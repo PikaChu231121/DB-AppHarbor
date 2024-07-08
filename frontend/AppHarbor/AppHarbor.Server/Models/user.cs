@@ -5,6 +5,11 @@ namespace AppHarbor.Server.Models
 {
     [Table("user", Schema = "C##APPHARBOR")]
 
+    public class UserLoginModel
+    {
+        public int Id { get; set; }
+        public string Password { get; set; }
+    }
     public class user
     {
         [Key]

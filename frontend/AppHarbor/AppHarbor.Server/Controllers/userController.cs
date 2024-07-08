@@ -55,6 +55,24 @@ namespace AppHarbor.Server.Controllers
             
         }
 
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserLoginModel loginModel)
+        {
+            var user = _dbContext.user.Find(loginModel.Id);
+            if (user == null)
+            {
+                return NotFound("user not found");
+            }
+            if (user.Password == loginModel.Password)
+            {
+                return Ok(user);
+            }
+            else
+            {
+                return BadRequest("Invalid password");
+            }
+        }
+
 
 
 

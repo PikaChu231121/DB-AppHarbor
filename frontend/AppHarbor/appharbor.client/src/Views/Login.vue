@@ -35,23 +35,20 @@ export default {
     };
   },
   methods: {
-    login() {
-      const loginCredential = {
-        username: this.username,
-        password: this.password
-      };
-      
-      axios.post("/api/Login", loginCredential)
-        .then(response => {
-          // Handle successful login
-          console.log("Login successful", response.data);
-          
-        })
-        .catch(error => {
-          // Handle login error
-          console.error("Login failed", error);
-        });
-    }
+      login() {
+          axios.post('http://localhost:5118/user/login', {
+              id: this.username,
+              password: this.password
+          })
+            .then(response => {
+                console.log("successfully logged in");
+            })
+            .catch(error => {
+                this.user = null;
+                this.error = 'Login failed: ' + error.response.data;
+                console.log(this.error);
+            });
+      }
   }
 };
 </script>
