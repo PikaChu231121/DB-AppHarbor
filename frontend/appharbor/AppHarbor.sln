@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHarbor.Server", "AppHarbor.Server\AppHarbor.Server.csproj", "{447B8AD5-F857-4F6B-A34B-37D65F3ECB4E}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "appharbor.client", "appharbor.client\appharbor.client.esproj", "{59C83CDC-8703-49CA-A284-85C3C13D758F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{447B8AD5-F857-4F6B-A34B-37D65F3ECB4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{447B8AD5-F857-4F6B-A34B-37D65F3ECB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{447B8AD5-F857-4F6B-A34B-37D65F3ECB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{447B8AD5-F857-4F6B-A34B-37D65F3ECB4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59C83CDC-8703-49CA-A284-85C3C13D758F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59C83CDC-8703-49CA-A284-85C3C13D758F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59C83CDC-8703-49CA-A284-85C3C13D758F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{59C83CDC-8703-49CA-A284-85C3C13D758F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59C83CDC-8703-49CA-A284-85C3C13D758F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59C83CDC-8703-49CA-A284-85C3C13D758F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4DC247DD-C899-4BE9-A46D-59D5C601F61B}
+	EndGlobalSection
+EndGlobal
