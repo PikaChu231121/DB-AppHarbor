@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {}
+    "F:\\GitHubClone\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {}
   },
   "projects": {
-    "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {
+    "F:\\GitHubClone\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
+        "projectUniqueName": "F:\\GitHubClone\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
         "projectName": "AppHarbor.Server",
-        "projectPath": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
-        "packagesPath": "C:\\Users\\86136\\.nuget\\packages\\",
-        "outputPath": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\obj\\",
+        "projectPath": "F:\\GitHubClone\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
+        "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
+        "outputPath": "F:\\GitHubClone\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\86136\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -44,6 +44,10 @@
               "target": "Package",
               "version": "[8.*-*, )"
             },
+            "Oracle.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.23.40, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
@@ -68,7 +72,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

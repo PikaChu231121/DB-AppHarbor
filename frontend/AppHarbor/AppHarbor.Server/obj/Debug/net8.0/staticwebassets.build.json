@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "Hash": "B/3nQq6pc466BcFnHOsRJML5f3uHUkn2F+eQSv1jQsg=",
+  "Hash": "0BTtoOfaVUhnk+P4fqzO1by2b2pbN4763tG2ZmNLJ3o=",
   "Source": "AppHarbor.Server",
   "BasePath": "_content/AppHarbor.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\appharbor.client\\appharbor.client.esproj",
+      "Identity": "F:\\GitHubClone\\DB-AppHarbor\\frontend\\AppHarbor\\appharbor.client\\appharbor.client.esproj",
       "Version": 2,
       "Source": "appharbor.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
