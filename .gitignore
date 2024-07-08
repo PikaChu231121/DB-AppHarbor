@@ -5,3 +5,22 @@
 # 忽略编译输出目录
 bin/
 obj/
+frontend/AppHarbor/.vs/AppHarbor/FileContentIndex/56846b44-688b-4b35-8f7a-8929cd9ed93c.vsidx
+frontend/AppHarbor/.vs/AppHarbor/FileContentIndex/aac31233-fe2f-4e08-9f18-4981365b2c35.vsidx
+frontend/AppHarbor/.vs/AppHarbor/FileContentIndex/f6de6eee-da6a-49db-9444-32f4068e44c3.vsidx
+frontend/AppHarbor/AppHarbor.Server/obj/AppHarbor.Server.csproj.nuget.dgspec.json
+frontend/AppHarbor/AppHarbor.Server/obj/AppHarbor.Server.csproj.nuget.g.props
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.AssemblyInfo.cs
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.AssemblyInfoInputs.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.assets.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.csproj.AssemblyReference.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.GeneratedMSBuildEditorConfig.editorconfig
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/spa.proxy.json
+frontend/AppHarbor/AppHarbor.Server/obj/project.assets.json
+frontend/AppHarbor/AppHarbor.Server/obj/project.nuget.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.AssemblyInfo.cs
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.AssemblyInfoInputs.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.assets.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.csproj.AssemblyReference.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.GeneratedMSBuildEditorConfig.editorconfig
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/spa.proxy.json
