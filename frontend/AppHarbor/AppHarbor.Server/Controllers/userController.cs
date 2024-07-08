@@ -36,21 +36,21 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpGet("{id},{password}")]
-        public ActionResult<user> login(int id,string password)
+        public String login(int id,string password)
         {
             var user = _dbContext.user.Find(id);
             if (user == null)
             {
-                return NotFound();
+                return "NotFound";
             }
             if (user.Password == password)
             {
-                return user;
+                return "登录成功";
 
             }
             else
             {
-                return BadRequest();
+                return "密码错误";
             }
             
         }
