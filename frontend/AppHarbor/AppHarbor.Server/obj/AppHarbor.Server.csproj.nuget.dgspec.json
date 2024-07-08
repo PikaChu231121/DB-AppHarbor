@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {}
+    "F:\\DBMS\\DB-AppHarbor\\frontend\\appharbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {}
   },
   "projects": {
-    "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {
+    "F:\\DBMS\\DB-AppHarbor\\frontend\\appharbor\\AppHarbor.Server\\AppHarbor.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
+        "projectUniqueName": "F:\\DBMS\\DB-AppHarbor\\frontend\\appharbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
         "projectName": "AppHarbor.Server",
-        "projectPath": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
-        "packagesPath": "C:\\Users\\86136\\.nuget\\packages\\",
-        "outputPath": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\obj\\",
+        "projectPath": "F:\\DBMS\\DB-AppHarbor\\frontend\\appharbor\\AppHarbor.Server\\AppHarbor.Server.csproj",
+        "packagesPath": "C:\\Users\\legion\\.nuget\\packages\\",
+        "outputPath": "F:\\DBMS\\DB-AppHarbor\\frontend\\appharbor\\AppHarbor.Server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\86136\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\legion\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -34,6 +35,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -68,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
