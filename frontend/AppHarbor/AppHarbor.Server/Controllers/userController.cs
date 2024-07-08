@@ -19,13 +19,13 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<user>> Get()
+        public ActionResult<IEnumerable<User>> Get()
         {
             return _dbContext.user.ToList();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<user> Get(int id)
+        public ActionResult<User> Get(int id)
         {
             var user = _dbContext.user.Find(id);
             if (user == null)

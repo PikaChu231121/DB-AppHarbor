@@ -10,15 +10,15 @@ namespace AppHarbor.Server
         {
         }
 
-        public DbSet<user> user { get; set; }
-        public DbSet<merchant> merchant { get; set; }
+        public DbSet<User> user { get; set; }
+        public DbSet<Merchant> merchant { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             // 配置表和列名
-            modelBuilder.Entity<user>(entity =>
+            modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("user", "C##APPHARBOR");
                 entity.HasKey(e => e.Id);
@@ -32,7 +32,7 @@ namespace AppHarbor.Server
                 entity.Property(e => e.State).IsRequired().HasMaxLength(255).HasColumnName("STATE");
             });
 
-            modelBuilder.Entity<merchant>(entity =>
+            modelBuilder.Entity<Merchant>(entity =>
             {
                 entity.ToTable("merchant", "C##APPHARBOR");
                 entity.HasKey(e => e.Id);

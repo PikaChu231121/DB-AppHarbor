@@ -20,13 +20,13 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<merchant>> Get()
+        public ActionResult<IEnumerable<Merchant>> Get()
         {
             return _dbContext.merchant.ToList();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<merchant> Get(int id)
+        public ActionResult<Merchant> Get(int id)
         {
             var merchant = _dbContext.merchant.Find(id);
             if (merchant == null)

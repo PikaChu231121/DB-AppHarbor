@@ -1,35 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace AppHarbor.Server.Models
+namespace AppHarbor.Server.Models;
+
+public partial class Merchant
 {
-    [Table("merchant", Schema = "C##APPHARBOR")]
+    public decimal Id { get; set; }
 
-    public class merchant
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+    public string Password { get; set; } = null!;
 
-        [Required]
-        [MaxLength(255)]
-        public string Password { get; set; }
+    public string Nickname { get; set; } = null!;
 
-        [Required]
-        [MaxLength(255)]
-        public string Nickname { get; set; }
+    public string? Avatar { get; set; }
 
-        [MaxLength(255)]
-        public string Avatar { get; set; }
+    public DateTime RegisterTime { get; set; }
 
-        [Required]
-        public DateTime RegisterTime { get; set; }
+    public decimal? Credit { get; set; }
 
-        public decimal Credit { get; set; }
+    public string State { get; set; } = null!;
 
-        [Required]
-        [MaxLength(255)]
-        public string State { get; set; }
+    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
 
-    }
+    public virtual ICollection<BanMerchant> BanMerchants { get; set; } = new List<BanMerchant>();
 }
