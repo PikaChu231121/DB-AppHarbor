@@ -18,3 +18,9 @@ frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.GeneratedM
 frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/spa.proxy.json
 frontend/AppHarbor/AppHarbor.Server/obj/project.assets.json
 frontend/AppHarbor/AppHarbor.Server/obj/project.nuget.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.AssemblyInfo.cs
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.AssemblyInfoInputs.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.assets.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.csproj.AssemblyReference.cache
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/AppHarbor.Server.GeneratedMSBuildEditorConfig.editorconfig
+frontend/AppHarbor/AppHarbor.Server/obj/Debug/net8.0/spa.proxy.json
