@@ -1,0 +1,7 @@
+# 忽略 VS 和 VSC 的目录
+.vs/
+.vscode/
+
+# 忽略编译输出目录
+bin/
+obj/
