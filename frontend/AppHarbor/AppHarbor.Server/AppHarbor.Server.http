@@ -1,0 +1,6 @@
+@AppHarbor.Server_HostAddress = http://localhost:5118
+
+GET {{AppHarbor.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

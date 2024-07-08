@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:5173",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "D:\\大二下\\DB-AppHarbor\\frontend\\AppHarbor\\AppHarbor.Server\\..\\appharbor.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}
