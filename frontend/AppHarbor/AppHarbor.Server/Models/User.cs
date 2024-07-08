@@ -7,15 +7,7 @@ public partial class User
 {
     public decimal Id { get; set; }
 
-<<<<<<< Updated upstream
-    public class user
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-=======
     public string Password { get; set; } = null!;
->>>>>>> Stashed changes
 
     public string Nickname { get; set; } = null!;
 
