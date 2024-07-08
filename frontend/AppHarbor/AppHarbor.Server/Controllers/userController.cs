@@ -35,6 +35,26 @@ namespace AppHarbor.Server.Controllers
             return user;
         }
 
+        [HttpGet("{id},{password}")]
+        public ActionResult<user> login(int id,string password)
+        {
+            var user = _dbContext.user.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (user.Password == password)
+            {
+                return user;
+
+            }
+            else
+            {
+                return BadRequest();
+            }
+            
+        }
+
 
 
 
