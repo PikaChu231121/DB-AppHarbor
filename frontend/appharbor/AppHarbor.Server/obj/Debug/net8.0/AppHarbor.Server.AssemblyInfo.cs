@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppHarbor.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a465c74b5e8fef783af2e21e7a7ea25d247651af")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ac14d533843e83dbd71f9ece25637741f6121cb")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppHarbor.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppHarbor.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
