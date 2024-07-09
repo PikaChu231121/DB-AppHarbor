@@ -36,7 +36,9 @@ namespace AppHarbor.Server.Controllers
             }
             if (user.Password == loginModel.Password)
             {
-                return Ok(user);
+                var token = Guid.NewGuid().ToString();
+                // TODO: 保存到数据库
+                return Ok(token);
             }
             else
             {
