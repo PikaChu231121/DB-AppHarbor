@@ -1,40 +1,28 @@
 <template>
-    <div>
-        <form @submit.prevent="addItem">
-            <input v-model="newItem" placeholder="添加收藏项" required />
-            <button type="submit">添加</button>
-        </form>
+    <div class="folder">
+        <h2>{{ folder.name }}</h2>
+        <button @click="deleteFolder">删除收藏夹</button>
         <ul>
-            <li v-for="(item, index) in folder.items" :key="index">
-                {{ item }}
-                <button @click="removeItem(index)">删除</button>
+            <li v-for="item in folder.items" :key="item.id">
+                {{ item.name }}
+                <button @click="deleteItem(item.id)">删除</button>
             </li>
         </ul>
     </div>
 </template>
 
 <script>
-export default {
-  props: ['folder'],
-  data() {
-    return {
-      newItem: ''
+    export default {
+        props: ['folder'],
+        methods: {
+            deleteFolder() {
+                this.$emit('delete-folder', this.folder.id);
+            },
+            deleteItem(itemId) {
+                this.$emit('delete-item', this.folder.id, itemId);
+            }
+        }
     };
-  },
-  methods: {
-    addItem() {
-      if (this.newItem.trim() !== '') {
-        this.folder.items.push(this.newItem.trim());
-        this.$emit('updateFolder', this.folder);
-        this.newItem = '';
-      }
-    },
-    removeItem(index) {
-      this.folder.items.splice(index, 1);
-      this.$emit('updateFolder', this.folder);
-    }
-  }
-};
 </script>
 
 <style scoped>
