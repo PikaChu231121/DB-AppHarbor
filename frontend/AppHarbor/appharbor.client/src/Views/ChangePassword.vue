@@ -30,7 +30,7 @@
     import axios from 'axios';
 
     export default {
-        name: 'ChangePassword',
+        name: 'changePassword',
         data() {
             return {
                 username: '',
@@ -42,8 +42,8 @@
             Change() {
                 axios.post('http://localhost:5118/User/changepassword', {
                     Id: this.username,
-                    bpassword: this.bpassword,
-                    apassword: this.apassword,
+                    OldPassword: this.bpassword,
+                    NewPassword: this.apassword,
                 })
                     .then(response => {
                         
@@ -51,8 +51,9 @@
                         alert('修改成功！');
                     })
                     .catch(error => {
-                        console.log(this.bpassword);
                         alert('修改失败！');
+                        console.log(this.bpassword);
+                        
                         console.log(error.response.data);
                     });
             },
