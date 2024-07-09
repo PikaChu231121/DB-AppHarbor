@@ -55,17 +55,20 @@
                 })
                     .then(response => {
                         Cookies.set("token", response.data);
+                        this.$router.push('/WorkBanchPage');
+                        alert('您好!尊敬的 ' +this.username+' 用户,欢迎来到AppHarbor!')
                         console.log("successfully logged in");
                     })
                     .catch(error => {
                         this.user = null;
                         this.error = 'Login failed: ' + error.response.data;
+                        alert('登录失败')
                         console.log(this.error);
                     });
             },
             goToLogin() {
                 this.login();
-                this.$router.push('/WorkBanchPage')
+                
             },
             goToRegister() {
                 this.$router.push('/RegisterAccount');
