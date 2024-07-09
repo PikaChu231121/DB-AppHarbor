@@ -17,10 +17,10 @@
     import SideNavigation from './SideNavigation.vue'; // 侧边栏
     //import HomeView from './HomeView.vue'; // Example component
     //import ShopView from './ShopView.vue'; // Example component
-    //import CollectionView from './CollectionView.vue'; // Example component
+    import Favorites from '../Favorites.vue'; // Example component
     //import PurseView from './PurseView.vue'; // Example component
     //import FriendsView from './FriendsView.vue'; // Example component
-    //import UserProfileView from './UserProfileView.vue'; // Example component
+    import PersonalInformation from '../PersonalInformation.vue'; // Example component
 
     export default {
         components: {
@@ -28,14 +28,14 @@
             SideNavigation,
             //HomeView,
             //ShopView,
-            //CollectionView,
+            Favorites,
             //PurseView,
             //FriendsView,
-            //UserProfileView
+            PersonalInformation
         },
         data() {
             return {
-                /*currentView: 'HomeView' // Default view*/
+                currentView: 'HomeView' // Default view
             };
         },
         methods: {
@@ -44,20 +44,20 @@
                     case 'Home':
                         this.currentView = 'HomeView';
                         break;
-                    case 'Shop':
-                        this.currentView = 'ShopView';
-                        break;
+                    //case 'Shop':
+                    //    this.currentView = 'ShopView';
+                    //    break;
                     case 'Collection':
-                        this.currentView = 'CollectionView';
+                        this.currentView = 'Favorites';
                         break;
-                    case 'Purse':
-                        this.currentView = 'PurseView';
-                        break;
-                    case 'Friends':
-                        this.currentView = 'FriendsView';
-                        break;
+                    //case 'Purse':
+                    //    this.currentView = 'PurseView';
+                    //    break;
+                    //case 'Friends':
+                    //    this.currentView = 'FriendsView';
+                    //    break;
                     case 'UserProfile':
-                        this.currentView = 'UserProfileView';
+                        this.currentView = 'PersonalInformation';
                         break;
                     default:
                         this.currentView = 'HomeView';
