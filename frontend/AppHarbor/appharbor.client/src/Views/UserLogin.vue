@@ -61,6 +61,7 @@
             },
             goToLogin() {
                 this.login();
+                this.$router.push('/WorkBanchPage')
             },
             goToRegister() {
                 this.$router.push('/RegisterAccount');

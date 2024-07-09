@@ -12,6 +12,10 @@ const routes = [
     {
         path: "/ChangePassword",
         component: () => import("@/Views/ChangePassword.vue")
+    },
+    {
+        path: "/WorkBanchPage",
+        component: () => import("@/Views/WorkBanch/MainLayout.vue")
     }
 ]
 
