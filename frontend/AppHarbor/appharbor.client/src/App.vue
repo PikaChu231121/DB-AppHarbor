@@ -4,17 +4,17 @@
 
 <template>
     <div id="app">
-        <Login />
+        <UserLogin />
     </div>
 </template>
 
 <script>
-    import Login from './Views/Login.vue';
+    import UserLogin from './Views/UserLogin.vue';
 
     export default {
         name: 'App',
         components: {
-            Login
+            UserLogin
         }
     };
 </script>
