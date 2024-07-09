@@ -57,10 +57,10 @@
 
             },
             goToRegister() {
-                
+                this.$router.push('/RegisterAccount')
             },
             goToForgotPassword() {
-                
+                this.$router.push('/ChangePassword')
             }
         }
     };

@@ -3,20 +3,21 @@
 </script>
 
 <template>
-    <div id="app">
+    <router-view/>
+<!--    <div id="app">
         <UserLogin />
-    </div>
+    </div>-->
 </template>
 
 <script>
-    import UserLogin from './Views/UserLogin.vue';
+/*    import UserLogin from './Views/UserLogin.vue';
 
     export default {
         name: 'App',
         components: {
             UserLogin
         }
-    };
+    };*/
 </script>
 
 <style>

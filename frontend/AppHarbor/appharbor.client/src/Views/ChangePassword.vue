@@ -1,5 +1,5 @@
 <template>
-    <h1>ÐÞ¸ÄÃÜÂë</h1>
+    <h1>ä¿®æ”¹å¯†ç </h1>
 </template>
 
 
