@@ -18,6 +18,12 @@ namespace AppHarbor.Server.Controllers
 
         }
 
+        [HttpPost("test")]
+        public IActionResult Test()
+        {
+            return Ok(_dbContext.Users.ToList());
+        }
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginModel loginModel)
         {

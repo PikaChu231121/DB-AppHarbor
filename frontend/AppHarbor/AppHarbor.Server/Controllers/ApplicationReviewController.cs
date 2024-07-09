@@ -21,7 +21,7 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("test")]
         public IActionResult Test()
         {
-            return Ok("test");
+            return Ok(_dbContext.ApplicationReviews.ToList());
         }
     }
 }
