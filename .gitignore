@@ -5,3 +5,5 @@
 # 忽略编译输出目录
 bin/
 obj/
+frontend/AppHarbor/node_modules/asynckit/index.js
+frontend/AppHarbor/node_modules/
