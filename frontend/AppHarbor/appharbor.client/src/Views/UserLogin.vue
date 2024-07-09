@@ -91,7 +91,9 @@
     }
 
     .backwrapper {
-        margin-left:-130px;
+        position:fixed;
+        top:0;
+        left:0;
         height: 100vh;
         width: 103vw;
         background-image: url('/public/login_back.svg');
