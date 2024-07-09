@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace AppHarbor.Server.Models;
 
+public class UserLoginModel
+{
+    public decimal Id { get; set; }
+
+    public string Password { get; set; } = null!;
+}
 public partial class User
 {
     public decimal Id { get; set; }
