@@ -1,55 +1,40 @@
 <template>
     <div v-if="visible" class="alert-box">
-        <div class="alert-content">
-            <p>{{ message }}</p>
-            <button @click="closeAlert">�ر�</button>
-        </div>
+        {{ message }}
     </div>
 </template>
 
 <script>
-export default {
-  props: ['message'],
-  data() {
-    return {
-      visible: true
+    export default {
+        props: ['message'],
+        data() {
+            return {
+                visible: false
+            };
+        },
+        watch: {
+            message(newMessage) {
+                if (newMessage) {
+                    this.visible = true;
+                    setTimeout(() => {
+                        this.visible = false;
+                    }, 3000); // 消息显示3秒
+                }
+            }
+        }
     };
-  },
-  methods: {
-    closeAlert() {
-      this.visible = false;
-    }
-  }
-}
 </script>
 
-<style scoped>
+<style>
     .alert-box {
         position: fixed;
-        top: 50%;
+        bottom: 10px;
         left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        border: 1px solid #ccc;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
+        transform: translateX(-50%);
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px 20px;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
     }
-
-    .alert-content {
-        text-align: center;
-    }
-
-    button {
-        margin-top: 10px;
-        background-color: #42b983;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-    }
-
-        button:hover {
-            background-color: #369f79;
-        }
 </style>

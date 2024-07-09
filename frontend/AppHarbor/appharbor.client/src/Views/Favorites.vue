@@ -1,18 +1,23 @@
 <template>
     <div>
-        <h1>个人收藏</h1>
-        <form @submit.prevent="addFolder">
-            <input v-model="newFolder" placeholder="新建收藏夹" required />
-            <button type="submit">新建</button>
-        </form>
-        <ul>
-            <li v-for="(folder, index) in folders" :key="index">
-                <h3>{{ folder.name }}</h3>
-                <button @click="removeFolder(index)">删除收藏夹</button>
-                <Folder :folder="folder" @updateFolder="updateFplder(index,$event)" />
-            </li>
-        </ul>
-        <AlertBox v-if="alertVisible" :message="alertMessage" @close="alertVisible = false" />
+        <alert-box :message="alertMessage"></alert-box>
+        <h1>我的收藏夹</h1>
+        <button @click="showAddFolderDialog">添加收藏夹</button>
+
+        <div v-if="isAddFolderDialogVisible" class="modal">
+            <div class="modal-content">
+                <span class="close" @click="closeAddFolderDialog">&times;</span>
+                <h2>请输入收藏夹名称</h2>
+                <input v-model="newFolderName" placeholder="收藏夹名称">
+                <button @click="addFolder">确认</button>
+            </div>
+        </div>
+
+        <div v-for="folder in folders" :key="folder.id" class="folder">
+            <folder :folder="folder" @delete-folder="deleteFolder" @delete-item="deleteItem"></folder>
+            <input v-model="newItemName[folder.id]" placeholder="新收藏物名称">
+            <button @click="addItem(folder.id)">添加收藏物</button>
+        </div>
     </div>
 </template>
 
@@ -26,29 +31,72 @@
             Folder
         },
         data() {
+            // data 默认为空
             return {
-                newFolder: '',
-                folders: JSON.parse(localStorage.getItem('folders')) || [{ name: '默认收藏夹', items: [] }]
+                folders: JSON.parse(localStorage.getItem('folders')) || [],
+                alertMessage: '',
+                newItemName: {},
+                isAddFolderDialogVisible: false,
+                newFolderName: ''
             };
         },
         methods: {
+            saveToLocalStorage() {
+                localStorage.setItem('folders', JSON.stringify(this.folders));
+            },
+            showAddFolderDialog() {
+                this.isAddFolderDialogVisible = true;
+            },
+            closeAddFolderDialog() {
+                this.isAddFolderDialogVisible = false;
+                this.newFolderName = '';
+            },
             addFolder() {
-                if (this.newFolder.trim() !== '') {
-                    this.folders.push({ name: this.newFolder.trim(), items: [] });
-                    this.updateLocalStorage();
-                    this.newFolder = '';
+                if (this.newFolderName.trim()) {
+                    const newFolder = {
+                        id: Date.now(),
+                        name: this.newFolderName,
+                        items: []
+                    };
+                    this.folders.push(newFolder);
+                    this.saveToLocalStorage();
+                    this.showAlert('收藏夹添加成功');
+                    this.closeAddFolderDialog();
+                } else {
+                    this.showAlert('收藏夹名称不能为空');
                 }
             },
-            removeFolder(index) {
-                this.folders.splice(index, 1);
-                this.updateLocalStorage();
+            addItem(folderId) {
+                const folder = this.folders.find(folder => folder.id === folderId);
+                if (folder && this.newItemName[folderId]?.trim()) {
+                    const newItem = {
+                        id: Date.now(),
+                        name: this.newItemName[folderId]
+                    };
+                    folder.items.push(newItem);
+                    this.saveToLocalStorage();
+                    this.showAlert('收藏物添加成功');
+                    this.newItemName[folderId] = '';
+                }
             },
-            updateFolder(index, updatedFolder) {
-                this.$set(this.folders, index, updatedFolder);
-                this.updateLocalStorage();
+            deleteFolder(folderId) {
+                this.folders = this.folders.filter(folder => folder.id !== folderId);
+                this.saveToLocalStorage();
+                this.showAlert('收藏夹删除成功');
             },
-            updateLocalStorage() {
-                localStorage.setItem('folders', JSON.stringify(this.folders));
+            deleteItem(folderId, itemId) {
+                const folder = this.folders.find(folder => folder.id === folderId);
+                if (folder) {
+                    folder.items = folder.items.filter(item => item.id !== itemId);
+                    this.saveToLocalStorage();
+                    this.showAlert('收藏物删除成功');
+                }
+            },
+            showAlert(message) {
+                this.alertMessage = message;
+                setTimeout(() => {
+                    this.alertMessage = '';
+                }, 3000);
             }
         }
     };
@@ -72,11 +120,20 @@
         padding: 0;
     }
 
-    li {
-        margin: 5px 0;
+    li.folder-item {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .folder-header {
+        display: flex;
+        flex-direction: column;
+        margin-right: 20px;
     }
 
     button {
@@ -87,7 +144,39 @@
         cursor: pointer;
     }
 
-        button:hover {
-            background-color: #369f79;
-        }
+    button:hover {
+        background-color: #369f79;
+    }
+
+    .folder {
+        margin-bottom: 20px;
+    }
+
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+        position: relative;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+    }
 </style>
