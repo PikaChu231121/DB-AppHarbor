@@ -15,8 +15,8 @@
 
         <div v-for="folder in folders" :key="folder.id" class="folder">
             <folder :folder="folder" @delete-folder="deleteFolder" @delete-item="deleteItem"></folder>
-            <input v-model="newItemName[folder.id]" placeholder="新收藏物名称">
-            <button @click="addItem(folder.id)">添加收藏物</button>
+            <input v-model="newItemName[folder.id]" placeholder="新收藏应用名称">
+            <button @click="addItem(folder.id)">添加收藏应用</button>
         </div>
     </div>
 </template>
@@ -75,7 +75,7 @@
                     };
                     folder.items.push(newItem);
                     this.saveToLocalStorage();
-                    this.showAlert('收藏物添加成功');
+                    this.showAlert('收藏应用添加成功');
                     this.newItemName[folderId] = '';
                 }
             },
@@ -89,7 +89,7 @@
                 if (folder) {
                     folder.items = folder.items.filter(item => item.id !== itemId);
                     this.saveToLocalStorage();
-                    this.showAlert('收藏物删除成功');
+                    this.showAlert('收藏应用删除成功');
                 }
             },
             showAlert(message) {
@@ -105,51 +105,22 @@
 <style scoped>
     h1 {
         color: #42b983;
-    }
-
-    form {
+        text-align: center;
         margin-bottom: 20px;
-    }
-
-    input {
-        margin-right: 10px;
-    }
-
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    li.folder-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        padding: 10px;
-        border-radius: 4px;
-    }
-
-    .folder-header {
-        display: flex;
-        flex-direction: column;
-        margin-right: 20px;
     }
 
     button {
         background-color: #42b983;
         color: white;
         border: none;
-        padding: 5px 10px;
+        padding: 10px 20px;
         cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
     }
 
     button:hover {
         background-color: #369f79;
-    }
-
-    .folder {
-        margin-bottom: 20px;
     }
 
     .modal {
@@ -162,6 +133,7 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
     }
 
     .modal-content {
@@ -170,6 +142,9 @@
         border-radius: 5px;
         text-align: center;
         position: relative;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
     }
 
     .close {
@@ -178,5 +153,25 @@
         right: 10px;
         font-size: 20px;
         cursor: pointer;
+        color: #999;
+    }
+
+    .close:hover {
+        color: #666;
+    }
+
+    .folder {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .folder input {
+        margin-bottom: 5px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
     }
 </style>
