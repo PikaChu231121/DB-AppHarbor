@@ -9,6 +9,25 @@ public class UserLoginModel
 
     public string Password { get; set; } = null!;
 }
+
+
+public class UserRegisterModel
+{
+    public string Nickname { get; set; } = null!;
+
+    public string Password { get; set; } = null!;
+
+}
+
+public class UserChangePasswordModel
+{
+    public decimal Id { get; set; }
+
+    public string OldPassword { get; set; } = null!;
+
+    public string NewPassword { get; set; } = null!;
+}
+
 public partial class User
 {
     public decimal Id { get; set; }
