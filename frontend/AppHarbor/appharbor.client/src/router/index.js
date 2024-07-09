@@ -14,6 +14,10 @@ const routes = [
         component: () => import("@/Views/ChangePassword.vue")
     },
     {
+        path: "/WorkBanchPage",
+        component: () => import("@/Views/WorkBanch/MainLayout.vue")
+    },
+    {
         path: "/PersonalInformation",
         component: () => import("@/Views/PersonalInformation.vue")
     }

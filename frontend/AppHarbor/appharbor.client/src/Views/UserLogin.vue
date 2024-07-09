@@ -1,33 +1,35 @@
 <template>
-    <div class="container" style="margin-left:40px">
-        <div class="content">
-            <div class="login-section">
-                <div class="login-form">
-                    <h2 class="login_text"style="font-family: 'Comic Sans MS', cursive, sans-serif;font-size:40px">欢迎来到AppHarbor</h2><br>
-                    <form @submit.prevent="login">
-                        <div class="form-group">
-                            <label for="username"style="font-family: 'Comic Sans MS', cursive, sans-serif;">用户名</label>
-                            <input type="text" id="username" v-model="username" required />
-                        </div>
-                        <div class="form-group">
-                            <label for="password"style="font-family: 'Comic Sans MS', cursive, sans-serif;">密码</label>
-                            <input type="password" id="password" v-model="password" required />
-                        </div>
-                        <div class="button-row">
-                            <button type="button" class="login-button" style="margin-left:0px;width:240px;font-family: 'Comic Sans MS', cursive, sans-serif;"@click="goToLogin">登录</button>
-                        </div>
-                        <div class="button-row"style="font-family: 'Comic Sans MS', cursive, sans-serif;">
-                            <button type="button" class="secondary-button" @click="goToRegister">注册账号</button>
-                            <button type="button" class="secondary-button" @click="goToForgotPassword">找回密码</button>
-                        </div>
-                    </form>
+    <div class="backwrapper">
+        <div class="container" style="margin-left:350px;margin-top:190px">
+            <div class="content">
+                <div class="login-section">
+                    <div class="login-form">
+                        <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px ; font-weight:bolder;margin-top:5px">登 录</h2>
+                        <form @submit.prevent="login">
+                            <div class="form-group">
+                                <label for="username" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;  ">用户名</label>
+                                <input type="text" style="height:40px;font-size:15px"id="username" v-model="username" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="password" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">密码</label>
+                                <input type="password" style="height:40px"id="password" v-model="password" required /><br><br><br>
+                            </div>
+                            <div class="button-row"style="margin-top:9px">
+                                <button type="button" class="login-button" style="font-size: 18px; margin-left: 0px; margin-top: -30px; width: 270px; font-family: 'Hanyi Wenhei 85W', sans-serif; " @click="goToLogin">登录</button>
+                            </div>
+                            <div class="button-row" style="font-family: 'Hanyi Wenhei 85W', sans-serif; margin-bottom:20px">
+                                <button type="button" class="secondary-button" @click="goToRegister">注册账号</button>
+                                <button type="button" class="secondary-button" @click="goToForgotPassword">修改密码</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            <div class="video-section">
-                <video autoplay loop muted playsinline>
-                    <source src="@/../public/video/login_gif.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <div class="video-section">
+                    <video autoplay loop muted playsinline>
+                        <source src="@/../public/video/login_gif.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
             </div>
         </div>
     </div>
@@ -35,6 +37,7 @@
 
 <script>
     import axios from 'axios';
+    import Cookies from 'js-cookie';
 
     export default {
         name: 'UserLogin',
@@ -51,6 +54,7 @@
                     password: this.password
                 })
                     .then(response => {
+                        Cookies.set("token", response.data);
                         console.log("successfully logged in");
                     })
                     .catch(error => {
@@ -61,9 +65,7 @@
             },
             goToLogin() {
                 this.login();
-                this.$globalVar = this.username;
-                console.log(this.$globalVar);
-                this.$router.push('/PersonalInformation');
+                this.$router.push('/WorkBanchPage')
             },
             goToRegister() {
                 this.$router.push('/RegisterAccount');
@@ -82,23 +84,35 @@
         height: 100%;
         width: 100%;
         overflow: hidden;
-        
     }
 
     * {
         box-sizing: border-box;
     }
 
+    .backwrapper {
+        position:fixed;
+        top:0;
+        left:0;
+        height: 100vh;
+        width: 103vw;
+        background-image: url('/public/login_back.svg');
+        background-size: cover; /* Ensures the image covers the entire screen */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents the image from repeating */
+    }
     .container {
-        margin-top:20px;
+        margin-top: 20px;
         display: flex;
-        height: 80vh;
-        width: 80vw;
+        height: 60vh;
+        width: 60vw;
+        
         justify-content: flex-start; /* 确保容器内容靠左 */
         background-color: white; /* 背景色可以根据需要调整 */
     }
 
     .content {
+        
         display: flex;
         height: 100%;
         width: 100%;
@@ -110,7 +124,6 @@
         flex: 1;
         display: flex;
         justify-content: center;
-        box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
         align-items: center;
     }
 
@@ -118,15 +131,13 @@
         flex: 1;
         display: flex;
         justify-content: center;
-        box-shadow: 9px 0 8px rgba(0, 0, 0, 0.3);
         align-items: center;
     }
     .login-form {
-        height: 670px;
+        height: 500px;
         background: white;
-        padding: 10em;
+        padding: 2em;
         border-radius: 2px;
-        box-shadow: -10px 0 8px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -174,7 +185,7 @@
         justify-content: space-between;
         text-align: center;
         cursor: pointer;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-family:'Hanyi Wenhei 85W', sans-serif;
     }
 
     .secondary-button {
@@ -188,10 +199,10 @@
         justify-content: space-between;
         text-align: center;
         cursor: pointer;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-family: 'Hanyi Wenhei', sans-serif;
     }
         .login-button:hover, .secondary-button:hover {
-            background-color: #349a72;
+            background-color: #fbb1a2;
         }
 
     video {

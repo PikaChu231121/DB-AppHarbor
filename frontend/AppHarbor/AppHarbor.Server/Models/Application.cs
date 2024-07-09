@@ -3,6 +3,14 @@ using System.Collections.Generic;
 
 namespace AppHarbor.Server.Models;
 
+
+public class GetAppListModel
+{
+    public string? Category { get; set; }
+
+    public int Page { get; set; }
+}
+
 public partial class Application
 {
     public decimal Id { get; set; }
