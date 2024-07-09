@@ -52,8 +52,6 @@
                 })
                     .then(response => {
                         console.log("successfully logged in");
-                        this.$globalVar = this.username;
-                        console.log(this.$globalVar);
                     })
                     .catch(error => {
                         this.user = null;
@@ -63,6 +61,9 @@
             },
             goToLogin() {
                 this.login();
+                this.$globalVar = this.username;
+                console.log(this.$globalVar);
+                this.$router.push('/PersonalInformation');
             },
             goToRegister() {
                 this.$router.push('/RegisterAccount');

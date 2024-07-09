@@ -53,20 +53,22 @@
                 }
             };
         },
-        created() {
-            this.fetchUserData();
+        mounted() {
+            this.user.id = this.$globalVar;
+            // this.fetchUserData();
         },
         methods: {
-            fetchUserData() {
-                axios.get('http://localhost:5118/user/${this.user.id}')
+            /*fetchUserData() {
+                axios.post('http://localhost:5118/user/login', {this.user.id})
                     .then(response => {
                         this.user = response.data;
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
                     });
-            },
+            },*/
             toggleEdit() {
+                console.log(this.$globalVar);
                 if (this.isEditing) {
                     // 这里可以添加保存更改的逻辑
                     console.log('更改已保存:', this.user.nickname);

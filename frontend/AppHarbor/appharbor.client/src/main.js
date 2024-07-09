@@ -6,10 +6,9 @@ import App from './App.vue'
 
 import router from './router'
 
-
-
-
-createApp(App).use(router).mount('#app')
+const app = createApp(App);
 
 // 添加全局变量
-App.config.globalProperties.$globalVar = '这是一个全局变量'
+app.config.globalProperties.$globalVar = '0';
+
+app.use(router).mount('#app');
