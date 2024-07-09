@@ -37,6 +37,7 @@
 
 <script>
     import axios from 'axios';
+    import Cookies from 'js-cookie';
 
     export default {
         name: 'UserLogin',
@@ -53,6 +54,7 @@
                     password: this.password
                 })
                     .then(response => {
+                        Cookies.set("token", response.data);
                         console.log("successfully logged in");
                     })
                     .catch(error => {
