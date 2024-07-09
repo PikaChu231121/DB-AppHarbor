@@ -10,11 +10,11 @@
                     </div>
                     <div class="form-group">
                         <label for="password">原密码</label>
-                        <input type="password" id="bpassword" v-model="password" required />
+                        <input type="password" id="bpassword" v-model="bpassword" required />
                     </div>
                     <div class="form-group">
                         <label for="password">新密码</label>
-                        <input type="password" id="apassword" v-model="password" required />
+                        <input type="password" id="apassword" v-model="apassword" required />
                     </div>
                     <div class="button-row">
                         <button type="button" class="login-button" @click="goToChange">确认修改</button>
@@ -35,22 +35,25 @@
             return {
                 username: '',
                 bpassword: '',
-                apassword:'',
+                apassword: '',
             };
         },
         methods: {
             Change() {
-                axios.post('http://localhost:5118/user/Change', {
-                    id: this.username,
-                    password: this.password,
+                axios.post('http://localhost:5118/User/changepassword', {
+                    Id: this.username,
+                    bpassword: this.bpassword,
+                    apassword: this.apassword,
                 })
                     .then(response => {
-                        console.log("successfully logged in");
+                        
+                        console.log("成功修改！");
+                        alert('修改成功！');
                     })
                     .catch(error => {
-                        this.user = null;
-                        this.error = 'Login failed: ' + error.response.data;
-                        console.log(this.error);
+                        console.log(this.bpassword);
+                        alert('修改失败！');
+                        console.log(error.response.data);
                     });
             },
             goToChange() {

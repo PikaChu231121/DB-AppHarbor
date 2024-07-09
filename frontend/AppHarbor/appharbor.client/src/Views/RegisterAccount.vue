@@ -5,17 +5,14 @@
                 <h2 class="login_text">注册账号</h2>
                 <form @submit.prevent="login">
                     <div class="form-group">
-                        <label for="username">用户名</label>
-                        <input type="text" id="username" v-model="username" required />
+                        <label for="nickname">昵称</label>
+                        <input type="text" id="nickname" v-model="nickname" required />
                     </div>
                     <div class="form-group">
                         <label for="password">密码</label>
                         <input type="password" id="bpassword" v-model="password" required />
                     </div>
-                    <div class="form-group">
-                        <label for="name">姓名</label>
-                        <input type="text" id="name" v-model="name" required />
-                    </div>
+                    
                     <div class="button-row">
                         <button type="button" class="login-button" @click="goToRegister">确认注册</button>
                     </div>
@@ -30,26 +27,26 @@
     import axios from 'axios';
 
     export default {
-        name: 'ChangePassword',
+        name: 'RegisterAccount',
         data() {
             return {
-                username: '',
+                nickname: '',
                 password: '',
-                realname: '',
             };
         },
         methods: {
             Register() {
-                axios.post('http://localhost:5118/user/Register', {
-                    id: this.username,
+                axios.post('http://localhost:5118/User/register', {
+                    nickname: this.nickname,
                     password: this.password,
                 })
                     .then(response => {
                         console.log("successfully Register!");
+                        console.log(response.data.id);
+                        alert('注册成功！您的用户名是' + response.data.id);
                     })
                     .catch(error => {
-                        this.user = null;
-                        this.error = 'Login failed: ' + error.response.data + '用户名已存在';
+                        this.error = '注册失败';
                         console.log(this.error);
                     });
             },
@@ -57,7 +54,7 @@
                 // 点击登录按钮，提交表单,跳转主页
                 this.Register();
 
-            },
+            }
         }
     };
 </script>
