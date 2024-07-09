@@ -11,4 +11,7 @@
   <ItemGroup>
     <Folder Include="src\router\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="public\loginBack.jpg" />
+  </ItemGroup>
 </Project>
