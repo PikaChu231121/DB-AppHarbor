@@ -16,6 +16,10 @@ const routes = [
     {
         path: "/WorkBanchPage",
         component: () => import("@/Views/WorkBanch/MainLayout.vue")
+    },
+    {
+        path: "/PersonalInformation",
+        component: () => import("@/Views/PersonalInformation.vue")
     }
 ]
 
