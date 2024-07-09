@@ -4,21 +4,21 @@
             <div class="content">
                 <div class="login-section">
                     <div class="login-form">
-                        <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 45px ; font-weight:bolder;margin-top:5px">登 录</h2>
+                        <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px ; font-weight:bolder;margin-top:5px">登 录</h2>
                         <form @submit.prevent="login">
                             <div class="form-group">
-                                <label for="username" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 25px;  ">用户名</label>
-                                <input type="text" style="height:40px;font-size:20px"id="username" v-model="username" required />
+                                <label for="username" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;  ">用户名</label>
+                                <input type="text" style="height:40px;font-size:15px"id="username" v-model="username" required />
                             </div>
                             <div class="form-group">
-                                <label for="password" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 25px;">密码</label>
-                                <input type="password" style="height:40px"id="password" v-model="password" required /><br><br>
+                                <label for="password" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">密码</label>
+                                <input type="password" style="height:40px"id="password" v-model="password" required /><br><br><br>
                             </div>
                             <div class="button-row"style="margin-top:9px">
-                                <button type="button" class="login-button" style="font-size:20px;margin-left: 0px; width: 270px; font-family: 'Hanyi Wenhei 85W', sans-serif; " @click="goToLogin">登录</button>
+                                <button type="button" class="login-button" style="font-size: 18px; margin-left: 0px; margin-top: -30px; width: 270px; font-family: 'Hanyi Wenhei 85W', sans-serif; " @click="goToLogin">登录</button>
                             </div>
-                            <div class="button-row" style="font-family: 'Hanyi Wenhei 85W', sans-serif; ">
-                                <button type="button" class="secondary-button" style="margin-top:6px"@click="goToRegister">注册账号</button>
+                            <div class="button-row" style="font-family: 'Hanyi Wenhei 85W', sans-serif; margin-bottom:20px">
+                                <button type="button" class="secondary-button" @click="goToRegister">注册账号</button>
                                 <button type="button" class="secondary-button" @click="goToForgotPassword">修改密码</button>
                             </div>
                         </form>
@@ -91,9 +91,9 @@
     }
 
     .backwrapper {
-        margin-left:-270px;
+        margin-left:-130px;
         height: 100vh;
-        width: 100vw;
+        width: 103vw;
         background-image: url('/public/login_back.svg');
         background-size: cover; /* Ensures the image covers the entire screen */
         background-position: center; /* Centers the image */
@@ -128,14 +128,13 @@
     .video-section {
         flex: 1;
         display: flex;
-        
         justify-content: center;
         align-items: center;
     }
     .login-form {
-        height: 628px;
+        height: 500px;
         background: white;
-        padding: 5em;
+        padding: 2em;
         border-radius: 2px;
         display: flex;
         flex-direction: column;
