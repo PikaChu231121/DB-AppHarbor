@@ -1,24 +1,24 @@
 <template>
-    <div class="container" style="margin-left:40px">
+    <div class="container" style="margin-left:180px;margin-top:-30px">
         <div class="content">
             <div class="login-section">
                 <div class="login-form">
-                    <h2 class="login_text"style="font-family: 'Comic Sans MS', cursive, sans-serif;font-size:40px">欢迎来到AppHarbor</h2><br>
+                    <h2 class="login_text"style="font-family: 'Heiti SC'; font-size: 35px ; font-weight:bolder">登 录</h2><br>
                     <form @submit.prevent="login">
                         <div class="form-group">
-                            <label for="username"style="font-family: 'Comic Sans MS', cursive, sans-serif;">用户名</label>
+                            <label for="username"style="font-family: 'Hanyi Wenhei 85W', sans-serif; ">用户名</label>
                             <input type="text" id="username" v-model="username" required />
                         </div>
                         <div class="form-group">
-                            <label for="password"style="font-family: 'Comic Sans MS', cursive, sans-serif;">密码</label>
+                            <label for="password"style="font-family: 'Hanyi Wenhei 85W', sans-serif; ">密码</label>
                             <input type="password" id="password" v-model="password" required />
                         </div>
                         <div class="button-row">
-                            <button type="button" class="login-button" style="margin-left:0px;width:240px;font-family: 'Comic Sans MS', cursive, sans-serif;"@click="goToLogin">登录</button>
+                            <button type="button" class="login-button" style="margin-left: 0px; width: 240px; font-family: 'Hanyi Wenhei 85W', sans-serif; "@click="goToLogin">登录</button>
                         </div>
-                        <div class="button-row"style="font-family: 'Comic Sans MS', cursive, sans-serif;">
+                        <div class="button-row"style="font-family: 'Hanyi Wenhei 85W', sans-serif; ">
                             <button type="button" class="secondary-button" @click="goToRegister">注册账号</button>
-                            <button type="button" class="secondary-button" @click="goToForgotPassword">找回密码</button>
+                            <button type="button" class="secondary-button" @click="goToForgotPassword">修改密码</button>
                         </div>
                     </form>
                 </div>
@@ -81,7 +81,6 @@
         height: 100%;
         width: 100%;
         overflow: hidden;
-        
     }
 
     * {
@@ -89,10 +88,10 @@
     }
 
     .container {
-        margin-top:20px;
+        margin-top: 20px;
         display: flex;
-        height: 80vh;
-        width: 80vw;
+        height: 60vh;
+        width: 60vw;
         justify-content: flex-start; /* 确保容器内容靠左 */
         background-color: white; /* 背景色可以根据需要调整 */
     }
@@ -109,7 +108,6 @@
         flex: 1;
         display: flex;
         justify-content: center;
-        box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
         align-items: center;
     }
 
@@ -121,9 +119,9 @@
         align-items: center;
     }
     .login-form {
-        height: 670px;
+        height: 503px;
         background: white;
-        padding: 10em;
+        padding: 5em;
         border-radius: 2px;
         box-shadow: -10px 0 8px rgba(0, 0, 0, 0.1);
         display: flex;
@@ -173,7 +171,7 @@
         justify-content: space-between;
         text-align: center;
         cursor: pointer;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-family:'Hanyi Wenhei 85W', sans-serif;
     }
 
     .secondary-button {
@@ -187,10 +185,10 @@
         justify-content: space-between;
         text-align: center;
         cursor: pointer;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-family: 'Hanyi Wenhei', sans-serif;
     }
         .login-button:hover, .secondary-button:hover {
-            background-color: #349a72;
+            background-color: #fbb1a2;
         }
 
     video {
