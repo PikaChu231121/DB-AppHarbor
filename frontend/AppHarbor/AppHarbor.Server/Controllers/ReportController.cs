@@ -7,12 +7,12 @@ namespace AppHarbor.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class MerchantController : ControllerBase
+    public class ReportController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
 
 
-        public MerchantController(ApplicationDbContext dbContext)
+        public ReportController(ApplicationDbContext dbContext)
         {
             this._dbContext = dbContext;
 

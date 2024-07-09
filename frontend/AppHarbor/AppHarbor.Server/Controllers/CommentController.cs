@@ -7,12 +7,12 @@ namespace AppHarbor.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class MerchantController : ControllerBase
+    public class CommentController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
 
 
-        public MerchantController(ApplicationDbContext dbContext)
+        public CommentController(ApplicationDbContext dbContext)
         {
             this._dbContext = dbContext;
 
@@ -23,8 +23,5 @@ namespace AppHarbor.Server.Controllers
         {
             return Ok("test");
         }
-
     }
 }
-
-

@@ -7,12 +7,12 @@ namespace AppHarbor.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class userController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
 
 
-        public userController(ApplicationDbContext dbContext)
+        public UserController(ApplicationDbContext dbContext)
         {
             this._dbContext = dbContext;
 
@@ -21,7 +21,7 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginModel loginModel)
         {
-            var user = _dbContext.user.Find(loginModel.Id);
+            var user = _dbContext.Users.Find(loginModel.Id);
             if (user == null)
             {
                 return NotFound("user not found");
