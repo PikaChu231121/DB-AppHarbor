@@ -21,13 +21,13 @@ namespace AppHarbor.Server.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<User>> Get()
         {
-            return _dbContext.user.ToList();
+            return _dbContext.Users.ToList();
         }
 
         [HttpGet("{id}")]
         public ActionResult<User> Get(int id)
         {
-            var user = _dbContext.user.Find(id);
+            var user = _dbContext.Users.Find(id);
             if (user == null)
             {
                 return NotFound();
@@ -38,7 +38,7 @@ namespace AppHarbor.Server.Controllers
         [HttpGet("{id},{password}")]
         public String login(int id,string password)
         {
-            var user = _dbContext.user.Find(id);
+            var user = _dbContext.Users.Find(id);
             if (user == null)
             {
                 return "NotFound";

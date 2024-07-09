@@ -1,4 +1,5 @@
 using AppHarbor.Server;
+using AppHarbor.Server.Models;
 using Microsoft.EntityFrameworkCore;
 
 

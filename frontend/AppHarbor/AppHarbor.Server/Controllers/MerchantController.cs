@@ -22,13 +22,13 @@ namespace AppHarbor.Server.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Merchant>> Get()
         {
-            return _dbContext.merchant.ToList();
+            return _dbContext.Merchants.ToList();
         }
 
         [HttpGet("{id}")]
         public ActionResult<Merchant> Get(int id)
         {
-            var merchant = _dbContext.merchant.Find(id);
+            var merchant = _dbContext.Merchants.Find(id);
             if (merchant == null)
             {
                 return NotFound();
