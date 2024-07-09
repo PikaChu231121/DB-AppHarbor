@@ -54,7 +54,7 @@
             goToLogin() {
                 // 点击登录按钮，提交表单,跳转主页
                 this.login();
-
+                this.$router.push('/WorkBanchPage')
             },
             goToRegister() {
                 this.$router.push('/RegisterAccount')
