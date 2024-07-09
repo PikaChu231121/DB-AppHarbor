@@ -52,8 +52,6 @@
                 })
                     .then(response => {
                         console.log("successfully logged in");
-                        this.$globalVar = this.username;
-                        console.log(this.$globalVar);
                     })
                     .catch(error => {
                         this.user = null;
