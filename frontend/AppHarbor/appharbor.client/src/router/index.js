@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         path:"/",
-        component:()=>import("@/Views/PersonalInformation.vue")
+        component:()=>import("@/Views/UserLogin.vue")
     },
     {
         path: "/RegisterAccount",
@@ -12,6 +12,10 @@ const routes = [
     {
         path: "/ChangePassword",
         component: () => import("@/Views/ChangePassword.vue")
+    },
+    {
+        path: "/PersonalInformation",
+        component: () => import("@/Views/PersonalInformation.vue")
     }
 ]
 
