@@ -3,9 +3,10 @@
     <div class="main-layout">
         <Header />
         <div class="layout-body">
-            <SideNavigation />
+            <SideNavigation @update-content="updateContent" />
             <div class="content">
-                <!-- 页面内容 -->
+                <!--主页面内容-->
+                <component :is="currentView" />
             </div>
         </div>
     </div>
@@ -14,12 +15,55 @@
 <script>
     import Header from './Header.vue'; // 标题栏
     import SideNavigation from './SideNavigation.vue'; // 侧边栏
+    //import HomeView from './HomeView.vue'; // Example component
+    //import ShopView from './ShopView.vue'; // Example component
+    //import CollectionView from './CollectionView.vue'; // Example component
+    //import PurseView from './PurseView.vue'; // Example component
+    //import FriendsView from './FriendsView.vue'; // Example component
+    //import UserProfileView from './UserProfileView.vue'; // Example component
 
     export default {
         components: {
             Header,
             SideNavigation,
+            //HomeView,
+            //ShopView,
+            //CollectionView,
+            //PurseView,
+            //FriendsView,
+            //UserProfileView
         },
+        data() {
+            return {
+                /*currentView: 'HomeView' // Default view*/
+            };
+        },
+        methods: {
+            updateContent(view) {
+                switch (view) {
+                    case 'Home':
+                        this.currentView = 'HomeView';
+                        break;
+                    case 'Shop':
+                        this.currentView = 'ShopView';
+                        break;
+                    case 'Collection':
+                        this.currentView = 'CollectionView';
+                        break;
+                    case 'Purse':
+                        this.currentView = 'PurseView';
+                        break;
+                    case 'Friends':
+                        this.currentView = 'FriendsView';
+                        break;
+                    case 'UserProfile':
+                        this.currentView = 'UserProfileView';
+                        break;
+                    default:
+                        this.currentView = 'HomeView';
+                }
+            }
+        }
     };
 </script>
 
@@ -39,14 +83,20 @@
     }
 
     .content {
-        flex: 1;
+        margin-left: 60px; /* 调整与侧边栏的间距 */
         padding: 20px;
+        width: calc(100% - 60px);
+        margin-top: 60px; /* 确保不被 header 遮挡 */
     }
 
     @media (max-width: 991px) {
         .layout-body {
             max-width: 100%;
             flex-wrap: wrap;
+        }
+
+        .content {
+            margin-left: 0;
         }
     }
 </style>
