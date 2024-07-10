@@ -46,7 +46,7 @@
         data() {
             return {
                 newTag: '',
-                selectedTags: [], // 默认选中的标签
+                selectedTags: ['All'], // 默认选中的标签
                 priceRange: [0, 100], // 价格范围初始值
                 minPrice: 0,
                 maxPrice: 100,
@@ -65,11 +65,13 @@
                     this.selectedTags.push(this.newTag);
                     this.newTag = '';
                     this.applyFilters();
+                    this.emitTags(); /*向父组件传递标签信息*/
                 }
             },
             removeTag(tag) {
                 this.selectedTags = this.selectedTags.filter(t => t !== tag);
                 this.applyFilters();
+                this.emitTags(); /*向父组件传递标签信息*/
             },
             applyFilters() {
                 this.filteredApps = this.apps.filter(app => {
@@ -78,6 +80,9 @@
                     return matchesTags && matchesPrice;
                 });
             },
+            emitTags() {
+                this.$emit('tags-changed', this.selectedTags);
+            }
         },
         mounted() {
             this.filteredApps = this.apps; // 初始化显示所有应用
@@ -113,11 +118,14 @@
         padding-right: 20px; /* 增加右边距，给关闭按钮留空间 */
     }
     .FilterSection {
-        height: 90%;
+        height: 100%;
         width: 90%;
         border-radius: 10px;
         background-color: antiquewhite;
         text-align: center;
+
+        display: flex;
+        flex-direction: column; /* 垂直布局 */
     }
     .close-btn {
         position: absolute;
