@@ -5,7 +5,7 @@
         </aside>
         <main class="search-section">
             <SearchBar /> <!--@search="handleSearch"/>--> 
-            <AppGrid :apps="paginatedApps" />
+            <AppGrid :apps=this.apps />
             <!--<AppGrid :apps="this.apps" />-->
             <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
@@ -39,14 +39,17 @@
             }
         },
         computed: {
+            
+        },
+        methods: {
             paginatedApps() {
                 // 计算当前页需要展示的应用
                 const start = (this.currentPage - 1) * this.appsPerPage;
                 const end = start + this.appsPerPage;
+                //console.log(Array.isArray(this.apps));
+                //console.log(3);
                 return this.apps.slice(start, end);
-            }
-        },
-        methods: {
+            },
             fetchApps() {
                 // 从远端数据库获取应用信息
                 axios.post('http://localhost:5118/api/application/getapplist', {
@@ -54,9 +57,10 @@
                     Page: this.currentPage  
                 })
                     .then(response => {
-                        this.apps = response.data;
+                        this.apps = response.data.$values;
                         //console.log(2);
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                        this.paginatedApps();
                     })
                     .catch(error => {
                         console.error("Error fetching apps:", error);
