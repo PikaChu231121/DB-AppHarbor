@@ -20,6 +20,7 @@
                 <div class="nickname-edit">
                     <input type="text"
                            v-model="user.nickname"
+                           @input="enableSaveButton"
                            class="nickname-input" />
                 </div>
             </div>
@@ -27,7 +28,7 @@
                 <label>注册时间:</label>
                 <p>{{ user.registerTime }}</p>
             </div>
-            <button @click="save" :disabled="isEditing">保存修改</button>
+            <button :disabled="!isSaveEnabled" @click="save">保存修改</button>
         </div>
     </div>
 </template>
@@ -42,13 +43,16 @@
         data() {
             return {
                 user: {
-                    id:'',
+                    id: '',
+                    avatar: '',
+                    nickname: '',
+                    registerTime: ''
                 },
-                isEditing: false,
+                isSaveEnabled: false
             }
         },
         mounted() {
-             // 读取 localStorage 中的 id
+            // 读取 localStorage 中的 id
             const storedId = localStorage.getItem('globalId');
             this.isEditing = false;
             if (global.id == '') {
@@ -63,22 +67,16 @@
         methods: {
             fetchUserInfo() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', {token: token})
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user = response.data;
-                        //this.translateUserState();
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
                     });
             },
-            toggleEdit() {
-                //console.log(this.user.nickname);
-                if (this.isEditing) {
-                    // 这里可以添加保存更改的逻辑
-                    console.log('更改已保存:', this.user.nickname);
-                }
-                this.isEditing = !this.isEditing;
+            enableSaveButton() {
+                this.isSaveEnabled = true;
             },
             triggerFileInput() {
                 this.$refs.fileInput.click();
@@ -89,10 +87,26 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         this.user.avatar = e.target.result;
+                        this.enableSaveButton();
                     };
                     reader.readAsDataURL(file);
                 }
             },
+            save() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/updateUserInfo', {
+                    token: token,
+                    avatar: this.user.avatar,
+                    nickname: this.user.nickname
+                })
+                    .then(response => {
+                        console.log('User info updated successfully');
+                        this.isSaveEnabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error updating user info:', error);
+                    });
+            }
         }
     };
 </script>
@@ -128,7 +142,7 @@
     label {
         margin-bottom: 5px;
         font-weight: bold;
-        font-size:20px;
+        font-size: 20px;
         color: #333;
     }
 
@@ -174,9 +188,14 @@
         cursor: pointer;
     }
 
-    button:hover {
-        background-color: #0056b3;
-    }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover:enabled {
+            background-color: #0056b3;
+        }
 
     .edit-icon img {
         width: 24px; /* 调整图标大小 */
