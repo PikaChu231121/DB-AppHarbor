@@ -50,7 +50,7 @@
         methods: {
             fetchApps() {
                 // 从远端数据库获取应用信息
-                axios.post('http://localhost:5118/application/getapplist', {
+                axios.post('http://localhost:5118/api/application/getapplist', {
                     Category: this.Category,
                     Page: this.currentPage  
                 })
