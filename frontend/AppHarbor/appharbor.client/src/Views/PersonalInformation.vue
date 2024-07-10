@@ -94,17 +94,27 @@
             },
             save() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/updateUserInfo', {
-                    token: token,
-                    avatar: this.user.avatar,
-                    nickname: this.user.nickname
+               /* axios.post('http://localhost:5118/api/user/updateUserAvatar', {
+                    id: this.user.id,
+                    newavatar: this.user.avatar,
                 })
                     .then(response => {
-                        console.log('User info updated successfully');
+                        console.log('User avatar updated successfully');
                         this.isSaveEnabled = false;
                     })
                     .catch(error => {
-                        console.error('Error updating user info:', error);
+                        console.error('Error updating user avatar:', error);
+                    });*/
+                axios.post('http://localhost:5118/api/user/updateUserNickname', {
+                id: this.user.id,
+                newnickname: this.user.nickname
+                })
+                    .then(response => {
+                        console.log('User nickname updated successfully');
+                        this.isSaveEnabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error updating user nickname:', error);
                     });
             }
         }

@@ -190,6 +190,18 @@ namespace AppHarbor.Server.Controllers
             return Ok(userInfo);
         }
 
+        [HttpPost("updateUserNickname")]
+        public IActionResult UpdateUserNickname([FromBody] UpdateUserNicknameModel nicknameModel)
+        {
+            var user = _dbContext.Users.Find(nicknameModel.Id);
+            if (user == null)
+            {
+                return NotFound("user not found");
+            }
+            user.Nickname = nicknameModel.NewNickname;
+            _dbContext.SaveChanges();
+            return Ok(user);
+        }
     }
 }
 
