@@ -16,7 +16,7 @@
     import Header from './Header.vue'; // 标题栏
     import SideNavigation from './SideNavigation.vue'; // 侧边栏
     //import HomeView from './HomeView.vue'; // Example component
-    //import ShopView from './ShopView.vue'; // Example component
+    import Shop from '../Shop/Shop.vue'; // Example component
     import Favorites from '../Favorites.vue'; // Example component
     //import PurseView from './PurseView.vue'; // Example component
     //import FriendsView from './FriendsView.vue'; // Example component
@@ -27,7 +27,7 @@
             Header,
             SideNavigation,
             //HomeView,
-            //ShopView,
+            Shop,
             Favorites,
             //PurseView,
             //FriendsView,
@@ -44,9 +44,9 @@
                     case 'Home':
                         this.currentView = 'HomeView';
                         break;
-                    //case 'Shop':
-                    //    this.currentView = 'ShopView';
-                    //    break;
+                    case 'Shop':
+                        this.currentView = 'Shop';
+                        break;
                     case 'Collection':
                         this.currentView = 'Favorites';
                         break;
