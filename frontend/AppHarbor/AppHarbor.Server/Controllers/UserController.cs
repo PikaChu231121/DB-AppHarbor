@@ -46,24 +46,48 @@ namespace AppHarbor.Server.Controllers
             }
         }
 
+        [HttpPost("getTransaction")]
+        public IActionResult Transaction([FromBody] UserInfoModel info)
+        {
+            // 使用 LINQ 进行连接查询
+            var query = from user in _dbContext.Users
+                        join order in _dbContext.Orders on user.Id equals order.BuyerId
+                        where user.Id == info.Id
+                        select new
+                        {
+                            ApplicationName = order.Application.Name,
+                            ReceiverNickName = order.Receiver.Nickname,
+                            Amount = order.Amount,
+                            Time = order.Time
+                        };
+
+            var result = query.ToList();
+
+            if (!result.Any())
+            {
+                return NotFound("No matching records found");
+            }
+
+            return Ok(result);
+        }
 
         [HttpPost("register")]
         public IActionResult Register([FromBody] UserRegisterModel registerModel)
         {
-            var newuser =new User() 
+            var newuser = new User()
             {
-                Id= _dbContext.Users.Select(u => u.Id).ToList().Max() + 1,
-                Password=registerModel.Password,
-                Nickname=registerModel.Nickname, 
-                Avatar= "default.png",
+                Id = _dbContext.Users.Select(u => u.Id).ToList().Max() + 1,
+                Password = registerModel.Password,
+                Nickname = registerModel.Nickname,
+                Avatar = "default.png",
                 RegisterTime = DateTime.Now,
-                Credit=0,
-                State="Normal"
+                Credit = 0,
+                State = "Normal"
             };
-            
+
             _dbContext.Users.Add(newuser);
             _dbContext.SaveChanges();
-            
+
             return Ok(newuser);
 
         }
@@ -78,7 +102,7 @@ namespace AppHarbor.Server.Controllers
             }
             if (user.Password == changePassworModel.OldPassword)
             {
-                user.Password=changePassworModel.NewPassword;
+                user.Password = changePassworModel.NewPassword;
                 _dbContext.SaveChanges();
                 return Ok(user);
             }
@@ -94,7 +118,7 @@ namespace AppHarbor.Server.Controllers
         public IActionResult UserInfo([FromBody] UserInfoModel infoModel)
         {
             var user = _dbContext.Users.Find(infoModel.Id);
-            
+
             if (user == null)
             {
                 return NotFound("user not found");

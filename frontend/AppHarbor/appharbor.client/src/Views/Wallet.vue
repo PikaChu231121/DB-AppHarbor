@@ -31,13 +31,14 @@
                         </thead>
                         <tbody>
                             <tr v-for="(transaction, index) in transactions" :key="index">
-                                <td>{{ transaction.date }}</td>
-                                <td>{{ transaction.description }}</td>
+                                <td>{{ transaction.time }}</td>
+                                <td>为用户 {{ transaction.receiverNickName }} 购买了 {{ transaction.applicationName }}</td>
                                 <td>{{ transaction.amount }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <div class="button-row">
                     <button type="button" class="button" @click="prevPage">上一页</button>
                     <button type="button" class="button" @click="nextPage">下一页</button>
@@ -48,20 +49,26 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
-            user_nickname: '4534',
-            user_id: '5357535',
-            transactions: [
-                { date: '2024-07-01', description: '充值', amount: '+100.00' },
-                { date: '2024-07-02', description: '消费', amount: '-50.00' },
-                { date: '2024-07-03', description: '消费', amount: '-20.00' },{ date: '2024-07-02', description: '消费', amount: '-50.00' },
-
-            ]
+            user_nickname: '',
+            user_id: 9,
+            transactions: []
         };
     },
     methods: {
+        fetchTransactions() {
+            axios.post('http://localhost:5118/user/getTransaction', { id: this.user_id })
+                .then(response => {
+                    this.transactions = response.data.$values;
+                    console.info(this.transactions);
+                })
+                .catch(error => {
+                    console.error('Error fetching transactions:', error);
+                });
+        },
         goToLogin() {
             // 充值按钮的点击事件处理逻辑
         },
@@ -71,6 +78,9 @@ export default {
         nextPage() {
             // 下一页按钮的点击事件处理逻辑
         }
+    },
+    mounted() {
+        this.fetchTransactions(); // 页面加载时获取交易记录
     }
 }
 </script>
