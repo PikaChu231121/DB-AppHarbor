@@ -7,8 +7,8 @@
                         <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px ; font-weight:bolder;margin-top:5px">登 录</h2>
                         <form @submit.prevent="login">
                             <div class="form-group">
-                                <label for="username" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;  ">用户名</label>
-                                <input type="text" style="height:40px;font-size:15px"id="username" v-model="username" required />
+                                <label for="id" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;  ">用户ID</label>
+                                <input type="text" style="height:40px;font-size:15px"id="id" v-model="id" required />
                             </div>
                             <div class="form-group">
                                 <label for="password" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">密码</label>
@@ -38,34 +38,40 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import global from "../global.js"
 
     export default {
         name: 'UserLogin',
         data() {
             return {
-                username: '',
+                id: '',
                 password: '',
             };
         },
         methods: {
             login() {
                 axios.post('http://localhost:5118/user/login', {
-                    id: this.username,
+                    id: this.id,
                     password: this.password
                 })
                     .then(response => {
                         Cookies.set("token", response.data);
+                        this.$router.push('/WorkBanchPage');
+                        alert('您好!尊敬的 ' +this.id+' 用户,欢迎来到AppHarbor!')
                         console.log("successfully logged in");
+                        global.id = this.id;
+                        console.log(global.id);
                     })
                     .catch(error => {
                         this.user = null;
                         this.error = 'Login failed: ' + error.response.data;
+                        alert('登录失败')
                         console.log(this.error);
                     });
             },
             goToLogin() {
                 this.login();
-                this.$router.push('/WorkBanchPage')
+                
             },
             goToRegister() {
                 this.$router.push('/RegisterAccount');
