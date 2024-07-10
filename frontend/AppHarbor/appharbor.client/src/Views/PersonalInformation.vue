@@ -3,10 +3,11 @@
         <h1>个人信息</h1>
         <div class="user-info">
             <div class="form-group">
-                <label>头像:</label>
                 <div class="avatar-edit">
                     <img :src="user.avatar" alt="用户头像" class="avatar" />
-                    <button @click="triggerFileInput">修改</button>
+                    <div class="edit-icon">
+                        <img src="../../public/editing.png" @click="triggerFileInput" />
+                    </div>
                     <input type="file" ref="fileInput" @change="onFileChange" class="file-input" />
                 </div>
             </div>
@@ -19,19 +20,14 @@
                 <div class="nickname-edit">
                     <input type="text"
                            v-model="user.nickname"
-                           :disabled="!isEditing"
                            class="nickname-input" />
-                    <button @click="toggleEdit">{{ isEditing ? '保存' : '修改' }}</button>
                 </div>
             </div>
             <div class="form-group">
                 <label>注册时间:</label>
                 <p>{{ user.registerTime }}</p>
             </div>
-            <div class="form-group">
-                <label>用户状态:</label>
-                <p>{{ user.state }}</p>
-            </div>
+            <button @click="save" :disabled="isEditing">保存修改</button>
         </div>
     </div>
 </template>
@@ -44,16 +40,17 @@
         name: 'ProfileSettings',
         data() {
             return {
-                isEditing: false,
                 user: {
                     id:'',
                 },
-            };
+                isEditing: false,
+            }
         },
         mounted() {
              // 读取 localStorage 中的 id
             const storedId = localStorage.getItem('globalId');
-            if (storedId) {
+            this.isEditing = false;
+            if (global.id == '') {
                 this.user.id = storedId;
                 global.id = storedId; // 更新 global.js 中的 id
             } else {
@@ -67,7 +64,7 @@
                 axios.post('http://localhost:5118/api/user/userInfo', {id: this.user.id})
                     .then(response => {
                         this.user = response.data;
-                        this.translateUserState();
+                        //this.translateUserState();
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
@@ -94,16 +91,6 @@
                     reader.readAsDataURL(file);
                 }
             },
-            translateUserState() {
-                console.log('yes');
-               if (this.user.state == 'Normal') {
-                   this.user.state = '正常';
-               } else if (this.user.state == 'active') {
-                   this.user.state = '活跃';
-               } else if (this.user.state == 'inactive') {
-                   this.user.state = '不活跃';
-               }
-            }
         }
     };
 </script>
@@ -187,5 +174,10 @@
 
     button:hover {
         background-color: #0056b3;
+    }
+
+    .edit-icon img {
+        width: 24px; /* 调整图标大小 */
+        height: 24px; /* 调整图标大小 */
     }
 </style>
