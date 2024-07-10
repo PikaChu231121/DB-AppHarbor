@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using AppHarbor.Server.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace AppHarbor.Server.Controllers
 {
@@ -9,6 +11,12 @@ namespace AppHarbor.Server.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
+        private readonly ApplicationDbContext _dbContext;
+        public ImageController(ApplicationDbContext dbContext)
+        {
+            this._dbContext = dbContext;
+        }
+
         private string SaveImage(IFormFile file,
                                  [FromServices] IWebHostEnvironment env,
                                  string guid)
@@ -26,12 +34,10 @@ namespace AppHarbor.Server.Controllers
                 fs.Flush();
             }
 
-            return relativePath;
+            return relativePath.Replace("\\", "/");
         }
 
-        [HttpPost]
-        public IActionResult UploadImage(IFormFile file,
-                                        [FromServices] IWebHostEnvironment env)
+        private IActionResult CheckImage(IFormFile file)
         {
             if (file.Length == 0)
             {
@@ -50,10 +56,52 @@ namespace AppHarbor.Server.Controllers
                 return BadRequest(new { Code = 1002, Msg = "File is not supported image" });
             }
 
+            return Ok();
+        }
+
+        [HttpPost("upload")]
+        public IActionResult UploadImage(IFormFile file,
+                                        [FromServices] IWebHostEnvironment env)
+        {
+            var checkResult = CheckImage(file);
+            if (checkResult is BadRequestObjectResult)
+            {
+                return checkResult;
+            }
+
             string guid = Guid.NewGuid().ToString("N");
             string relativePath = SaveImage(file, env, guid);
 
             return Ok(new { Data = relativePath.Replace("\\", "/"), Code = 2001, Msg = "Succeeded" });
+        }
+
+        [HttpPost("upload_app")]
+        public IActionResult UploadAppImage(IFormFile file,
+                                            [FromServices] IWebHostEnvironment env,
+                                            decimal id)
+        {
+            // 上传应用图片
+            var checkResult = CheckImage(file);
+            if (checkResult is BadRequestObjectResult)
+            {
+                return checkResult;
+            }
+            
+            // 查找数据库中对应App的项目
+            var app = _dbContext.Applications.Find(id);
+            if (app == null)
+            {
+                return BadRequest(new { Code = 1003, Msg = "Application Not Found" });
+            };
+
+            // 保存图片并保存数据
+            string guid = Guid.NewGuid().ToString("N");
+            string relativePath = SaveImage(file, env, guid);
+            app.Image = relativePath;
+            _dbContext.Applications.Update(app);
+            _dbContext.SaveChanges();
+
+            return Ok(new { Data = relativePath, Code = 2001, Msg = "Succeeded" });
         }
     }
 }
