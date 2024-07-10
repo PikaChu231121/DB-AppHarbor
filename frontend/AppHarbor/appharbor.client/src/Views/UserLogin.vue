@@ -39,9 +39,13 @@
     import axios from 'axios';
     import Cookies from 'js-cookie';
     import global from "../global.js"
+    import AlertBox from './LoginAlert.vue';
 
     export default {
         name: 'UserLogin',
+        components: {
+            AlertBox,
+        },
         data() {
             return {
                 id: '',
@@ -65,6 +69,7 @@
                     .catch(error => {
                         this.user = null;
                         this.error = 'Login failed: ' + error.response.data;
+                        this.showAlert('登录失败')
                         alert('登录失败')
                         console.log(this.error);
                     });
@@ -78,6 +83,12 @@
             },
             goToForgotPassword() {
                 this.$router.push('/ChangePassword');
+            },
+            showAlert(message) {
+                this.alertMessage = message;
+                setTimeout(() => {
+                    this.alertMessage = '';
+                }, 3000);
             }
         }
     };

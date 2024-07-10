@@ -1,5 +1,5 @@
 <template>
-    <div v-if="visible" class="alert-box">
+    <div v-if="visible" class="login-alert">
         {{ message }}
     </div>
 </template>
@@ -18,7 +18,7 @@
                     this.visible = true;
                     setTimeout(() => {
                         this.visible = false;
-                    }, 3000); // Ê∂àÊÅØÊòæÁ§∫3Áßí
+                    }, 2000); // œ˚œ¢œ‘ æ2√Î
                 }
             }
         }
@@ -26,7 +26,7 @@
 </script>
 
 <style>
-    .alert-box {
+    .login-alert {
         position: fixed;
         bottom: 10px;
         left: 50%;
@@ -38,4 +38,3 @@
         border-radius: 5px;
     }
 </style>
-
