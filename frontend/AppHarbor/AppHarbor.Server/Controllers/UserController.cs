@@ -90,6 +90,18 @@ namespace AppHarbor.Server.Controllers
 
         }
 
+        [HttpPost("userinfo")]
+        public IActionResult UserInfo([FromBody] UserInfoModel infoModel)
+        {
+            var user = _dbContext.Users.Find(infoModel.Id);
+            
+            if (user == null)
+            {
+                return NotFound("user not found");
+            }
+            return Ok(user);
+        }
+
     }
 }
 
