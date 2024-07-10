@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+# DB-AppHarbor
+
+# This is zzy's brunch.
+=======
 # 2024年暑期数据库课设 DB-AppHarbor 
 ## AppHarbor-应用商店
 
@@ -14,3 +19,4 @@
 | 2252042 | 周政宇 |
 | 2250694 | 刘子赫 |
 | 2253924 | 程翔宇 |
+>>>>>>> origin/AfterLogin
