@@ -1,6 +1,8 @@
 using AppHarbor.Server;
 using AppHarbor.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// 上传文件设置
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/uploads"
+});
 
 app.UseHttpsRedirection();
 app.UseRouting();
