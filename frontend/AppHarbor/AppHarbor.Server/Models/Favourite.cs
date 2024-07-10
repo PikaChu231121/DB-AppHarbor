@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace AppHarbor.Server.Models;
 
+public class UserFavouriteModel
+{
+    public decimal Id { get; set; }
+}
 public partial class Favourite
 {
     public decimal Id { get; set; }

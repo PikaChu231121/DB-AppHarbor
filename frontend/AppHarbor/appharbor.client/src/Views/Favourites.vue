@@ -24,6 +24,7 @@
 <script>
     import AlertBox from './AlertBox.vue';
     import Folder from './Folder.vue';
+    import axios from 'axios';
 
     export default {
         components: {
@@ -31,8 +32,9 @@
             Folder
         },
         data() {
-            // data 默认为空
+            
             return {
+                user: { id: '' },
                 folders: JSON.parse(localStorage.getItem('folders')) || [],
                 alertMessage: '',
                 newItemName: {},
@@ -40,7 +42,21 @@
                 newFolderName: ''
             };
         },
+        mounted() {
+            this.fetchUserFavourite();
+        },
         methods: {
+            fetchUserFavourite() {
+                console.log('successfully build connection');
+                axios.post('http://localhost:5118/api/favourite/favourite', { id: this.user.id })
+                    .then(response => {
+                        console.log('successfully get user favourite');
+                        this.favourite = response.data; // 假设response.data包含folders数组
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user favourite data:', error);
+                    });
+            },
             saveToLocalStorage() {
                 localStorage.setItem('folders', JSON.stringify(this.folders));
             },
@@ -98,7 +114,7 @@
                     this.alertMessage = '';
                 }, 3000);
             }
-        }
+        },
     };
 </script>
 

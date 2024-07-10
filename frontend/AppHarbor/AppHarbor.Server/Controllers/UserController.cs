@@ -20,20 +20,29 @@ namespace AppHarbor.Server.Controllers
 
         }
 
-        [HttpGet("tokentest")]
-        public IActionResult TokenTest(string token)
+        [HttpPost("tokentest")]
+        public IActionResult TokenTest([FromBody] TokenRequest request)
         {
-            // 必须拥有合理token才能返回OK
-            var tokenid = _dbContext.TokenIds.Find(token);
-            if (tokenid == null)
+            if (string.IsNullOrEmpty(request.Token))
             {
-                return BadRequest("Invalid Token!");
+                return Unauthorized("No token provided.");
             }
-            else
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
             {
-                var user = tokenid.IdNavigation;
-                return Ok(user);
+                return Unauthorized("Invalid or expired token.");
             }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            // 返回受保护的数据
+            return Ok(new { message = "This is protected data.", user });
         }
 
         [HttpPost("test")]
@@ -146,15 +155,39 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("userinfo")]
-        public IActionResult UserInfo([FromBody] UserInfoModel infoModel)
+        public IActionResult UserInfo([FromBody] TokenRequest request)
         {
-            var user = _dbContext.Users.Find(infoModel.Id);
-            
+
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
             if (user == null)
             {
-                return NotFound("user not found");
+                return Unauthorized("User not found.");
             }
-            return Ok(user);
+
+            // 返回受保护的数据
+            var userInfo = new
+            {
+                user.Id,
+                user.Nickname,
+                user.Avatar,
+                user.RegisterTime,
+                user.Credit,
+                user.State
+            };
+
+            return Ok(userInfo);
         }
 
     }
