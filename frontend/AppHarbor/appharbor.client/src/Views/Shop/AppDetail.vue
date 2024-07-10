@@ -1,9 +1,10 @@
 <template>
     <div class="card">
+        <!--图片信息-->
         <div class="image-placeholder">
             <img src="@/assets/A.png" alt="Image Description" class="image">
         </div>
-
+        <!--应用详情-->
         <div class="details">
             <h2 class="text-heading">{{ Appname }}</h2>
             <div class="tag">{{ Classification }}</div>

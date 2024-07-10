@@ -44,7 +44,7 @@
                 ], // 存储所有应用信息
                 currentPage: 1, // 当前页码
                 totalPages: 2, // 总页数
-                appsPerPage: 10 // 每页显示的应用数量
+                appsPerPage: 10, // 每页显示的应用数量
                 selectedTags: [] // 选中的标签
             }
         },
@@ -60,14 +60,15 @@
             fetchApps() {
                 // 从远端数据库获取应用信息
                 const payload = {
-                    Category: this.selectedTags.length > 0 ? this.selectedTags.join(',') : "All",
+                    /*Category: this.selectedTags.length > 0 ? this.selectedTags.join(',') : "All",*/
+                    Category: 'All',
                     Page: this.currentPage
                 };
 
                 axios.post('https://localhost:5118/application/getapplist', payload)
                     .then(response => {
-                        this.apps = response.data;
-                        this.totalPages = Math.ceil(response.data.total / this.appsPerPage); // 假设response.data包含total字段
+                        //this.apps = response.data;
+                        //this.totalPages = Math.ceil(response.data.total / this.appsPerPage); // 假设response.data包含total字段
                     })
                     .catch(error => {
                         console.error("Error fetching apps:", error);
