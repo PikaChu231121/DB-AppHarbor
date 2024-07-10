@@ -18,7 +18,6 @@
     import SearchBar from './SearchBar.vue';
     import AppGrid from './AppGrid.vue';
     import Pagination from './Pagination.vue';
-    import axios from 'axios';
 
     export default {
         name: 'Shop',

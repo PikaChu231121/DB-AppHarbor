@@ -60,7 +60,7 @@
 
     .app-price {
         font-size: 14px;
-        color: #666;
+        color: #666666;
         margin-bottom: 5px;
     }
 
