@@ -1,29 +1,37 @@
 <!--侧边栏组件实现-->
 <template>
-    <nav class="navigation-menu">
-        <div class="menu-container">
-            <header class="logo-container">
-                <img src="@/assets/A.png" alt="Company Logo" class="logo" />
-            </header>
-            <ul class="menu-items">
-                <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
-                    <img :src="item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
-                </li>
-            </ul>
-            <footer class="user-profile" :class="{ active: userProfileActive }" @click="selectUserProfile">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f2f0cc5253685e466269ae8336d8d72a3d274305a41c2aa06f39552802b5c83d?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="User Profile" class="profile-icon" />
-            </footer>
-        </div>
-    </nav>
+    <div>
+        <Loading :loading="isLoading" />
+        <nav class="navigation-menu">
+            <div class="menu-container">
+                <header class="logo-container">
+                    <img src="@/assets/A.png" alt="Company Logo" class="logo" />
+                </header>
+                <ul class="menu-items">
+                    <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
+                        <img :src="item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
+                    </li>
+                </ul>
+                <footer class="user-profile" :class="{ active: userProfileActive }" @click="selectUserProfile">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f2f0cc5253685e466269ae8336d8d72a3d274305a41c2aa06f39552802b5c83d?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="User Profile" class="profile-icon" />
+                </footer>
+            </div>
+        </nav>
+    </div>
 </template>
 
 <script>
+    import Loading from "../Tools/Loading.vue"
     export default {
         name: 'SideNavigation',
+        components: {
+            Loading,
+        },
         data() {
             return {
                 selectedItem: null,
                 userProfileActive: false,
+                isLoading: false,
                 menuItems: [
                     { label: 'Home', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/f7f8683160f0eeac08fc6d9ea071a796fe62241473dfca92bf303b19c7ff8a61?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
                     { label: 'Shop', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/a1c7d9975252d8bba0b8cf7508b2e7ed21aaafbf43caa40771cf38fccdbd7a4e?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
@@ -35,9 +43,18 @@
         },
         methods: {
             selectItem(index) {
-                this.selectedItem = index;
-                this.userProfileActive = false; // Deselect user profile when a menu item is selected   
-                this.$emit('update-content', this.menuItems[index].label);
+                if (this.menuItems[index].label === 'Purse') {
+                    this.isLoading = true; // 开始加载动画
+                    setTimeout(() => {
+                        this.isLoading = false; // 几秒后停止加载动画
+                        this.selectedItem = index; // 选择Purse菜单项
+                        this.$emit('update-content', this.menuItems[index].label);
+                    }, 12000); // 设置加载动画持续时间为3秒
+                } else {
+                    this.selectedItem = index;
+                    this.userProfileActive = false; // Deselect user profile when a menu item is selected
+                    this.$emit('update-content', this.menuItems[index].label);
+                }
             },
             selectUserProfile() {
                 this.selectedItem = null; // Deselect any menu item
