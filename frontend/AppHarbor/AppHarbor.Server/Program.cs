@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AppHarbor.Server;
 using AppHarbor.Server.Models;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; // æ·»åŠ  JSON åºåˆ—åŒ–é…ç½®ä»¥å¤„ç†å¾ªç¯å¼•ç”¨ï¼Œèƒ½å¤ŸåŒæ—¶æŸ¥è¯¢ä¸¤å¼ è¡¨
+    });
+
 builder.Services.AddEndpointsApiExplorer();
-// ×¢ÊÍµôSwaggerµÄÏà¹Ø·şÎñ×¢²á
+// æ³¨é‡Šæ‰Swaggerçš„ç›¸å…³æœåŠ¡æ³¨å†Œ
 builder.Services.AddSwaggerGen();
 
-// ÅäÖÃCORS²ßÂÔ
+// é…ç½®CORSç­–ç•¥
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -37,7 +43,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    // ×¢ÊÍµôSwaggerµÄÖĞ¼ä¼ş
+    // æ³¨é‡Šæ‰Swaggerçš„ä¸­é—´ä»¶
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -52,7 +58,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseCors("AllowSpecificOrigin"); // ÆôÓÃCORS²ßÂÔ
+app.UseCors("AllowSpecificOrigin"); // å¯ç”¨CORSç­–ç•¥
 
 app.UseAuthorization();
 

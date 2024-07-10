@@ -1,128 +1,52 @@
-<!--<template>
-    <nav class="side-navigation">
-        <ul class="navigation-list">
-            <li v-for="(item, index) in navigationItems" :key="index" class="navigation-item">
-                <a :href="item.link" :class="['navigation-link', { 'active': item.active }]">
-                    <img :src="item.icon" :alt="item.label + ' icon'" class="navigation-icon" />
-                    <span class="navigation-label">{{ item.label }}</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</template>
-
-<script>
-    export default {
-        name: 'SideNavigation',
-        data() {
-            return {
-                navigationItems: [
-                    { label: 'Home', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/967c6560da4b213132ab0417a82a3f9c6c5a1ba2fa8ef36db8bad11882b6858a?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&', link: '#', active: false },
-                    { label: 'Dashboard', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/5b774bca1879174ba445330d7506a61e25868f4939b355a432ec5e59311232f0?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&', link: '#', active: false },
-                    { label: 'Project', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/522aff549119ae7230a5f059337b10220a2aae586a4eb85391330d09465bac13?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&', link: '#', active: false },
-                    { label: 'Tasks', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/044a74e6c11214946080a89ee6b721b93df04db7b25e5573f6f3acc787656265?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&', link: '#', active: false },
-                    { label: 'Reporting', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/522aff549119ae7230a5f059337b10220a2aae586a4eb85391330d09465bac13?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&', link: '#', active: true },
-                    { label: 'Users', icon: '', link: '#', active: false },
-                    { label: 'Support', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/911911c604361729536fae4c773145f331c7211ba809afb37e63d37aacd9747b?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&', link: '#', active: false },
-                    { label: 'Settings', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/5af3553eb5ab41e3322f8d3e282426f70b5897f72f171f361c2ecc22075c8e74?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&', link: '#', active: false },
-                ],
-            };
-        },
-    };
-</script>
-
-<style scoped>
-    .side-navigation {
-        position: fixed;
-        left: 0;
-        top: 0;
-        height: 100%;
-        max-width: 223px;
-        padding-bottom: 80px;
-
-    }
-
-    .navigation-list {
-        list-style-type: none;
-        padding: 12px 0 0;
-        margin: 0;
-    }
-
-    .navigation-item {
-        margin-top: 8px;
-    }
-
-    .navigation-link {
-        display: flex;
-        align-items: center;
-        padding: 8px 12px;
-        border-radius: 3px;
-        text-decoration: none;
-        color: var(--Light-usage-text---color-text-0, #1c1f23);
-        font: 600 14px/143% Inter, sans-serif;
-        letter-spacing: -0.14px;
-    }
-
-        .navigation-link.active {
-            background-color: var(--Light-usage-primary-light---color-primary-light-default, #eaf6ff);
-        }
-
-    .navigation-icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 8px;
-    }
-
-    .navigation-label {
-        white-space: nowrap;
-    }
-
-    /* Users icon styles */
-    .navigation-item:nth-child(6) .navigation-icon {
-        background-color: var(--Icon-Blue, #4cc3fa);
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-        .navigation-item:nth-child(6) .navigation-icon::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background-color: #fff;
-            border-radius: 50%;
-        }
-</style>-->
-
-<!--侧边栏组件实现-->
 <template>
-    <nav class="navigation-menu">
-        <div class="menu-container">
-            <header class="logo-container">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2a60b1ed82f1172eb03fb24500d6a2c8738bf2a3af9420ddd9c80e22ecc80ef9?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="Company Logo" class="logo" />
-            </header>
-            <ul class="menu-items">
-                <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
-                    <img :src="item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
-                </li>
-            </ul>
-            <footer class="user-profile" :class="{ active: userProfileActive }" @click="selectUserProfile">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f2f0cc5253685e466269ae8336d8d72a3d274305a41c2aa06f39552802b5c83d?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="User Profile" class="profile-icon" />
-            </footer>
+    <div>
+        <Loading :loading="isLoading" />
+        <nav class="navigation-menu">
+            <div class="menu-container">
+                <header class="logo-container">
+                    <img src="@/assets/A.png" alt="Company Logo" class="logo" />
+                </header>
+                <ul class="menu-items">
+                    <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
+                        <img :src="item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
+                    </li>
+                </ul>
+                <footer class="user-profile" :class="{ active: userProfileActive }" @click="selectUserProfile">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f2f0cc5253685e466269ae8336d8d72a3d274305a41c2aa06f39552802b5c83d?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="User Profile" class="profile-icon" />
+                </footer>
+            </div>
+        </nav>
+        <!-- Friends Popup -->
+        <div v-if="showFriendsPopup" class="friends-popup">
+            <button class="popup-item1" @click="handlePopupClick('Your friends')">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f2f0cc5253685e466269ae8336d8d72a3d274305a41c2aa06f39552802b5c83d?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="Your friends" class="popup-icon" />
+                <span>  &nbsp;&nbsp;  Your friends</span>
+            </button>
+            <button class="popup-item2" @click="handlePopupClick('Add friends')">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/a1c7d9975252d8bba0b8cf7508b2e7ed21aaafbf43caa40771cf38fccdbd7a4e?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="Add friends" class="popup-icon" />
+                <span>  &nbsp;&nbsp;  Add friends</span>
+            </button>
+            <button class="popup-item3" @click="handlePopupClick('Buy me')">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/322a906bee0409691439aed3778cc4aa69ac9130e4eac018d076c6e27b660e92?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="Buy me" class="popup-icon" />
+                <span>   &nbsp;&nbsp;  Buy me</span>
+            </button>
         </div>
-    </nav>
+    </div>
 </template>
 
 <script>
+    import Loading from "../Tools/Loading.vue"
     export default {
         name: 'SideNavigation',
+        components: {
+            Loading,
+        },
         data() {
             return {
                 selectedItem: null,
                 userProfileActive: false,
+                isLoading: false,
+                showFriendsPopup: false,
                 menuItems: [
                     { label: 'Home', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/f7f8683160f0eeac08fc6d9ea071a796fe62241473dfca92bf303b19c7ff8a61?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
                     { label: 'Shop', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/a1c7d9975252d8bba0b8cf7508b2e7ed21aaafbf43caa40771cf38fccdbd7a4e?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
@@ -134,25 +58,47 @@
         },
         methods: {
             selectItem(index) {
-                this.selectedItem = index;
-                this.userProfileActive = false; // Deselect user profile when a menu item is selected   
-                this.$emit('update-content', this.menuItems[index].label);
+                if (this.menuItems[index].label === 'Purse' || this.menuItems[index].label === 'Home' || this.menuItems[index].label === 'Shop' || this.menuItems[index].label === 'Collection') {
+                    this.isLoading = true; // 开始加载动画
+                    setTimeout(() => {
+                        this.isLoading = false; // 几秒后停止加载动画
+                        this.selectedItem = index; // 选择Purse菜单项
+                        this.$emit('update-content', this.menuItems[index].label);
+                    }, 2000); // 设置加载动画持续时间为2秒
+                } else if (this.menuItems[index].label === 'Friends') {
+                    this.toggleFriendsPopup();
+                } else {
+                    this.selectedItem = index;
+                    this.userProfileActive = false; // Deselect user profile when a menu item is selected
+                    this.$emit('update-content', this.menuItems[index].label);
+                }
             },
             selectUserProfile() {
                 this.selectedItem = null; // Deselect any menu item
                 this.userProfileActive = true;
                 this.$emit('update-content', 'UserProfile');
+            },
+            toggleFriendsPopup() {
+                this.showFriendsPopup = !this.showFriendsPopup;
+            },
+            handlePopupClick(action) {
+                // Handle each popup button click action here
+                console.log(action);
+                this.showFriendsPopup = false; // Hide the popup after a button is clicked
             }
         }
     };
 </script>
 
 <style scoped>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2&family=Quicksand:wght@400;700&family=Fredoka+One&display=swap');
+
     .navigation-menu {
         position: fixed;
-        top: 60px; /* 紧跟在Header下面 */
-        left: 0;
-        height: calc(100% - 60px); /* 减去Header的高度 */
+        top: 30px; /* 紧跟在Header下面 */
+        left: 10px;
+        height: calc(100% - 60px - 10px); /* 减去Header的高度 */
         width: 60px; /* 调整宽度 */
         background-color: #efc2bb;
         display: flex;
@@ -174,7 +120,7 @@
     .logo-container {
         display: flex;
         justify-content: center;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
     }
 
     .logo {
@@ -202,43 +148,170 @@
         margin-bottom: 8px;
         border-radius: 12px;
         cursor: pointer;
+        transition: background-color 0.5s ease;
+        transition: transform 0.6s ease, color 0.6s ease;
     }
 
         .menu-item.active {
-            background-color: rgba(239, 194, 187, 0.18);
+            background-color: #FFEDEB;
+        }
+
+        .menu-item:hover {
+            background-color: #F4DDDA;
+            transform: scale(1.2); /* 鼠标悬停时的缩放效果 */
         }
 
     .menu-icon {
         width: 16px;
         height: 16px;
+        color: #77797B;
+        transition: color 0.6s ease; /* 颜色过渡效果 */
     }
 
     .user-profile {
         display: flex;
         justify-content: center;
-        margin-top: auto;
+        margin-top: 2px;
         padding: 8px;
         border-radius: 12px;
         cursor: pointer;
+        transition: background-color 0.5s ease;
+        transition: transform 0.6s ease, color 0.6s ease;
     }
 
         .user-profile.active {
             background-color: rgba(239, 194, 187, 0.18);
         }
 
+        .user-profile:hover {
+            background-color: #FCF4F3; /* 设置悬停时的背景颜色 */
+            border-radius: 25px;
+            transform: scale(1.2); /* 鼠标悬停时的缩放效果 */
+        }
+
     .profile-icon {
-        width: 16px;
-        height: 16px;
+        margin-top: 2px;
+        width: 15px;
+        height: 15px;
     }
 
-    @media (max-width: 991px) {
-        .navigation-menu {
-            width: 60px;
+    /* Friends Popup */
+    .friends-popup {
+        position: absolute;
+        top: 300px; /* 根据需要调整位置 */
+        left: 90px;
+        background-color: #fbeaea;
+        border-radius: 12px;
+        padding: 16px;
+        width:220px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .popup-item1 {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px 16px;
+        font-size: medium;
+        border: none;
+        border-radius: 12px;
+        font-family: 'Baloo 2', cursive;
+        font-weight: bolder;
+        color: #F8887D;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
+    }
+    .popup-item2 {
+        display: flex;
+        align-items: center;
+        font-size: medium;
+        margin-bottom: 8px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 12px;
+        font-family: 'Baloo 2', cursive;
+        font-weight: bolder;
+        color: #27CCA6;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
+    }
+    .popup-item3 {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: medium;
+        font-family: 'Baloo 2', cursive;
+        font-weight: bolder;
+        color: #B245C0;
+        background-color: transparent;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
+    }
+
+        .popup-item:last-child {
+            margin-bottom: 0;
         }
 
-        .logo-container,
-        .menu-items {
-            display: none;
+        .popup-item:hover {
+            background-color: #ffe5e5;
+            transform: scale(1.05);
         }
+
+        .popup-item:active {
+            background-color: #ffcccc;
+            transform: scale(0.95);
+        }
+
+    .popup-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+    }
+    .popup-item1, .popup-item2, .popup-item3 {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px 16px;
+        font-size: medium;
+        border: none;
+        border-radius: 12px;
+        font-family: 'Baloo 2', cursive;
+        font-weight: bolder;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
+    }
+
+    .popup-item1 {
+        color: #F8887D;
+    }
+
+    .popup-item2 {
+        color: #27CCA6;
+    }
+
+    .popup-item3 {
+        color: #B245C0;
+    }
+
+        .popup-item1:hover, .popup-item2:hover, .popup-item3:hover {
+            background-color: #ffe5e5;
+            transform: scale(1.05);
+        }
+
+        .popup-item1:active, .popup-item2:active, .popup-item3:active {
+            background-color: #ffcccc;
+            transform: scale(0.95);
+        }
+
+    .popup-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
     }
 </style>
