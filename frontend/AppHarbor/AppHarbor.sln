@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHarbor.Server", "AppHarbor.Server\AppHarbor.Server.csproj", "{42603039-CA70-4D6C-861D-95AEDBF1B347}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "appharbor.client", "appharbor.client\appharbor.client.esproj", "{29F7F480-2B03-4C2A-BD73-C26702D1CD5F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42603039-CA70-4D6C-861D-95AEDBF1B347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42603039-CA70-4D6C-861D-95AEDBF1B347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42603039-CA70-4D6C-861D-95AEDBF1B347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42603039-CA70-4D6C-861D-95AEDBF1B347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29F7F480-2B03-4C2A-BD73-C26702D1CD5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29F7F480-2B03-4C2A-BD73-C26702D1CD5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29F7F480-2B03-4C2A-BD73-C26702D1CD5F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{29F7F480-2B03-4C2A-BD73-C26702D1CD5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29F7F480-2B03-4C2A-BD73-C26702D1CD5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29F7F480-2B03-4C2A-BD73-C26702D1CD5F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {58AD30D8-2365-4499-B0BC-FD59C6D8F667}
+	EndGlobalSection
+EndGlobal
