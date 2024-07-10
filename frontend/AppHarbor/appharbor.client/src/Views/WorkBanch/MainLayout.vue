@@ -69,24 +69,44 @@
 
 <style scoped>
     .main-layout {
+        position: fixed;
+        top: 0;
+        left: 0;
+
         display: flex;
         flex-direction: column;
         width: 100%;
+        height: 100%;
+
+        background-color: #efc2bb;
+        background-size: cover;
     }
 
     .layout-body {
         display: flex;
-        justify-content: space-between;
+        /*justify-content: space-between;*/
+        justify-content: flex-start;
         width: 100%;
+        height: 100%;
         gap: 20px;
-        margin-top: 80px; /* 给Header留出空间 */
+        margin-top: 60px; /* 给Header留出空间 */
+
+        padding-left: 60px; /* 确保内容不被侧边栏遮挡 */
+        overflow: hidden; /* 隐藏溢出的内容 */
     }
 
     .content {
-        margin-left: 60px; /* 调整与侧边栏的间距 */
+        margin-left: 20px; /* 调整与侧边栏的间距 */
         padding: 20px;
-        width: calc(100% - 60px);
-        margin-top: 60px; /* 确保不被 header 遮挡 */
+        /*width: calc(100% - 60px);*/
+        margin-top: 20px; /* 确保不被 header 遮挡 */
+        margin-bottom: 20px;
+        margin-right: 10px;
+        background-color: white; /* content部分背景为白色 */
+        flex-grow: 1; /* 使content部分占据页面的大部分 */
+        border-radius: 12px; /* Optional: 给content部分添加圆角 */
+        /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/ /* Optional: 添加阴影效果 */
+        overflow: auto; /* 当内容超出时，添加滚动条 */
     }
 
     @media (max-width: 991px) {
