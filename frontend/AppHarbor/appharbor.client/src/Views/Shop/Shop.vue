@@ -1,18 +1,18 @@
 <template>
     <div class="app-search">
-        <!--<aside class="filter-section">
+        <aside class="filter-section">
             <FilterSection />
-        </aside>-->
+        </aside>
         <main class="search-section">
             <SearchBar /> <!--@search="handleSearch"/>--> 
             <AppGrid :apps="paginatedApps" />
-            <Pagination :total-pages="totalPages" :current-page.sync="currentPage" @page-changed="handlePageChange" />
+            <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
     </div>
 </template>
 
 <script>
-    //import FilterSection from './FilterSection.vue';
+    import FilterSection from './FliterSection.vue';
     import SearchBar from './SearchBar.vue';
     import AppGrid from './AppGrid.vue';
     import Pagination from './Pagination.vue';
@@ -21,7 +21,7 @@
     export default {
         name: 'Shop',
         components: {
-/*            FilterSection,*/
+            FilterSection,
             SearchBar,
             AppGrid,
             Pagination
@@ -112,10 +112,15 @@
         width:100%;
     }
 
-/*    .filter-section {
-        width: 27%;
+    .filter-section {
+        width: 30%;
+        height: 100%;
         margin-right: 20px;
-    }*/
+        border-radius: 10px;
+
+        margin-right: auto; /* 将搜索区域向右对齐 */
+        margin-left: 10px; /* 增加右侧距离 */
+    }
 
     .search-section {
         width: 70%;
@@ -137,9 +142,9 @@
             padding: 20px;
         }
 
-/*        .filter-section {
+        .filter-section {
             margin-bottom: 40px;
-        }*/
+        }
 
         .search-section {
             width: 100%;

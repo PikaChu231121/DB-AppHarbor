@@ -32,11 +32,14 @@
 <script>
 export default {
     name: 'PaginationComponent',
-    data() {
-        return {
-            currentPage: 1,
-            totalPages: 10,
-            visiblePageCount: 3
+    props: {
+        currentPage: {
+            type: Number,
+            required: true
+        },
+        totalPages: {
+            type: Number,
+            required: true
         }
     },
     computed: {
@@ -65,20 +68,27 @@ export default {
             return this.totalPages > this.visiblePageCount; // 判断是否显示省略号
         }
     },
+    data() {
+        return {
+            //currentPage: 1,
+            //totalPages: 10,
+            visiblePageCount: 3
+        }
+    },
     methods: {
         goToPreviousPage() {
             if (!this.isFirstPage) {
-                this.currentPage--; // 切换到上一页
+                this.$emit('page-changed', this.currentPage - 1);
             }
         },
         goToNextPage() {
             if (!this.isLastPage) {
-                this.currentPage++; // 切换到下一页
+                this.$emit('page-changed', this.currentPage + 1);
             }
         },
         goToPage(page) {
-            this.currentPage = page; // 切换到指定页码
-        }
+            this.$emit('page-changed', page);
+        },
     }
 }
 </script>
