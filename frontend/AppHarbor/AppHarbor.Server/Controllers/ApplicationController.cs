@@ -43,19 +43,7 @@ namespace AppHarbor.Server.Controllers
 
             }
 
-            
-            //if (user == null)
-            //{
-            //    return NotFound("user not found");
-            //}
-            //if (user.Password == loginModel.Password)
-            //{
-            //    return Ok(user);
-            //}
-            //else
-            //{
-            //    return BadRequest("Invalid password");
-            //}
+           
         }
     }
 }
