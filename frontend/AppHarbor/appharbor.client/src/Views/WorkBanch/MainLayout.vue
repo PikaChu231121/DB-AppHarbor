@@ -72,7 +72,6 @@
         position: fixed;
         top: 0;
         left: 0;
-
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -99,9 +98,9 @@
         margin-left: 20px; /* 调整与侧边栏的间距 */
         padding: 20px;
         /*width: calc(100% - 60px);*/
-        margin-top: 20px; /* 确保不被 header 遮挡 */
-        margin-bottom: 20px;
-        margin-right: 10px;
+        margin-top: 5px; /* 确保不被 header 遮挡 */
+        margin-bottom: 40px;
+        margin-right: 20px;
         background-color: white; /* content部分背景为白色 */
         flex-grow: 1; /* 使content部分占据页面的大部分 */
         border-radius: 12px; /* Optional: 给content部分添加圆角 */
@@ -109,15 +108,6 @@
         overflow: auto; /* 当内容超出时，添加滚动条 */
     }
 
-    @media (max-width: 991px) {
-        .layout-body {
-            max-width: 100%;
-            flex-wrap: wrap;
-        }
 
-        .content {
-            margin-left: 0;
-        }
-    }
 </style>
 
