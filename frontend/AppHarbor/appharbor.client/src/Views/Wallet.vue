@@ -1,13 +1,13 @@
 <template>
-    <div class="root-group-1">
+    <div class="Wallet">
         <div class="header">
             <img src="../../public/avatar/default.png" class="avatar-header" />
         </div>
         <div class="avatar">
             <img src="../../public/avatar/default.png" class="avatar-circle" />
             <div class="user-info">
-                <p class="user-nickname">{{ user_nickname }}</p>
-                <p class="user-id">{{ user_id }}</p>
+                <p class="user-nickname">用户昵称{{ user_nickname }}</p>
+                <p class="user-id">用户ID：{{ user_id }}</p>
             </div>
         </div>
 
@@ -15,7 +15,7 @@
             <div class="info-box">
                 <p class="text">钱包余额</p>
                 <div class="button-row">
-                    <button type="button" class="button" @click="goToLogin">充值</button>
+                    <button type="button" class="button">充值</button>
                 </div>
             </div>
             <div class="info-box">
@@ -60,7 +60,7 @@ export default {
     },
     methods: {
         fetchTransactions() {
-            axios.post('http://localhost:5118/user/getTransaction', { id: this.user_id })
+            axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
                 .then(response => {
                     this.transactions = response.data.$values;
                     console.info(this.transactions);
@@ -69,7 +69,7 @@ export default {
                     console.error('Error fetching transactions:', error);
                 });
         },
-        goToLogin() {
+        goToPay() {
             // 充值按钮的点击事件处理逻辑
         },
         prevPage() {
@@ -86,7 +86,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.root-group-1 {
+.Wallet {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -117,6 +117,7 @@ export default {
     left: 5%;
     top: 8%;
     height: 100px;
+    width: 500px;
 }
 
 .avatar-circle {
@@ -134,11 +135,11 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     margin-bottom: 4%;
-    margin-left: 15%;
+    margin-left: 5%;
 }
 
 .user-nickname {
-    font-size: 60px;
+    font-size: 40px;
     height: 70%;
     align-items: center;
     display: flex;
@@ -147,6 +148,7 @@ export default {
 }
 .user-id {
     // font-size: 60px;
+    width: 100%;
     margin-left: 5px;
     height: 70%;
     align-items: center;
