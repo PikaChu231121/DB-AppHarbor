@@ -64,7 +64,7 @@
         },
         methods: {
             fetchUserInfo() {
-                axios.post('http://localhost:5118/user/userInfo', {id: this.user.id})
+                axios.post('http://localhost:5118/api/user/userInfo', {id: this.user.id})
                     .then(response => {
                         this.user = response.data;
                         this.translateUserState();

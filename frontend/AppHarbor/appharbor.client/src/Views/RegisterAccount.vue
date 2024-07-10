@@ -36,7 +36,7 @@
         },
         methods: {
             Register() {
-                axios.post('http://localhost:5118/User/register', {
+                axios.post('http://localhost:5118/api/User/register', {
                     nickname: this.nickname,
                     password: this.password,
                 })
