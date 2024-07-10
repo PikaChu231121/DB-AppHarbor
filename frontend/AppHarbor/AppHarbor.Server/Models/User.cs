@@ -59,4 +59,6 @@ public partial class User
     public virtual ICollection<Relationship> RelationshipUser2s { get; set; } = new List<Relationship>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+
+    public virtual ICollection<TokenId> TokenIds { get; set; } = new List<TokenId>();
 }

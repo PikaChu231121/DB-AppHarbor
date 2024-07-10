@@ -20,6 +20,22 @@ namespace AppHarbor.Server.Controllers
 
         }
 
+        [HttpGet("tokentest")]
+        public IActionResult TokenTest(string token)
+        {
+            // 必须拥有合理token才能返回OK
+            var tokenid = _dbContext.TokenIds.Find(token);
+            if (tokenid == null)
+            {
+                return BadRequest("Invalid Token!");
+            }
+            else
+            {
+                var user = tokenid.IdNavigation;
+                return Ok(user);
+            }
+        }
+
         [HttpPost("test")]
         public IActionResult Test()
         {
@@ -36,8 +52,17 @@ namespace AppHarbor.Server.Controllers
             }
             if (user.Password == loginModel.Password)
             {
+                // 创建token并保存到数据库
                 var token = Guid.NewGuid().ToString();
-                // TODO: 保存到数据库
+                var tokenid = new TokenId()
+                {
+                    Id = user.Id,
+                    Token = token,
+                    ExpireDate = DateTime.UtcNow.AddDays(1)
+                };
+                _dbContext.TokenIds.Add(tokenid);
+                _dbContext.SaveChanges();
+
                 return Ok(token);
             }
             else
