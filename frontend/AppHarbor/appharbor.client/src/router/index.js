@@ -24,6 +24,10 @@ const routes = [
     {
         path: "/",
         component: () => import("@/Views/Shop/AppDetail.vue")
+    },
+    {
+        path: "/FliterSection",
+        component: () => import("@/Views/Shop/FliterSection.vue")
     }
 ]
 
