@@ -7,7 +7,7 @@ using System;
 namespace AppHarbor.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         //private readonly ApplicationDbContext _dbContext;
@@ -103,16 +103,24 @@ namespace AppHarbor.Server.Controllers
             }
 
             var orders = _dbContext.Orders
-            .Where(orders => orders.BuyerId == user.Id)
-            .ToList();
+                .Where(o => o.BuyerId == info.Id)
+                .Select(o => new
+                {
+                    o.Id,
+                    o.Time,
+                    o.Amount,
+                    o.ApplicationId,
+                    o.BuyerId,
+                    o.ReceiverId
+                })
+                .ToList();
 
-            var result = new
+            if (orders == null || orders.Count == 0)
             {
-                User = user,
-                Orders = orders
-            };
+                return NotFound("No orders found for the specified buyer.");
+            }
 
-            return Ok(user);
+            return Ok(orders);
         }
 
         [HttpPost("changepassword")]
