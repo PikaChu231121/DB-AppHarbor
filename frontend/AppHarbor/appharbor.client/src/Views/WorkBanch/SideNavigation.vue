@@ -3,7 +3,7 @@
     <nav class="navigation-menu">
         <div class="menu-container">
             <header class="logo-container">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2a60b1ed82f1172eb03fb24500d6a2c8738bf2a3af9420ddd9c80e22ecc80ef9?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="Company Logo" class="logo" />
+                <img src="@/assets/A.png" alt="Company Logo" class="logo" />
             </header>
             <ul class="menu-items">
                 <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
@@ -51,8 +51,8 @@
 <style scoped>
     .navigation-menu {
         position: fixed;
-        top: 60px; /* 紧跟在Header下面 */
-        left: 0;
+        top: 30px; /* 紧跟在Header下面 */
+        left: 10px;
         height: calc(100% - 60px - 10px); /* 减去Header的高度 */
         width: 60px; /* 调整宽度 */
         background-color: #efc2bb;
@@ -75,7 +75,7 @@
     .logo-container {
         display: flex;
         justify-content: center;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
     }
 
     .logo {
@@ -103,43 +103,53 @@
         margin-bottom: 8px;
         border-radius: 12px;
         cursor: pointer;
+        transition: background-color 0.5s ease;
+        transition: transform 0.6s ease, color 0.6s ease;
     }
 
         .menu-item.active {
-            background-color: rgba(239, 194, 187, 0.18);
+            background-color: #FFEDEB;
+        }
+
+        .menu-item:hover {
+            background-color: #F4DDDA;
+            transform: scale(1.2); /* 鼠标悬停时的缩放效果 */
         }
 
     .menu-icon {
         width: 16px;
         height: 16px;
+        color: #77797B;
+        transition: color 0.6s ease; /* 颜色过渡效果 */
     }
 
     .user-profile {
         display: flex;
         justify-content: center;
-        margin-top: auto;
+        margin-top: 2px;
         padding: 8px;
         border-radius: 12px;
         cursor: pointer;
+        transition: background-color 0.5s ease;
+        transition: transform 0.6s ease, color 0.6s ease;
     }
 
         .user-profile.active {
             background-color: rgba(239, 194, 187, 0.18);
         }
 
+        .user-profile:hover {
+            background-color: #FCF4F3; /* 设置悬停时的背景颜色 */
+            border-radius: 25px;
+            transform: scale(1.2); /* 鼠标悬停时的缩放效果 */
+        }
+
     .profile-icon {
-        width: 16px;
-        height: 16px;
+        margin-top: 2px;
+        width: 15px;
+        height: 15px;
     }
 
-    @media (max-width: 991px) {
-        .navigation-menu {
-            width: 60px;
-        }
 
-        .logo-container,
-        .menu-items {
-            display: none;
-        }
-    }
+
 </style>
