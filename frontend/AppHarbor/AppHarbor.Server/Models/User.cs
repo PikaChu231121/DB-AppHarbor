@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace AppHarbor.Server.Models;
 
+public class UserInfoModel
+{
+    public decimal Id { get; set; }
+}
+
 public class UserLoginModel
 {
     public decimal Id { get; set; }

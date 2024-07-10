@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label>用户状态:</label>
-                <p>{{ user.status }}</p>
+                <p>{{ user.state }}</p>
             </div>
         </div>
     </div>
@@ -39,8 +39,6 @@
 <script>
     import axios from 'axios';
     import global from "../global.js"
-    /*获取登入后的用户id
-    console.log(global.id);*/
 
     export default {
         name: 'ProfileSettings',
@@ -48,30 +46,35 @@
             return {
                 isEditing: false,
                 user: {
-                    id: 'NULL',
-                    nickname: 'NULL',
-                    avatar: 'NULL',
-                    registerTime: 'NULL',
-                    status: 'NULL'
-                }
+                    id:'',
+                },
             };
         },
         mounted() {
-            this.user.id = this.$globalVar;
-            // this.fetchUserData();
+             // 读取 localStorage 中的 id
+            const storedId = localStorage.getItem('globalId');
+            if (storedId) {
+                this.user.id = storedId;
+                global.id = storedId; // 更新 global.js 中的 id
+            } else {
+                this.user.id = global.id;
+                localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
+            }
+            this.fetchUserInfo();
         },
         methods: {
-            /*fetchUserData() {
-                axios.post('http://localhost:5118/user/login', {this.user.id})
+            fetchUserInfo() {
+                axios.post('http://localhost:5118/user/userInfo', {id: this.user.id})
                     .then(response => {
                         this.user = response.data;
+                        this.translateUserState();
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
                     });
-            },*/
+            },
             toggleEdit() {
-                console.log(this.$globalVar);
+                //console.log(this.user.nickname);
                 if (this.isEditing) {
                     // 这里可以添加保存更改的逻辑
                     console.log('更改已保存:', this.user.nickname);
@@ -90,6 +93,16 @@
                     };
                     reader.readAsDataURL(file);
                 }
+            },
+            translateUserState() {
+                console.log('yes');
+               if (this.user.state == 'Normal') {
+                   this.user.state = '正常';
+               } else if (this.user.state == 'active') {
+                   this.user.state = '活跃';
+               } else if (this.user.state == 'inactive') {
+                   this.user.state = '不活跃';
+               }
             }
         }
     };
