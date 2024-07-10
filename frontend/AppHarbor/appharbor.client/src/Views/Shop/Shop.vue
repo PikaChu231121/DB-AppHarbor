@@ -4,7 +4,7 @@
             <FilterSection @tags-changed="handleTagsChanged" />
         </aside>
         <main class="search-section">
-            <SearchBar /> <!--@search="handleSearch"/>-->
+            <SearchBar /> <!--@search="handleSearch"/>--> 
             <AppGrid :apps="paginatedApps" />
             <!--<AppGrid :apps="this.apps" />-->
             <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
@@ -18,6 +18,7 @@
     import SearchBar from './SearchBar.vue';
     import AppGrid from './AppGrid.vue';
     import Pagination from './Pagination.vue';
+    /*import axios from 'axios';*/
 
     export default {
         name: 'Shop',
