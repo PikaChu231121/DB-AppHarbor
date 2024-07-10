@@ -16,7 +16,7 @@
     import Header from './Header.vue'; // 标题栏
     import SideNavigation from './SideNavigation.vue'; // 侧边栏
     //import HomeView from './HomeView.vue'; // Example component
-/*    import Shop from '../Shop/Shop.vue'; // Example component*/
+    import Shop from '../Shop/Shop.vue'; // Example component
     import Favorites from '../Favorites.vue'; // Example component
     //import PurseView from './PurseView.vue'; // Example component
     //import FriendsView from './FriendsView.vue'; // Example component
@@ -44,9 +44,9 @@
                     case 'Home':
                         this.currentView = 'HomeView';
                         break;
-                    //case 'Shop':
-                    //    this.currentView = 'Shop';
-                    //    break;
+                    case 'Shop':
+                        this.currentView = 'Shop';
+                        break;
                     case 'Collection':
                         this.currentView = 'Favorites';
                         break;
@@ -97,7 +97,7 @@
 
     .content {
         margin-left: 20px; /* 调整与侧边栏的间距 */
-        padding: 20px;
+        padding: 10px;
         /*width: calc(100% - 60px);*/
         margin-top: 20px; /* 确保不被 header 遮挡 */
         margin-bottom: 20px;
