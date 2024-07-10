@@ -62,7 +62,7 @@
         methods: {
             fetchUserInfo() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', {token: token， })
+                axios.post('http://localhost:5118/api/user/userInfo', {token: token})
                     .then(response => {
                         this.user = response.data;
                         //this.translateUserState();
