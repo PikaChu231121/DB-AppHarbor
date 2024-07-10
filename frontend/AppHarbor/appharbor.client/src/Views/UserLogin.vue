@@ -54,10 +54,10 @@
         },
         methods: {
             login() {
-                axios.post('http://localhost:5118/api/user/login', {
-                    id: this.id,
-                    password: this.password
-                })
+                let formData = new FormData();
+                formData.append('id', this.id);
+                formData.append('password', this.password);
+                axios.post('http://localhost:5118/api/user/login', formData)
                     .then(response => {
                         Cookies.set("token", response.data);
                         this.$router.push('/WorkBanchPage');

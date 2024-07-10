@@ -52,14 +52,14 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLoginModel loginModel)
+        public IActionResult Login([FromForm] decimal id, [FromForm] string password)
         {
-            var user = _dbContext.Users.Find(loginModel.Id);
+            var user = _dbContext.Users.Find(id);
             if (user == null)
             {
                 return NotFound("user not found");
             }
-            if (user.Password == loginModel.Password)
+            if (user.Password == password)
             {
                 // 创建token并保存到数据库
                 var token = Guid.NewGuid().ToString();
