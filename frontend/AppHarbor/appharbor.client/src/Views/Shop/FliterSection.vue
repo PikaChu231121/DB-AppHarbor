@@ -1,5 +1,5 @@
 <template>
-    <div class="FliterSection">
+    <div class="FilterSection">
 
         <div class="filter">
             <!-- 标签筛选部分 -->
@@ -46,7 +46,7 @@
         data() {
             return {
                 newTag: '',
-                selectedTags: ['Spring', 'Smart', 'Modern'], // 默认选中的标签
+                selectedTags: [], // 默认选中的标签
                 priceRange: [0, 100], // 价格范围初始值
                 minPrice: 0,
                 maxPrice: 100,
@@ -112,11 +112,12 @@
         background-color: #fbb1a2;
         padding-right: 20px; /* 增加右边距，给关闭按钮留空间 */
     }
-    .FliterSection{
-        width:180px;
-        background-color:antiquewhite;
-        text-align:center;
-
+    .FilterSection {
+        height: 90%;
+        width: 90%;
+        border-radius: 10px;
+        background-color: antiquewhite;
+        text-align: center;
     }
     .close-btn {
         position: absolute;
