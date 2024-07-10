@@ -4,14 +4,16 @@
             <FilterSection />
         </aside>
         <main class="search-section">
-            <SearchBar /> <!--@search="handleSearch"/>--> 
+            <SearchBar /> <!--@search="handleSearch"/>-->
             <AppGrid :apps="paginatedApps" />
+            <!--<AppGrid :apps="this.apps" />-->
             <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
     </div>
 </template>
 
 <script>
+    import axios from 'axios';
     import FilterSection from './FliterSection.vue';
     import SearchBar from './SearchBar.vue';
     import AppGrid from './AppGrid.vue';
@@ -28,20 +30,9 @@
         },
         data() {
             return {
-                apps: [
-                    { id: 1, image: 'https://via.placeholder.com/100', name: 'App 1', price: '$1.99' },
-                    { id: 2, image: 'https://via.placeholder.com/100', name: 'App 2', price: '$2.99' },
-                    { id: 3, image: 'https://via.placeholder.com/100', name: 'App 3', price: '$3.99' },
-                    { id: 4, image: 'https://via.placeholder.com/100', name: 'App 4', price: '$4.99' },
-                    { id: 5, image: 'https://via.placeholder.com/100', name: 'App 5', price: '$5.99' },
-                    { id: 6, image: 'https://via.placeholder.com/100', name: 'App 6', price: '$6.99' },
-                    { id: 7, image: 'https://via.placeholder.com/100', name: 'App 7', price: '$7.99' },
-                    { id: 8, image: 'https://via.placeholder.com/100', name: 'App 8', price: '$8.99' },
-                    { id: 9, image: 'https://via.placeholder.com/100', name: 'App 9', price: '$9.99' },
-                    { id: 10, image: 'https://via.placeholder.com/100', name: 'App 10', price: '$10.99' },
-                    { id: 11, image: 'https://via.placeholder.com/100', name: 'App 11', price: '$11.99' },
-                    { id: 12, image: 'https://via.placeholder.com/100', name: 'App 12', price: '$12.99' }
-                ], // 存储所有应用信息
+                apps: [],
+                Category:"All",//--------------我这先设置成All，需要调试可以改成Social或Office，你等之后加上前端的分类模块后再作具体修改
+                
                 currentPage: 1, // 当前页码
                 totalPages: 2, // 总页数
                 appsPerPage: 10 // 每页显示的应用数量
@@ -56,17 +47,22 @@
             }
         },
         methods: {
-            //fetchApps() {
-            //    // 从远端数据库获取应用信息
-            //    axios.get('https://api.example.com/apps')
-            //        .then(response => {
-            //            this.apps = response.data.apps;
-            //            this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-            //        })
-            //        .catch(error => {
-            //            console.error("Error fetching apps:", error);
-            //        });
-            //},
+            fetchApps() {
+                // 从远端数据库获取应用信息
+                axios.post('http://localhost:5118/application/getapplist', {
+                    Category: this.Category,
+                    Page: this.currentPage  
+                })
+                    .then(response => {
+                        this.apps = response.data;
+                        //console.log(2);
+                        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching apps:", error);
+                    });
+
+            },
             handleSearch(searchTerm) {
                 //// 根据搜索词过滤应用
                 //// 这里假设后端支持搜索查询，返回搜索结果
@@ -90,10 +86,11 @@
                 this.currentPage = newPage;
             }
         },
-        //created() {
-        //    // 初始获取应用信息
-        //    this.fetchApps();
-        //}
+        created() {
+            // 初始获取应用信息
+            //console.log(1);
+            this.fetchApps();
+        }
     }
 </script>
 
