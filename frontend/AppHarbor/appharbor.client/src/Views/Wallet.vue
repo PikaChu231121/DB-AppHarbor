@@ -1,13 +1,13 @@
 <template>
-    <div class="root-group-1">
+    <div class="Wallet">
         <div class="header">
             <img src="../../public/avatar/default.png" class="avatar-header" />
         </div>
         <div class="avatar">
             <img src="../../public/avatar/default.png" class="avatar-circle" />
             <div class="user-info">
-                <p class="user-nickname">{{ user_nickname }}</p>
-                <p class="user-id">{{ user_id }}</p>
+                <p class="user-nickname">用户昵称{{ user_nickname }}</p>
+                <p class="user-id">用户ID：{{ user_id }}</p>
             </div>
         </div>
 
@@ -15,7 +15,7 @@
             <div class="info-box">
                 <p class="text">钱包余额</p>
                 <div class="button-row">
-                    <button type="button" class="button" @click="goToLogin">充值</button>
+                    <button type="button" class="button">充值</button>
                 </div>
             </div>
             <div class="info-box">
@@ -31,13 +31,14 @@
                         </thead>
                         <tbody>
                             <tr v-for="(transaction, index) in transactions" :key="index">
-                                <td>{{ transaction.date }}</td>
-                                <td>{{ transaction.description }}</td>
+                                <td>{{ transaction.time }}</td>
+                                <td>为用户 {{ transaction.receiverNickName }} 购买了 {{ transaction.applicationName }}</td>
                                 <td>{{ transaction.amount }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
                 <div class="button-row">
                     <button type="button" class="button" @click="prevPage">上一页</button>
                     <button type="button" class="button" @click="nextPage">下一页</button>
@@ -48,21 +49,27 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
-            user_nickname: '4534',
-            user_id: '5357535',
-            transactions: [
-                { date: '2024-07-01', description: '充值', amount: '+100.00' },
-                { date: '2024-07-02', description: '消费', amount: '-50.00' },
-                { date: '2024-07-03', description: '消费', amount: '-20.00' },{ date: '2024-07-02', description: '消费', amount: '-50.00' },
-
-            ]
+            user_nickname: '',
+            user_id: 9,
+            transactions: []
         };
     },
     methods: {
-        goToLogin() {
+        fetchTransactions() {
+            axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
+                .then(response => {
+                    this.transactions = response.data.$values;
+                    console.info(this.transactions);
+                })
+                .catch(error => {
+                    console.error('Error fetching transactions:', error);
+                });
+        },
+        goToPay() {
             // 充值按钮的点击事件处理逻辑
         },
         prevPage() {
@@ -71,12 +78,15 @@ export default {
         nextPage() {
             // 下一页按钮的点击事件处理逻辑
         }
+    },
+    mounted() {
+        this.fetchTransactions(); // 页面加载时获取交易记录
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.root-group-1 {
+.Wallet {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -107,6 +117,7 @@ export default {
     left: 5%;
     top: 8%;
     height: 100px;
+    width: 500px;
 }
 
 .avatar-circle {
@@ -124,11 +135,11 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     margin-bottom: 4%;
-    margin-left: 15%;
+    margin-left: 5%;
 }
 
 .user-nickname {
-    font-size: 60px;
+    font-size: 40px;
     height: 70%;
     align-items: center;
     display: flex;
@@ -137,6 +148,7 @@ export default {
 }
 .user-id {
     // font-size: 60px;
+    width: 100%;
     margin-left: 5px;
     height: 70%;
     align-items: center;

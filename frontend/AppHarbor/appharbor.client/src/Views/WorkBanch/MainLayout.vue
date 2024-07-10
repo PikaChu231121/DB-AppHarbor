@@ -18,7 +18,7 @@
     //import HomeView from './HomeView.vue'; // Example component
     import Shop from '../Shop/Shop.vue'; // Example component
     import Favourites from '../Favourites.vue'; // Example component
-    //import PurseView from './PurseView.vue'; // Example component
+    import Wallet from '../Wallet.vue'; // Example component
     //import FriendsView from './FriendsView.vue'; // Example component
     import PersonalInformation from '../PersonalInformation.vue'; // Example component
 
@@ -29,7 +29,7 @@
             //HomeView,
             Shop,
             Favourites,
-            //PurseView,
+            Wallet,
             //FriendsView,
             PersonalInformation
         },
@@ -50,9 +50,9 @@
                     case 'Collection':
                         this.currentView = 'Favourites';
                         break;
-                    //case 'Purse':
-                    //    this.currentView = 'PurseView';
-                    //    break;
+                    case 'Purse':
+                       this.currentView = 'Wallet';
+                       break;
                     //case 'Friends':
                     //    this.currentView = 'FriendsView';
                     //    break;
