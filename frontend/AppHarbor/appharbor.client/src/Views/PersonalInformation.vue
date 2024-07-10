@@ -38,6 +38,9 @@
 
 <script>
     import axios from 'axios';
+    import global from "../global.js"
+    /*获取登入后的用户id
+    console.log(global.id);*/
 
     export default {
         name: 'ProfileSettings',
