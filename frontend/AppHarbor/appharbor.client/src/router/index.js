@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-    {
+/*    {
         path:"/",
         component:()=>import("@/Views/WorkBanch/MainLayout.vue")
-    },
+    },*/
     {
         path: "/RegisterAccount",
         component: () => import("@/Views/RegisterAccount.vue")
@@ -20,6 +20,10 @@ const routes = [
     {
         path: "/PersonalInformation",
         component: () => import("@/Views/PersonalInformation.vue")
+    },
+    {
+        path: "/",
+        component: () => import("@/Views/Shop/AppDetail.vue")
     }
 ]
 
