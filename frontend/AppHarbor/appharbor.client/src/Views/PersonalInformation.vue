@@ -35,6 +35,7 @@
 <script>
     import axios from 'axios';
     import global from "../global.js"
+    import Cookies from 'js-cookie';
 
     export default {
         name: 'ProfileSettings',
