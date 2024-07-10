@@ -7,7 +7,7 @@ using System;
 namespace AppHarbor.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         //private readonly ApplicationDbContext _dbContext;
@@ -18,6 +18,31 @@ namespace AppHarbor.Server.Controllers
         {
             this._dbContext = dbContext;
 
+        }
+
+        [HttpPost("tokentest")]
+        public IActionResult TokenTest([FromBody] TokenRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            // 返回受保护的数据
+            return Ok(new { message = "This is protected data.", user });
         }
 
         [HttpPost("test")]
@@ -36,8 +61,17 @@ namespace AppHarbor.Server.Controllers
             }
             if (user.Password == loginModel.Password)
             {
+                // 创建token并保存到数据库
                 var token = Guid.NewGuid().ToString();
-                // TODO: 保存到数据库
+                var tokenid = new TokenId()
+                {
+                    Id = user.Id,
+                    Token = token,
+                    ExpireDate = DateTime.UtcNow.AddDays(1)
+                };
+                _dbContext.TokenIds.Add(tokenid);
+                _dbContext.SaveChanges();
+
                 return Ok(token);
             }
             else
@@ -115,17 +149,53 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("userinfo")]
-        public IActionResult UserInfo([FromBody] UserInfoModel infoModel)
+        public IActionResult UserInfo([FromBody] TokenRequest request)
         {
-            var user = _dbContext.Users.Find(infoModel.Id);
 
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            // 返回受保护的数据
+            var userInfo = new
+            {
+                user.Id,
+                user.Nickname,
+                user.Avatar,
+                user.RegisterTime,
+                user.Credit,
+                user.State
+            };
+
+            return Ok(userInfo);
+        }
+
+        [HttpPost("updateUserNickname")]
+        public IActionResult UpdateUserNickname([FromBody] UpdateUserNicknameModel nicknameModel)
+        {
+            var user = _dbContext.Users.Find(nicknameModel.Id);
             if (user == null)
             {
                 return NotFound("user not found");
             }
+            user.Nickname = nicknameModel.NewNickname;
+            _dbContext.SaveChanges();
             return Ok(user);
         }
-
     }
 }
 

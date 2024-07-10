@@ -33,6 +33,13 @@ public class UserChangePasswordModel
     public string NewPassword { get; set; } = null!;
 }
 
+public class UpdateUserNicknameModel
+{
+    public decimal Id { get; set; }
+
+    public string NewNickname { get; set; } = null!;
+}
+
 public partial class User
 {
     public decimal Id { get; set; }
@@ -64,4 +71,6 @@ public partial class User
     public virtual ICollection<Relationship> RelationshipUser2s { get; set; } = new List<Relationship>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+
+    public virtual ICollection<TokenId> TokenIds { get; set; } = new List<TokenId>();
 }

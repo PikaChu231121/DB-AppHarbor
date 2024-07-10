@@ -54,7 +54,7 @@
         },
         methods: {
             login() {
-                axios.post('http://localhost:5118/user/login', {
+                axios.post('http://localhost:5118/api/user/login', {
                     id: this.id,
                     password: this.password
                 })

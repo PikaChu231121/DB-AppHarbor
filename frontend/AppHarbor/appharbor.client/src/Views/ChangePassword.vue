@@ -40,7 +40,7 @@
         },
         methods: {
             Change() {
-                axios.post('http://localhost:5118/User/changepassword', {
+                axios.post('http://localhost:5118/api/User/changepassword', {
                     Id: this.username,
                     OldPassword: this.bpassword,
                     NewPassword: this.apassword,
