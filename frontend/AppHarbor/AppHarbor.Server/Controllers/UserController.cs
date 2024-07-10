@@ -93,6 +93,28 @@ namespace AppHarbor.Server.Controllers
 
         }
 
+        [HttpPost("getTransection")]
+        public IActionResult Transaction([FromBody] UserInfoModel info)
+        {
+            var user = _dbContext.Users.Find(info.Id);
+            if (user == null)
+            {
+                return NotFound("user not found");
+            }
+
+            var orders = _dbContext.Orders
+            .Where(orders => orders.BuyerId == user.Id)
+            .ToList();
+
+            var result = new
+            {
+                User = user,
+                Orders = orders
+            };
+
+            return Ok(user);
+        }
+
         [HttpPost("changepassword")]
         public IActionResult ChangePassword([FromBody] UserChangePasswordModel changePassworModel)
         {
