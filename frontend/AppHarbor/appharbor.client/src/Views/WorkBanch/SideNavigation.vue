@@ -7,7 +7,7 @@
                     <img src="@/assets/A.png" alt="Company Logo" class="logo" />
                 </header>
                 <ul class="menu-items">
-                    <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)" >
+                    <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
                         <img :src="selectedItem === index ? item.activeIcon : item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
                     </li>
                 </ul>
@@ -21,23 +21,20 @@
             <div v-if="showFriendsPopup" class="friends-popup" ref="friendsPopup">
                 <button class="popup-item1" @click="handlePopupClick('Your friends')">
                     <img src="../../assets/yourfriends.svg" alt="Your friends" class="popup-icon" />
-                    <span>  &nbsp;&nbsp;  Your friends</span>
+                    <span>&nbsp;&nbsp;Your friends</span>
                 </button>
                 <button class="popup-item2" @click="handlePopupClick('Add friends')">
                     <img src="../../assets/addfriends.svg" alt="Add friends" class="popup-icon" />
-                    <span>  &nbsp;&nbsp;  Add friends</span>
+                    <span>&nbsp;&nbsp;Add friends</span>
                 </button>
                 <button class="popup-item3" @click="handlePopupClick('Buy me')">
                     <img src="../../assets/buyme.svg" alt="Buy me" class="popup-icon" />
-                    <span>   &nbsp;&nbsp;  Buy me</span>
+                    <span>&nbsp;&nbsp;Buy me</span>
                 </button>
             </div>
         </transition>
     </div>
 </template>
-
-
-
 
 <script>
     import Loading from "../Tools/Loading.vue"
@@ -63,27 +60,26 @@
         },
         methods: {
             selectItem(index) {
-                if (this.menuItems[index].label === 'Purse' || this.menuItems[index].label === 'Home' || this.menuItems[index].label === 'Shop' || this.menuItems[index].label === 'Collection') {
-                    this.isLoading = true; // 开始加载动画
+                if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[index].label)) {
+                    this.isLoading = true;
                     setTimeout(() => {
-                        this.isLoading = false; // 几秒后停止加载动画
-                        this.selectedItem = index; // 选择Purse菜单项
+                        this.isLoading = false;
+                        this.selectedItem = index;
                         this.showFriendsPopup = false;
                         this.$emit('update-content', this.menuItems[index].label);
-
-                    }, 2000); // 设置加载动画持续时间为2秒
+                    }, 2000);
                 } else if (this.menuItems[index].label === 'Friends') {
-                    this.selectedItem = index; // 选择Purse菜单项
+                    this.selectedItem = index;
                     this.$emit('update-content', this.menuItems[index].label);
                     this.toggleFriendsPopup();
                 } else {
                     this.selectedItem = index;
-                    this.userProfileActive = false; // Deselect user profile when a menu item is selected
+                    this.userProfileActive = false;
                     this.$emit('update-content', this.menuItems[index].label);
                 }
             },
             selectUserProfile() {
-                this.selectedItem = null; // Deselect any menu item
+                this.selectedItem = null;
                 this.userProfileActive = true;
                 this.$emit('update-content', 'UserProfile');
             },
@@ -95,10 +91,20 @@
                 }
             },
             handlePopupClick(action) {
-                // Handle each popup button click action here
                 console.log(action);
-                this.showFriendsPopup = false; // Hide the popup after a button is clicked
+                this.showFriendsPopup = false;
+            },
+            handleClickOutside(event) {
+                if (this.showFriendsPopup && !this.$refs.friendsPopup.contains(event.target) && !this.$el.contains(event.target)) {
+                    this.showFriendsPopup = false;
+                }
             }
+        },
+        mounted() {
+            document.addEventListener('click', this.handleClickOutside);
+        },
+        beforeDestroy() {
+            document.removeEventListener('click', this.handleClickOutside);
         }
     };
 </script>
@@ -109,10 +115,10 @@
 
     .navigation-menu {
         position: fixed;
-        top: 30px; /* 紧跟在Header下面 */
+        top: 30px;
         left: 10px;
-        height: calc(100% - 60px - 10px); /* 减去Header的高度 */
-        width: 60px; /* 调整宽度 */
+        height: calc(100% - 60px - 10px);
+        width: 60px;
         background-color: #efc2bb;
         display: flex;
         align-items: center;
@@ -171,14 +177,13 @@
 
         .menu-item:hover {
             background-color: #F4DDDA;
-            transform: scale(1.2); /* 鼠标悬停时的缩放效果 */
+            transform: scale(1.2);
         }
 
     .menu-icon {
         width: 16px;
         height: 16px;
-        /*color: #77797B;*/
-        transition: color 0.6s ease; /* 颜色过渡效果 */
+        transition: color 0.6s ease;
     }
 
     .user-profile {
@@ -197,9 +202,9 @@
         }
 
         .user-profile:hover {
-            background-color: #FCF4F3; /* 设置悬停时的背景颜色 */
+            background-color: #FCF4F3;
             border-radius: 25px;
-            transform: scale(1.2); /* 鼠标悬停时的缩放效果 */
+            transform: scale(1.2);
         }
 
     .profile-icon {
@@ -208,10 +213,9 @@
         height: 15px;
     }
 
-
     .friends-popup {
         position: absolute;
-        top: 300px; /* 根据需要调整位置 */
+        top: 300px;
         left: 90px;
         background-color: #fbeaea;
         border-radius: 12px;
@@ -222,12 +226,12 @@
         opacity: 1;
         transform: translateY(0);
     }
+
         .friends-popup button {
             border: 3px solid #FADAD6;
             width: 170px;
             border-radius: 10px;
         }
-
 
     .popup-item1 {
         display: flex;
