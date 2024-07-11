@@ -1,40 +1,45 @@
 <template>
-    <div class="backwrapper">
-        <div class="container" style="margin-left:350px;margin-top:190px">
-            <div class="content">
-                <div class="login-section">
-                    <div class="login-form">
-                        <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px; font-weight: bolder; margin-top: 5px;">登 录</h2>
-                        <form @submit.prevent="login">
-                            <div class="form-group">
-                                <label for="id" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">用户ID</label>
-                                <input type="text" style="height: 40px; font-size: 15px;" id="id" v-model="id" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="password" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">密码</label>
-                                <input type="password" style="height: 40px;" id="password" v-model="password" required /><br><br><br>
-                            </div>
-                            <div class="button-row" style="margin-top: 9px;">
-                                <button type="button" class="login-button" style="font-size: 18px; margin-left: 0px; margin-top: -30px; width: 270px; font-family: 'Hanyi Wenhei 85W', sans-serif;" @click="goToLogin">登录</button>
-                            </div>
-                            <div class="button-row" style="font-family: 'Hanyi Wenhei 85W', sans-serif; margin-bottom: 20px;">
-                                <button type="button" class="secondary-button" @click="goToRegister">注册账号</button>
-                                <button type="button" class="secondary-button" @click="goToForgotPassword">修改密码</button>
-                            </div>
-                        </form>
+    <div>
+        <Loading :loading="isLoading" />
+        <LoginAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
+        <div class="backwrapper">
+            <div class="container" style="margin-left:350px;margin-top:190px">
+                <div class="content">
+                    <div class="login-section">
+                        <div class="login-form">
+                            <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px; font-weight: bolder; margin-top: 5px;">登 录</h2>
+                            <form @submit.prevent="login">
+                                <div class="form-group">
+                                    <label for="id" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">用户ID</label>
+                                    <input type="text" style="height: 40px; font-size: 15px;" id="id" v-model="id" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">密码</label>
+                                    <input type="password" style="height: 40px;" id="password" v-model="password" required /><br><br><br>
+                                </div>
+                                <div class="button-row" style="margin-top: 9px;">
+                                    <button type="button" class="login-button" style="font-size: 18px; margin-left: 0px; margin-top: -30px; width: 270px; font-family: 'Hanyi Wenhei 85W', sans-serif;" @click="goToLogin">登录</button>
+                                </div>
+                                <div class="button-row" style="font-family: 'Hanyi Wenhei 85W', sans-serif; margin-bottom: 20px;">
+                                    <button type="button" class="secondary-button" @click="goToRegister">注册账号</button>
+                                    <button type="button" class="secondary-button" @click="goToForgotPassword">修改密码</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+                    <div class="video-section">
+                        <video autoplay loop muted playsinline>
+                            <source src="@/../public/video/login_gif.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+
                 </div>
-                <div class="video-section">
-                    <video autoplay loop muted playsinline>
-                        <source src="@/../public/video/login_gif.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-                <LoginAlert v-if="alertMessage" :message="alertMessage" @close="alertMessage = ''" />
-                <Loading :loading="loading" />
             </div>
         </div>
     </div>
+    
 </template>
 
 <script>
@@ -42,7 +47,7 @@
     import Cookies from 'js-cookie';
     import global from "../global.js";
     import LoginAlert from './LoginAlert.vue';
-    import Loading from './Loading.vue';
+    import Loading from './Tools/Loading.vue';
 
     export default {
         name: 'UserLogin',
@@ -55,7 +60,7 @@
                 id: '',
                 password: '',
                 alertMessage: '',
-                loading: false
+                isLoading: false
             };
         },
         methods: {
@@ -67,15 +72,17 @@
                 axios.post('http://localhost:5118/api/user/login', formData)
                     .then(response => {
                         Cookies.set("token", response.data);
-                        this.loading = true; // Show loading animation on login attempt
+                        this.isLoading = true; // Show loading animation on login attempt
                         this.alertMessage = `您好! 尊敬的 ${this.id} 用户, 欢迎来到 AppHarbor!`;
                         global.id = this.id;
                         setTimeout(() => {
                             this.$router.push('/WorkBanchPage');
-                        }, 2000); // Redirect after 2 seconds
+                            
+                        }, 3000); // Redirect after 2 seconds
+                        
                     })
                     .catch(error => {
-                        this.loading = false; // Hide loading animation on login failure
+                        this.isLoading = false; // Hide loading animation on login failure
                         this.alertMessage = '登录失败: ' + error.response.data;
                     });
             },
@@ -235,6 +242,6 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 9999; /* Adjust as necessary */
+        z-index: 0; /* Adjust as necessary */
     }
 </style>

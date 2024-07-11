@@ -18,7 +18,7 @@
         mounted() {
             setTimeout(() => {
                 this.closeAlert();
-            }, 2000); // Close the alert after 2 seconds
+            }, 3000); // Close the alert after 2 seconds
         },
         methods: {
             closeAlert() {

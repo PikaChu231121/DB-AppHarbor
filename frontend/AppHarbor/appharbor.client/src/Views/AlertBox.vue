@@ -36,6 +36,7 @@
         padding: 10px 20px;
         border: 1px solid #f5c6cb;
         border-radius: 5px;
+        z-index:1;
     }
 </style>
 
