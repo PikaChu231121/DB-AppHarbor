@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component }" class="light">
         <keep-alive>
             <component :is="Component" />
         </keep-alive>
