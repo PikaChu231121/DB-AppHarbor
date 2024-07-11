@@ -11,6 +11,11 @@ public class GetAppListModel
     public int Page { get; set; }
 }
 
+public class GetAppDetailModel
+{
+    public decimal Id { get; set; }
+}
+
 public partial class Application
 {
     public decimal Id { get; set; }
@@ -30,6 +35,8 @@ public partial class Application
     public string? Image { get; set; }
 
     public decimal? DownloadCount { get; set; }
+
+    public decimal? Price { get; set; }
 
     public virtual ICollection<ApplicationReview> ApplicationReviews { get; set; } = new List<ApplicationReview>();
 
