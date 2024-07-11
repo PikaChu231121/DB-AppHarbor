@@ -138,5 +138,58 @@ namespace AppHarbor.Server.Controllers
             var jsonSuccessResponse = JsonSerializer.Serialize(successResponse);
             return new JsonResult(jsonSuccessResponse);
         }
+
+        [HttpPost("bulkDelete")]
+        public IActionResult BulkDelete([FromBody] BulkDeleteRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                var failResponse = new
+                {
+                    msg = "No token provided!"
+                };
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                var failResponse = new
+                {
+                    msg = "Invalid or expired token!"
+                };
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
+            }
+
+            var favourites = _dbContext.Favourites
+                .Where(f => request.Ids.Contains(f.Id) && f.UserId == tokenEntry.Id)
+                .ToList();
+
+            if (!favourites.Any())
+            {
+                var failResponse = new
+                {
+                    msg = "Favourites not found!"
+                };
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
+            }
+
+            _dbContext.Favourites.RemoveRange(favourites);
+            _dbContext.SaveChanges();
+
+            var successResponse = new
+            {
+                success = true,
+                msg = "Favourites deleted successfully!"
+            };
+
+            var jsonSuccessResponse = JsonSerializer.Serialize(successResponse);
+            return new JsonResult(jsonSuccessResponse);
+        }
+
     }
 }

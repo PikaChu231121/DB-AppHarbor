@@ -13,6 +13,12 @@ public class DeleteFavouriteRequest
     public decimal Id { get; set; }
 }
 
+public class BulkDeleteRequest
+{
+    public string Token { get; set; }
+    public List<decimal> Ids { get; set; }
+}
+
 public partial class Favourite
 {
     public decimal Id { get; set; }
