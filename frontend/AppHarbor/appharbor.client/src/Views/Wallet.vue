@@ -2,11 +2,15 @@
     <div class="Wallet">
         <div class="header">
             <img src="../../public/avatar/default.png" class="avatar-header" />
+            <!-- TODO: 如何通过 url 从服务器获取图片 -->
+            <!-- <img :src="avatar_url" class="avatar-header" />   -->
         </div>
         <div class="avatar">
             <img src="../../public/avatar/default.png" class="avatar-circle" />
+            <!-- TODO: 如何通过 url 从服务器获取图片 -->
+            <!-- <img :src="avatar_url" class="avatar-circle" />   -->
             <div class="user-info">
-                <p class="user-nickname">用户昵称{{ user_nickname }}</p>
+                <p class="user-nickname">用户昵称：{{ user_nickname }}</p>
                 <p class="user-id">用户ID：{{ user_id }}</p>
             </div>
         </div>
@@ -50,16 +54,42 @@
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie';
 export default {
     data() {
         return {
             user_nickname: '',
-            user_id: 9,
-            transactions: []
+            user_id: '',
+            transactions: [],
+            avatar_url: '',
+            credit: -1
         };
     },
     methods: {
+        fetchUserAndTransaction() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                        console.info(response.data);
+                        this.user_id = response.data.id;
+                        this.user_nickname = response.data.nickname;
+                        this.avatar_url = response.data.avatar;
+                        this.credit = response.data.credit;
+
+                        // 确保在user_id被设置之后调用fetchTransactions
+                        this.fetchTransactions();
+
+                        // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
+                        // 理想状态是通过cookies直接能得到所有的信息
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+        },
+            
         fetchTransactions() {
+            console.info(this.user_id);
             axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
                 .then(response => {
                     this.transactions = response.data.$values;
@@ -80,7 +110,7 @@ export default {
         }
     },
     mounted() {
-        this.fetchTransactions(); // 页面加载时获取交易记录
+        this.fetchUserAndTransaction(); // 页面加载时从cookies获取用户ID，再获取交易信息
     }
 }
 </script>
