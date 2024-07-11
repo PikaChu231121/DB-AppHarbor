@@ -17,7 +17,8 @@
         props: {
             apps: {
                 type: Array,
-                required: true
+                required: true,
+                default: () => []
             }
         }
     }
