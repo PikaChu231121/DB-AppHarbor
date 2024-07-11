@@ -30,25 +30,14 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("getapplist")]
         public IActionResult GetAppList([FromBody] GetAppListModel getapplistModel)
         {
-            
-            if (getapplistModel.Category=="All")
-            {
-                var applist_category = _dbContext.Applications.ToList();
-                applist_category.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
-                //var resultlist = applist_category.Skip((getapplistModel.Page - 1) * 10 - 1).Take(getapplistModel.Page * 10 - 1);
-                //return Ok(resultlist);
-                return Ok(applist_category);
 
-            }
-            else
-            {
-                var applist_category = _dbContext.Applications.Where(a => a.Category == getapplistModel.Category).ToList();
-                applist_category.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
-                //var resultlist = applist_category.Skip((getapplistModel.Page - 1) * 10 - 1).Take(getapplistModel.Page * 10 - 1);
-                //return Ok(resultlist);
-                return Ok(applist_category);
+            var resultlist = _dbContext.Applications.Where(a =>
+            getapplistModel.Category == "All" ? true : a.Category == getapplistModel.Category).ToList();
 
-            }
+            resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+
+            return Ok(resultlist);
+
 
            
         }
@@ -65,6 +54,22 @@ namespace AppHarbor.Server.Controllers
             {
                 return Ok(app);
             }
+
+
+        }
+
+        [HttpPost("searchapplist")]
+        public IActionResult SearchAppList([FromBody] SearchAppListModel searchapplistModel)
+        {
+
+            var resultlist = _dbContext.Applications.Where(a => 
+            a.Price >= searchapplistModel.Price_min && 
+            a.Price <= searchapplistModel.Price_max && 
+            a.Name.Contains(searchapplistModel.Content)&&
+            searchapplistModel.Category=="All"? true: a.Category == searchapplistModel.Category).ToList();
+
+            resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+            return Ok(resultlist);
 
 
         }

@@ -80,7 +80,7 @@
                 // 这里假设后端支持搜索查询，返回搜索结果
                 //axios.get(`https://api.example.com/apps?search=${searchTerm}`)
                 //    .then(response => {
-                //        this.apps = response.data.apps;
+                //        this.apps = response.data;
                 //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
                 //        this.currentPage = 1; // 重置到第一页
                 //    })

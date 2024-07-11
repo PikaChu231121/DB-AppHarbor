@@ -8,12 +8,25 @@ public class GetAppListModel
 {
     public string? Category { get; set; }
 
-    public int Page { get; set; }
+    //public int Page { get; set; }
 }
 
 public class GetAppDetailModel
 {
     public decimal Id { get; set; }
+}
+
+
+
+public class SearchAppListModel
+{
+    public string? Category { get; set; }
+
+    public decimal? Price_min { get; set; }
+
+    public decimal? Price_max { get; set; }
+
+    public string Content { get; set; } = null!;
 }
 
 public partial class Application
