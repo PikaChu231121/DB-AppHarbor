@@ -21,13 +21,13 @@
                        v-model="priceRange[0]"
                        :min="minPrice"
                        :max="maxPrice"
-                       @input="applyFilters" />
+                       @input="updatePriceRange" />
                 <input type="range"
                        id="priceRangeMax"
                        v-model="priceRange[1]"
                        :min="minPrice"
                        :max="maxPrice"
-                       @input="applyFilters" />
+                       @input="updatePriceRange" />
             </div>
         </div>
 
@@ -82,6 +82,11 @@
             //},
             emitTags() {
                 this.$emit('tags-changed', this.selectedTags);
+            },
+
+            updatePriceRange() {
+                // 触发事件，将价格区间传递给父组件
+                this.$emit('price-range-updated', this.priceRange);
             }
         },
         //mounted() {
