@@ -1,11 +1,12 @@
 <template>
     <div class="app-grid">
-        <!--每个应用对应的组件，包含应用信息-->
-        <div class="app-item" v-for="app in apps" :key="app.id">
-            <!--应用图片、名称、价格等信息-->
-            <img :src="app.image" alt="App Image" />
-            <h3>{{ app.name }}</h3> 
-            <p>{{ app.price }}</p>
+        <div v-for="app in apps" :key="app.id" class="app-item"@click="goToDetail(app.id)">
+            <img :src="app.image" :alt="app.name" class="app-image" />
+            <div class="app-details">
+                <h3 class="app-name">{{ app.name }}</h3>
+                <p class="app-price">{{ app.price }}</p>
+                <p class="app-category">Category: {{ app.category }}</p>
+            </div>
         </div>
     </div>
 </template>
@@ -16,7 +17,13 @@
         props: {
             apps: {
                 type: Array,
-                required: true
+                required: true,
+                default: () => []
+            }
+        },
+        methods: {
+            goToDetail(appId) {
+                this.$router.push(`/app/${appId}`);
             }
         }
     }
@@ -40,19 +47,31 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .app-item img {
+    .app-item image {
         width: 100px;
         height: 100px;
         object-fit: cover;
         border-radius: 10px;
     }
 
-    .app-item h3 {
-        margin: 10px 0 5px;
-        font-size: 1.2em;
+    .app-details {
+        flex: 1; /* 让详情部分填充剩余空间 */
     }
 
-    .app-item p {
+    .app-name {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .app-price {
+        font-size: 14px;
+        color: #666666;
+        margin-bottom: 5px;
+    }
+
+    .app-category {
+        font-size: 14px;
         color: #888;
     }
 </style>

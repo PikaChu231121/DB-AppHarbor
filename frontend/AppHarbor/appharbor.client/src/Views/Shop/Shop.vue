@@ -1,99 +1,123 @@
 <template>
     <div class="app-search">
-        <!--<aside class="filter-section">
-            <FilterSection />
-        </aside>-->
+        <aside class="filter-section">
+            <FilterSection @tags-changed="handleTagsChange" />
+        </aside>
         <main class="search-section">
-            <SearchBar /> <!--@search="handleSearch"/>--> 
-            <AppGrid :apps="paginatedApps" />
-            <Pagination :total-pages="totalPages" :current-page.sync="currentPage" @page-changed="handlePageChange" />
+            <!--<SearchBar />--> 
+            <SearchBar @search="handleSearch"/>
+            <AppGrid :apps="appsShown" />
+            <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
     </div>
 </template>
 
 <script>
-    //import FilterSection from './FilterSection.vue';
+    import axios from 'axios';
+    import FilterSection from './FliterSection.vue';
     import SearchBar from './SearchBar.vue';
     import AppGrid from './AppGrid.vue';
     import Pagination from './Pagination.vue';
-    /*import axios from 'axios';*/
 
     export default {
         name: 'Shop',
         components: {
-/*            FilterSection,*/
+            FilterSection,
             SearchBar,
             AppGrid,
             Pagination
         },
         data() {
             return {
-                apps: [
-                    { id: 1, image: 'https://via.placeholder.com/100', name: 'App 1', price: '$1.99' },
-                    { id: 2, image: 'https://via.placeholder.com/100', name: 'App 2', price: '$2.99' },
-                    { id: 3, image: 'https://via.placeholder.com/100', name: 'App 3', price: '$3.99' },
-                    { id: 4, image: 'https://via.placeholder.com/100', name: 'App 4', price: '$4.99' },
-                    { id: 5, image: 'https://via.placeholder.com/100', name: 'App 5', price: '$5.99' },
-                    { id: 6, image: 'https://via.placeholder.com/100', name: 'App 6', price: '$6.99' },
-                    { id: 7, image: 'https://via.placeholder.com/100', name: 'App 7', price: '$7.99' },
-                    { id: 8, image: 'https://via.placeholder.com/100', name: 'App 8', price: '$8.99' },
-                    { id: 9, image: 'https://via.placeholder.com/100', name: 'App 9', price: '$9.99' },
-                    { id: 10, image: 'https://via.placeholder.com/100', name: 'App 10', price: '$10.99' },
-                    { id: 11, image: 'https://via.placeholder.com/100', name: 'App 11', price: '$11.99' },
-                    { id: 12, image: 'https://via.placeholder.com/100', name: 'App 12', price: '$12.99' }
-                ], // ´æ´¢ËùÓĞÓ¦ÓÃĞÅÏ¢
-                currentPage: 1, // µ±Ç°Ò³Âë
-                totalPages: 2, // ×ÜÒ³Êı
-                appsPerPage: 10 // Ã¿Ò³ÏÔÊ¾µÄÓ¦ÓÃÊıÁ¿
-            }
-        },
-        computed: {
-            paginatedApps() {
-                // ¼ÆËãµ±Ç°Ò³ĞèÒªÕ¹Ê¾µÄÓ¦ÓÃ
-                const start = (this.currentPage - 1) * this.appsPerPage;
-                const end = start + this.appsPerPage;
-                return this.apps.slice(start, end);
+                apps: [], // åç«¯è¿”å›çš„åº”ç”¨åˆ—è¡¨
+                appsShown: [], // å½“å‰é¡µæ˜¾ç¤ºåº”ç”¨
+                selectedTags: [], // é€‰ä¸­çš„æ ‡ç­¾
+                Category:"All",//--------------æˆ‘è¿™å…ˆè®¾ç½®æˆAllï¼Œéœ€è¦è°ƒè¯•å¯ä»¥æ”¹æˆSocialæˆ–Officeï¼Œä½ ç­‰ä¹‹ååŠ ä¸Šå‰ç«¯çš„åˆ†ç±»æ¨¡å—åå†ä½œå…·ä½“ä¿®æ”¹
+                
+                currentPage: 1, // å½“å‰é¡µç ï¼Œåˆå§‹ä¸º1
+                totalPages: 1, // æ€»é¡µæ•°ï¼Œåˆå§‹ä¸º1
+                appsPerPage: 10 // æ¯é¡µæ˜¾ç¤ºçš„åº”ç”¨æ•°é‡
             }
         },
         methods: {
-            //fetchApps() {
-            //    // ´ÓÔ¶¶ËÊı¾İ¿â»ñÈ¡Ó¦ÓÃĞÅÏ¢
-            //    axios.get('https://api.example.com/apps')
-            //        .then(response => {
-            //            this.apps = response.data.apps;
-            //            this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-            //        })
-            //        .catch(error => {
-            //            console.error("Error fetching apps:", error);
-            //        });
-            //},
-            handleSearch(searchTerm) {
-                //// ¸ù¾İËÑË÷´Ê¹ıÂËÓ¦ÓÃ
-                //// ÕâÀï¼ÙÉèºó¶ËÖ§³ÖËÑË÷²éÑ¯£¬·µ»ØËÑË÷½á¹û
-                //axios.get(`https://api.example.com/apps?search=${searchTerm}`)
-                //    .then(response => {
-                //        this.apps = response.data.apps;
-                //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                //        this.currentPage = 1; // ÖØÖÃµ½µÚÒ»Ò³
-                //    })
-                //    .catch(error => {
-                //        console.error("Error searching apps:", error);
-                //    });
+            fetchApps() {
+                // ä»è¿œç«¯æ•°æ®åº“è·å–åº”ç”¨ä¿¡æ¯
+                axios.post('http://localhost:5118/api/application/getapplist', {
+                    Category: this.Category
+                    /*Page: this.currentPage */  
+                })
+                    .then(response => {
+                        this.apps = response.data.$values;
+                        console.log(2);
+                        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                        this.paginatedApps();
+                    })
+                    .catch(error => {
+                        console.error("Error fetching apps:", error);
+                    });
 
-                // ¸ù¾İËÑË÷´Ê¹ıÂËÓ¦ÓÃ£¨ÕâÀïÊÇÇ°¶ËÄ£Äâ¹ıÂË£©
-                const filteredApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
-                this.apps = filteredApps;
-                this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                this.currentPage = 1; // ÖØÖÃµ½µÚÒ»Ò³
             },
+            paginatedApps() {
+                // è®¡ç®—å½“å‰é¡µéœ€è¦å±•ç¤ºçš„åº”ç”¨
+                const start = (this.currentPage - 1) * this.appsPerPage;
+                const end = start + this.appsPerPage < this.apps.length ? start + this.appsPerPage : this.apps.length;
+                //console.log(Array.isArray(this.apps));
+                console.log('appsShown changed');
+                this.appsShown = this.apps.slice(start, end); // sliceä¸å–æœ€åä¸€ä¸ªå…ƒç´ 
+            },
+            AppsIsEmpty() {
+                // åˆ¤æ–­åº”ç”¨åˆ—è¡¨æ˜¯å¦ä¸ºç©º
+                return this.apps.length === 0;
+            },
+            TagsIsEmpty() {
+                // åˆ¤æ–­æ ‡ç­¾æ•°ç»„æ˜¯å¦ä¸ºç©º
+                return this.selectedTags.length === 0;
+            },
+            //handleSearch(searchTerm) {
+            //    // æ ¹æ®æœç´¢è¯è¿‡æ»¤åº”ç”¨
+            //    // è¿™é‡Œå‡è®¾åç«¯æ”¯æŒæœç´¢æŸ¥è¯¢ï¼Œè¿”å›æœç´¢ç»“æœ
+            //    //axios.get(`https://api.example.com/apps?search=${searchTerm}`)
+            //    //    .then(response => {
+            //    //        this.apps = response.data.apps;
+            //    //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+            //    //        this.currentPage = 1; // é‡ç½®åˆ°ç¬¬ä¸€é¡µ
+            //    //    })
+            //    //    .catch(error => {
+            //    //        console.error("Error searching apps:", error);
+            //    //    });
+
+            //    // æ ¹æ®æœç´¢è¯è¿‡æ»¤åº”ç”¨ï¼ˆè¿™é‡Œæ˜¯å‰ç«¯æ¨¡æ‹Ÿè¿‡æ»¤ï¼‰
+            //    const searchedApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            //    this.apps = searchedApps;
+            //    this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+            //    this.currentPage = 1; // é‡ç½®åˆ°ç¬¬ä¸€é¡µ
+            //},
             handlePageChange(newPage) {
+                // å¤„ç†å½“å‰é¡µå·çš„å˜åŒ–
                 this.currentPage = newPage;
+                /*this.fetchApps();*/
+                this.paginatedApps();
+            },
+            handleTagsChange(newTags) {
+                // å¤„ç†å½“å‰æ ‡ç­¾çš„å˜åŒ–
+                this.selectedTags = newTags;
+                /*æµ‹è¯•ï¼šå…ˆå–selectedTagsçš„ç¬¬ä¸€ä¸ªä½œä¸ºç­›é€‰*/
+                if (this.TagsIsEmpty()) {
+                    /*this.selectedTags.push('All');*/
+                    this.Category = 'All';
+                } else {
+                    this.Category = this.selectedTags[0];
+                }
+
+                this.fetchApps();
             }
         },
-        //created() {
-        //    // ³õÊ¼»ñÈ¡Ó¦ÓÃĞÅÏ¢
-        //    this.fetchApps();
-        //}
+        created() {
+            // åˆå§‹è·å–åº”ç”¨ä¿¡æ¯
+            console.log(1);
+            this.fetchApps();
+            /*this.paginatedApps();*/
+        }
     }
 </script>
 
@@ -107,15 +131,20 @@
         padding-top:10px;
         padding-bottom:10px;
 
-        background-color:aqua; /*²âÊÔÑÕÉ«*/
+        background-color:aqua; /*æµ‹è¯•é¢œè‰²*/
         height:100%;
         width:100%;
     }
 
-/*    .filter-section {
-        width: 27%;
+    .filter-section {
+        width: 30%;
+        height: 100%;
         margin-right: 20px;
-    }*/
+        border-radius: 10px;
+
+        margin-right: auto; /* å°†æœç´¢åŒºåŸŸå‘å³å¯¹é½ */
+        margin-left: 10px; /* å¢åŠ å³ä¾§è·ç¦» */
+    }
 
     .search-section {
         width: 70%;
@@ -123,12 +152,12 @@
         border-radius: 10px;
 
         display: flex;
-        flex-direction: column; /* ´¹Ö±²¼¾Ö */
-        justify-content: space-between; /* ½«ÄÚÈİ·Ö²¼ÔÚ¶¥²¿ºÍµ×²¿ */
+        flex-direction: column; /* å‚ç›´å¸ƒå±€ */
+        justify-content: space-between; /* å°†å†…å®¹åˆ†å¸ƒåœ¨é¡¶éƒ¨å’Œåº•éƒ¨ */
 
-        margin-left: auto; /* ½«ËÑË÷ÇøÓòÏòÓÒ¶ÔÆë */
-        margin-right: 20px; /* Ôö¼ÓÓÒ²à¾àÀë */
-        background-color: aquamarine; /*²âÊÔÑÕÉ«*/
+        margin-left: auto; /* å°†æœç´¢åŒºåŸŸå‘å³å¯¹é½ */
+        margin-right: 20px; /* å¢åŠ å³ä¾§è·ç¦» */
+        background-color: aquamarine; /*æµ‹è¯•é¢œè‰²*/
     }
 
     @media (max-width: 991px) {
@@ -137,9 +166,9 @@
             padding: 20px;
         }
 
-/*        .filter-section {
+        .filter-section {
             margin-bottom: 40px;
-        }*/
+        }
 
         .search-section {
             width: 100%;

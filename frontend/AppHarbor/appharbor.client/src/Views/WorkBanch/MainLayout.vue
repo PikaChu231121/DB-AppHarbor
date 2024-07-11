@@ -17,8 +17,8 @@
     import SideNavigation from './SideNavigation.vue'; // 侧边栏
     //import HomeView from './HomeView.vue'; // Example component
     import Shop from '../Shop/Shop.vue'; // Example component
-    import Favorites from '../Favorites.vue'; // Example component
-    //import PurseView from './PurseView.vue'; // Example component
+    import Favourites from '../Favourites.vue'; // Example component
+    import Wallet from '../Wallet.vue'; // Example component
     //import FriendsView from './FriendsView.vue'; // Example component
     import PersonalInformation from '../PersonalInformation.vue'; // Example component
 
@@ -28,14 +28,14 @@
             SideNavigation,
             //HomeView,
             Shop,
-            Favorites,
-            //PurseView,
+            Favourites,
+            Wallet,
             //FriendsView,
             PersonalInformation
         },
         data() {
             return {
-                currentView: 'HomeView' // Default view
+                currentView: 'Shop' // Default view
             };
         },
         methods: {
@@ -48,19 +48,19 @@
                         this.currentView = 'Shop';
                         break;
                     case 'Collection':
-                        this.currentView = 'Favorites';
+                        this.currentView = 'Favourites';
                         break;
-                    //case 'Purse':
-                    //    this.currentView = 'PurseView';
-                    //    break;
-                    //case 'Friends':
-                    //    this.currentView = 'FriendsView';
-                    //    break;
+                    case 'Purse':
+                       this.currentView = 'Wallet';
+                       break;
+                    case 'Friends':
+                        /*this.currentView = 'FriendsView';*/
+                        break;
                     case 'UserProfile':
                         this.currentView = 'PersonalInformation';
                         break;
                     default:
-                        this.currentView = 'HomeView';
+                        this.currentView = 'Shop';
                 }
             }
         }

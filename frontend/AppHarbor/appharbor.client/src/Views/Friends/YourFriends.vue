@@ -48,7 +48,7 @@ export default {
       searchQuery: '',
       selectedGroup: null,
       groups: [
-        {
+{
           name: 'Family',
           friends: [
             { id: 1, name: 'Friend 1', avatar: 'avatar1.png', description: 'Description 1' },
@@ -286,5 +286,5 @@ export default {
 
     .friend-description {
         color: var(--md-sys-color-on-surface-variant);
-    }
+}
 </style>

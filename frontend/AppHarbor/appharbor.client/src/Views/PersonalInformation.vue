@@ -1,12 +1,15 @@
 <template>
     <div class="profile-settings">
+        <alert-box :message="alertMessage"></alert-box>
         <h1>个人信息</h1>
         <div class="user-info">
             <div class="form-group">
                 <label>头像:</label>
                 <div class="avatar-edit">
-                    <img :src="user.avatar" alt="用户头像" class="avatar" />
-                    <button @click="triggerFileInput">修改</button>
+                    <img :src="getAvatarUrl(user.avatar)" alt="用户头像" class="avatar" />
+                    <div class="edit-icon">
+                        <img src="../../public/editing.png" @click="triggerFileInput" />
+                    </div>
                     <input type="file" ref="fileInput" @change="onFileChange" class="file-input" />
                 </div>
             </div>
@@ -19,18 +22,14 @@
                 <div class="nickname-edit">
                     <input type="text"
                            v-model="user.nickname"
-                           :disabled="!isEditing"
+                           @input="enableSaveButton"
                            class="nickname-input" />
-                    <button @click="toggleEdit">{{ isEditing ? '保存' : '修改' }}</button>
+                    <button :disabled="!isSaveEnabled" @click="save">保存修改</button>
                 </div>
             </div>
             <div class="form-group">
                 <label>注册时间:</label>
-                <p>{{ user.registerTime }}</p>
-            </div>
-            <div class="form-group">
-                <label>用户状态:</label>
-                <p>{{ user.status }}</p>
+                <p>{{ formattedRegisterTime }}</p>
             </div>
         </div>
     </div>
@@ -38,45 +37,53 @@
 
 <script>
     import axios from 'axios';
-    import global from "../global.js"
-    /*获取登入后的用户id
-    console.log(global.id);*/
+    import global from "../global.js";
+    import Cookies from 'js-cookie';
+    import AlertBox from './AlertBox.vue';
 
     export default {
         name: 'ProfileSettings',
+        components: {
+            AlertBox
+        },
         data() {
             return {
-                isEditing: false,
                 user: {
-                    id: 'NULL',
-                    nickname: 'NULL',
-                    avatar: 'NULL',
-                    registerTime: 'NULL',
-                    status: 'NULL'
-                }
-            };
+                    id: '',
+                    avatar: '',
+                    nickname: '',
+                    registerTime: ''
+                },
+                isSaveEnabled: false,
+                alertMessage: ''
+            }
         },
         mounted() {
-            this.user.id = this.$globalVar;
-            // this.fetchUserData();
+            // 读取 localStorage 中的 id
+            const storedId = localStorage.getItem('globalId');
+            this.isEditing = false;
+            if (global.id == '') {
+                this.user.id = storedId;
+                global.id = storedId; // 更新 global.js 中的 id
+            } else {
+                this.user.id = global.id;
+                localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
+            }
+            this.fetchUserInfo();
         },
         methods: {
-            /*fetchUserData() {
-                axios.post('http://localhost:5118/user/login', {this.user.id})
+            fetchUserInfo() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user = response.data;
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
                     });
-            },*/
-            toggleEdit() {
-                console.log(this.$globalVar);
-                if (this.isEditing) {
-                    // 这里可以添加保存更改的逻辑
-                    console.log('更改已保存:', this.user.nickname);
-                }
-                this.isEditing = !this.isEditing;
+            },
+            enableSaveButton() {
+                this.isSaveEnabled = true;
             },
             triggerFileInput() {
                 this.$refs.fileInput.click();
@@ -84,12 +91,58 @@
             onFileChange(event) {
                 const file = event.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.user.avatar = e.target.result;
+                    let formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('id', this.user.id);
+                    for (let pair of formData.entries()) {
+                        console.log(`${pair[0]}: ${pair[1]}`);
                     };
-                    reader.readAsDataURL(file);
+                    var token = Cookies.get('token');
+                    axios.post('http://localhost:5118/api/Image/upload-personal-image', formData)
+                        .then(response => {
+                            this.user.avatar = response.data.data;
+                            //console.log(this.user.avatar);
+                            this.showAlert('头像上传成功');
+                        })
+                        .catch(error => {
+                            console.error('Error uploading avatar:', error);
+                        });
                 }
+            },
+            save() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/updateUserNickname', {
+                    id: this.user.id,
+                    newnickname: this.user.nickname
+                })
+                    .then(response => {
+                        console.log('User nickname updated successfully');
+                        this.showAlert('昵称修改成功');
+                        this.isSaveEnabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error updating user nickname:', error);
+                    });
+            },
+            showAlert(message) {
+                this.alertMessage = message;
+                setTimeout(() => {
+                    this.alertMessage = '';
+                }, 3000);
+            },
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../public/default.png'; // 默认头像路径
+            }
+        },
+        computed: {
+            formattedRegisterTime() {
+                if (this.user.registerTime) {
+                    return this.user.registerTime.replace('T', ' ');
+                }
+                return '';
             }
         }
     };
@@ -126,7 +179,7 @@
     label {
         margin-bottom: 5px;
         font-weight: bold;
-        font-size:20px;
+        font-size: 20px;
         color: #333;
     }
 
@@ -150,6 +203,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        position: relative; /* 使阴影效果相对于父元素 */
     }
 
     .avatar {
@@ -172,7 +226,30 @@
         cursor: pointer;
     }
 
-    button:hover {
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    button:hover:enabled {
         background-color: #0056b3;
     }
+
+    .edit-icon {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .edit-icon img {
+        width: 24px; /* 调整图标大小 */
+        height: 24px; /* 调整图标大小 */
+        transition: box-shadow 0.3s ease, filter 0.3s ease;
+    }
+
+    .edit-icon:hover img {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        filter: brightness(1.1);
+    }
 </style>
+

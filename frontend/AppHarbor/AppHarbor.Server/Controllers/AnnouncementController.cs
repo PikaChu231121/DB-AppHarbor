@@ -6,7 +6,7 @@ using AppHarbor.Server.Models;
 namespace AppHarbor.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AnnouncementController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;

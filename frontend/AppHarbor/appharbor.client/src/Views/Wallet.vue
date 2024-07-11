@@ -1,125 +1,240 @@
 <template>
-    <div class="root-group-1">
+    <div class="Wallet">
         <div class="header">
-            <img src="../assets/logo.svg" class="avatar-header" />
+            <img src="../../public/avatar/default.png" class="avatar-header" />
         </div>
-        <img src="../assets/logo.svg" class="avatar-circle" />
+        <div class="avatar">
+            <img src="../../public/avatar/default.png" class="avatar-circle" />
+            <div class="user-info">
+                <p class="user-nickname">用户昵称{{ user_nickname }}</p>
+                <p class="user-id">用户ID：{{ user_id }}</p>
+            </div>
+        </div>
+
         <div class="auto-wrapper">
             <div class="info-box">
                 <p class="text">钱包余额</p>
                 <div class="button-row">
-                    <button type="button" class="button" @click="goToLogin">充值</button>
+                    <button type="button" class="button">充值</button>
                 </div>
             </div>
             <div class="info-box">
                 <p class="text">交易记录</p>
+                <div class="transaction-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>描述</th>
+                                <th>金额</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(transaction, index) in transactions" :key="index">
+                                <td>{{ transaction.time }}</td>
+                                <td>为用户 {{ transaction.receiverNickName }} 购买了 {{ transaction.applicationName }}</td>
+                                <td>{{ transaction.amount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="button-row">
-                    <button type="button" class="button">上一页</button>
-                    <button type="button" class="button">下一页</button>
+                    <button type="button" class="button" @click="prevPage">上一页</button>
+                    <button type="button" class="button" @click="nextPage">下一页</button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
-
+<script>
+import axios from 'axios';
+export default {
+    data() {
+        return {
+            user_nickname: '',
+            user_id: 9,
+            transactions: []
+        };
+    },
+    methods: {
+        fetchTransactions() {
+            axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
+                .then(response => {
+                    this.transactions = response.data.$values;
+                    console.info(this.transactions);
+                })
+                .catch(error => {
+                    console.error('Error fetching transactions:', error);
+                });
+        },
+        goToPay() {
+            // 充值按钮的点击事件处理逻辑
+        },
+        prevPage() {
+            // 上一页按钮的点击事件处理逻辑
+        },
+        nextPage() {
+            // 下一页按钮的点击事件处理逻辑
+        }
+    },
+    mounted() {
+        this.fetchTransactions(); // 页面加载时获取交易记录
+    }
+}
 </script>
 
 <style lang="scss" scoped>
-    .root-group-1 {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-    }
+.Wallet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
 
-    .header{
-        height: 14%;
-        width: 100%;
-        overflow: hidden; /* 裁剪超出部分 */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
-        position: relative;
-    }
+.header {
+    height: 14%;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    border-radius: 10px;
+}
 
-    .avatar-header {
-        width: 100%;
-        height: 200px;
-        // object-fit:cover /* 拉伸图像 */
-        overflow: clip; /* 裁剪超出部分 */
-        filter: blur(10px);
-    }
+.avatar-header {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    filter: blur(50px);
+}
 
-    .avatar-circle {
+.avatar {
+    display: flex;
+    flex-direction: row;
     position: absolute;
+    left: 5%;
+    top: 8%;
+    height: 100px;
+    width: 500px;
+}
+
+.avatar-circle {
+    position: relative;
     background-color: #ffffff;
-    left: 2.4%;
-    top: 13%;
-    width: 12.4%;
+    height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
-    // object-fit: cover;
-    z-index: 1; /* 使其置于其他内容之上 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.447);
+    z-index: 1;
+}
 
-    }
+.user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 4%;
+    margin-left: 5%;
+}
 
-    .auto-wrapper {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        height: auto;
-        margin: 2.4% 0 0;
-    }
+.user-nickname {
+    font-size: 40px;
+    height: 70%;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    text-shadow: 0 3px 15px rgb(255, 255, 255);
+}
+.user-id {
+    // font-size: 60px;
+    width: 100%;
+    margin-left: 5px;
+    height: 70%;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    text-shadow: 0 3px 15px rgb(255, 255, 255);
+}
+.auto-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    margin: 2.4% 0 0;
+}
 
-    .info-box{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: #d9d9d9;
-        padding: 2% 1% 2% 2%;
-        width: 49%;
-        height: 500px;
-        border-radius: 4px;
-    }
+.info-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #e9f2fb;
+    padding: 2% 1% 2% 2%;
+    width: 49%;
+    height: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    .text{
-        font-family: Inika;
-        font-size: 2rem;
-        color: #000000;
-        line-height: normal;
-        text-align: left;
-        vertical-align: top;
-        font-weight: 400;
-        white-space: normal;
-        margin-bottom: 1rem;
-    }
+.text {
+    font-family: Inika;
+    font-size: 2rem;
+    color: #000000;
+    line-height: normal;
+    text-align: left;
+    vertical-align: top;
+    font-weight: 400;
+    white-space: normal;
+    margin-bottom: 1rem;
+}
 
-    .button-row {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        margin-top: 1em;
-    }
+.transaction-table {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
 
-    .button {
-        width: 40%;
-        padding: 0.5em;
-        border: none;
-        border-radius: 4px;
-        background-color: #42b983;
-        color: white;
-        font-size: 1em;
-        cursor: pointer;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
 
-    .button:hover
-    {
-        background-color: #3ca676;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 阴影效果 */
-    }
+th, td {
+    padding: 0.5em;
+    border-bottom: 1px solid #ddd;
+}
 
+th {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+.button-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+}
+
+.button {
+    width: 40%;
+    padding: 0.5em;
+    border: none;
+    border-radius: 4px;
+    background-color: #42b983;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #3ca676;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
 </style>

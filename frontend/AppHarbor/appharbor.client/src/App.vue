@@ -3,21 +3,16 @@
 </script>
 
 <template>
-    <router-view/>
-<!--    <div id="app">
-        <UserLogin />
-    </div>-->
+    <router-view v-slot="{ Component }">
+        <keep-alive>
+            <component :is="Component" />
+        </keep-alive>
+    </router-view>
+    <!--<router-view/>-->
 </template>
 
 <script>
-/*    import UserLogin from './Views/UserLogin.vue';
 
-    export default {
-        name: 'App',
-        components: {
-            UserLogin
-        }
-    };*/
 </script>
 
 <style>

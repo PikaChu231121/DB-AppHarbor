@@ -1,5 +1,5 @@
 <template>
-    <div class="FliterSection">
+    <div class="FilterSection">
 
         <div class="filter">
             <!-- 标签筛选部分 -->
@@ -31,13 +31,13 @@
             </div>
         </div>
 
-        <div class="app-list">
+        <!--<div class="app-list">
             <div v-for="app in filteredApps" :key="app.id" class="app-item">
                 <h2>{{ app.name }}</h2>
                 <p>类别: {{ app.tags.join(', ') }}</p>
                 <p>价格: {{ app.price }} 元</p>
             </div>
-        </div>
+        </div>-->
     </div>
 </template>
 
@@ -46,17 +46,17 @@
         data() {
             return {
                 newTag: '',
-                selectedTags: ['Spring', 'Smart', 'Modern'], // 默认选中的标签
+                selectedTags: [], // 默认选中的标签
                 priceRange: [0, 100], // 价格范围初始值
                 minPrice: 0,
                 maxPrice: 100,
-                apps: [
-                    { id: 1, name: '应用A', tags: ['社交'], price: 0 },
-                    { id: 2, name: '应用B', tags: ['工具'], price: 50 },
-                    { id: 3, name: '应用C', tags: ['生活'], price: 30 },
-                    // 其他应用数据
-                ],
-                filteredApps: [],
+                //apps: [
+                //    { id: 1, name: '应用A', tags: ['社交'], price: 0 },
+                //    { id: 2, name: '应用B', tags: ['工具'], price: 50 },
+                //    { id: 3, name: '应用C', tags: ['生活'], price: 30 },
+                //    // 其他应用数据
+                //],
+                /*filteredApps: [],*/
             };
         },
         methods: {
@@ -64,24 +64,29 @@
                 if (this.newTag && !this.selectedTags.includes(this.newTag)) {
                     this.selectedTags.push(this.newTag);
                     this.newTag = '';
-                    this.applyFilters();
+                    /*this.applyFilters();*/
+                    this.emitTags(); /*向父组件传递标签信息*/
                 }
             },
             removeTag(tag) {
                 this.selectedTags = this.selectedTags.filter(t => t !== tag);
-                this.applyFilters();
+                /*this.applyFilters();*/
+                this.emitTags(); /*向父组件传递标签信息*/
             },
-            applyFilters() {
-                this.filteredApps = this.apps.filter(app => {
-                    const matchesTags = this.selectedTags.length === 0 || this.selectedTags.some(tag => app.tags.includes(tag));
-                    const matchesPrice = app.price >= this.priceRange[0] && app.price <= this.priceRange[1];
-                    return matchesTags && matchesPrice;
-                });
-            },
+            //applyFilters() {
+            //    this.filteredApps = this.apps.filter(app => {
+            //        const matchesTags = this.selectedTags.length === 0 || this.selectedTags.some(tag => app.tags.includes(tag));
+            //        const matchesPrice = app.price >= this.priceRange[0] && app.price <= this.priceRange[1];
+            //        return matchesTags && matchesPrice;
+            //    });
+            //},
+            emitTags() {
+                this.$emit('tags-changed', this.selectedTags);
+            }
         },
-        mounted() {
-            this.filteredApps = this.apps; // 初始化显示所有应用
-        },
+        //mounted() {
+        //    this.filteredApps = this.apps; // 初始化显示所有应用
+        //},
     };
 </script>
 
@@ -112,11 +117,15 @@
         background-color: #fbb1a2;
         padding-right: 20px; /* 增加右边距，给关闭按钮留空间 */
     }
-    .FliterSection{
-        width:180px;
-        background-color:antiquewhite;
-        text-align:center;
+    .FilterSection {
+        height: 100%;
+        width: 90%;
+        border-radius: 10px;
+        background-color: antiquewhite;
+        text-align: center;
 
+        display: flex;
+        flex-direction: column; /* 垂直布局 */
     }
     .close-btn {
         position: absolute;

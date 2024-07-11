@@ -43,6 +43,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<ReportReview> ReportReviews { get; set; }
 
+    public virtual DbSet<TokenId> TokenIds { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -539,6 +541,29 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey<ReportReview>(d => d.ReportId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("SYS_C008547");
+        });
+
+        modelBuilder.Entity<TokenId>(entity =>
+        {
+            entity.HasKey(e => e.Token).HasName("SYS_C008569");
+
+            entity.ToTable("token_id");
+
+            entity.Property(e => e.Token)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("token");
+            entity.Property(e => e.ExpireDate)
+                .HasColumnType("DATE")
+                .HasColumnName("expire_date");
+            entity.Property(e => e.Id)
+                .HasColumnType("NUMBER")
+                .HasColumnName("id");
+
+            entity.HasOne(d => d.IdNavigation).WithMany(p => p.TokenIds)
+                .HasForeignKey(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("SYS_C008570");
         });
 
         modelBuilder.Entity<User>(entity =>
