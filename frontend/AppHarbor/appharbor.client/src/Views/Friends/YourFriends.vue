@@ -47,36 +47,8 @@ export default {
     return {
       searchQuery: '',
       selectedGroup: null,
-      groups: [
-{
-          name: 'Family',
-          friends: [
-            { id: 1, name: 'Friend 1', avatar: 'avatar1.png', description: 'Description 1' },
-            { id: 2, name: 'Friend 2', avatar: 'avatar2.png', description: 'Description 2' },
-            { id: 7, name: 'Friend 7', avatar: 'avatar7.png', description: 'Description 7' },
-            { id: 8, name: 'Friend 8', avatar: 'avatar8.png', description: 'Description 8' },
-          ],
-        },
-        {
-          name: 'Bro',
-          friends: [
-            { id: 3, name: 'Friend 3', avatar: 'avatar3.png', description: 'Description 3' },
-            { id: 4, name: 'Friend 4', avatar: 'avatar4.png', description: 'Description 4' },
-          ],
-        },
-        {
-          name: 'Green',
-          friends: [
-            { id: 5, name: 'Friend 5', avatar: 'avatar5.png', description: 'Description 5' },
-            { id: 6, name: 'Friend 6', avatar: 'avatar6.png', description: 'Description 6' },
-          ],
-        },
-      ],
-      friends: [
-        { id: 1, avatar: 'avatar1.png', title: 'Title 1', description: 'Description 1' },
-        { id: 2, avatar: 'avatar2.png', title: 'Title 2', description: 'Description 2' },
-        { id: 3, avatar: 'avatar3.png', title: 'Title 3', description: 'Description 3' },
-      ],
+      groups: [ ],
+      friends: [ ],
     };
   },
   computed: {
