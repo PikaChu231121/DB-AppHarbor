@@ -30,6 +30,7 @@
         data() {
             return {
                 apps: [], // 后端返回的应用列表
+                searchedApps: [], // 从apps中搜索出来的分支
                 appsShown: [], // 当前页显示应用
                 selectedTags: [], // 选中的标签
                 Category:"All",//--------------我这先设置成All，需要调试可以改成Social或Office，你等之后加上前端的分类模块后再作具体修改
@@ -50,6 +51,7 @@
                         this.apps = response.data.$values;
                         console.log(2);
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                        this.searchedApps = this.apps; // 复制
                         this.paginatedApps();
                     })
                     .catch(error => {
@@ -60,10 +62,10 @@
             paginatedApps() {
                 // 计算当前页需要展示的应用
                 const start = (this.currentPage - 1) * this.appsPerPage;
-                const end = start + this.appsPerPage < this.apps.length ? start + this.appsPerPage : this.apps.length;
+                const end = start + this.appsPerPage < this.searchedApps.length ? start + this.appsPerPage : this.searchedApps.length;
                 //console.log(Array.isArray(this.apps));
                 console.log('appsShown changed');
-                this.appsShown = this.apps.slice(start, end); // slice不取最后一个元素
+                this.appsShown = this.searchedApps.slice(start, end); // slice不取最后一个元素
             },
             AppsIsEmpty() {
                 // 判断应用列表是否为空
@@ -73,25 +75,37 @@
                 // 判断标签数组是否为空
                 return this.selectedTags.length === 0;
             },
-            //handleSearch(searchTerm) {
-            //    // 根据搜索词过滤应用
-            //    // 这里假设后端支持搜索查询，返回搜索结果
-            //    //axios.get(`https://api.example.com/apps?search=${searchTerm}`)
-            //    //    .then(response => {
-            //    //        this.apps = response.data.apps;
-            //    //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-            //    //        this.currentPage = 1; // 重置到第一页
-            //    //    })
-            //    //    .catch(error => {
-            //    //        console.error("Error searching apps:", error);
-            //    //    });
+            handleSearch(searchTerm) {
+                // 根据搜索词过滤应用
+                // 这里假设后端支持搜索查询，返回搜索结果
+                //axios.get(`https://api.example.com/apps?search=${searchTerm}`)
+                //    .then(response => {
+                //        this.apps = response.data.apps;
+                //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                //        this.currentPage = 1; // 重置到第一页
+                //    })
+                //    .catch(error => {
+                //        console.error("Error searching apps:", error);
+                //    });
 
-            //    // 根据搜索词过滤应用（这里是前端模拟过滤）
-            //    const searchedApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
-            //    this.apps = searchedApps;
-            //    this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-            //    this.currentPage = 1; // 重置到第一页
-            //},
+                //// 根据搜索词过滤应用（这里是前端模拟过滤）
+                //const searchedApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                //this.apps = searchedApps;
+                //this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                //this.currentPage = 1; // 重置到第一页
+
+                if (searchTerm.trim() === "") {
+                    // 搜索词为空时，重新获取所有应用
+                    this.fetchApps();
+                } else {
+                    // 根据搜索词过滤应用
+                    const searchResults = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                    this.searchedApps = searchResults;
+                    this.totalPages = Math.ceil(this.searchedApps.length / this.appsPerPage);
+                    this.currentPage = 1; // 重置到第一页
+                    this.paginatedApps();
+                }
+            },
             handlePageChange(newPage) {
                 // 处理当前页号的变化
                 this.currentPage = newPage;
