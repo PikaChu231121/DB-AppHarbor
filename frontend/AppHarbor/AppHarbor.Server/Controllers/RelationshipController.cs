@@ -25,6 +25,35 @@ namespace AppHarbor.Server.Controllers
         }
 
 
+        [HttpPost("findall")]
+        public IActionResult FindMySubscriber([FromForm] TokenRequest request)
+        {
+            var query = from user in _dbContext.Relationships
+                        join friend in _dbContext.Users on user.User2Id equals friend.Id
+                        join token in _dbContext.TokenIds on request.Token equals token.Token
+                        where user.User1Id == token.Id
+                        select new
+                        {
+                            id = friend.Id,
+                            nickname = friend.Nickname,
+                            avatar = friend.Avatar,
+                            state = friend.State
+                        };
+
+            var result = query.ToList();
+
+            if (!result.Any())
+            {
+                return NotFound(new { Msg = "No matching records found" });
+            }
+
+            return Ok(new
+            {
+                Msg = "successful!",
+                data = result
+            });
+        }
+
         [HttpPost("findmysubscriber")]
         public IActionResult FindMySubscriber([FromForm] TokenRequest request, [FromForm] string relationship)
         {
