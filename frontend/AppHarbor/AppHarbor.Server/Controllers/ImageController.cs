@@ -75,6 +75,31 @@ namespace AppHarbor.Server.Controllers
             return Ok(new { Data = relativePath.Replace("\\", "/"), Code = 2001, Msg = "Succeeded" });
         }
 
+        [HttpPost("upload-personal-image")]
+        public IActionResult UploadPersonalImage([FromForm] IFormFile file,
+                                                [FromForm] decimal id,
+                                                [FromServices] IWebHostEnvironment env)
+        {
+            var checkResult = CheckImage(file);
+            if (checkResult is BadRequestObjectResult)
+            {
+                return checkResult;
+            }
+
+            var user = _dbContext.Users.Find(id);
+            if (user == null)
+            {
+                return BadRequest(new { Code = 1003, Msg = "User Not Found" });
+            }
+
+            string guid = Guid.NewGuid().ToString("N");
+            string relativePath = SaveImage(file, env, guid);
+            user.Avatar = relativePath;
+            _dbContext.Users.Update(user);
+            _dbContext.SaveChanges();
+            return Ok(new { Data = relativePath, Code = 2001, Msg = "Succeeded" });
+        }
+
         [HttpPost("upload_app")]
         public IActionResult UploadAppImage(IFormFile file, decimal id, [FromServices] IWebHostEnvironment env)
         {
