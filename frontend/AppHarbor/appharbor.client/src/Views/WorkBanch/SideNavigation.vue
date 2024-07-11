@@ -45,6 +45,7 @@
         },
         data() {
             return {
+                pastSelectedItem: null,
                 selectedItem: null,
                 userProfileActive: false,
                 isLoading: false,
@@ -64,11 +65,15 @@
                     this.isLoading = true;
                     setTimeout(() => {
                         this.isLoading = false;
+                        //this.pastSelectedItem = this.selectedItem;
                         this.selectedItem = index;
                         this.showFriendsPopup = false;
                         this.$emit('update-content', this.menuItems[index].label);
                     }, 2000);
                 } else if (this.menuItems[index].label === 'Friends') {
+                    if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.selectedItem].label)) {
+                        this.pastSelectedItem = this.selectedItem;
+                    }
                     this.selectedItem = index;
                     this.$emit('update-content', this.menuItems[index].label);
                     this.toggleFriendsPopup();
@@ -88,6 +93,9 @@
                 if (!this.showFriendsPopup) {
                     this.selectedItem = null;
                     this.userProfileActive = false;
+                    if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                        this.selectedItem = this.pastSelectedItem;
+                    }
                 }
             },
             handlePopupClick(action) {
@@ -97,6 +105,10 @@
             handleClickOutside(event) {
                 if (this.showFriendsPopup && !this.$refs.friendsPopup.contains(event.target) && !this.$el.contains(event.target)) {
                     this.showFriendsPopup = false;
+                    this.selectedItem = null;
+                    if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                        this.selectedItem = this.pastSelectedItem;
+                    }
                 }
             }
         },
