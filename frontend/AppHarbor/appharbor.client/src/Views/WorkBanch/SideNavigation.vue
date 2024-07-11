@@ -7,7 +7,7 @@
                     <img src="@/assets/A.png" alt="Company Logo" class="logo" />
                 </header>
                 <ul class="menu-items">
-                    <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
+                    <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)" >
                         <img :src="selectedItem === index ? item.activeIcon : item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
                     </li>
                 </ul>
@@ -18,7 +18,7 @@
         </nav>
         <!-- Friends Popup -->
         <transition name="popup">
-            <div v-if="showFriendsPopup" class="friends-popup">
+            <div v-if="showFriendsPopup" class="friends-popup" ref="friendsPopup">
                 <button class="popup-item1" @click="handlePopupClick('Your friends')">
                     <img src="../../assets/yourfriends.svg" alt="Your friends" class="popup-icon" />
                     <span>  &nbsp;&nbsp;  Your friends</span>
@@ -68,6 +68,7 @@
                     setTimeout(() => {
                         this.isLoading = false; // 几秒后停止加载动画
                         this.selectedItem = index; // 选择Purse菜单项
+                        this.showFriendsPopup = false;
                         this.$emit('update-content', this.menuItems[index].label);
 
                     }, 2000); // 设置加载动画持续时间为2秒
@@ -88,9 +89,9 @@
             },
             toggleFriendsPopup() {
                 this.showFriendsPopup = !this.showFriendsPopup;
-                if (this.showFriendsPopup == false) {
-                    this.selectedItem = null; // Deselect any menu item
-                    this.userProfileActive = false; // Deselect user profile when the popup is closed
+                if (!this.showFriendsPopup) {
+                    this.selectedItem = null;
+                    this.userProfileActive = false;
                 }
             },
             handlePopupClick(action) {
