@@ -49,7 +49,7 @@
                 })
                     .then(response => {
                         this.apps = response.data.$values;
-                        console.log(2);
+                        //console.log(2);
                         this.searchedApps=this.apps;;
                         this.totalPages = Math.ceil(this.searchedApps.length / this.appsPerPage);
                         this.paginatedApps();
@@ -78,26 +78,34 @@
             handleSearch(searchTerm) {
                 // 根据搜索词过滤应用
                 // 这里假设后端支持搜索查询，返回搜索结果
-                //axios.get(`https://api.example.com/apps?search=${searchTerm}`)
-                //    .then(response => {
-                //        this.apps = response.data;
-                //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                //        this.currentPage = 1; // 重置到第一页
-                //    })
-                //    .catch(error => {
-                //        console.error("Error searching apps:", error);
-                //    });
+                axios.post('http://localhost:5118/api/application/searchapplist', {
+                    Category: this.Category
 
-                if (searchTerm.trim() === "") {
-                    // 搜索词为空时，重新获取所有应用
-                    this.fetchApps();
-                } else {
-                    // 根据搜索词过滤应用
-                    const searchResults = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
-                    this.searchedApps = searchResults;
-                    this.totalPages = Math.ceil(this.searchedApps.length / this.appsPerPage);
-                    this.currentPage = 1; // 重置到第一页
-                    this.paginatedApps();
+                    Price_min:
+
+                    Price_max:
+
+                    Content:
+                })
+                    .then(response => {
+                        this.apps = response.data.$values;
+                        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                        this.currentPage = 1; // 重置到第一页
+                    })
+                    .catch(error => {
+                        console.error("Error searching apps:", error);
+                    });
+
+                //if (searchTerm.trim() === "") {
+                //    // 搜索词为空时，重新获取所有应用
+                //    this.fetchApps();
+                //} else {
+                //    // 根据搜索词过滤应用
+                //    const searchResults = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                //    this.searchedApps = searchResults;
+                //    this.totalPages = Math.ceil(this.searchedApps.length / this.appsPerPage);
+                //    this.currentPage = 1; // 重置到第一页
+                //    this.paginatedApps();
                 }
             },
             handlePageChange(newPage) {
@@ -122,7 +130,7 @@
         },
         created() {
             // 初始获取应用信息
-            console.log(1);
+            //console.log(1);
             this.fetchApps();
             /*this.paginatedApps();*/
         }
