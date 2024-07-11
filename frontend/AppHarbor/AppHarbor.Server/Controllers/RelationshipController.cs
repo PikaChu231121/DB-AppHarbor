@@ -56,11 +56,12 @@ namespace AppHarbor.Server.Controllers
 
 
         [HttpPost("findmyfollower")]
-        public IActionResult FindMyFollower([FromForm] decimal Id)
+        public IActionResult FindMyFollower([FromForm] TokenRequest request)
         {
             var query = from user in _dbContext.Relationships
                         join friend in _dbContext.Users on user.User1Id equals friend.Id
-                        where user.User2Id == Id
+                        join token in _dbContext.TokenIds on request.Token equals token.Token
+                        where user.User2Id == token.Id
                         select new
                         {
                             id = friend.Id,
