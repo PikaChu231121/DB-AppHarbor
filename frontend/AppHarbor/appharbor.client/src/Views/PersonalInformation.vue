@@ -1,10 +1,12 @@
 <template>
     <div class="profile-settings">
+        <alert-box :message="alertMessage"></alert-box>
         <h1>个人信息</h1>
         <div class="user-info">
             <div class="form-group">
+                <label>头像:</label>
                 <div class="avatar-edit">
-                    <img :src="user.avatar" alt="用户头像" class="avatar" />
+                    <img :src="getAvatarUrl(user.avatar)" alt="用户头像" class="avatar" />
                     <div class="edit-icon">
                         <img src="../../public/editing.png" @click="triggerFileInput" />
                     </div>
@@ -22,24 +24,28 @@
                            v-model="user.nickname"
                            @input="enableSaveButton"
                            class="nickname-input" />
+                    <button :disabled="!isSaveEnabled" @click="save">保存修改</button>
                 </div>
             </div>
             <div class="form-group">
                 <label>注册时间:</label>
-                <p>{{ user.registerTime }}</p>
+                <p>{{ formattedRegisterTime }}</p>
             </div>
-            <button :disabled="!isSaveEnabled" @click="save">保存修改</button>
         </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-    import global from "../global.js"
+    import global from "../global.js";
     import Cookies from 'js-cookie';
+    import AlertBox from './AlertBox.vue';
 
     export default {
         name: 'ProfileSettings',
+        components: {
+            AlertBox
+        },
         data() {
             return {
                 user: {
@@ -48,7 +54,8 @@
                     nickname: '',
                     registerTime: ''
                 },
-                isSaveEnabled: false
+                isSaveEnabled: false,
+                alertMessage: ''
             }
         },
         mounted() {
@@ -84,38 +91,58 @@
             onFileChange(event) {
                 const file = event.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.user.avatar = e.target.result;
-                        this.enableSaveButton();
+                    let formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('id', this.user.id);
+                    for (let pair of formData.entries()) {
+                        console.log(`${pair[0]}: ${pair[1]}`);
                     };
-                    reader.readAsDataURL(file);
+                    var token = Cookies.get('token');
+                    axios.post('http://localhost:5118/api/Image/upload-personal-image', formData)
+                        .then(response => {
+                            this.user.avatar = response.data.data;
+                            //console.log(this.user.avatar);
+                            this.showAlert('头像上传成功');
+                        })
+                        .catch(error => {
+                            console.error('Error uploading avatar:', error);
+                        });
                 }
             },
             save() {
                 var token = Cookies.get('token');
-               /* axios.post('http://localhost:5118/api/user/updateUserAvatar', {
-                    id: this.user.id,
-                    newavatar: this.user.avatar,
-                })
-                    .then(response => {
-                        console.log('User avatar updated successfully');
-                        this.isSaveEnabled = false;
-                    })
-                    .catch(error => {
-                        console.error('Error updating user avatar:', error);
-                    });*/
                 axios.post('http://localhost:5118/api/user/updateUserNickname', {
-                id: this.user.id,
-                newnickname: this.user.nickname
+                    id: this.user.id,
+                    newnickname: this.user.nickname
                 })
                     .then(response => {
                         console.log('User nickname updated successfully');
+                        this.showAlert('昵称修改成功');
                         this.isSaveEnabled = false;
                     })
                     .catch(error => {
                         console.error('Error updating user nickname:', error);
                     });
+            },
+            showAlert(message) {
+                this.alertMessage = message;
+                setTimeout(() => {
+                    this.alertMessage = '';
+                }, 3000);
+            },
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../public/avatar/default.png'; // 默认头像路径
+            }
+        },
+        computed: {
+            formattedRegisterTime() {
+                if (this.user.registerTime) {
+                    return this.user.registerTime.replace('T', ' ');
+                }
+                return '';
             }
         }
     };
@@ -176,6 +203,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        position: relative; /* 使阴影效果相对于父元素 */
     }
 
     .avatar {
@@ -198,17 +226,30 @@
         cursor: pointer;
     }
 
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 
-        button:hover:enabled {
-            background-color: #0056b3;
-        }
+    button:hover:enabled {
+        background-color: #0056b3;
+    }
+
+    .edit-icon {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
 
     .edit-icon img {
         width: 24px; /* 调整图标大小 */
         height: 24px; /* 调整图标大小 */
+        transition: box-shadow 0.3s ease, filter 0.3s ease;
+    }
+
+    .edit-icon:hover img {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        filter: brightness(1.1);
     }
 </style>
+
