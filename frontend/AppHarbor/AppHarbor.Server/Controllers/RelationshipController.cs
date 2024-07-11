@@ -90,40 +90,52 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("addfriend")]
-        public IActionResult AddFriend([FromForm] decimal myId, [FromForm] decimal friendId, [FromForm] string Relationship)
+        public IActionResult AddFriend([FromForm] TokenRequest request, [FromForm] decimal friendId, [FromForm] string Relationship)
         {
-            var user = _dbContext.Users.Find(friendId);
-            if (user == null)
+            
+            if (string.IsNullOrEmpty(request.Token))
             {
-                return NotFound(new {
-                    Data = 2,
-                    Msg = "user not found" });
-            }
-            if (user.State == "banned")
-            {
-                return NotFound(new {
-                    Data = 3,
-                    Msg = "user state abnormal" });
+                return Unauthorized("No token provided.");
             }
             else
             {
-                var friend = new Relationship()
+                var myID = _dbContext.TokenIds.Find(request.Token);
+                var user = _dbContext.Users.Find(myID.Id);
+                if (user == null)
                 {
-                    User1Id = myId,
-                    User2Id = user.Id,
-                    CreateTime = DateTime.Now,
-                    Relationship1 = Relationship
-                };
-                _dbContext.Relationships.Add(friend);
-                _dbContext.SaveChanges();
-                return Ok(new
+                    return NotFound(new
+                    {
+                        Data = 2,
+                        Msg = "user not found"
+                    });
+                }
+                if (user.State == "banned")
                 {
-                    data = 1,
-                    Msg = friend
-                });
+                    return NotFound(new
+                    {
+                        Data = 3,
+                        Msg = "user state abnormal"
+                    });
+                }
+                else
+                {
+                    var friend = new Relationship()
+                    {
+                        User1Id = myID.Id,
+                        User2Id = friendId,
+                        CreateTime = DateTime.Now,
+                        Relationship1 = Relationship
+                    };
+                    _dbContext.Relationships.Add(friend);
+                    _dbContext.SaveChanges();
+                    return Ok(new
+                    {
+                        data = 1,
+                        Msg = friend
+                    });
+                }
             }
         }
-
     }
 }
 
