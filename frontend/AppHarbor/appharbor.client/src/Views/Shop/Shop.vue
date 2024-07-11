@@ -1,7 +1,7 @@
 <template>
     <div class="app-search">
         <aside class="filter-section">
-            <FilterSection @tags-changed="handleTagsChange" />
+            <FilterSection @tags-changed="handleTagsChange" @price-range-updated = "handlePriceChange" />
         </aside>
         <main class="search-section">
             <!--<SearchBar />--> 
@@ -30,9 +30,12 @@
         data() {
             return {
                 apps: [], // 后端返回的应用列表
+                /*searchedApps: [],*/
                 appsShown: [], // 当前页显示应用
                 selectedTags: [], // 选中的标签
-                Category:"All",//--------------我这先设置成All，需要调试可以改成Social或Office，你等之后加上前端的分类模块后再作具体修改
+                Category: "All", // 检索属性
+                priceRange: [0,100],
+                searchQuery: "",
                 
                 currentPage: 1, // 当前页码，初始为1
                 totalPages: 1, // 总页数，初始为1
@@ -41,21 +44,45 @@
         },
         methods: {
             fetchApps() {
-                // 从远端数据库获取应用信息
-                axios.post('http://localhost:5118/api/application/getapplist', {
-                    Category: this.Category
-                    /*Page: this.currentPage */  
+                console.log(this.searchQuery);
+                console.log(this.Category);
+                console.log(this.priceRange[0]);
+                console.log(this.priceRange[1]);
+                //// 从远端数据库获取应用信息
+                //axios.post('http://localhost:5118/api/application/getapplist', {
+                //    Category: this.Category
+                //    /*Page: this.currentPage */  
+                //})
+                //    .then(response => {
+                //        this.apps = response.data.$values;
+                //        //console.log(2);
+                //        /*this.searchedApps=this.apps;*/
+                //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                //        this.paginatedApps();
+                //    })
+                //    .catch(error => {
+                //        console.error("Error fetching apps:", error);
+                //    });
+                axios.post('http://localhost:5118/api/application/searchapplist', {
+                    Category: this.Category,
+
+                    Price_min: this.priceRange[0],
+
+                    Price_max: this.priceRange[1],
+
+                    Content: this.searchQuery
+
                 })
                     .then(response => {
                         this.apps = response.data.$values;
-                        console.log(2);
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                        this.currentPage = 1; // 重置到第一页
                         this.paginatedApps();
                     })
                     .catch(error => {
-                        console.error("Error fetching apps:", error);
+                        console.error("Error searching apps:", error);
                     });
-
+                console.log(this.apps.length);
             },
             paginatedApps() {
                 // 计算当前页需要展示的应用
@@ -73,25 +100,48 @@
                 // 判断标签数组是否为空
                 return this.selectedTags.length === 0;
             },
-            //handleSearch(searchTerm) {
-            //    // 根据搜索词过滤应用
-            //    // 这里假设后端支持搜索查询，返回搜索结果
-            //    //axios.get(`https://api.example.com/apps?search=${searchTerm}`)
-            //    //    .then(response => {
-            //    //        this.apps = response.data.apps;
-            //    //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-            //    //        this.currentPage = 1; // 重置到第一页
-            //    //    })
-            //    //    .catch(error => {
-            //    //        console.error("Error searching apps:", error);
-            //    //    });
+            handleSearch(searchTerm) {
 
-            //    // 根据搜索词过滤应用（这里是前端模拟过滤）
-            //    const searchedApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
-            //    this.apps = searchedApps;
-            //    this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-            //    this.currentPage = 1; // 重置到第一页
-            //},
+                this.searchQuery = searchTerm;
+                //console.log(this.searchQuery);
+                //console.log(this.Category);
+                //console.log(this.priceRange[0]);
+                //console.log(this.priceRange[1]);
+                //console.log(this.apps.length);
+                // 根据搜索词过滤应用
+                // 这里假设后端支持搜索查询，返回搜索结果
+                //axios.post('http://localhost:5118/api/application/searchapplist', {
+                //    Category: this.Category,
+
+                //    Price_min: this.priceRange[0],
+
+                //    Price_max: this.priceRange[1],
+
+                //    Content: this.searchQuery
+
+                //})
+                //    .then(response => {
+                //        this.apps = response.data.$values;
+                //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                //        this.currentPage = 1; // 重置到第一页
+                //        this.paginatedApps();
+                //    })
+                //    .catch(error => {
+                //        console.error("Error searching apps:", error);
+                //    });
+                //if (searchTerm.trim() === "") {
+                //    // 搜索词为空时，重新获取所有应用
+                //    this.fetchApps();
+                //} else {
+                //    // 根据搜索词过滤应用
+                //    const searchResults = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                //    this.searchedApps = searchResults;
+                //    this.totalPages = Math.ceil(this.searchedApps.length / this.appsPerPage);
+                //    this.currentPage = 1; // 重置到第一页
+                //    this.paginatedApps();
+                //}
+                this.fetchApps();
+            },
             handlePageChange(newPage) {
                 // 处理当前页号的变化
                 this.currentPage = newPage;
@@ -110,11 +160,18 @@
                 }
 
                 this.fetchApps();
+            },
+            handlePriceChange(newRange) {
+                this.priceRange = newRange;
+                console.log('priceRange has changed');
+                //console.log(this.priceRange[0]);
+                //console.log(this.priceRange[1]);
+                this.fetchApps();
             }
         },
         created() {
             // 初始获取应用信息
-            console.log(1);
+            //console.log(1);
             this.fetchApps();
             /*this.paginatedApps();*/
         }

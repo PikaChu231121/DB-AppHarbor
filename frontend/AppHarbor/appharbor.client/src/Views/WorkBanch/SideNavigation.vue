@@ -6,14 +6,17 @@
                 <header class="logo-container">
                     <img src="@/assets/A.png" alt="Company Logo" class="logo" />
                 </header>
+
                 <ul class="menu-items">
                     <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
                         <img :src="selectedItem === index ? item.activeIcon : item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
                     </li>
                 </ul>
+
                 <footer class="user-profile" :class="{ active: userProfileActive }" @click="selectUserProfile">
                     <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f2f0cc5253685e466269ae8336d8d72a3d274305a41c2aa06f39552802b5c83d?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="User Profile" class="profile-icon" />
                 </footer>
+
             </div>
         </nav>
         <!-- Friends Popup -->
@@ -64,11 +67,11 @@
                 menuItems: [
                     { label: 'Home', icon: '../src/assets/home.svg', activeIcon: '../src/assets/homeActive.svg' },
                     { label: 'Shop', icon: '../src/assets/shop.svg', activeIcon: '../src/assets/shopActive.svg' },
-                    { label: 'Collection', icon: '../src/assets/collection.svg', activeIcon: '../src/assets/collectionActive.svg' },
-                    { label: 'Purse', icon: '../src/assets/purse.svg', activeIcon: '../src/assets/purseActive.svg' },
-                    { label: 'Friends', icon: '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' }
+                    { label: 'Favourites', icon: '../src/assets/collection.svg', activeIcon: '../src/assets/collectionActive.svg' },
+                    { label: 'Wallet', icon: '../src/assets/purse.svg', activeIcon: '../src/assets/purseActive.svg' },
+                    { label: 'Friends', icon:  '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' }
                 ],
-            };
+            }
         },
         methods: {
             selectItem(index) {
@@ -267,7 +270,7 @@
 
     .user-profile-popup {
         position: absolute;
-        top: 100px; /* 根据需要调整位置 */
+        top: 100px; /* 鏍规嵁闇�瑕佽皟鏁翠綅缃?*/
         left: 90px;
         background-color: #fbeaea;
         border-radius: 12px;

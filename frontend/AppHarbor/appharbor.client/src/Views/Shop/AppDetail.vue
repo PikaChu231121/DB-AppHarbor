@@ -29,7 +29,9 @@
 </template>
 
 <script>
+    import axios from 'axios';
     export default {
+
         data() {
             return {
                 app: null,
@@ -50,15 +52,30 @@
             },
             fetchAppDetails(appId) {
                 // 从API或其他地方获取应用详细信息
+                axios.post('http://localhost:5118/api/application/getappdetail', {
+                    Id: appId
+                    /*Page: this.currentPage */
+                })
+                    .then(response => {
+                        this.app = response.data;
+                        //console.log(this.app.price);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching apps:", error);
+                    });
+                
+
+                
                 // 这里简单地模拟一个应用详情
-                this.app = {
-                    id: appId,
-                    name: 'Keep',
-                    image: '@/assets/A.png',
-                    price: '$70.00',
-                    category: '健身',
-                    description: '「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！'
-                };
+                //this.app = {
+                //    id: appId,
+                //    name: 'Keep',
+                //    image: '@/assets/A.png',
+                //    price: '$70.00',
+                //    category: '健身',
+                //    description: '「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！'
+                //};
+
             },
             goBack() {
                 this.$router.push('/WorkBanchPage');
