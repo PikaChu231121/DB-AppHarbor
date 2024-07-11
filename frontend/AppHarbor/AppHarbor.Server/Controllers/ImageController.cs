@@ -76,8 +76,8 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("upload-personal-image")]
-        public IActionResult UploadPersonalImage(IFormFile file,
-                                                decimal id,
+        public IActionResult UploadPersonalImage([FromForm] IFormFile file,
+                                                [FromForm] decimal id,
                                                 [FromServices] IWebHostEnvironment env)
         {
             var checkResult = CheckImage(file);
@@ -97,7 +97,6 @@ namespace AppHarbor.Server.Controllers
             user.Avatar = relativePath;
             _dbContext.Users.Update(user);
             _dbContext.SaveChanges();
-
             return Ok(new { Data = relativePath, Code = 2001, Msg = "Succeeded" });
         }
 
