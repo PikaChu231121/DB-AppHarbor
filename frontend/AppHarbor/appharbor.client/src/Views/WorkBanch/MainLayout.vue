@@ -53,9 +53,9 @@
                     case 'Purse':
                        this.currentView = 'Wallet';
                        break;
-                    //case 'Friends':
-                    //    this.currentView = 'FriendsView';
-                    //    break;
+                    case 'Friends':
+                        /*this.currentView = 'FriendsView';*/
+                        break;
                     case 'UserProfile':
                         this.currentView = 'PersonalInformation';
                         break;
