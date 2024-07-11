@@ -1,20 +1,20 @@
 <template>
     <div class="Wallet">
         <div class="header">
-            <img src="../../public/avatar/default.png" class="avatar-header" />
+            <img src="../../public/default.png" class="avatar-header" />
             <!-- TODO: 如何通过 url 从服务器获取图片 -->
             <!-- <img :src="avatar_url" class="avatar-header" />   -->
-        </div>
-        <div class="avatar">
-            <img src="../../public/avatar/default.png" class="avatar-circle" />
-            <!-- TODO: 如何通过 url 从服务器获取图片 -->
-            <!-- <img :src="avatar_url" class="avatar-circle" />   -->
-            <div class="user-info">
-                <p class="user-nickname">用户昵称：{{ user_nickname }}</p>
-                <p class="user-id">用户ID：{{ user_id }}</p>
+        
+            <div class="avatar">
+                <img src="../../public/default.png" class="avatar-circle" />
+                <!-- TODO: 如何通过 url 从服务器获取图片 -->
+                <!-- <img :src="avatar_url" class="avatar-circle" />   -->
+                <div class="user-info">
+                    <p class="user-nickname">用户昵称：{{ user_nickname }}</p>
+                    <p class="user-id">用户ID：{{ user_id }}</p>
+                </div>
             </div>
         </div>
-
         <div class="auto-wrapper">
             <div class="info-box">
                 <p class="text">钱包余额</p>
@@ -133,10 +133,11 @@ export default {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
 }
 
 .header {
-    height: 14%;
+    min-height: 150px;
     width: 100%;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -156,7 +157,7 @@ export default {
     flex-direction: row;
     position: absolute;
     left: 5%;
-    top: 8%;
+    top: 15%;
     height: 100px;
     width: 500px;
 }
@@ -203,8 +204,8 @@ export default {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: auto;
-    margin: 2.4% 0 0;
+    height: 100%;
+    margin: 10px 10px 3px;
 }
 
 .info-box {
@@ -212,9 +213,9 @@ export default {
     flex-direction: column;
     align-items: center;
     background: #e9f2fb;
-    padding: 2% 1% 2% 2%;
-    width: 49%;
-    height: 500px;
+    padding: 2% 5% 2% 5%;
+    width: calc(50% - 8px);
+    height: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
