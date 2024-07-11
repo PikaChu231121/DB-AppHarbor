@@ -19,6 +19,8 @@
     import Shop from '../Shop/Shop.vue'; // Example component
     import Favourites from '../Favourites.vue'; // Example component
     import Wallet from '../Wallet.vue'; // Example component
+    import YourFriends from '../Friends/YourFriends.vue'; // Example component
+    //import FriendsView from './FriendsView.vue'; // Example component
     //import FriendsView from './FriendsView.vue'; // Example component
     import PersonalInformation from '../PersonalInformation.vue'; // Example component
 
@@ -30,7 +32,7 @@
             Shop,
             Favourites,
             Wallet,
-            //FriendsView,
+            YourFriends,
             PersonalInformation
         },
         data() {
@@ -53,8 +55,8 @@
                     case 'Purse':
                        this.currentView = 'Wallet';
                        break;
-                    case 'Friends':
-                        /*this.currentView = 'FriendsView';*/
+                    case 'Your friends':
+                        this.currentView = 'YourFriends';
                         break;
                     case 'UserProfile':
                         this.currentView = 'PersonalInformation';

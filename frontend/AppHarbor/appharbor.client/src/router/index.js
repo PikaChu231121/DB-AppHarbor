@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-/*    {
+    {
         path:"/",
         component: () => import("@/Views/UserLogin.vue")
-    },*/
+    },
     {
         path: "/RegisterAccount",
         component: () => import("@/Views/RegisterAccount.vue")
@@ -32,10 +32,10 @@ const routes = [
         path: "/FliterSection",
         component: () => import("@/Views/Shop/FliterSection.vue")
     },
-    {
+/*    {
         path: "/",
         component: () => import("@/Views/Friends/YourFriends.vue")
-    },
+    },*/
 ]
 
 const router = createRouter(

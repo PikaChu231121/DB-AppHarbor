@@ -75,7 +75,7 @@
                         this.pastSelectedItem = this.selectedItem;
                     }
                     this.selectedItem = index;
-                    this.$emit('update-content', this.menuItems[index].label);
+                    /*this.$emit('update-content', this.menuItems[index].label);*/
                     this.toggleFriendsPopup();
                 } else {
                     this.selectedItem = index;
@@ -101,6 +101,7 @@
             handlePopupClick(action) {
                 console.log(action);
                 this.showFriendsPopup = false;
+                this.$emit('update-content', action);
             },
             handleClickOutside(event) {
                 if (this.showFriendsPopup && !this.$refs.friendsPopup.contains(event.target) && !this.$el.contains(event.target)) {
