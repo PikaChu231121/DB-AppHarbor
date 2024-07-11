@@ -1,6 +1,6 @@
 <template>
     <div class="app-grid">
-        <div v-for="app in apps" :key="app.id" class="app-item">
+        <div v-for="app in apps" :key="app.id" class="app-item"@click="goToDetail(app.id)">
             <img :src="app.image" :alt="app.name" class="app-image" />
             <div class="app-details">
                 <h3 class="app-name">{{ app.name }}</h3>
@@ -19,6 +19,11 @@
                 type: Array,
                 required: true,
                 default: () => []
+            }
+        },
+        methods: {
+            goToDetail(appId) {
+                this.$router.push(`/app/${appId}`);
             }
         }
     }
