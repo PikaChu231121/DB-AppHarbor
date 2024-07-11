@@ -88,12 +88,6 @@
                 //        console.error("Error searching apps:", error);
                 //    });
 
-                //// 根据搜索词过滤应用（这里是前端模拟过滤）
-                //const searchedApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
-                //this.apps = searchedApps;
-                //this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                //this.currentPage = 1; // 重置到第一页
-
                 if (searchTerm.trim() === "") {
                     // 搜索词为空时，重新获取所有应用
                     this.fetchApps();
