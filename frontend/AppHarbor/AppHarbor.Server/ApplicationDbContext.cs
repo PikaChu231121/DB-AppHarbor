@@ -310,10 +310,10 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateTime)
                 .HasColumnType("DATE")
                 .HasColumnName("CREATE_TIME");
-            entity.Property(e => e.Name)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("NAME");
+            // entity.Property(e => e.Name)
+            //     .HasMaxLength(255)
+            //     .IsUnicode(false)
+            //     .HasColumnName("NAME");
             entity.Property(e => e.UserId)
                 .HasColumnType("NUMBER")
                 .HasColumnName("USER_ID");

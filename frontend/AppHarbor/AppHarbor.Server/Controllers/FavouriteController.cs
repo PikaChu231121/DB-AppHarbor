@@ -64,7 +64,7 @@ namespace AppHarbor.Server.Controllers
                 .Select(f => new
                 {
                     appId = f.ApplicationId,
-                    appName = f.Name,
+                    //appName = f.Name,
                     appVisibility = f.Visibility,
                     userId = f.UserId
                 })
