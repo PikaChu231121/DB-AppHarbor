@@ -240,17 +240,19 @@
         border: 3px solid #FADAD6;
         border-radius: 10px;
         cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
 
         button:disabled {
             cursor: not-allowed;
         }
 
-    button:hover:enabled {
-        background-color: #ffe5e5;
-        transform: scale(1.05);
-        color: #F8887D;
-    }
+        button:hover:enabled {
+            background-color: #ffe5e5;
+            transform: scale(1.05);
+            color: #F8887D;
+            transition: background-color 0.3s, transform 0.3s, color 0.3s;
+        }
 
     .edit-icon {
         cursor: pointer;
