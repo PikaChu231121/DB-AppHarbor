@@ -35,7 +35,7 @@
         },
         data() {
             return {
-                currentView: 'HomeView' // Default view
+                currentView: 'Shop' // Default view
             };
         },
         methods: {
@@ -60,7 +60,7 @@
                         this.currentView = 'PersonalInformation';
                         break;
                     default:
-                        this.currentView = 'HomeView';
+                        this.currentView = 'Shop';
                 }
             }
         }
