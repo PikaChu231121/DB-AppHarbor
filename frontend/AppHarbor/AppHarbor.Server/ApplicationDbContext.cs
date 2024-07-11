@@ -141,6 +141,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.DownloadCount)
                 .HasColumnType("NUMBER")
                 .HasColumnName("DOWNLOAD_COUNT");
+            entity.Property(e => e.Price)
+                .HasColumnType("NUMBER")
+                .HasColumnName("PRICE");
             entity.Property(e => e.Image)
                 .HasMaxLength(255)
                 .IsUnicode(false)

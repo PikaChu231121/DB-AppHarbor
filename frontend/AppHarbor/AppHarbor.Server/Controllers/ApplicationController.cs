@@ -52,5 +52,21 @@ namespace AppHarbor.Server.Controllers
 
            
         }
+
+        [HttpPost("getappdetail")]
+        public IActionResult GetAppDetail([FromBody] GetAppDetailModel getappdetailModel)
+        {
+            var app=_dbContext.Applications.Find(getappdetailModel.Id);
+            if (app == null)
+            {
+                return NotFound("app not found");
+            }
+            else
+            {
+                return Ok(app);
+            }
+
+
+        }
     }
 }
