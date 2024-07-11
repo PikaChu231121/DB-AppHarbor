@@ -30,7 +30,6 @@
         data() {
             return {
                 apps: [], // 后端返回的应用列表
-                searchedApps: [], // 从apps中搜索出来的分支
                 appsShown: [], // 当前页显示应用
                 selectedTags: [], // 选中的标签
                 Category:"All",//--------------我这先设置成All，需要调试可以改成Social或Office，你等之后加上前端的分类模块后再作具体修改
@@ -51,7 +50,6 @@
                         this.apps = response.data.$values;
                         console.log(2);
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                        this.searchedApps = this.apps; // 复制
                         this.paginatedApps();
                     })
                     .catch(error => {
@@ -62,10 +60,10 @@
             paginatedApps() {
                 // 计算当前页需要展示的应用
                 const start = (this.currentPage - 1) * this.appsPerPage;
-                const end = start + this.appsPerPage < this.searchedApps.length ? start + this.appsPerPage : this.searchedApps.length;
+                const end = start + this.appsPerPage < this.apps.length ? start + this.appsPerPage : this.apps.length;
                 //console.log(Array.isArray(this.apps));
                 console.log('appsShown changed');
-                this.appsShown = this.searchedApps.slice(start, end); // slice不取最后一个元素
+                this.appsShown = this.apps.slice(start, end); // slice不取最后一个元素
             },
             AppsIsEmpty() {
                 // 判断应用列表是否为空
