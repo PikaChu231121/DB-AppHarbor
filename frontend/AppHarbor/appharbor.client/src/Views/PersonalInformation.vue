@@ -134,7 +134,7 @@
                 if (avatarPath) {
                     return `http://localhost:5118${avatarPath}`;
                 }
-                return '../../public/avatar/default.png'; // 默认头像路径
+                return '../../../avatar/default.png'; // 默认头像路径
             }
         },
         computed: {

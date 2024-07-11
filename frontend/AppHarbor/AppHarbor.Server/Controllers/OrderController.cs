@@ -24,11 +24,6 @@ namespace AppHarbor.Server.Controllers
             return Ok(_dbContext.Orders.ToList());
         }
 
-        [HttpPost("addorder")]
-        public IActionResult AddOrder()
-        {
-            
-        }
 
     }
 }
