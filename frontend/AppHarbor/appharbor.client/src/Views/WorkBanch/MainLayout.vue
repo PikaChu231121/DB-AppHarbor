@@ -3,10 +3,10 @@
     <div class="main-layout">
         <Header />
         <div class="layout-body">
-            <SideNavigation @update-content="updateContent" />
+            <SideNavigation /><!--@update-content="updateContent"-->
             <div class="content">
                 <!--主页面内容-->
-                <component :is="currentView" />
+                <router-view />
             </div>
         </div>
     </div>
@@ -47,16 +47,16 @@
                     case 'Shop':
                         this.currentView = 'Shop';
                         break;
-                    case 'Collection':
+                    case 'Favourites':
                         this.currentView = 'Favourites';
                         break;
-                    case 'Purse':
+                    case 'Wallet':
                        this.currentView = 'Wallet';
                        break;
                     case 'Friends':
                         /*this.currentView = 'FriendsView';*/
                         break;
-                    case 'UserProfile':
+                    case 'PersonalInformation':
                         this.currentView = 'PersonalInformation';
                         break;
                     default:
