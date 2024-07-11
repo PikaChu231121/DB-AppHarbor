@@ -33,10 +33,6 @@ const routes = [
         path: "/Wallet",
         component: () => import("@/Views/Wallet.vue")
     },
-    //{
-    //    path: "/Friends",
-    //    component: () => import("@/Views/Friends.vue")
-    //},
     {
         path: "/PersonalInformation",
         component: () => import("@/Views/PersonalInformation.vue")
@@ -45,13 +41,11 @@ const routes = [
         path: '/app/:id',
         name: 'AppDetail',
         component: () => import("@/Views/Shop/AppDetail.vue")
-        //path: "/AppDetail",
-        //component: () => import("@/Views/Shop/AppDetail.vue")
-    }
-    //{
-    //    path: "/FliterSection",
-    //    component: () => import("@/Views/Shop/FliterSection.vue")
-    //}
+    },
+    {
+        path: "/FliterSection",
+        component: () => import("@/Views/Shop/FliterSection.vue")
+    },
 ]
 
 const router = createRouter(

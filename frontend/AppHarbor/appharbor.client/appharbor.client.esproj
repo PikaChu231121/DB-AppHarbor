@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\router\" />
+    <Folder Include="src\Views\Friends\" />
     <Folder Include="src\Views\新文件夹\" />
   </ItemGroup>
   <ItemGroup>

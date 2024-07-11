@@ -1,3 +1,4 @@
 export default {
-    id:""
+    id: "",
+    friend_category : ["family","friend","classmate"]
 }
