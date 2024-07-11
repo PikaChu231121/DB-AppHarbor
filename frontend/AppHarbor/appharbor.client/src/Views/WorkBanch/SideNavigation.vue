@@ -8,7 +8,7 @@
                 </header>
                 <ul class="menu-items">
                     <li v-for="(item, index) in menuItems" :key="index" :class="['menu-item', { active: selectedItem === index }]" @click="selectItem(index)">
-                        <img :src="item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
+                        <img :src="selectedItem === index ? item.activeIcon : item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
                     </li>
                 </ul>
                 <footer class="user-profile" :class="{ active: userProfileActive }" @click="selectUserProfile">
@@ -48,11 +48,11 @@
                 isLoading: false,
                 showFriendsPopup: false,
                 menuItems: [
-                    { label: 'Home', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/f7f8683160f0eeac08fc6d9ea071a796fe62241473dfca92bf303b19c7ff8a61?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
-                    { label: 'Shop', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/a1c7d9975252d8bba0b8cf7508b2e7ed21aaafbf43caa40771cf38fccdbd7a4e?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
-                    { label: 'Collection', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/a44e9dec8d1bc8dbd92ad473ebbf785ae74327807e67a3c2774f3732d0a61a24?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
-                    { label: 'Purse', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/322a906bee0409691439aed3778cc4aa69ac9130e4eac018d076c6e27b660e92?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' },
-                    { label: 'Friends', icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/9391b38f177ede077284ea2a50a643d8c9b9889dbed04a2013303fef2cd678f1?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&' }
+                    { label: 'Home', icon: '../src/assets/home.svg', activeIcon: '../src/assets/homeActive.svg' },
+                    { label: 'Shop', icon: '../src/assets/shop.svg', activeIcon: '../src/assets/shopActive.svg' },
+                    { label: 'Collection', icon: '../src/assets/collection.svg', activeIcon: '../src/assets/collectionActive.svg' },
+                    { label: 'Purse', icon: '../src/assets/purse.svg', activeIcon: '../src/assets/purseActive.svg' },
+                    { label: 'Friends', icon: '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' }
                 ],
             };
         },
@@ -64,8 +64,11 @@
                         this.isLoading = false; // 几秒后停止加载动画
                         this.selectedItem = index; // 选择Purse菜单项
                         this.$emit('update-content', this.menuItems[index].label);
+
                     }, 2000); // 设置加载动画持续时间为2秒
                 } else if (this.menuItems[index].label === 'Friends') {
+                    this.selectedItem = index; // 选择Purse菜单项
+                    this.$emit('update-content', this.menuItems[index].label);
                     this.toggleFriendsPopup();
                 } else {
                     this.selectedItem = index;
@@ -80,6 +83,10 @@
             },
             toggleFriendsPopup() {
                 this.showFriendsPopup = !this.showFriendsPopup;
+                if (this.showFriendsPopup == false) {
+                    this.selectedItem = null; // Deselect any menu item
+                    this.userProfileActive = false; // Deselect user profile when the popup is closed
+                }
             },
             handlePopupClick(action) {
                 // Handle each popup button click action here
@@ -164,7 +171,7 @@
     .menu-icon {
         width: 16px;
         height: 16px;
-        color: #77797B;
+        /*color: #77797B;*/
         transition: color 0.6s ease; /* 颜色过渡效果 */
     }
 
