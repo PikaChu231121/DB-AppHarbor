@@ -4,9 +4,8 @@
             <FilterSection @tags-changed="handleTagsChange" />
         </aside>
         <main class="search-section">
-            <SearchBar /> <!--@search="handleSearch"/>-->
-            <!--<AppGrid :apps=this.apps />-->
-            <!--<AppGrid :apps="this.apps" />-->
+            <!--<SearchBar />--> 
+            <SearchBar @search="handleSearch"/>
             <AppGrid :apps="appsShown" />
             <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
@@ -86,11 +85,12 @@
             //    //    .catch(error => {
             //    //        console.error("Error searching apps:", error);
             //    //    });
+
             //    // 根据搜索词过滤应用（这里是前端模拟过滤）
-            //    //const filteredApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
-            //    //this.apps = filteredApps;
-            //    //this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-            //    //this.currentPage = 1; // 重置到第一页
+            //    const searchedApps = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            //    this.apps = searchedApps;
+            //    this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+            //    this.currentPage = 1; // 重置到第一页
             //},
             handlePageChange(newPage) {
                 // 处理当前页号的变化
