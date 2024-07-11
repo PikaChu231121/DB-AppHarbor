@@ -263,6 +263,14 @@
         transform: translateY(0);
     }
 
+    .popup-enter-active, .popup-leave-active {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .popup-enter-from, .popup-leave-to {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
 
     .popup-item1 {
         display: flex;
