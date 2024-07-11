@@ -18,6 +18,7 @@
         <div class="auto-wrapper">
             <div class="info-box">
                 <p class="text">钱包余额</p>
+                <p class="user-credit" v-html="formattedCredit"></p>
                 <div class="button-row">
                     <button type="button" class="button">充值</button>
                 </div>
@@ -111,11 +112,21 @@ export default {
     },
     mounted() {
         this.fetchUserAndTransaction(); // 页面加载时从cookies获取用户ID，再获取交易信息
+    },
+    computed: {
+    formattedCredit() {
+      // 将credit转换为字符串并拆分为整数部分和小数部分
+      let creditStr = this.credit.toFixed(2).split('.');
+      let integerPart = creditStr[0];
+      let decimalPart = creditStr[1];
+      // 返回带有HTML标记的字符串
+      return `<span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
     }
+  }
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .Wallet {
     position: relative;
     display: flex;
@@ -177,7 +188,7 @@ export default {
     text-shadow: 0 3px 15px rgb(255, 255, 255);
 }
 .user-id {
-    // font-size: 60px;
+
     width: 100%;
     margin-left: 5px;
     height: 70%;
@@ -206,6 +217,17 @@ export default {
     height: 500px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-credit {
+  font-size: 25px; /* 基本字体大小 */
+}
+
+::v-deep .integer-part {
+  font-size: 50px;
+}
+::v-deep .decimal-part {
+  font-size: 20px;
 }
 
 .text {
