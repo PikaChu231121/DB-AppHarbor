@@ -1,193 +1,230 @@
 <template>
-    <div>
-        <alert-box :message="alertMessage"></alert-box>
-        <h1>我的收藏夹</h1>
-        <button @click="showAddFolderDialog">添加收藏夹</button>
-
-        <div v-if="isAddFolderDialogVisible" class="modal">
-            <div class="modal-content">
-                <span class="close" @click="closeAddFolderDialog">&times;</span>
-                <h2>请输入收藏夹名称</h2>
-                <input v-model="newFolderName" placeholder="收藏夹名称">
-                <button @click="addFolder">确认</button>
+    <div class="favourite-list">
+        <alert-box :message="notification"></alert-box>
+        <h1>个人收藏夹</h1>
+        <div class="user-info">
+            <div class="delete-button-group">
+                <button @click="toggleBulkDelete">{{ isBulkDeleting ? '退出批量删除模式' : '批量删除' }}</button>
+                <button @click="bulkDelete" :disabled="!isBulkDeleting || selectedFavourites.length === 0">删除选中应用</button>
             </div>
-        </div>
-
-        <div v-for="folder in folders" :key="folder.id" class="folder">
-            <folder :folder="folder" @delete-folder="deleteFolder" @delete-item="deleteItem"></folder>
-            <input v-model="newItemName[folder.id]" placeholder="新收藏应用名称">
-            <button @click="addItem(folder.id)">添加收藏应用</button>
+            <div v-if="favourites.length" class="favourite-grid">
+                <div v-for="favourite in favourites" :key="favourite.id" class="favourite-item">
+                    <h3>ApplicationId: {{ favourite.applicationId }}</h3>
+                    <p>CreateTime: {{ favourite.createTime }}</p>
+                    <p>Visibility: {{ favourite.visibility }}</p>
+                    <div class="action-buttons">
+                        <button @click="deleteFavourite(favourite.id)" :disabled="isBulkDeleting">删除</button>
+                        <input type="checkbox" v-if="isBulkDeleting" v-model="selectedFavourites" :value="favourite.id" class="bulk-delete-checkbox">
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <p>{{ message }}</p>
+            </div>
         </div>
     </div>
 </template>
 
+
 <script>
-    import AlertBox from './AlertBox.vue';
-    import Folder from './Folder.vue';
     import axios from 'axios';
+    import Cookies from 'js-cookie';
+    import AlertBox from './AlertBox.vue';
 
     export default {
+        name: 'FavouriteList',
         components: {
-            AlertBox,
-            Folder
+            AlertBox
         },
         data() {
-            
             return {
-                user: { id: '' },
-                folders: JSON.parse(localStorage.getItem('folders')) || [],
-                alertMessage: '',
-                newItemName: {},
-                isAddFolderDialogVisible: false,
-                newFolderName: ''
+                favourites: [],
+                message: '加载中...',
+                notification: '', // 通知用户删除情况
+                isBulkDeleting: false,
+                selectedFavourites: []
             };
         },
-        mounted() {
-            this.fetchUserFavourite();
+        created() {
+            this.fetchFavourites();
         },
         methods: {
-            fetchUserFavourite() {
-                console.log('successfully build connection');
-                axios.post('http://localhost:5118/api/favourite/favourite', { id: this.user.id })
+            fetchFavourites() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/favourite/getfavourites', {
+                    token: token
+                })
                     .then(response => {
-                        console.log('successfully get user favourite');
-                        this.favourite = response.data; // 假设response.data包含folders数组
+                        console.log("API response data:", response.data); // 输出 API 响应的数据
+                        const parsedData = JSON.parse(response.data);
+                        if (parsedData && parsedData.Favourites) {
+                            this.favourites = parsedData.Favourites;
+                            this.message = ''; // 清空消息
+                            console.log("Favourites array:", this.favourites);
+                        } else {
+                            this.message = '您还没有收藏的应用哦，去商店逛逛吧';
+                            console.error('Error: Expected Favourites but got:', response.data);
+                        }
                     })
                     .catch(error => {
-                        console.error('Error fetching user favourite data:', error);
+                        this.message = '您还没有收藏的应用哦，去商店逛逛吧';
+                        console.error('Error fetching favourites:', error);
                     });
             },
-            saveToLocalStorage() {
-                localStorage.setItem('folders', JSON.stringify(this.folders));
+            deleteFavourite(id) {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                    token: token,
+                    id: id
+                })
+                    .then(response => {
+                        const parsedData = JSON.parse(response.data);
+                        if (parsedData.success) {
+                            this.favourites = this.favourites.filter(fav => fav.id !== id);
+                            console.log("Delete successful:", parsedData);
+                            this.showNotification('删除应用成功');
+                            this.fetchFavourites(); // 重新拉取收藏夹内容
+                        } else {
+                            console.error('Delete failed:', parsedData);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting favourite:', error);
+                    });
             },
-            showAddFolderDialog() {
-                this.isAddFolderDialogVisible = true;
-            },
-            closeAddFolderDialog() {
-                this.isAddFolderDialogVisible = false;
-                this.newFolderName = '';
-            },
-            addFolder() {
-                if (this.newFolderName.trim()) {
-                    const newFolder = {
-                        id: Date.now(),
-                        name: this.newFolderName,
-                        items: []
-                    };
-                    this.folders.push(newFolder);
-                    this.saveToLocalStorage();
-                    this.showAlert('收藏夹添加成功');
-                    this.closeAddFolderDialog();
-                } else {
-                    this.showAlert('收藏夹名称不能为空');
-                }
-            },
-            addItem(folderId) {
-                const folder = this.folders.find(folder => folder.id === folderId);
-                if (folder && this.newItemName[folderId]?.trim()) {
-                    const newItem = {
-                        id: Date.now(),
-                        name: this.newItemName[folderId]
-                    };
-                    folder.items.push(newItem);
-                    this.saveToLocalStorage();
-                    this.showAlert('收藏应用添加成功');
-                    this.newItemName[folderId] = '';
-                }
-            },
-            deleteFolder(folderId) {
-                this.folders = this.folders.filter(folder => folder.id !== folderId);
-                this.saveToLocalStorage();
-                this.showAlert('收藏夹删除成功');
-            },
-            deleteItem(folderId, itemId) {
-                const folder = this.folders.find(folder => folder.id === folderId);
-                if (folder) {
-                    folder.items = folder.items.filter(item => item.id !== itemId);
-                    this.saveToLocalStorage();
-                    this.showAlert('收藏应用删除成功');
-                }
-            },
-            showAlert(message) {
-                this.alertMessage = message;
+            showNotification(message) {
+                this.notification = message;
                 setTimeout(() => {
-                    this.alertMessage = '';
-                }, 3000);
+                    this.notification = '';
+                }, 2000);
+            },
+            toggleBulkDelete() {
+                this.isBulkDeleting = !this.isBulkDeleting;
+                if (!this.isBulkDeleting) {
+                    this.selectedFavourites = []; // 清空已选中的应用
+                }
+            },
+            bulkDelete() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/favourite/bulkDelete', {
+                    token: token,
+                    ids: this.selectedFavourites
+                })
+                    .then(response => {
+                        const parsedData = JSON.parse(response.data);
+                        if (parsedData.success) {
+                            this.favourites = this.favourites.filter(fav => !this.selectedFavourites.includes(fav.id));
+                            console.log("Bulk delete successful:", parsedData);
+                            this.showNotification('批量删除应用成功');
+                            this.fetchFavourites(); // 重新拉取收藏夹内容
+                        } else {
+                            console.error('Bulk delete failed:', parsedData);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error bulk deleting favourites:', error);
+                    });
             }
-        },
+        }
     };
 </script>
 
 <style scoped>
-    h1 {
-        color: #42b983;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    button {
-        background-color: #42b983;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-        background-color: #369f79;
-    }
-
-    .modal {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-    }
-
-    .modal-content {
+    .favourite-list {
+        max-width: 700px;
+        min-height: 780px;
+        margin: 0 auto;
+        padding: 40px;
         background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         text-align: center;
-        position: relative;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-        width: 100%;
     }
 
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        cursor: pointer;
-        color: #999;
+    h1 {
+        margin-bottom: 20px;
+        font-size: 32px;
+        color: #333;
+        text-align: center;
+        border: 3px solid #F3C7BA;
+        border-radius: 8px;
     }
 
-    .close:hover {
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .favourite-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 固定两列布局 */
+        gap: 20px;
+    }
+
+    .favourite-item {
+        padding: 20px;
+        border: 1px solid #F3C7BA;
+        border-radius: 8px;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 24px;
+        color: #007bff;
+    }
+
+    p {
+        margin: 5px 0;
+        font-size: 16px;
         color: #666;
     }
 
-    .folder {
-        margin-bottom: 20px;
-        padding: 10px;
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+    button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #fbeaea;
+        font-size: 15px;
+        color: #F8887D;
+        border: 3px solid #FADAD6;
+        border-radius: 10px;
+        cursor: pointer;
     }
 
-    .folder input {
-        margin-bottom: 5px;
-        padding: 5px;
-        border: 1px solid #ddd;
+        button:hover:enabled {
+            background-color: #ffe5e5;
+            transform: scale(1.05);
+            color: #F8887D;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+        }
+
+    .notification {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #dff0d8;
+        color: #3c763d;
+        border: 1px solid #d6e9c6;
         border-radius: 4px;
+        text-align: center;
+    }
+
+    .delete-button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px; 
+    }
+    .bulk-delete-checkbox {
+        width: 20px; 
+        height: 20px; 
     }
 </style>

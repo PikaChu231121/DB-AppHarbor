@@ -1,19 +1,19 @@
 <template>
     <div class="Wallet">
         <div class="header">
-            <img src="../../public/avatar/default.png" class="avatar-header" />
-        </div>
-        <div class="avatar">
-            <img src="../../public/avatar/default.png" class="avatar-circle" />
-            <div class="user-info">
-                <p class="user-nickname">用户昵称{{ user_nickname }}</p>
-                <p class="user-id">用户ID：{{ user_id }}</p>
+            <img :src="avatar_url"  class="avatar-header"  />
+            <div class="avatar">
+                <img :src="avatar_url"  class="avatar-circle" />
+                <div class="user-info">
+                    <p class="user-nickname">用户昵称：{{ user_nickname }}</p>
+                    <p class="user-id">用户ID：{{ user_id }}</p>
+                </div>
             </div>
         </div>
-
         <div class="auto-wrapper">
             <div class="info-box">
                 <p class="text">钱包余额</p>
+                <p class="user-credit" v-html="formattedCredit"></p>
                 <div class="button-row">
                     <button type="button" class="button">充值</button>
                 </div>
@@ -50,16 +50,41 @@
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie';
 export default {
     data() {
         return {
             user_nickname: '',
-            user_id: 9,
-            transactions: []
+            user_id: '',
+            transactions: [],
+            avatar_url: '',
+            credit: -1
         };
     },
     methods: {
+        fetchUserAndTransaction() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                        console.info(response.data);
+                        this.user_id = response.data.id;
+                        this.user_nickname = response.data.nickname;
+                        this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
+                        this.credit = response.data.credit;
+
+                        // 确保在user_id被设置之后调用fetchTransactions
+                        this.fetchTransactions();
+                        // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
+                        // 理想状态是通过cookies直接能得到所有的信息
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+        },
+            
         fetchTransactions() {
+            console.info(this.user_id);
             axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
                 .then(response => {
                     this.transactions = response.data.$values;
@@ -80,22 +105,34 @@ export default {
         }
     },
     mounted() {
-        this.fetchTransactions(); // 页面加载时获取交易记录
+        this.fetchUserAndTransaction(); // 页面加载时从cookies获取用户ID，再获取交易信息
+    },
+
+    computed: {
+    formattedCredit() {
+      // 将credit转换为字符串并拆分为整数部分和小数部分
+      let creditStr = this.credit.toFixed(2).split('.');
+      let integerPart = creditStr[0];
+      let decimalPart = creditStr[1];
+      // 返回带有HTML标记的字符串
+      return `<span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
     }
+  }
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .Wallet {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 100%;
 }
 
 .header {
-    height: 14%;
+    min-height: 150px;
     width: 100%;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -115,7 +152,7 @@ export default {
     flex-direction: row;
     position: absolute;
     left: 5%;
-    top: 8%;
+    top: 15%;
     height: 100px;
     width: 500px;
 }
@@ -123,6 +160,7 @@ export default {
 .avatar-circle {
     position: relative;
     background-color: #ffffff;
+    object-fit:cover;
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
@@ -147,7 +185,7 @@ export default {
     text-shadow: 0 3px 15px rgb(255, 255, 255);
 }
 .user-id {
-    // font-size: 60px;
+
     width: 100%;
     margin-left: 5px;
     height: 70%;
@@ -162,8 +200,8 @@ export default {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: auto;
-    margin: 2.4% 0 0;
+    height: 100%;
+    margin: 10px 10px 3px;
 }
 
 .info-box {
@@ -171,11 +209,22 @@ export default {
     flex-direction: column;
     align-items: center;
     background: #e9f2fb;
-    padding: 2% 1% 2% 2%;
-    width: 49%;
-    height: 500px;
+    padding: 2% 5% 2% 5%;
+    width: calc(50% - 8px);
+    height: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-credit {
+  font-size: 25px; /* 基本字体大小 */
+}
+
+::v-deep .integer-part {
+  font-size: 50px;
+}
+::v-deep .decimal-part {
+  font-size: 20px;
 }
 
 .text {

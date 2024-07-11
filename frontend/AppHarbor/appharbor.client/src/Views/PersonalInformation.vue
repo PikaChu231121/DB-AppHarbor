@@ -3,8 +3,7 @@
         <alert-box :message="alertMessage"></alert-box>
         <h1>个人信息</h1>
         <div class="user-info">
-            <div class="form-group">
-                <label>头像:</label>
+            <div class="avatar-group">
                 <div class="avatar-edit">
                     <img :src="getAvatarUrl(user.avatar)" alt="用户头像" class="avatar" />
                     <div class="edit-icon">
@@ -14,11 +13,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>ID:</label>
+                <label>ID</label>
                 <p>{{ user.id }}</p>
             </div>
             <div class="form-group">
-                <label>昵称:</label>
+                <label>昵称</label>
                 <div class="nickname-edit">
                     <input type="text"
                            v-model="user.nickname"
@@ -28,7 +27,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>注册时间:</label>
+                <label>注册时间</label>
                 <p>{{ formattedRegisterTime }}</p>
             </div>
         </div>
@@ -106,11 +105,16 @@
                         })
                         .catch(error => {
                             console.error('Error uploading avatar:', error);
+                            this.showAlert('头像上传失败');
                         });
                 }
             },
             save() {
                 var token = Cookies.get('token');
+                if (this.user.nickname == "") {
+                    this.showAlert("昵称不允许为空，请重新输入");
+                    return;
+                }
                 axios.post('http://localhost:5118/api/user/updateUserNickname', {
                     id: this.user.id,
                     newnickname: this.user.nickname
@@ -150,7 +154,8 @@
 
 <style scoped>
     .profile-settings {
-        max-width: 600px;
+        max-width: 500px;
+        min-height: 780px;
         margin: 0 auto;
         padding: 40px;
         background-color: #fff;
@@ -163,6 +168,8 @@
         font-size: 32px;
         color: #333;
         text-align: center;
+        border: 3px solid #F3C7BA;
+        border-radius: 8px;
     }
 
     .user-info {
@@ -176,6 +183,14 @@
         flex-direction: column;
     }
 
+    .avatar-group {
+        max-width: 250px;
+        padding: 20px;
+        border: 1px solid #F3C7BA;
+        border-radius: 8px;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+    }
+
     label {
         margin-bottom: 5px;
         font-weight: bold;
@@ -185,7 +200,7 @@
 
     input[type="text"], p {
         padding: 10px;
-        border: 1px solid #ccc;
+        border: 2px solid #ebebeb;
         border-radius: 4px;
         font-size: 16px;
     }
@@ -207,8 +222,8 @@
     }
 
     .avatar {
-        width: 80px;
-        height: 80px;
+        width: 160px;
+        height: 160px;
         border-radius: 50%;
         object-fit: cover;
     }
@@ -219,21 +234,25 @@
 
     button {
         padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
+        background-color: #fbeaea;
+        font-size: 15px;
+        color: #F8887D;
+        border: 3px solid #FADAD6;
+        border-radius: 10px;
         cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
 
-    button:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-    }
+        button:disabled {
+            cursor: not-allowed;
+        }
 
-    button:hover:enabled {
-        background-color: #0056b3;
-    }
+        button:hover:enabled {
+            background-color: #ffe5e5;
+            transform: scale(1.05);
+            color: #F8887D;
+            transition: background-color 0.3s, transform 0.3s, color 0.3s;
+        }
 
     .edit-icon {
         cursor: pointer;
@@ -248,7 +267,7 @@
     }
 
     .edit-icon:hover img {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
         filter: brightness(1.1);
     }
 </style>

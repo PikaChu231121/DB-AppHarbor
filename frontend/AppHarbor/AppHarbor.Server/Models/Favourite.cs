@@ -3,15 +3,27 @@ using System.Collections.Generic;
 
 namespace AppHarbor.Server.Models;
 
-public class UserFavouriteModel
+public class GetFavouritesModel
 {
+    public decimal UserId { get; set; }
+}
+public class DeleteFavouriteRequest
+{
+    public string Token { get; set; }
     public decimal Id { get; set; }
 }
+
+public class BulkDeleteRequest
+{
+    public string Token { get; set; }
+    public List<decimal> Ids { get; set; }
+}
+
 public partial class Favourite
 {
     public decimal Id { get; set; }
 
-    public string? Name { get; set; }
+    // public string? Name { get; set; }
 
     public DateTime? CreateTime { get; set; }
 

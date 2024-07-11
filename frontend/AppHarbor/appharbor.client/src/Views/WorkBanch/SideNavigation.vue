@@ -33,15 +33,25 @@
                 </button>
             </div>
         </transition>
+        <!-- User Profile Popup -->
+        <transition name="popup">
+            <div v-if="showUserProfilePopup" class="user-profile-popup" ref="userProfilePopup">
+                <PersonalInformation />
+            </div>
+        </transition>
     </div>
 </template>
 
 <script>
     import Loading from "../Tools/Loading.vue"
+    import PersonalInformation from "../PersonalInformation.vue"
+
+
     export default {
         name: 'SideNavigation',
         components: {
             Loading,
+            PersonalInformation
         },
         data() {
             return {
@@ -50,6 +60,7 @@
                 userProfileActive: false,
                 isLoading: false,
                 showFriendsPopup: false,
+                showUserProfilePopup: false,
                 menuItems: [
                     { label: 'Home', icon: '../src/assets/home.svg', activeIcon: '../src/assets/homeActive.svg' },
                     { label: 'Shop', icon: '../src/assets/shop.svg', activeIcon: '../src/assets/shopActive.svg' },
@@ -86,7 +97,9 @@
             selectUserProfile() {
                 this.selectedItem = null;
                 this.userProfileActive = true;
-                this.$emit('update-content', 'UserProfile');
+                this.showFriendsPopup = false;
+                this.toggleUserProfilePopup();
+                //this.$emit('update-content', 'UserProfile');
             },
             toggleFriendsPopup() {
                 this.showFriendsPopup = !this.showFriendsPopup;
@@ -96,6 +109,13 @@
                     if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
                         this.selectedItem = this.pastSelectedItem;
                     }
+                }
+            },
+            toggleUserProfilePopup() {
+                this.showUserProfilePopup = !this.showUserProfilePopup;
+                if (!this.showUserProfilePopup) {
+                    this.selectedItem = null;
+                    this.userProfileActive = false;
                 }
             },
             handlePopupClick(action) {
@@ -244,6 +264,29 @@
             width: 170px;
             border-radius: 10px;
         }
+
+    .user-profile-popup {
+        position: absolute;
+        top: 100px; /* 根据需要调整位置 */
+        left: 90px;
+        background-color: #fbeaea;
+        border-radius: 12px;
+        padding: 16px;
+        width: 500px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .popup-enter-active, .popup-leave-active {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .popup-enter-from, .popup-leave-to {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
 
     .popup-item1 {
         display: flex;
