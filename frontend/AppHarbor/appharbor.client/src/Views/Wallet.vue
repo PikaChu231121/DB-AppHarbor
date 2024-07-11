@@ -1,14 +1,9 @@
 <template>
     <div class="Wallet">
         <div class="header">
-            <img src="../../public/default.png" class="avatar-header" />
-            <!-- TODO: 如何通过 url 从服务器获取图片 -->
-            <!-- <img :src="avatar_url" class="avatar-header" />   -->
-        
+            <img :src="avatar_url"  class="avatar-header"  />
             <div class="avatar">
-                <img src="../../public/default.png" class="avatar-circle" />
-                <!-- TODO: 如何通过 url 从服务器获取图片 -->
-                <!-- <img :src="avatar_url" class="avatar-circle" />   -->
+                <img :src="avatar_url"  class="avatar-circle" />
                 <div class="user-info">
                     <p class="user-nickname">用户昵称：{{ user_nickname }}</p>
                     <p class="user-id">用户ID：{{ user_id }}</p>
@@ -75,12 +70,11 @@ export default {
                         console.info(response.data);
                         this.user_id = response.data.id;
                         this.user_nickname = response.data.nickname;
-                        this.avatar_url = response.data.avatar;
+                        this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
                         this.credit = response.data.credit;
 
                         // 确保在user_id被设置之后调用fetchTransactions
                         this.fetchTransactions();
-
                         // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
                         // 理想状态是通过cookies直接能得到所有的信息
                     })
@@ -113,6 +107,7 @@ export default {
     mounted() {
         this.fetchUserAndTransaction(); // 页面加载时从cookies获取用户ID，再获取交易信息
     },
+
     computed: {
     formattedCredit() {
       // 将credit转换为字符串并拆分为整数部分和小数部分
@@ -165,6 +160,7 @@ export default {
 .avatar-circle {
     position: relative;
     background-color: #ffffff;
+    object-fit:cover;
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
