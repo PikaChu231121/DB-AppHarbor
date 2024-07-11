@@ -3,10 +3,10 @@
     <div class="main-layout">
         <Header />
         <div class="layout-body">
-            <SideNavigation /><!--@update-content="updateContent"-->
+            <SideNavigation @update-content="updateContent"/>
             <div class="content">
                 <!--主页面内容-->
-                <router-view />
+                <component :is="currentView" />
             </div>
         </div>
     </div>
@@ -15,12 +15,12 @@
 <script>
     import Header from './Header.vue'; // 标题栏
     import SideNavigation from './SideNavigation.vue'; // 侧边栏
-    //import HomeView from './HomeView.vue'; // Example component
-    import Shop from '../Shop/Shop.vue'; // Example component
-    import Favourites from '../Favourites.vue'; // Example component
-    import Wallet from '../Wallet.vue'; // Example component
-    //import FriendsView from './FriendsView.vue'; // Example component
-    import PersonalInformation from '../PersonalInformation.vue'; // Example component
+    /*import HomeView from './HomeView.vue'; // */
+    import Shop from '../Shop/Shop.vue'; // 
+    import Favourites from '../Favourites.vue'; // 
+    import Wallet from '../Wallet.vue'; // 
+    //import FriendsView from './FriendsView.vue'; // 
+    import PersonalInformation from '../PersonalInformation.vue'; // 
 
     export default {
         components: {

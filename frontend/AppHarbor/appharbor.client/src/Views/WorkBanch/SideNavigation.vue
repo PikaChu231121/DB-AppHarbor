@@ -11,7 +11,7 @@
                     <li v-for="(item, index) in menuItems"
                         :key="index"
                         :class="['menu-item', { active: selectedItem === index }]"
-                        @click="selectItem(index, item.route)"
+                        @click="selectItem(index)"
                     >
                         <img :src="selectedItem === index ? item.activeIcon : item.icon" :alt="item.label + ' Icon'" class="menu-icon" />
                     </li>
@@ -48,7 +48,6 @@
 
 <script>
     import Loading from "../Tools/Loading.vue"
-    import { useRouter } from 'vue-router';
     export default {
         name: 'SideNavigation',
         components: {
@@ -68,13 +67,13 @@
                 //    { label: 'Friends', icon: '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' }
                 //],
                 menuItems: [
-                    { label: 'Home', icon: '../src/assets/home.svg', activeIcon: '../src/assets/homeActive.svg', route: '/Home' },
-                    { label: 'Shop', icon: '../src/assets/shop.svg', activeIcon: '../src/assets/shopActive.svg', route: '/Shop' },
-                    { label: 'Favourites', icon: '../src/assets/collection.svg', activeIcon: '../src/assets/collectionActive.svg', route: '/Favourites' },
-                    { label: 'Wallet', icon: '../src/assets/purse.svg', activeIcon: '../src/assets/purseActive.svg', route: '/Wallet' },
-                    { label: 'Friends', icon: icon: '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg', route: '/Friends' }
+                    { label: 'Home', icon: '../src/assets/home.svg', activeIcon: '../src/assets/homeActive.svg' },
+                    { label: 'Shop', icon: '../src/assets/shop.svg', activeIcon: '../src/assets/shopActive.svg' },
+                    { label: 'Favourites', icon: '../src/assets/collection.svg', activeIcon: '../src/assets/collectionActive.svg' },
+                    { label: 'Wallet', icon: '../src/assets/purse.svg', activeIcon: '../src/assets/purseActive.svg' },
+                    { label: 'Friends', icon:  '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' }
                 ],
-            
+            }
         },
         methods: {
             selectItem(index) {
@@ -84,26 +83,23 @@
                         this.isLoading = false; // 几秒后停止加载动画
                         this.selectedItem = index; // 选择Purse菜单项
                         this.showFriendsPopup = false;
-                        this.$router.push(route); // 使用 Vue Router 导航到新路径
-                        /*this.$emit('update-content', this.menuItems[index].label);*/
+                        this.$emit('update-content', this.menuItems[index].label);
 
                     }, 2000); // 设置加载动画持续时间为2秒
                 } else if (this.menuItems[index].label === 'Friends') {
                     this.selectedItem = index; // 选择Friends菜单项
-                    /*this.$emit('update-content', this.menuItems[index].label);*/
+                    this.$emit('update-content', this.menuItems[index].label);
                     this.toggleFriendsPopup();
                 } else {
                     this.selectedItem = index;
                     this.userProfileActive = false; // Deselect user profile when a menu item is selected
-                    /*this.$emit('update-content', this.menuItems[index].label);*/
-                    this.$router.push(route); // 使用 Vue Router 导航到新路径
+                    this.$emit('update-content', this.menuItems[index].label);
                 }
             },
             selectUserProfile() {
                 this.selectedItem = null; // Deselect any menu item
                 this.userProfileActive = true;
-                /*this.$emit('update-content', 'PersonalInformation');*/
-                this.$router.push('/PersonalInformation'); // 使用 Vue Router 导航到用户资料路径
+                this.$emit('update-content', 'PersonalInformation');
             },
             toggleFriendsPopup() {
                 this.showFriendsPopup = !this.showFriendsPopup;

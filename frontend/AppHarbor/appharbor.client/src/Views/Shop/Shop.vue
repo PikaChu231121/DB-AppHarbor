@@ -30,7 +30,7 @@
         data() {
             return {
                 apps: [], // 后端返回的应用列表
-                searchedApps: [], // 从apps中搜索出来的分支
+                searchedApps: [],
                 appsShown: [], // 当前页显示应用
                 selectedTags: [], // 选中的标签
                 Category:"All",//--------------我这先设置成All，需要调试可以改成Social或Office，你等之后加上前端的分类模块后再作具体修改
@@ -50,8 +50,8 @@
                     .then(response => {
                         this.apps = response.data.$values;
                         console.log(2);
-                        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                        this.searchedApps = this.apps; // 复制
+                        this.searchedApps=this.apps;;
+                        this.totalPages = Math.ceil(this.searchedApps.length / this.appsPerPage);
                         this.paginatedApps();
                     })
                     .catch(error => {
