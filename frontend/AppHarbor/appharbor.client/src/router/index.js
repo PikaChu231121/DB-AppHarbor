@@ -22,8 +22,11 @@ const routes = [
         component: () => import("@/Views/PersonalInformation.vue")
     },
     {
-        path: "/AppDetail",
+        path: '/app/:id',
+        name: 'AppDetail',
         component: () => import("@/Views/Shop/AppDetail.vue")
+        //path: "/AppDetail",
+        //component: () => import("@/Views/Shop/AppDetail.vue")
     },
     {
         path: "/FliterSection",
