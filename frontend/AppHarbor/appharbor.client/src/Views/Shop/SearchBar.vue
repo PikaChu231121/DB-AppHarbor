@@ -32,6 +32,7 @@
             handleSearch() {
                 // Implement search functionality
                 console.log('Searching for:', this.searchQuery);
+                this.$emit('search', this.searchQuery);
             }
         }
     }
