@@ -7,6 +7,11 @@ public class GetFavouritesModel
 {
     public decimal UserId { get; set; }
 }
+public class DeleteFavouriteRequest
+{
+    public string Token { get; set; }
+    public decimal Id { get; set; }
+}
 
 public partial class Favourite
 {
