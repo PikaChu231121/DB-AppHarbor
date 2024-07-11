@@ -25,8 +25,8 @@ namespace AppHarbor.Server.Controllers
         }
 
 
-        [HttpPost("findrelationship")]
-        public IActionResult FindRelationship([FromForm] decimal User1Id)
+        [HttpPost("findmysubscriber")]
+        public IActionResult FindMySubscriber([FromForm] decimal User1Id)
         {
             var query = from user in _dbContext.Relationships
                         join friend in _dbContext.Users on user.User2Id equals friend.Id 
@@ -44,51 +44,82 @@ namespace AppHarbor.Server.Controllers
             //如果集合中有元素，返回 true；如果集合为空，返回 false。
             if (!result.Any())
             {
-                return NotFound("No matching records found");
+                return NotFound(new {
+                    Data = 2,
+                    Msg = "No matching records found" });
             }
 
-            return Ok(result);
+            return Ok(new { 
+                data=1,
+                Msg=result });
         }
 
-        [HttpPost("addfriend")]
-        public IActionResult AddFriend([FromForm] decimal Id)
+        [HttpPost("findmyfollower")]
+        public IActionResult FindMyFollower([FromForm] decimal Id)
         {
-            var user = _dbContext.Users.Find(Id);
-            if (user == null)
-            {
-                return NotFound("user not found");
-            }
-            if (user.State == "")
-            {
-                return NotFound("user state abnormal");
-            }
-            else
-            {
-
-            }
-
-
-
-            var newuser = new User()
-            {
-                Id = _dbContext.Users.Select(u => u.Id).ToList().Max() + 1,
-                Password = registerModel.Password,
-                Nickname = registerModel.Nickname,
-                Avatar = "default.png",
-                RegisterTime = DateTime.Now,
-                Credit = 0,
-                State = "Normal"
-            };
+            var query = from user in _dbContext.Relationships
+                        join friend in _dbContext.Users on user.User1Id equals friend.Id
+                        where user.User2Id == Id
+                        select new
+                        {
+                            id = friend.Id,
+                            nickname = friend.Nickname,
+                            avatar = friend.Avatar,
+                            state = friend.State
+                        };
 
             var result = query.ToList();
             //判断集合中是否有任何元素
             //如果集合中有元素，返回 true；如果集合为空，返回 false。
             if (!result.Any())
             {
-                return NotFound("No matching records found");
+                return NotFound(new
+                {
+                    Data = 2,
+                    Msg = "No matching records found"
+                });
             }
 
-            return Ok(result);
+            return Ok(new
+            {
+                data = 1,
+                Msg = result
+            });
+        }
+
+        [HttpPost("addfriend")]
+        public IActionResult AddFriend([FromForm] decimal myId, [FromForm] decimal friendId, [FromForm] string Relationship)
+        {
+            var user = _dbContext.Users.Find(friendId);
+            if (user == null)
+            {
+                return NotFound(new {
+                    Data = 2,
+                    Msg = "user not found" });
+            }
+            if (user.State == "banned")
+            {
+                return NotFound(new {
+                    Data = 3,
+                    Msg = "user state abnormal" });
+            }
+            else
+            {
+                var friend = new Relationship()
+                {
+                    User1Id = myId,
+                    User2Id = user.Id,
+                    CreateTime = DateTime.Now,
+                    Relationship1 = Relationship
+                };
+                _dbContext.Relationships.Add(friend);
+                _dbContext.SaveChanges();
+                return Ok(new
+                {
+                    data = 1,
+                    Msg = friend
+                });
+            }
         }
 
     }
