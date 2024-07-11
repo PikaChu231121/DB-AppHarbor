@@ -44,12 +44,12 @@
                             this.message = ''; // 清空消息
                             console.log("Favourites array:", this.favourites);
                         } else {
-                            this.message = '当前用户无收藏夹！';
+                            this.message = '您还没有收藏夹哦，去创建一个吧';
                             console.error('Error: Expected Favourites but got:', response.data);
                         }
                     })
                     .catch(error => {
-                        this.message = '当前用户无收藏夹！';
+                        this.message = '您还没有收藏夹哦，去创建一个吧';
                         console.error('Error fetching favourites:', error);
                     });
             }
