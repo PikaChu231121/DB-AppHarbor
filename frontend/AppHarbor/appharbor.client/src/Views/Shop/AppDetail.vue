@@ -11,7 +11,7 @@
             <div class="tag">{{ app.category }}</div>
             <div class="price">￥{{ app.price }}</div>
             <p class="description">Text</p>
-            <button class="button">购买</button>
+            <button class="purchase-button" @click="gotoPurchase">购买</button>
             <div class="faq">
                 <div class="faq-header" @click="toggleFAQ">
                     <h3 class="faq-title">介绍</h3>
@@ -79,6 +79,9 @@
             },
             goBack() {
                 this.$router.push('/WorkBanchPage');
+            },
+            gotoPurchase() {
+                this.$router.push('/Purchase');
             }
         }
     };
@@ -146,6 +149,17 @@
     }
 
     .button {
+        display: inline-block;
+        background-color: #000;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .purchase-button {
         display: inline-block;
         background-color: #000;
         color: #fff;
