@@ -61,15 +61,28 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("searchapplist")]
         public IActionResult SearchAppList([FromBody] SearchAppListModel searchapplistModel)
         {
+            if (searchapplistModel.Category=="All")
+            {
+                var resultlist = _dbContext.Applications.Where(a =>
+                a.Price >= searchapplistModel.Price_min &&
+                a.Price <= searchapplistModel.Price_max &&
+                a.Name.Contains(searchapplistModel.Content)).ToList();
 
-            var resultlist = _dbContext.Applications.Where(a => 
-            a.Price >= searchapplistModel.Price_min && 
-            a.Price <= searchapplistModel.Price_max &&
-            a.Name.Contains(searchapplistModel.Content) &&
-            searchapplistModel.Category=="All"? true: a.Category == searchapplistModel.Category).ToList();
+                resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+                return Ok(resultlist);
+            }
+            else
+            {
+                var resultlist = _dbContext.Applications.Where(a => 
+                a.Price >= searchapplistModel.Price_min &&
+                a.Price <= searchapplistModel.Price_max && 
+                a.Name.Contains(searchapplistModel.Content) && 
+                a.Category==searchapplistModel.Category).ToList();
 
-            resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
-            return Ok(resultlist);
+                resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+                return Ok(resultlist);
+            }
+            
 
 
         }

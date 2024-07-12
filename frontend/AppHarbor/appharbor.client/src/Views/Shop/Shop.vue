@@ -124,18 +124,20 @@
                 } else {
                     this.Category = this.selectedTags[0];
                 }
-
+                console.log("changed");
                 /*this.fetchApps();*/
                 this.searchApps();
+                console.log("TEST");
             },
             handlePriceChange(newRange) {
                 this.priceRange = newRange;
-                /*console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' this.priceRange[1]);*/
+                console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' +this.priceRange[1]);
                 this.searchApps();
             }
         },
         created() {
             // 初始获取应用信息
+            //this.searchApps();
             this.fetchApps();
             /*this.paginatedApps();*/
         }
