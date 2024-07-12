@@ -154,6 +154,26 @@ namespace AppHarbor.Server.Controllers
 
         }
 
+        [HttpPost("searchid")]
+        public IActionResult SearchId([FromForm] decimal inputId)
+        {
+            var user = _dbContext.Users.Find(inputId);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            // 返回受保护的数据
+            var userInfo = new
+            {
+                user.Id,
+                user.Nickname,
+                user.Avatar,
+            };
+
+            return Ok(userInfo);
+        }
+
         [HttpPost("userinfo")]
         public IActionResult UserInfo([FromBody] TokenRequest request)
         {
