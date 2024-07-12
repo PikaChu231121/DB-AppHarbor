@@ -69,7 +69,7 @@
                     { label: 'Shop', icon: '../src/assets/shop.svg', activeIcon: '../src/assets/shopActive.svg' },
                     { label: 'Favourites', icon: '../src/assets/collection.svg', activeIcon: '../src/assets/collectionActive.svg' },
                     { label: 'Wallet', icon: '../src/assets/purse.svg', activeIcon: '../src/assets/purseActive.svg' },
-                    { label: 'Friends', icon:  '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' }
+                    { label: 'Friends', icon: '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' },
                 ],
             }
         },
@@ -82,25 +82,32 @@
                         //this.pastSelectedItem = this.selectedItem;
                         this.selectedItem = index;
                         this.showFriendsPopup = false;
+                        this.userProfileActive = false;
+                        this.showUserProfilePopup = false;
                         this.$emit('update-content', this.menuItems[index].label);
                     }, 2000);
                 } else if (this.menuItems[index].label === 'Friends') {
-                    if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.selectedItem].label)) {
+                    if (this.selectedItem && ['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.selectedItem].label)) {
                         this.pastSelectedItem = this.selectedItem;
                     }
                     this.selectedItem = index;
+                    this.userProfileActive = false;
+                    this.showUserProfilePopup = false;
                     /*this.$emit('update-content', this.menuItems[index].label);*/
                     this.toggleFriendsPopup();
                 } else {
                     this.selectedItem = index;
                     this.userProfileActive = false;
+                    this.showUserProfilePopup = false;
                     this.$emit('update-content', this.menuItems[index].label);
                 }
             },
             selectUserProfile() {
-                this.selectedItem = null;
                 this.userProfileActive = true;
                 this.showFriendsPopup = false;
+                if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                    this.selectedItem = this.pastSelectedItem;
+                }
                 this.toggleUserProfilePopup();
                 //this.$emit('update-content', 'UserProfile');
             },
@@ -117,7 +124,7 @@
             toggleUserProfilePopup() {
                 this.showUserProfilePopup = !this.showUserProfilePopup;
                 if (!this.showUserProfilePopup) {
-                    this.selectedItem = null;
+                    //this.selectedItem = null;
                     this.userProfileActive = false;
                 }
             },
