@@ -28,9 +28,9 @@ namespace AppHarbor.Server.Controllers
 
 
         [HttpPost("getFavourites")]
-        public IActionResult GetFavourites([FromBody] TokenRequest request, string categoryFilter = null)
+        public IActionResult GetFavourites([FromForm] string token ,[FromForm] string categoryFilter)
         {
-            if (string.IsNullOrEmpty(request.Token))
+            if (string.IsNullOrEmpty(token))
             {
                 var failResponse = new
                 {
@@ -39,7 +39,7 @@ namespace AppHarbor.Server.Controllers
                 return Unauthorized(failResponse);
             }
 
-            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
 
             if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
             {
@@ -62,7 +62,7 @@ namespace AppHarbor.Server.Controllers
 
             var query = _dbContext.Favourites
                 .Where(f => f.UserId == user.Id);
-            if (!string.IsNullOrEmpty(categoryFilter))
+            if (!string.IsNullOrEmpty(categoryFilter) && categoryFilter.ToLower() != "all")
             {
                 query = query.Where(f => f.Application.Category == categoryFilter);
             }
@@ -82,12 +82,12 @@ namespace AppHarbor.Server.Controllers
 
             if (!favouriteList.Any())
             {
-                var failResponse = new
+                var emptyData = new
                 {
-                    msg = "No favourites found for the current user!"
+                    Favourites = new List<object>()
                 };
-                return NotFound(failResponse);
-
+                var JResponse = JsonSerializer.Serialize(emptyData);
+                return new JsonResult(JResponse);
             }
 
             var data = new
@@ -98,7 +98,7 @@ namespace AppHarbor.Server.Controllers
             var jsonResponse = JsonSerializer.Serialize(data);
             return new JsonResult(jsonResponse);
         }
-        
+
         [HttpPost("deleteFavourite")]
         public IActionResult DeleteFavourite([FromBody] DeleteFavouriteRequest request)
         {
@@ -108,7 +108,8 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "No token provided!"
                 };
-                return NotFound(failResponse);
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
             }
 
             var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
@@ -119,7 +120,8 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "Invalid or expired token!"
                 };
-                return Unauthorized(failResponse);
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
             }
 
             var favourite = _dbContext.Favourites.FirstOrDefault(f => f.Id == request.Id && f.UserId == tokenEntry.Id);
@@ -129,7 +131,8 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "Favourite not found!"
                 };
-                return NotFound(failResponse);
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
             }
 
             _dbContext.Favourites.Remove(favourite);
@@ -140,7 +143,9 @@ namespace AppHarbor.Server.Controllers
                 success = true,
                 msg = "Favourite deleted successfully!"
             };
-            return Ok(successResponse);
+
+            var jsonSuccessResponse = JsonSerializer.Serialize(successResponse);
+            return new JsonResult(jsonSuccessResponse);
         }
 
         [HttpPost("bulkDelete")]
@@ -152,7 +157,8 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "No token provided!"
                 };
-                return NotFound(failResponse);
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
             }
 
             var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
@@ -163,7 +169,8 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "Invalid or expired token!"
                 };
-                return Unauthorized(failResponse);
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
             }
 
             var favourites = _dbContext.Favourites
@@ -176,7 +183,8 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "Favourites not found!"
                 };
-                return NotFound(failResponse);
+                var jsonResponse = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jsonResponse);
             }
 
             _dbContext.Favourites.RemoveRange(favourites);
@@ -188,7 +196,8 @@ namespace AppHarbor.Server.Controllers
                 msg = "Favourites deleted successfully!"
             };
 
-            return Ok(successResponse);
+            var jsonSuccessResponse = JsonSerializer.Serialize(successResponse);
+            return new JsonResult(jsonSuccessResponse);
         }
 
         [HttpPost("addFavourite")]

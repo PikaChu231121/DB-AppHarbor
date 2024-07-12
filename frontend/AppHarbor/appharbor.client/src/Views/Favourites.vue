@@ -6,24 +6,23 @@
         <!-- 应用种类筛选选择框 -->
         <label for="categoryFilter">选择应用种类：</label>
         <select id="categoryFilter" @change="filterByCategory" v-model="selectedCategory">
-            <option value="">All</option>
-            <option value="Office">Office</option>
-            <option value="Social">Social</option>
+            <option value="all">全部</option>
+            <option value="Office">办公</option>
+            <option value="Social">社交</option>
             <option value="Program">Program</option>
         </select>
 
         <div class="user-info">
             <div class="delete-button-group">
-                <button @click="toggleBulkDelete">{{ isBulkDeleting ? '退出批量删除模式' : '批量删除' }}</button>
+                <button @click="toggleBulkDelete">{{ isBulkDeleting ? '取消批量删除' : '批量删除' }}</button>
                 <button @click="bulkDelete" :disabled="!isBulkDeleting || selectedFavourites.length === 0">删除选中应用</button>
             </div>
             <div v-if="favourites.length" class="favourite-grid">
                 <div v-for="favourite in favourites" :key="favourite.id" class="favourite-item">
-                    <h3>ApplicationId: {{ favourite.applicationId }}</h3>
-                    <p>CreateTime: {{ favourite.createTime }}</p>
-                    <p>Visibility: {{ favourite.visibility }}</p>
-                    <p>Name: {{ favourite.applicationName  }}</p> 
-                    <p>Category: {{ favourite.applicationCategory  }}</p> 
+                    <h3>应用名称: {{ favourite.applicationName }}</h3>
+                    <p>收藏时间: {{ favourite.createTime }}</p>
+                    <p>可见性: {{ favourite.visibility }}</p>
+                    <p>分类: {{ favourite.applicationCategory  }}</p> 
                     <div class="action-buttons">
                         <button @click="deleteFavourite(favourite.id)" :disabled="isBulkDeleting">删除</button>
                         <input type="checkbox" v-if="isBulkDeleting" v-model="selectedFavourites" :value="favourite.id" class="bulk-delete-checkbox">
@@ -36,7 +35,6 @@
         </div>
     </div>
 </template>
-
 
 <script>
     import axios from 'axios';
@@ -55,7 +53,7 @@
                 notification: '',
                 isBulkDeleting: false,
                 selectedFavourites: [],
-                selectedCategory: ''
+                selectedCategory: 'all'
             };
         },
         created() {
@@ -63,21 +61,28 @@
         },
         methods: {
             fetchFavourites() {
-                var token = Cookies.get('token');
-                var url = 'http://localhost:5118/api/favourite/getfavourites';
-                var params = {
-                    token: token,
-                    categoryFilter: this.selectedCategory
-                }; // 发送选中应用的种类
-                axios.post(url, params)
+                const token = Cookies.get('token');
+                const formData = new FormData();
+                formData.append('token', token);
+                formData.append('categoryFilter', this.selectedCategory);
+                axios.post('http://localhost:5118/api/favourite/getfavourites', formData)
                     .then(response => {
-                        console.log("API response data:", response.data); // 输出 API 响应的数据
+                        console.log("API response data:", response.data); // 获得 API 响应的数据
+
                         const parsedData = JSON.parse(response.data);
+
                         if (parsedData && parsedData.Favourites) {
                             this.favourites = parsedData.Favourites;
                             this.message = ''; // 清空消息
                             console.log("Favourites array:", this.favourites);
+
+                            if (this.favourites.length === 0) {
+                                this.message = this.selectedCategory === 'all'
+                                    ? '您还没有收藏的应用哦，去商店逛逛吧'
+                                    : '当前分类下暂无收藏应用哦，去商店逛逛吧';
+                            }
                         } else {
+                            this.favourites = [];
                             this.message = '您还没有收藏的应用哦，去商店逛逛吧';
                             console.error('Error: Expected Favourites but got:', response.data);
                         }
@@ -89,15 +94,13 @@
             },
             deleteFavourite(id) {
                 var token = Cookies.get('token');
-                var url = 'http://localhost:5118/api/favourite/deleteFavourite';
-                var params = {
+                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
                     token: token,
                     id: id
-                }; // 发送选中应用的种类
-                axios.post(url, params)
+                })
                     .then(response => {
                         const parsedData = JSON.parse(response.data);
-                        if (parsedData && parsedData.success) {
+                        if (parsedData.success) {
                             this.favourites = this.favourites.filter(fav => fav.id !== id);
                             console.log("Delete successful:", parsedData);
                             this.showNotification('删除应用成功');
@@ -110,29 +113,15 @@
                         console.error('Error deleting favourite:', error);
                     });
             },
-            showNotification(message) {
-                this.notification = message;
-                setTimeout(() => {
-                    this.notification = '';
-                }, 2000);
-            },
-            toggleBulkDelete() {
-                this.isBulkDeleting = !this.isBulkDeleting;
-                if (!this.isBulkDeleting) {
-                    this.selectedFavourites = []; // 清空已选中的应用
-                }
-            },
             bulkDelete() {
                 var token = Cookies.get('token');
-                var url = 'http://localhost:5118/api/favourite/bulkDelete';
-                var params = {
+                axios.post('http://localhost:5118/api/favourite/bulkDelete', {
                     token: token,
                     ids: this.selectedFavourites
-                };
-                axios.post(url, params)
+                })
                     .then(response => {
                         const parsedData = JSON.parse(response.data);
-                        if (parsedData && parsedData.success) {
+                        if (parsedData.success) {
                             this.favourites = this.favourites.filter(fav => !this.selectedFavourites.includes(fav.id));
                             console.log("Bulk delete successful:", parsedData);
                             this.showNotification('批量删除应用成功');
@@ -145,8 +134,21 @@
                         console.error('Error bulk deleting favourites:', error);
                     });
             },
+            showNotification(message) {
+                this.notification = message;
+                setTimeout(() => {
+                    this.notification = '';
+                }, 2000);
+            },
             filterByCategory() {
+                console.log("Selected category:", this.selectedCategory); // 调试信息，确认选中的种类是否正确
                 this.fetchFavourites();
+            },
+            toggleBulkDelete() {
+                this.isBulkDeleting = !this.isBulkDeleting;
+                if (!this.isBulkDeleting) {
+                    this.selectedFavourites = []; // 清空已选中的应用
+                }
             }
         }
     };
