@@ -32,7 +32,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(transaction, index) in transactions" :key="index">
-                                <td>{{ transaction.time }}</td>
+                                <td>{{ transaction.time.replace('T', ' ') }}</td>
                                 <td>为用户 {{ transaction.receiverNickName }} 购买了 {{ transaction.applicationName }}</td>
                                 <td>{{ transaction.amount }}</td>
                             </tr>
@@ -40,10 +40,10 @@
                     </table>
                 </div>
 
-                <div class="button-row">
+                <!-- <div class="button-row">
                     <button type="button" class="button" @click="prevPage">上一页</button>
                     <button type="button" class="button" @click="nextPage">下一页</button>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -160,7 +160,7 @@ export default {
 }
 
 .header {
-    min-height: 150px;
+    height: 150px;
     width: 100%;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -230,7 +230,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 150px);
     margin: 10px 10px 3px;
 }
 
@@ -281,6 +281,7 @@ export default {
 .transaction-table {
     width: 100%;
     overflow-x: auto;
+    overflow-y: scroll;
     margin-bottom: 1rem;
 }
 
