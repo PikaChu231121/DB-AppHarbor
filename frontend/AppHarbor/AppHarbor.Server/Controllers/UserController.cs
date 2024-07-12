@@ -63,6 +63,9 @@ namespace AppHarbor.Server.Controllers
             }
             if (user.Password == password)
             {
+                // 删除同id的其他token
+                _dbContext.TokenIds.Where(u => u.Id == id).ExecuteDelete();
+
                 // 创建token并保存到数据库
                 var token = Guid.NewGuid().ToString();
                 var tokenid = new TokenId()
@@ -72,6 +75,7 @@ namespace AppHarbor.Server.Controllers
                     ExpireDate = DateTime.UtcNow.AddDays(1)
                 };
                 _dbContext.TokenIds.Add(tokenid);
+
                 _dbContext.SaveChanges();
 
                 return Ok(token);
