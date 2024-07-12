@@ -6,12 +6,12 @@
                  :key="group.name"
                  :class="{ selected: selectedGroup && selectedGroup.name === group.name }"
                  @click="toggleGroupSelection(group)">
-                <div class="group-header">{{ group.name }}</div>
+                <div class="group-header">{{ group.Chinese }}</div>
                 <div class="group-friend-icons">
                     <template v-for="(friend, index) in group.friends.slice(0, 3)">
                         <img v-if="index < 3"
                              :key="friend.id"
-                             :src="friend.avatar"
+                             :src="getAvatarUrl(friend.avatar)"
                              class="friend-icon" />
                     </template>
                     <div v-if="group.friends.length > 3" class="friend-icon more">
@@ -34,7 +34,7 @@
             <div class="friends-list">
                 <div class="friend-item1" v-if="selectedGroup !== null">
                     <div class="friend-item" v-for="friend in filtered2Friends" :key="friend.id">
-                        <img :src="friend.avatar" class="avatar" />
+                        <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
                         <div class="friend-info">
                             <div class="friend-title">{{ friend.nickname }}</div>
                             <div class="friend-description">{{ friend.state }}</div>
@@ -43,7 +43,7 @@
                 </div>
                     <div class="friend-item2" v-else>
                         <div class="friend-item" v-for="friend in friends" :key="friend.id">
-                            <img :src="friend.avatar" class="avatar" />
+                            <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
                             <div class="friend-info">
                                 <div class="friend-title">{{ friend.nickname }}</div>
                                 <div class="friend-description">{{ friend.state }}</div>
@@ -63,10 +63,11 @@ s
             return {
                 searchQuery: '',
                 selectedGroup: null,
-                groups: [{ name: 'Family', friends: [] },
-                        { name: 'Friend', friends: [] },
-                        { name: 'Classmate', friends: [] },],
+                groups: [{ name: 'Family', friends: [], Chinese: '瀹朵汉' },
+                        { name: 'Friend', friends: [], Chinese: '濂藉弸' },
+                        { name: 'Classmate', friends: [], Chinese: '鍚屽' },],
                 friends: [],
+                map: { 'Family':'瀹朵汉' }
             };
         },
         computed: {
@@ -81,7 +82,7 @@ s
                 );
             },
             selectedGroupName() {
-                return this.selectedGroup ? this.selectedGroup.name : 'All Friends';
+                return this.selectedGroup ? this.selectedGroup.Chinese : '鍏ㄩ儴濂藉弸';
             },
             filtered2Friends() {
                 console.log(this.selectedGroup.name);
@@ -153,7 +154,7 @@ s
                         console.log(error);
                     });
 
-
+                console.log(this.friends);
             
             },
 
@@ -164,6 +165,13 @@ s
                     this.selectedGroup = group;
                 }
             },
+
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../../public/default.png'; // 默  头  路  
+            }
         },
         mounted() {
             this.getfriend();
@@ -320,7 +328,7 @@ s
     .friends-list {
         display: flex;
         flex-wrap: wrap;
-        flex-direction: row; /* 确保子元素水平排列 */
+        flex-direction: row; /* 确    元  水平     */
         gap: 10px;
     }
 
