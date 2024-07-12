@@ -58,7 +58,7 @@
         },
         data() {
             return {
-                pastSelectedItem: null,
+                pastSelectedItem: 1,
                 selectedItem: 1,
                 userProfileActive: false,
                 isLoading: false,
@@ -75,7 +75,7 @@
         },
         methods: {
             selectItem(index) {
-                if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[index].label)) {
+                if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[index].label)) {
                     this.isLoading = true;
                     setTimeout(() => {
                         this.isLoading = false;
@@ -87,7 +87,7 @@
                         this.$emit('update-content', this.menuItems[index].label);
                     }, 2000);
                 } else if (this.menuItems[index].label === 'Friends') {
-                    if (this.selectedItem && ['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.selectedItem].label)) {
+                    if (this.selectedItem && ['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.selectedItem].label)) {
                         this.pastSelectedItem = this.selectedItem;
                     }
                     this.selectedItem = index;
@@ -105,18 +105,19 @@
             selectUserProfile() {
                 this.userProfileActive = true;
                 this.showFriendsPopup = false;
-                if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                /*if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
                     this.selectedItem = this.pastSelectedItem;
-                }
+                }*/
                 this.toggleUserProfilePopup();
                 //this.$emit('update-content', 'UserProfile');
             },
             toggleFriendsPopup() {
                 this.showFriendsPopup = !this.showFriendsPopup;
+                
                 if (!this.showFriendsPopup) {
                     this.selectedItem = null;
                     this.userProfileActive = false;
-                    if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                    if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.pastSelectedItem].label)) {
                         this.selectedItem = this.pastSelectedItem;
                     }
                 }
@@ -126,6 +127,11 @@
                 if (!this.showUserProfilePopup) {
                     //this.selectedItem = null;
                     this.userProfileActive = false;
+                }
+                else {
+                    if (['Friends'].includes(this.menuItems[this.selectedItem].label)) {
+                        this.selectedItem = this.pastSelectedItem;
+                    }
                 }
             },
             handlePopupClick(action) {
@@ -137,7 +143,7 @@
                 if (this.showFriendsPopup && !this.$refs.friendsPopup.contains(event.target) && !this.$el.contains(event.target)) {
                     this.showFriendsPopup = false;
                     this.selectedItem = null;
-                    if (['Purse', 'Home', 'Shop', 'Collection'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                    if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.pastSelectedItem].label)) {
                         this.selectedItem = this.pastSelectedItem;
                     }
                 }
