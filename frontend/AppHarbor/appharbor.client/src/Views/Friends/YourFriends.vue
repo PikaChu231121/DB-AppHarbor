@@ -160,6 +160,7 @@
     };
 </script>
 
+
 <style scoped>
     .light {
         --md-sys-color-primary: rgb(144, 74, 64);
