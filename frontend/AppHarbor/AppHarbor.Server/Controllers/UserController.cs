@@ -95,8 +95,16 @@ namespace AppHarbor.Server.Controllers
                 return BadRequest("Amount should be positive");
             }
 
-            user.Credit += info.Amount;
-            _dbContext.SaveChanges();
+            try
+            {
+                user.Credit += info.Amount;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                // bug fix: 充值1000000000000元，会直接给后端充爆。try catch最有用的一集。
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
 
             return Ok(new { user.Id, user.Nickname, user.Credit });
         }

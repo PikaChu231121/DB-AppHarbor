@@ -64,7 +64,7 @@ export default {
         };
     },
     methods: {
-        fetchUserAndTransaction() {
+        fetchUserAndTransactions() {
                 var token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
@@ -97,21 +97,33 @@ export default {
                 });
         },
         recharge() {
-            if (this.rechargeAmount > 0) {
-                axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
-                    .then(response => {
-                        this.credit += this.rechargeAmount;
-                        alert('充值成功');
-                    })
-                    .catch(error => {
-                        console.error('Error recharging:', error);
-                    });
-            } else {
+
+            if (this.rechargeAmount <= 0) {
                 alert('请输入有效的充值金额');
+                return;
             }
-        },
-        goToPay() {
-            // 充值按钮的点击事件处理逻辑
+        
+            if (this.rechargeAmount + this.credit > 1e6) {
+                alert(`充值失败，账户金额不能超过 1000000 元`);
+                return;
+            }
+
+            if (!/^\d+(\.\d{1,2})?$/.test(this.rechargeAmount)) {
+                alert('请输入最多两位小数的有效金额');
+                return;
+            }
+            
+            axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
+                .then(response => {
+                    this.fetchUserAndTransactions();
+                    // this.credit += this.rechargeAmount;
+                    alert('充值成功');
+                })
+                .catch(error => {
+                    console.error('Error recharging:', error);
+                    alert('充值失败，请联系管理员');
+                });
+
         },
         prevPage() {
             // 上一页按钮的点击事件处理逻辑
@@ -121,7 +133,7 @@ export default {
         }
     },
     mounted() {
-        this.fetchUserAndTransaction(); // 页面加载时从cookies获取用户ID，再获取交易信息
+        this.fetchUserAndTransactions(); // 页面加载时从cookies获取用户ID，再获取交易信息
     },
 
     computed: {
