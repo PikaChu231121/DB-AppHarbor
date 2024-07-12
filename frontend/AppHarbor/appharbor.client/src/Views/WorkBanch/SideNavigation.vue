@@ -24,15 +24,15 @@
             <div v-if="showFriendsPopup" class="friends-popup" ref="friendsPopup">
                 <button class="popup-item1" @click="handlePopupClick('Your friends')">
                     <img src="../../assets/yourfriends.svg" alt="Your friends" class="popup-icon" />
-                    <span>&nbsp;&nbsp;Your friends</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;您的好友</span>
                 </button>
                 <button class="popup-item2" @click="handlePopupClick('Add friends')">
                     <img src="../../assets/addfriends.svg" alt="Add friends" class="popup-icon" />
-                    <span>&nbsp;&nbsp;Add friends</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;添加好友</span>
                 </button>
                 <button class="popup-item3" @click="handlePopupClick('Buy me')">
                     <img src="../../assets/buyme.svg" alt="Buy me" class="popup-icon" />
-                    <span>&nbsp;&nbsp;Buy me</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;赠送礼物</span>
                 </button>
             </div>
         </transition>
@@ -284,7 +284,7 @@
 
     .user-profile-popup {
         position: absolute;
-        top: 100px; /* 根据需要调整位�?*/
+        top: 100px; /* 根据需要调整位 ?*/
         left: 90px;
         background-color: #fbeaea;
         border-radius: 12px;
