@@ -42,11 +42,11 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      searchQuery: '',
-      selectedGroup: null,
+    export default {
+        data() {
+            return {
+                searchQuery: '',
+                selectedGroup: null,
                 groups: [
                     {
                         name: 'Family',
@@ -72,39 +72,37 @@ export default {
                         ],
                     },
                 ],
-                friends: [
-                    { id: 1, avatar: 'avatar1.png', title: 'Title 1', description: 'Description 1' },
-                    { id: 2, avatar: 'avatar2.png', title: 'Title 2', description: 'Description 2' },
-                    { id: 3, avatar: 'avatar3.png', title: 'Title 3', description: 'Description 3' },
-                ],
+            };
+        },
+        computed: {
+            filteredFriends() {
+                if (!this.selectedGroup) {
+                    return this.groups.flatMap(group =>
+                        group.friends.filter(friend =>
+                            friend.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+                        )
+                    );
+                }
+                return this.selectedGroup.friends.filter(friend =>
+                    friend.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            },
+            selectedGroupName() {
+                return this.selectedGroup ? this.selectedGroup.name : 'All Friends';
+            }
+        },
+        methods: {
+            toggleGroupSelection(group) {
+                if (this.selectedGroup && this.selectedGroup.name === group.name) {
+                    this.selectedGroup = null;
+                } else {
+                    this.selectedGroup = group;
+                }
+            },
+        },
     };
-  },
-  computed: {
-    filteredFriends() {
-      if (!this.selectedGroup) {
-        return this.friends.filter(friend =>
-          friend.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-      return this.selectedGroup.friends.filter(friend =>
-        friend.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    },
-    selectedGroupName() {
-      return this.selectedGroup ? this.selectedGroup.name : 'All Friends';
-    }
-  },
-  methods: {
-    toggleGroupSelection(group) {
-      if (this.selectedGroup && this.selectedGroup.name === group.name) {
-        this.selectedGroup = null;
-      } else {
-        this.selectedGroup = group;
-      }
-    },
-  },
-};
 </script>
+
 
 <style scoped>
     .light {
@@ -286,5 +284,5 @@ export default {
 
     .friend-description {
         color: var(--md-sys-color-on-surface-variant);
-}
+    }
 </style>
