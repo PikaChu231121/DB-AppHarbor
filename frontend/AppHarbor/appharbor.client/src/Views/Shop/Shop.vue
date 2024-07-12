@@ -34,7 +34,7 @@
                 appsShown: [], // 当前页显示应用
                 selectedTags: [], // 选中的标签
                 Category: "All", // 检索属性
-                priceRange: [0,100],
+                priceRange: [0,1000],
                 searchQuery: "",
                 
                 currentPage: 1, // 当前页码，初始为1
@@ -44,25 +44,28 @@
         },
         methods: {
             fetchApps() {
+                // 从远端数据库获取应用信息
+                console.log('fetchApps has been execute!');
+                axios.post('http://localhost:5118/api/application/getapplist', {
+                    Category: this.Category
+                    /*Page: this.currentPage */  
+                })
+                    .then(response => {
+                        this.apps = response.data.$values;
+                        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
+                        this.currentPage = 1; // 重置到第一页
+                        this.paginatedApps();
+                    })
+                    .catch(error => {
+                        console.error("Error fetching apps:", error);
+                    });
+            },
+            searchApps() {
+                /*console.log('searching for ' + this.searchQuery + ' ' + this.Category + ' price: ' + this.priceRange[0] + ' to ' this.priceRange[1]);*/
                 console.log(this.searchQuery);
                 console.log(this.Category);
                 console.log(this.priceRange[0]);
                 console.log(this.priceRange[1]);
-                //// 从远端数据库获取应用信息
-                //axios.post('http://localhost:5118/api/application/getapplist', {
-                //    Category: this.Category
-                //    /*Page: this.currentPage */  
-                //})
-                //    .then(response => {
-                //        this.apps = response.data.$values;
-                //        //console.log(2);
-                //        /*this.searchedApps=this.apps;*/
-                //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                //        this.paginatedApps();
-                //    })
-                //    .catch(error => {
-                //        console.error("Error fetching apps:", error);
-                //    });
                 axios.post('http://localhost:5118/api/application/searchapplist', {
                     Category: this.Category,
 
@@ -82,14 +85,13 @@
                     .catch(error => {
                         console.error("Error searching apps:", error);
                     });
-                console.log(this.apps.length);
+                console.log('num of apps searched: '+ this.apps.length);
             },
             paginatedApps() {
                 // 计算当前页需要展示的应用
                 const start = (this.currentPage - 1) * this.appsPerPage;
                 const end = start + this.appsPerPage < this.apps.length ? start + this.appsPerPage : this.apps.length;
-                //console.log(Array.isArray(this.apps));
-                console.log('appsShown changed');
+                console.log('slice apps from '+ start + ' to '+ end + ' in apps');
                 this.appsShown = this.apps.slice(start, end); // slice不取最后一个元素
             },
             AppsIsEmpty() {
@@ -103,44 +105,8 @@
             handleSearch(searchTerm) {
 
                 this.searchQuery = searchTerm;
-                //console.log(this.searchQuery);
-                //console.log(this.Category);
-                //console.log(this.priceRange[0]);
-                //console.log(this.priceRange[1]);
-                //console.log(this.apps.length);
-                // 根据搜索词过滤应用
-                // 这里假设后端支持搜索查询，返回搜索结果
-                //axios.post('http://localhost:5118/api/application/searchapplist', {
-                //    Category: this.Category,
-
-                //    Price_min: this.priceRange[0],
-
-                //    Price_max: this.priceRange[1],
-
-                //    Content: this.searchQuery
-
-                //})
-                //    .then(response => {
-                //        this.apps = response.data.$values;
-                //        this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
-                //        this.currentPage = 1; // 重置到第一页
-                //        this.paginatedApps();
-                //    })
-                //    .catch(error => {
-                //        console.error("Error searching apps:", error);
-                //    });
-                //if (searchTerm.trim() === "") {
-                //    // 搜索词为空时，重新获取所有应用
-                //    this.fetchApps();
-                //} else {
-                //    // 根据搜索词过滤应用
-                //    const searchResults = this.apps.filter(app => app.name.toLowerCase().includes(searchTerm.toLowerCase()));
-                //    this.searchedApps = searchResults;
-                //    this.totalPages = Math.ceil(this.searchedApps.length / this.appsPerPage);
-                //    this.currentPage = 1; // 重置到第一页
-                //    this.paginatedApps();
-                //}
-                this.fetchApps();
+                this.searchApps();
+                /*this.fetchApps();*/
             },
             handlePageChange(newPage) {
                 // 处理当前页号的变化
@@ -159,19 +125,17 @@
                     this.Category = this.selectedTags[0];
                 }
 
-                this.fetchApps();
+                /*this.fetchApps();*/
+                this.searchApps();
             },
             handlePriceChange(newRange) {
                 this.priceRange = newRange;
-                console.log('priceRange has changed');
-                //console.log(this.priceRange[0]);
-                //console.log(this.priceRange[1]);
-                this.fetchApps();
+                /*console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' this.priceRange[1]);*/
+                this.searchApps();
             }
         },
         created() {
             // 初始获取应用信息
-            //console.log(1);
             this.fetchApps();
             /*this.paginatedApps();*/
         }

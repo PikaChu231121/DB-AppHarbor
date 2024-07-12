@@ -65,8 +65,7 @@ namespace AppHarbor.Server.Controllers
             var resultlist = _dbContext.Applications.Where(a => 
             a.Price >= searchapplistModel.Price_min && 
             a.Price <= searchapplistModel.Price_max &&
-            //a.Name.Contains(searchapplistModel.Content)&&
-            searchapplistModel.Content==""? true: a.Name.Contains(searchapplistModel.Content)&&
+            a.Name.Contains(searchapplistModel.Content) &&
             searchapplistModel.Category=="All"? true: a.Category == searchapplistModel.Category).ToList();
 
             resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });

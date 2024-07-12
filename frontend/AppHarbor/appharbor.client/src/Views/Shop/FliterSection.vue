@@ -47,9 +47,9 @@
             return {
                 newTag: '',
                 selectedTags: [], // 默认选中的标签
-                priceRange: [0, 100], // 价格范围初始值
+                priceRange: [0, 1000], // 价格范围初始值
                 minPrice: 0,
-                maxPrice: 100,
+                maxPrice: 1000,
                 //apps: [
                 //    { id: 1, name: '应用A', tags: ['社交'], price: 0 },
                 //    { id: 2, name: '应用B', tags: ['工具'], price: 50 },
