@@ -26,12 +26,16 @@ namespace AppHarbor.Server.Controllers
 
 
         [HttpPost("findall")]
-        public IActionResult FindMySubscriber([FromForm] TokenRequest request)
+        public IActionResult FindMySubscriber([FromForm] string token)
         {
+            if (token == null || string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { Msg = "Invalid request data" });
+            }
             var query = from user in _dbContext.Relationships
                         join friend in _dbContext.Users on user.User2Id equals friend.Id
-                        join token in _dbContext.TokenIds on request.Token equals token.Token
-                        where user.User1Id == token.Id
+                        join token1 in _dbContext.TokenIds on token equals token1.Token
+                        where user.User1Id == token1.Id 
                         select new
                         {
                             id = friend.Id,
@@ -55,12 +59,13 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("findmysubscriber")]
-        public IActionResult FindMySubscriber([FromForm] TokenRequest request, [FromForm] string relationship)
+        public IActionResult FindMySubscriber([FromForm] string token, [FromForm] string relationship)
         {
+
             var query = from user in _dbContext.Relationships
                         join friend in _dbContext.Users on user.User2Id equals friend.Id
-                        join token in _dbContext.TokenIds on request.Token equals token.Token
-                        where user.User1Id == token.Id && user.Relationship1 == relationship
+                        join token1 in _dbContext.TokenIds on token equals token1.Token
+                        where user.User1Id == token1.Id && user.Relationship1 == relationship
                         select new
                         {
                             id = friend.Id,
@@ -70,6 +75,9 @@ namespace AppHarbor.Server.Controllers
                         };
 
             var result = query.ToList();
+
+            // 打印查询结果数量
+            Console.WriteLine($"Query result count: {result.Count}");
 
             if (!result.Any())
             {
@@ -84,13 +92,14 @@ namespace AppHarbor.Server.Controllers
         }
 
 
+
         [HttpPost("findmyfollower")]
-        public IActionResult FindMyFollower([FromForm] TokenRequest request)
+        public IActionResult FindMyFollower([FromForm] string token)
         {
             var query = from user in _dbContext.Relationships
                         join friend in _dbContext.Users on user.User1Id equals friend.Id
-                        join token in _dbContext.TokenIds on request.Token equals token.Token
-                        where user.User2Id == token.Id
+                        join token1 in _dbContext.TokenIds on token equals token1.Token
+                        where user.User2Id == token1.Id
                         select new
                         {
                             id = friend.Id,
@@ -119,16 +128,16 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("addfriend")]
-        public IActionResult AddFriend([FromForm] TokenRequest request, [FromForm] decimal friendId, [FromForm] string Relationship)
+        public IActionResult AddFriend([FromForm] string token, [FromForm] decimal friendId, [FromForm] string Relationship)
         {
             
-            if (string.IsNullOrEmpty(request.Token))
+            if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("No token provided.");
             }
             else
             {
-                var myID = _dbContext.TokenIds.Find(request.Token);
+                var myID = _dbContext.TokenIds.Find(token);
                 var user = _dbContext.Users.Find(myID.Id);
                 if (user == null)
                 {

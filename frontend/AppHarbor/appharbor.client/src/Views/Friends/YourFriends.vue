@@ -20,6 +20,8 @@
                 </div>
             </div>
         </div>
+
+
         <div class="main">
             <div class="header">
                 <div class="header-title">{{ selectedGroupName }}</div>
@@ -28,6 +30,7 @@
                           prefix-icon="el-icon-search"
                           class="search-input"></el-input>
             </div>
+
             <div class="friends-list">
                 <div class="friend-item" v-for="friend in filteredFriends" :key="friend.id">
                     <img :src="friend.avatar" class="avatar" />
@@ -42,68 +45,119 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      searchQuery: '',
-      selectedGroup: null,
-                groups: [
-                    {
-                        name: 'Family',
-                        friends: [
-                            { id: 1, name: 'Friend 1', avatar: 'avatar1.png', description: 'Description 1' },
-                            { id: 2, name: 'Friend 2', avatar: 'avatar2.png', description: 'Description 2' },
-                            { id: 7, name: 'Friend 7', avatar: 'avatar7.png', description: 'Description 7' },
-                            { id: 8, name: 'Friend 8', avatar: 'avatar8.png', description: 'Description 8' },
-                        ],
-                    },
-                    {
-                        name: 'Bro',
-                        friends: [
-                            { id: 3, name: 'Friend 3', avatar: 'avatar3.png', description: 'Description 3' },
-                            { id: 4, name: 'Friend 4', avatar: 'avatar4.png', description: 'Description 4' },
-                        ],
-                    },
-                    {
-                        name: 'Green',
-                        friends: [
-                            { id: 5, name: 'Friend 5', avatar: 'avatar5.png', description: 'Description 5' },
-                            { id: 6, name: 'Friend 6', avatar: 'avatar6.png', description: 'Description 6' },
-                        ],
-                    },
-                ],
-                friends: [
-                    { id: 1, avatar: 'avatar1.png', title: 'Title 1', description: 'Description 1' },
-                    { id: 2, avatar: 'avatar2.png', title: 'Title 2', description: 'Description 2' },
-                    { id: 3, avatar: 'avatar3.png', title: 'Title 3', description: 'Description 3' },
-                ],
+    import Cookies from 'js-cookie';
+    import axios from 'axios';
+    export default {
+        data() {
+            return {
+                searchQuery: '',
+                selectedGroup: null,
+                groups: [{ name: 'Family', friends: [] },
+                        { name: 'Friend', friends: [] },
+                        { name: 'Classmate', friends: [] },],
+                friends: [],
+                /*                    { id: 1, avatar: 'avatar1.png', title: 'Title 1', description: 'Description 1' },
+                                      { id: 2, avatar: 'avatar2.png', title: 'Title 2', description: 'Description 2' },
+                                      { id: 3, avatar: 'avatar3.png', title: 'Title 3', description: 'Description 3' },*/
+            };
+        },
+        computed: {
+            filteredFriends() {
+                if (!this.selectedGroup) {
+                    return this.friends.filter(friend =>
+                        friend.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    );
+                }
+                return this.selectedGroup.friends.filter(friend =>
+                    friend.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            },
+            selectedGroupName() {
+                return this.selectedGroup ? this.selectedGroup.name : 'All Friends';
+            }
+        },
+        methods: {
+            getfriend() {
+                var token = Cookies.get('token');
+
+                let formData4 = new FormData;
+                formData4.append('token', token);
+                axios.post('http://localhost:5118/api/relationship/findall', formData4)
+                    .then(response => {
+                        groups.forEach(group => {
+                            friends = response.data.data.$values;
+                            console.log(friends);
+                        });
+
+                    })
+                    .catch(error => {
+                        this.alertMessage = error.response.data.msg;
+                    });
+
+                let formData1 = new FormData();
+                formData1.append('token', token);
+                formData1.append('relationship', "family");
+                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData1)
+                    .then(response => {
+                        this.groups.forEach(group => {
+                            if (group.name === 'Family') {
+                                group.friends=response.data.data.$values;
+                                //console.log(response.data.data);
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        this.alertMessage = error.response.data;
+                    });
+
+                let formData2 = new FormData();
+                formData2.append('token', token);
+                formData2.append('relationship', 'friend');
+                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData2)
+                    .then(response => {
+                        this.groups.forEach(group => {
+                            if (group.name === 'Friend') {
+                                group.friends=response.data.data.$values;
+                                console.log(response.data.data);
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        this.alertMessage = error.response.data;
+                    });
+
+                let formData3 = new FormData();
+                formData3.append('token', token);
+                formData3.append('relationship', 'classmate');
+                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData3)
+                    .then(response => {
+                        this.groups.forEach(group => {
+                            if (group.name === 'Classmate') {
+                                group.friends = response.data.data.$values;
+                                //console.log(response.data.data);
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        this.alertMessage = error.response.data;
+                    });
+
+
+            
+            },
+
+            toggleGroupSelection(group) {
+                if (this.selectedGroup && this.selectedGroup.name === group.name) {
+                    this.selectedGroup = null;
+                } else {
+                    this.selectedGroup = group;
+                }
+            },
+        },
+        mounted() {
+            this.getfriend();
+        }
     };
-  },
-  computed: {
-    filteredFriends() {
-      if (!this.selectedGroup) {
-        return this.friends.filter(friend =>
-          friend.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-      return this.selectedGroup.friends.filter(friend =>
-        friend.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    },
-    selectedGroupName() {
-      return this.selectedGroup ? this.selectedGroup.name : 'All Friends';
-    }
-  },
-  methods: {
-    toggleGroupSelection(group) {
-      if (this.selectedGroup && this.selectedGroup.name === group.name) {
-        this.selectedGroup = null;
-      } else {
-        this.selectedGroup = group;
-      }
-    },
-  },
-};
 </script>
 
 <style scoped>
@@ -286,5 +340,5 @@ export default {
 
     .friend-description {
         color: var(--md-sys-color-on-surface-variant);
-}
+    }
 </style>
