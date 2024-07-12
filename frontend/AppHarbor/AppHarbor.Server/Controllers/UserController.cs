@@ -64,7 +64,7 @@ namespace AppHarbor.Server.Controllers
             if (user.Password == password)
             {
                 // 删除同id的其他token
-                _dbContext.TokenIds.Where(u => u.Id == id).ExecuteDelete();
+                // _dbContext.TokenIds.Where(u => u.Id == id).ExecuteDelete();
 
                 // 创建token并保存到数据库
                 var token = Guid.NewGuid().ToString();
