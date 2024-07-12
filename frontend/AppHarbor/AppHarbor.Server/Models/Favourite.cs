@@ -19,6 +19,12 @@ public class BulkDeleteRequest
     public List<decimal> Ids { get; set; }
 }
 
+public class AddFavouriteRequest
+{
+    public string Token { get; set; }
+    public decimal ApplicationId { get; set; }
+}
+
 public partial class Favourite
 {
     public decimal Id { get; set; }

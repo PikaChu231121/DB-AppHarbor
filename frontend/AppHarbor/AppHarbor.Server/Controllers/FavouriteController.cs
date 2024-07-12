@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using AppHarbor.Server.Models;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AppHarbor.Server.Controllers
 {
@@ -27,9 +28,9 @@ namespace AppHarbor.Server.Controllers
 
 
         [HttpPost("getFavourites")]
-        public IActionResult GetFavourites([FromBody] TokenRequest request)
+        public IActionResult GetFavourites([FromForm] string token, [FromForm] string categoryFilter)
         {
-            if (string.IsNullOrEmpty(request.Token))
+            if (string.IsNullOrEmpty(token))
             {
                 var failResponse = new
                 {
@@ -38,7 +39,7 @@ namespace AppHarbor.Server.Controllers
                 return Unauthorized(failResponse);
             }
 
-            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
 
             if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
             {
@@ -59,26 +60,34 @@ namespace AppHarbor.Server.Controllers
                 return Unauthorized(failResponse);
             }
 
-            var favouriteList = _dbContext.Favourites
-                .Where(f => f.UserId == user.Id)
+            var query = _dbContext.Favourites
+                .Where(f => f.UserId == user.Id);
+            if (!string.IsNullOrEmpty(categoryFilter) && categoryFilter.ToLower() != "all")
+            {
+                query = query.Where(f => f.Application.Category == categoryFilter);
+            }
+
+            var favouriteList = query
                 .Select(f => new
                 {
                     id = f.Id,
                     applicationId = f.ApplicationId,
                     createTime = f.CreateTime,
                     visibility = f.Visibility,
-                    userId = f.UserId
+                    userId = f.UserId,
+                    applicationName = f.Application.Name,
+                    applicationCategory = f.Application.Category,
                 })
                 .ToList();
 
             if (!favouriteList.Any())
             {
-                var failResponse = new
+                var emptyData = new
                 {
-                    msg = "No favourites found for the current user!"
+                    Favourites = new List<object>()
                 };
-                return NotFound(failResponse);
-
+                var JResponse = JsonSerializer.Serialize(emptyData);
+                return new JsonResult(JResponse);
             }
 
             var data = new
@@ -189,6 +198,58 @@ namespace AppHarbor.Server.Controllers
 
             var jsonSuccessResponse = JsonSerializer.Serialize(successResponse);
             return new JsonResult(jsonSuccessResponse);
+        }
+
+        [HttpPost("addFavourite")]
+        public IActionResult AddFavourite([FromBody] AddFavouriteRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                var failResponse = new
+                {
+                    msg = "No token provided!"
+                };
+                return NotFound(failResponse);
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                var failResponse = new
+                {
+                    msg = "Invalid or expired token!"
+                };
+                return Unauthorized(failResponse);
+            }
+
+            // 检查收藏夹是否已经存在该应用
+            var existingFavourite = _dbContext.Favourites.FirstOrDefault(f => f.ApplicationId == request.ApplicationId && f.UserId == tokenEntry.Id);
+            if (existingFavourite != null)
+            {
+                var failResponse = new
+                {
+                    msg = "Favourite already exists!"
+                };
+                return Conflict(failResponse);
+            }
+            // 新建
+            var newFavourite = new Favourite
+            {
+                ApplicationId = request.ApplicationId,
+                UserId = tokenEntry.Id,
+                Visibility = "invisible",
+                CreateTime = DateTime.UtcNow
+            };
+            _dbContext.Favourites.Add(newFavourite);
+            _dbContext.SaveChanges();
+
+            var successResponse = new
+            {
+                success = true,
+                msg = "Favourite added successfully!"
+            };
+            return Ok(successResponse);
         }
 
     }
