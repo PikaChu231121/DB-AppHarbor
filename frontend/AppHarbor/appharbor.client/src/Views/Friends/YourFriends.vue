@@ -64,7 +64,7 @@ s
                 searchQuery: '',
                 selectedGroup: null,
                 groups: [{ name: 'Family', friends: [], Chinese: '家人' },
-                        { name: 'Friend', friends: [], Chinese: '好友' },
+                        { name: 'Friend', friends: [], Chinese: '朋友' },
                         { name: 'Classmate', friends: [], Chinese: '同学' },],
                 friends: [],
                 map: { 'Family':'家人' }
