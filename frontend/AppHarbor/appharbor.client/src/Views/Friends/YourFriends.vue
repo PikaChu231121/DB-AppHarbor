@@ -84,14 +84,15 @@
                 formData4.append('token', token);
                 axios.post('http://localhost:5118/api/relationship/findall', formData4)
                     .then(response => {
-                        groups.forEach(group => {
-                            friends = response.data.data.$values;
-                            console.log(friends);
+                        this.groups.forEach(group => {
+                            this.friends = response.data.data.$values;
+                            console.log(this.friends);
                         });
 
                     })
                     .catch(error => {
-                        this.alertMessage = error.response.data.msg;
+                        //this.alertMessage = error.msg;
+                        console.log(error);
                     });
 
                 let formData1 = new FormData();
@@ -102,9 +103,9 @@
                         this.groups.forEach(group => {
                             if (group.name === 'Family') {
                                 group.friends=response.data.data.$values;
-                                //console.log(response.data.data);
                             }
                         });
+                        //console.log(this.groups);
                     })
                     .catch(error => {
                         this.alertMessage = error.response.data;
@@ -118,9 +119,10 @@
                         this.groups.forEach(group => {
                             if (group.name === 'Friend') {
                                 group.friends=response.data.data.$values;
-                                console.log(response.data.data);
+                                //console.log(response.data.data);
                             }
                         });
+                        //console.log(this.groups);
                     })
                     .catch(error => {
                         this.alertMessage = error.response.data;
@@ -137,6 +139,7 @@
                                 //console.log(response.data.data);
                             }
                         });
+                        //console.log(this.groups);
                     })
                     .catch(error => {
                         this.alertMessage = error.response.data;
