@@ -15,7 +15,8 @@
                 <p class="text">钱包余额</p>
                 <p class="user-credit" v-html="formattedCredit"></p>
                 <div class="button-row">
-                    <button type="button" class="button">充值</button>
+                    <input type="number" v-model="rechargeAmount" placeholder="输入充值金额" class="input-recharge" />
+                    <button type="button" class="button" @click="recharge">充值</button>
                 </div>
             </div>
             <div class="info-box">
@@ -58,7 +59,8 @@ export default {
             user_id: '',
             transactions: [],
             avatar_url: '',
-            credit: -1
+            credit: -1, 
+            rechargeAmount: 0 // 充值金额
         };
     },
     methods: {
@@ -93,6 +95,20 @@ export default {
                 .catch(error => {
                     console.error('Error fetching transactions:', error);
                 });
+        },
+        recharge() {
+            if (this.rechargeAmount > 0) {
+                axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
+                    .then(response => {
+                        this.credit += this.rechargeAmount;
+                        alert('充值成功');
+                    })
+                    .catch(error => {
+                        console.error('Error recharging:', error);
+                    });
+            } else {
+                alert('请输入有效的充值金额');
+            }
         },
         goToPay() {
             // 充值按钮的点击事件处理逻辑
@@ -228,6 +244,14 @@ export default {
 }
 ::v-deep .decimal-part {
   font-size: 20px;
+}
+
+.input-recharge {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+    border: 2px solid #FADAD6;
+    border-radius: 5px;
 }
 
 .text {

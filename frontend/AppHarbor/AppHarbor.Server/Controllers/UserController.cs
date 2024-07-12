@@ -82,6 +82,26 @@ namespace AppHarbor.Server.Controllers
             }
         }
 
+        [HttpPost("recharge")]
+        public IActionResult Recharge([FromBody] UserRechargeModel info)
+        {
+            var user = _dbContext.Users.Find(info.Id);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            if (info.Amount <= 0)
+            {
+                return BadRequest("Amount should be positive");
+            }
+
+            user.Credit += info.Amount;
+            _dbContext.SaveChanges();
+
+            return Ok(new { user.Id, user.Nickname, user.Credit });
+        }
+
+
         [HttpPost("getTransaction")]
         public IActionResult Transaction([FromBody] UserInfoModel info)
         {
