@@ -115,7 +115,7 @@ export default {
       let integerPart = creditStr[0];
       let decimalPart = creditStr[1];
       // 返回带有HTML标记的字符串
-      return `<span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
+      return `<span>￥ </span><span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
     }
   }
 }
@@ -138,13 +138,14 @@ export default {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     border-radius: 10px;
+    border: 3px solid #ffd7d2;
 }
 
 .avatar-header {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    filter: blur(50px);
+    filter: blur(50px)opacity(80%);
 }
 
 .avatar {
@@ -184,8 +185,8 @@ export default {
     flex-direction: row;
     text-shadow: 0 3px 15px rgb(255, 255, 255);
 }
-.user-id {
 
+.user-id {
     width: 100%;
     margin-left: 5px;
     height: 70%;
@@ -194,6 +195,7 @@ export default {
     flex-direction: row;
     text-shadow: 0 3px 15px rgb(255, 255, 255);
 }
+
 .auto-wrapper {
     display: flex;
     flex-direction: row;
@@ -208,7 +210,8 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #e9f2fb;
+    background: #fff9f9;
+    border: 3px solid #ffd7d2;
     padding: 2% 5% 2% 5%;
     width: calc(50% - 8px);
     height: 100%;
@@ -217,7 +220,7 @@ export default {
 }
 
 .user-credit {
-  font-size: 25px; /* 基本字体大小 */
+  font-size: 30px; /* 基本字体大小 */
 }
 
 ::v-deep .integer-part {
@@ -271,19 +274,26 @@ tr:hover {
     margin-top: 1em;
 }
 
-.button {
-    width: 40%;
-    padding: 0.5em;
-    border: none;
-    border-radius: 4px;
-    background-color: #42b983;
-    color: white;
-    font-size: 1em;
-    cursor: pointer;
-}
+button {
+        padding: 10px 20px;
+        background-color: #fbeaea;
+        font-size: 18px;
+        color: #F8887D;
+        border: 3px solid #FADAD6;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
+    }
 
-.button:hover {
-    background-color: #3ca676;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
+        button:disabled {
+            cursor: not-allowed;
+        }
+
+        button:hover:enabled {
+            background-color: #ffe5e5;
+            transform: scale(1.05);
+            color: #F8887D;
+            transition: background-color 0.3s, transform 0.3s, color 0.3s;
+        }
+        
 </style>
