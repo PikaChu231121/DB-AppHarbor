@@ -32,7 +32,7 @@
             </div>
 
             <div class="friends-list">
-                <div class="friend-item" v-for="friend in filteredFriends" :key="friend.id">
+                <div class="friend-item" v-for="friend in friends" :key="friend.id">
                     <img :src="friend.avatar" class="avatar" />
                     <div class="friend-info">
                         <div class="friend-title">{{ friend.name }}</div>
