@@ -430,6 +430,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Time)
                 .HasColumnType("DATE")
                 .HasColumnName("TIME");
+            entity.Property(e => e.Type)
+                .HasMaxLength(255)
+                .HasColumnName("TYPE");
 
             entity.HasOne(d => d.Application).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.ApplicationId)

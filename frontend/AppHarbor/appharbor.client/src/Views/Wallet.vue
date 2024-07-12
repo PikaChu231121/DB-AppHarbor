@@ -31,9 +31,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(transaction, index) in transactions" :key="index">
+                            <tr v-for="(transaction, index) in transactions" :key="index"
+                                :class="{'recharge': transaction.type === 'recharge', 'purchase': transaction.type === 'purchase'}">
                                 <td>{{ transaction.time.replace('T', ' ') }}</td>
-                                <td>为用户 {{ transaction.receiverNickName }} 购买了 {{ transaction.applicationName }}</td>
+                                <td v-if="transaction.type === 'recharge'">充值</td>
+                                <td v-else-if="transaction.type === 'purchase'">
+                                    为用户 {{ transaction.receiverNickName }} 购买了 {{ transaction.applicationName }}
+                                </td>
                                 <td>{{ transaction.amount }}</td>
                             </tr>
                         </tbody>
@@ -116,7 +120,6 @@ export default {
             axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
                 .then(response => {
                     this.fetchUserAndTransactions();
-                    // this.credit += this.rechargeAmount;
                     alert('充值成功');
                 })
                 .catch(error => {
@@ -285,23 +288,80 @@ export default {
     margin-bottom: 1rem;
 }
 
+/* 表格基本样式 */
 table {
     width: 100%;
     border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
     text-align: left;
+    background-color: #fbeaea;
+    border: 3px solid #fadad6;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* TODO: 表头不随鼠标scroll而移动 */
+thead th {
+    position: sticky;
+    top: 0px;
+    background-color: #fadad6;
+    color: #f8887d;
+    font-weight: bold;
+    border-bottom: 3px solid #fadad6;
 }
 
 th, td {
-    padding: 0.5em;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #f2f2f2;
+    padding: 12px 15px;
+    border-bottom: 1px solid #fadad6;
 }
 
 tr:hover {
-    background-color: #f5f5f5;
+    background-color: #ffe5e5;
+    transform: scale(1.01);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+/* 充值交易的背景颜色 */
+.recharge {
+    background-color: #ffe5e5;
+}
+
+/* 其他交易的背景颜色 */
+.purchase {
+    background-color: #fbeaea;
+}
+
+/* 设置不同交易类型的文本颜色 */
+.recharge td {
+    color: #d9534f;
+}
+
+.purchase td {
+    color: #5a5a5a;
+}
+
+/* 给表格添加圆角效果 */
+table, th, td, tr {
+    border-radius: 10px;
+}
+
+/* 表格头部单独设置圆角 */
+th:first-child {
+    border-top-left-radius: 10px;
+}
+
+th:last-child {
+    border-top-right-radius: 10px;
+}
+
+tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
 }
 
 .button-row {

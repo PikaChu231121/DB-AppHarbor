@@ -95,19 +95,40 @@ namespace AppHarbor.Server.Controllers
                 return BadRequest("Amount should be positive");
             }
 
-            try
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                user.Credit += info.Amount;
-                _dbContext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                // bug fix: 充值1000000000000元，会直接给后端充爆。try catch最有用的一集。
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                try
+                {
+                    //user.Credit += info.Amount;
+                    _dbContext.SaveChanges();
+
+                    // 插入充值记录到 order 表
+                    var order = new Order
+                    {
+                        Time = DateTime.UtcNow,
+                        Amount = info.Amount,
+                        ApplicationId = null, // 充值时为null
+                        BuyerId = user.Id,
+                        ReceiverId = null, // 充值时为null
+                        Type = "recharge"
+                    };
+
+                    _dbContext.Orders.Add(order);
+                    _dbContext.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    // 捕获异常，防止超大金额导致后端崩溃
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
             }
 
             return Ok(new { user.Id, user.Nickname, user.Credit });
         }
+
 
 
         [HttpPost("getTransaction")]
@@ -117,12 +138,14 @@ namespace AppHarbor.Server.Controllers
             var query = from user in _dbContext.Users
                         join order in _dbContext.Orders on user.Id equals order.BuyerId
                         where user.Id == info.Id
+                        orderby order.Time descending
                         select new
                         {
                             ApplicationName = order.Application.Name,
                             ReceiverNickName = order.Receiver.Nickname,
                             Amount = order.Amount,
-                            Time = order.Time
+                            Time = order.Time,
+                            Type = order.Type
                         };
 
             var result = query.ToList();
