@@ -40,6 +40,14 @@ public class UpdateUserNicknameModel
     public string NewNickname { get; set; } = null!;
 }
 
+public class UserRechargeModel // 钱包充值
+{
+    public decimal Id { get; set; }
+
+    public decimal Amount { get; set; }
+}
+
+
 public partial class User
 {
     public decimal Id { get; set; }
