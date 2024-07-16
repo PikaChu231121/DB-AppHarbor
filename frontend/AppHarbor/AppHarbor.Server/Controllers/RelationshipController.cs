@@ -190,6 +190,7 @@ namespace AppHarbor.Server.Controllers
             }
 
             var user = _dbContext.Users.Find(tokenEntry.Id);
+            //没有找到用户
             if (user == null)
             {
                 return NotFound(new
@@ -199,6 +200,7 @@ namespace AppHarbor.Server.Controllers
                 });
             }
 
+            //用户状态被禁
             if (user.State == "banned")
             {
                 return NotFound(new
@@ -211,6 +213,7 @@ namespace AppHarbor.Server.Controllers
             var relationship = _dbContext.Relationships
                 .FirstOrDefault(r => (r.User1Id == user.Id && r.User2Id == friendId) || (r.User1Id == friendId && r.User2Id == user.Id));
 
+            //不存在关系
             if (relationship == null)
             {
                 return NotFound(new
@@ -220,9 +223,11 @@ namespace AppHarbor.Server.Controllers
                 });
             }
 
+            //删除好友关系
             _dbContext.Relationships.Remove(relationship);
             _dbContext.SaveChanges();
 
+            //返回删除成功
             return Ok(new
             {
                 Data = 1,

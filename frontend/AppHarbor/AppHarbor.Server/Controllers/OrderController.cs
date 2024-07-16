@@ -117,6 +117,7 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("fetchOwnApps")]
         public IActionResult FetchOwnApps([FromForm] TokenRequest request)
         {
+            //检查token
             if (string.IsNullOrEmpty(request.Token))
             {
                 return Unauthorized("No token provided.");
@@ -135,6 +136,7 @@ namespace AppHarbor.Server.Controllers
                 return Unauthorized("User not found.");
             }
 
+            //找到所有拥有的应用
             var ownedAppIds = _dbContext.Orders
                 .Where(o => o.ReceiverId == user.Id)
                 .Select(o => o.ApplicationId)
@@ -153,6 +155,7 @@ namespace AppHarbor.Server.Controllers
                 })
                 .ToList();
             
+            //返回应用list
             return Ok(ownedApps);
         }
 
