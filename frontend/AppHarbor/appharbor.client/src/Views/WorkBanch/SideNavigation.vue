@@ -87,10 +87,10 @@
                         this.$emit('update-content', this.menuItems[index].label);
                     }, 2000);
                 } else if (this.menuItems[index].label === 'Friends') {
-                    if (this.selectedItem && ['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.selectedItem].label)) {
+                    /*if (this.selectedItem && ['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.selectedItem].label)) {
                         this.pastSelectedItem = this.selectedItem;
-                    }
-                    this.selectedItem = index;
+                    }*/
+                    //this.selectedItem = index;
                     this.userProfileActive = false;
                     this.showUserProfilePopup = false;
                     /*this.$emit('update-content', this.menuItems[index].label);*/
@@ -115,11 +115,11 @@
                 this.showFriendsPopup = !this.showFriendsPopup;
                 
                 if (!this.showFriendsPopup) {
-                    this.selectedItem = null;
+                    //this.selectedItem = null;
                     this.userProfileActive = false;
-                    if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                    /*if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.pastSelectedItem].label)) {
                         this.selectedItem = this.pastSelectedItem;
-                    }
+                    }*/
                 }
             },
             toggleUserProfilePopup() {
@@ -129,13 +129,14 @@
                     this.userProfileActive = false;
                 }
                 else {
-                    if (['Friends'].includes(this.menuItems[this.selectedItem].label)) {
+                    /*if (['Friends'].includes(this.menuItems[this.selectedItem].label)) {
                         this.selectedItem = this.pastSelectedItem;
-                    }
+                    }*/
                 }
             },
             handlePopupClick(action) {
                 console.log(action);
+                this.selectedItem = 4;
                 this.showFriendsPopup = false;
                 this.$emit('update-content', action);
             },
@@ -143,9 +144,9 @@
                 if (this.showFriendsPopup && !this.$refs.friendsPopup.contains(event.target) && !this.$el.contains(event.target)) {
                     this.showFriendsPopup = false;
                     this.selectedItem = null;
-                    if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.pastSelectedItem].label)) {
+                    /*if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[this.pastSelectedItem].label)) {
                         this.selectedItem = this.pastSelectedItem;
-                    }
+                    }*/
                 }
             }
         },
