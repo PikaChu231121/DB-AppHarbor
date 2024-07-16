@@ -19,7 +19,11 @@
             </div>
             <div v-if="favourites.length" class="favourite-grid">
                 <div v-for="favourite in favourites" :key="favourite.id" class="favourite-item">
-                    <h3>应用名称: {{ favourite.applicationName }}</h3>
+                    <h3>
+                        <router-link :to="{ name: 'AppDetail', params: { id: favourite.applicationId } }">
+                            应用名称: {{ favourite.applicationName }}
+                        </router-link>
+                    </h3>
                     <p>收藏时间: {{ favourite.createTime }}</p>
                     <p>可见性: {{ favourite.visibility }}</p>
                     <p>分类: {{ favourite.applicationCategory  }}</p>
