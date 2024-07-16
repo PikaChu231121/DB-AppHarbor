@@ -29,64 +29,66 @@
 </template>
 
 <script>
-    export default {
-        name: 'SideBar',
-        methods: {
-            selectMenuItem(menuItem) {
-                this.$emit('menuItemSelected', menuItem);
-            }
+export default {
+    name: 'SideBar',
+    methods: {
+        selectMenuItem(menuItem) {
+            this.$emit('menuItemSelected', menuItem);
         }
     }
+}
 </script>
 
 <style scoped>
-    .sidebar {
-        width: 240px;
-        background-color: #f8f9fa;
-        height: 100vh;
-        padding: 16px;
-    }
+.sidebar {
+    width: 240px;
+    background-color: #f8f9fa;
+    height: 100vh;
+    padding: 16px;
+}
 
-    .sidebar-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 32px;
-    }
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+}
 
-        .sidebar-header .icon {
-            width: 24px;
-            height: 24px;
-            background: #ccc; /* Use an icon */
-            margin-right: 8px;
-        }
+.sidebar-header .icon {
+    width: 24px;
+    height: 24px;
+    background: #ccc;
+    /* Use an icon */
+    margin-right: 8px;
+}
 
-        .sidebar-header .count {
-            background-color: #007bff;
-            color: #fff;
-            border-radius: 12px;
-            padding: 4px 8px;
-            margin-left: auto;
-        }
+.sidebar-header .count {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 12px;
+    padding: 4px 8px;
+    margin-left: auto;
+}
 
-    .sidebar-menu ul {
-        list-style: none;
-        padding: 0;
-    }
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+}
 
-        .sidebar-menu ul li {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            cursor: pointer;
-        }
+.sidebar-menu ul li {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    cursor: pointer;
+}
 
-            .sidebar-menu ul li .icon-outbox,
-            .sidebar-menu ul li .icon-favorites,
-            .sidebar-menu ul li .icon-trash,
-            .sidebar-menu ul li .icon-release {
-                width: 24px;
-                height: 24px;
-                background: #ccc; /* Use appropriate icons */
-                margin-right: 8px;
-            }
+.sidebar-menu ul li .icon-outbox,
+.sidebar-menu ul li .icon-favorites,
+.sidebar-menu ul li .icon-trash,
+.sidebar-menu ul li .icon-release {
+    width: 24px;
+    height: 24px;
+    background: #ccc;
+    /* Use appropriate icons */
+    margin-right: 8px;
+}
 </style>
