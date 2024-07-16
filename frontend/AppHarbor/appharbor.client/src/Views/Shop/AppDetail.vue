@@ -1,6 +1,9 @@
 <template>
     <div class="card">
-        <button @click="goBack">Back to Shop</button>
+        <div class="button-container">
+            <button @click="goBack">Back to Shop</button>
+            <button @click="favourite">s</button>
+        </div>
         <!--图片信息-->
         <div class="image-placeholder">
             <img :src="app.image" :alt="app.name" class="app-image" />
@@ -63,25 +66,16 @@
                     .catch(error => {
                         console.error("Error fetching apps:", error);
                     });
-                
-
-                
-                // 这里简单地模拟一个应用详情
-                //this.app = {
-                //    id: appId,
-                //    name: 'Keep',
-                //    image: '@/assets/A.png',
-                //    price: '$70.00',
-                //    category: '健身',
-                //    description: '「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！'
-                //};
-
             },
             goBack() {
                 this.$router.push('/WorkBanchPage');
             },
             gotoPurchase() {
                 this.$router.push('/Purchase');
+            },
+            favourite() {
+                //收藏的后端逻辑
+                //(可选)收藏成功提示
             }
         }
     };
@@ -95,6 +89,13 @@
         overflow: hidden;
         max-width: 800px;
         background-color: #fff;
+
+        margin-top:auto;
+        margin-bottom:auto;
+    }
+
+    .button-container {
+        flex-direction: column;
     }
 
     .image-placeholder {
