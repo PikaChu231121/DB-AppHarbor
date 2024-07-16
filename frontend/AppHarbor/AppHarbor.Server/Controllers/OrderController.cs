@@ -50,6 +50,17 @@ namespace AppHarbor.Server.Controllers
                         });
                     }
 
+                    var existingOrder = _dbContext.Orders
+                        .FirstOrDefault(o => o.ApplicationId == APPID && o.ReceiverId == ReceiverID);
+
+                    if (existingOrder != null)
+                    {
+                        return BadRequest(new
+                        {
+                            Msg = "Receiver already owns the app."
+                        });
+                    }
+
                     var APPAmount = App.Price;
                     var User = _dbContext.Users.Find(BuyerID);
                     if (User == null)
@@ -62,7 +73,6 @@ namespace AppHarbor.Server.Controllers
 
                     if (APPAmount <= User.Credit)
                     {
-
                         var newOrder = new Order()
                         {
                             // 确保ID是唯一的，可以使用GUID或数据库自动生成的ID
@@ -103,6 +113,7 @@ namespace AppHarbor.Server.Controllers
                 }
             }
         }
+
 
     }
 }
