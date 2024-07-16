@@ -3,7 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         path:"/",
-        component: () => import("@/Views/UserLogin.vue")
+        // component: () => import("@/Views/UserLogin.vue")
+        component: () => import("@/Views/Merchant/MainLayout.vue")
     },
     {
         path: "/RegisterAccount",
