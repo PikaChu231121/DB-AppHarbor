@@ -109,7 +109,7 @@ namespace AppHarbor.Server.Controllers
                     // 插入充值记录到 order 表
                     var order = new Order
                     {
-                        Time = DateTime.UtcNow,
+                        Time = DateTime.Now, // 当前时区
                         Amount = info.Amount,
                         ApplicationId = null, // 充值时为null
                         BuyerId = user.Id,
