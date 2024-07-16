@@ -35,7 +35,7 @@ namespace AppHarbor.Server.Controllers
             var query = from user in _dbContext.Relationships
                         join friend in _dbContext.Users on user.User2Id equals friend.Id
                         join token1 in _dbContext.TokenIds on token equals token1.Token
-                        where user.User1Id == token1.Id 
+                        where user.User1Id == token1.Id
                         select new
                         {
                             id = friend.Id,
@@ -130,7 +130,7 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("addfriend")]
         public IActionResult AddFriend([FromForm] string token, [FromForm] decimal friendId, [FromForm] string Relationship)
         {
-            
+
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("No token provided.");
@@ -173,6 +173,61 @@ namespace AppHarbor.Server.Controllers
                     });
                 }
             }
+        }
+
+        [HttpPost("deletefriend")]
+        public IActionResult DeleteFriend([FromForm] string token, [FromForm] decimal friendId)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Data = 2,
+                    Msg = "User not found"
+                });
+            }
+
+            if (user.State == "banned")
+            {
+                return NotFound(new
+                {
+                    Data = 3,
+                    Msg = "User state abnormal"
+                });
+            }
+
+            var relationship = _dbContext.Relationships
+                .FirstOrDefault(r => (r.User1Id == user.Id && r.User2Id == friendId) || (r.User1Id == friendId && r.User2Id == user.Id));
+
+            if (relationship == null)
+            {
+                return NotFound(new
+                {
+                    Data = 4,
+                    Msg = "Relationship not found"
+                });
+            }
+
+            _dbContext.Relationships.Remove(relationship);
+            _dbContext.SaveChanges();
+
+            return Ok(new
+            {
+                Data = 1,
+                Msg = "Friend deleted successfully"
+            });
         }
     }
 }
