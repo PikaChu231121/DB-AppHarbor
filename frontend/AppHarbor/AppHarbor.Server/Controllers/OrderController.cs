@@ -114,6 +114,48 @@ namespace AppHarbor.Server.Controllers
             }
         }
 
+        [HttpPost("fetchOwnApps")]
+        public IActionResult FetchOwnApps([FromForm] TokenRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            var ownedAppIds = _dbContext.Orders
+                .Where(o => o.ReceiverId == user.Id)
+                .Select(o => o.ApplicationId)
+                .Distinct()
+                .ToList();
+
+            var ownedApps = _dbContext.Applications
+                .Where(a => ownedAppIds.Contains(a.Id))
+                .Select(a => new
+                {
+                    a.Id,
+                    a.Name,
+                    a.Version,
+                    a.Category,
+                    a.Image
+                })
+                .ToList();
+            
+            return Ok(ownedApps);
+        }
+
 
     }
 }
