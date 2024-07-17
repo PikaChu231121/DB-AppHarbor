@@ -1,7 +1,6 @@
 <template>
     <div class="background">
         <div class="order-container">
-
             <div class="left-container">
                 <!--送给谁显示-->
                 <div class="flex-col section_2">
@@ -12,21 +11,28 @@
                         <div class="flex-col justify-start items-end page">
                             <!--好有选项-->
                             <div class="friend-item">
-                                <img :src="friend.avatar" class="avatar" alt="Friend Avatar">
+                                <img :src="getAvatarUrl(friend.avatar)" class="avatar" alt="Friend Avatar">
                                 <div class="friend-details">
-                                    <p class="friend-name">{{ friend.name }}</p>
+                                    <p class="friend-name">{{ friend.nickname }}</p>
                                     <p class="friend-id">{{ friend.id }}</p>
                                 </div>
                             </div>
                             <!--选择按钮-->
-                            <img class="image" @click="friendsPopout"
+                            <img class="image" @click="toggleDropdown"
                                  src="https://ide.code.fun/api/image?token=66965fc547b10e0011256b79&name=8cbed8d2c747e746db8a785093c531af.png" />
+                        </div>
+                        <!--下拉菜单-->
+                        <div class="dropdown-menu" v-show="showDropdown">
+                            <div v-for="friend in friends" :key="friend.id" class="friendsmenu-item">
+                                <p @click="changeFriend(friend)">{{friend.nickname}}</p>
+                                <!-- 可以根据需要添加更多菜单项 -->
+                            </div>
                         </div>
                     </div>
                     <span class="self-start text_3">from (you):</span>
                     <!--我的信息-->
                     <div class="user-item">
-                        <img :src="user.avatar" class="avatar" alt="User Avatar">
+                        <img :src="getAvatarUrl(user.avatar)" class="avatar" alt="User Avatar">
                         <div class="user-details">
                             <p class="user-name">{{ user.nickname }}</p>
                             <p class="user-id">{{ user.id }}</p>
@@ -81,25 +87,21 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import global from "@/global.js";
 
     export default {
         data() {
             return {
                 user: null,
-                //app : {
-                //    /*id: appId,*/
-                //    name: 'Keep',
-                //    image: '@/assets/A.png',
-                //    price: '70.00',
-                //    /*category: '健身',*/
-                //    description: '「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！'
-                //},
                 app: null,
                 friend: {
                     id: 1,
-                    name: 'Bob',
+                    nickname: 'Bob',
                     avatar:'https://randomuser.me/api/portraits/men/2.jpg'
                 },
+/*                friend: null,*/
+                friends: [],
+                showDropdown: false,
                 user :{
                     id: 10 ,
                     name: 'Jerry',
@@ -113,23 +115,50 @@
                 ]
             };
         },
-        //mounted() {
-        //    // 读取 localStorage 中的 id
-        //    const storedId = localStorage.getItem('globalId');
-        //    this.isEditing = false;
-        //    if (global.id == '') {
-        //        this.user.id = storedId;
-        //        global.id = storedId; // 更新 global.js 中的 id
-        //    } else {
-        //        this.user.id = global.id;
-        //        localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
-        //    }
-        //    this.fetchUserInfo();
-        //},
         methods: {
             handlePurchase() {
                 // 购买的后端
+                console.log(this.user.id);
+                console.log(this.friend.id);
+                console.log(this.app.id);
+                let formData = new FormData();
+                formData.append('BuyerID', this.user.id);
+                formData.append('ReceiverID', this.friend.id);
+                formData.append('APPID', this.app.id);
+                axios.post('http://localhost:5118/api/order/createneworder', formData)
+                    .then(response => {
+
+                    })
+                    .catch(error => {
+                        console.error('Error purchase app:', error);
+                    });
+
                 console.log('App has been puechased!');
+            },
+            toggleDropdown() {
+                // 好有菜单选项
+                this.showDropdown = !this.showDropdown;
+            },
+            fetchFriends() {
+                // 获取好友列表信息
+                let formData = new FormData();
+                var token = Cookies.get('token');
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/relationship/findall',formData)
+                    .then(response => {
+                        this.friends = response.data.data.$values;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching friends data:', error);
+                    });
+            },
+            changeFriend(newFriend) {
+                // 更改当前friend的属性
+                this.friend.nickname = newFriend.nickname;
+                this.friend.id = newFriend.id;
+                this.friend.avatar = newFriend.avatar;
+
+                this.showDropdown = false; // 关闭下拉菜单
             },
             fetchAppDetails(appId) {
                 // 从API或其他地方获取应用详细信息
@@ -145,27 +174,45 @@
                         console.error("Error fetching apps:", error);
                     });
             },
-            //fetchUserInfo() {
-            //    // 获取用户个人信息
-            //    var token = Cookies.get('token');
-            //    axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-            //        .then(response => {
-            //            this.user = response.data;
-            //        })
-            //        .catch(error => {
-            //            console.error('Error fetching user data:', error);
-            //        });
-            //},
-            //getAvatarUrl(avatarPath) {
-            //    if (avatarPath) {
-            //        return `http://localhost:5118${avatarPath}`;
-            //    }
-            //    return '../../public/default.png'; // 默认头像路径
-            //}
+            fetchUserInfo() {
+                // 获取用户个人信息
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../public/default.png'; // 默认头像路径
+            }
         },
         created() {
+            // 获取应用信息部分
             const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
+
+            // 获取个人信息部分
+            // 读取 localStorage 中的 id
+            const storedId = localStorage.getItem('globalId');
+            this.isEditing = false;
+            if (global.id == '') {
+                this.user.id = storedId;
+                global.id = storedId; // 更新 global.js 中的 id
+            } else {
+                this.user.id = global.id;
+                localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
+            }
+            this.fetchUserInfo();
+
+            // 获取好友信息部分
+            this.fetchFriends();
+
         },
     };
 </script>
@@ -303,6 +350,20 @@
         width: 1.25rem;
         height: 1.25rem;
         cursor: pointer;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 300px;
+        left: 90px;
+        background-color: #fbeaea;
+        border-radius: 12px;
+        padding: 16px;
+        width: 200px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .text_3 {
