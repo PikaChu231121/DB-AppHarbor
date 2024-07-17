@@ -31,21 +31,22 @@ namespace AppHarbor.Server.Controllers
         public IActionResult GetAppList([FromBody] GetAppListModel getapplistModel)
         {
 
-            var resultlist = _dbContext.Applications.Where(a =>
-            getapplistModel.Category == "All" ? true : a.Category == getapplistModel.Category).ToList();
+            //var resultlist = _dbContext.Applications.Where(a =>
+            //getapplistModel.Category == "All" ? true : a.Category == getapplistModel.Category).ToList();
 
-            resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+            var resultlist = _dbContext.Applications.ToList();
+            resultlist.Sort((app1, app2) => { return app1.DownloadCount <= app2.DownloadCount ? 1 : -1; });
 
             return Ok(resultlist);
 
 
-           
+
         }
 
         [HttpPost("getappdetail")]
         public IActionResult GetAppDetail([FromBody] GetAppDetailModel getappdetailModel)
         {
-            var app=_dbContext.Applications.Find(getappdetailModel.Id);
+            var app = _dbContext.Applications.Find(getappdetailModel.Id);
             if (app == null)
             {
                 return NotFound("app not found");
@@ -61,55 +62,97 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("searchapplist")]
         public IActionResult SearchAppList([FromBody] SearchAppListModel searchapplistModel)
         {
-            if (searchapplistModel.Category=="All")
+            if (searchapplistModel.Category == "All")
             {
                 var resultlist = _dbContext.Applications.Where(a =>
                 a.Price >= searchapplistModel.Price_min &&
                 a.Price <= searchapplistModel.Price_max &&
                 a.Name.Contains(searchapplistModel.Content)).ToList();
 
-                resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+                resultlist.Sort((app1, app2) => { return app1.DownloadCount <= app2.DownloadCount ? 1 : -1; });
                 return Ok(resultlist);
             }
             else
             {
-                var resultlist = _dbContext.Applications.Where(a => 
+                var resultlist = _dbContext.Applications.Where(a =>
                 a.Price >= searchapplistModel.Price_min &&
-                a.Price <= searchapplistModel.Price_max && 
-                a.Name.Contains(searchapplistModel.Content) && 
-                a.Category==searchapplistModel.Category).ToList();
+                a.Price <= searchapplistModel.Price_max &&
+                a.Name.Contains(searchapplistModel.Content) &&
+                a.Category == searchapplistModel.Category).ToList();
 
-                resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+                resultlist.Sort((app1, app2) => { return app1.DownloadCount <= app2.DownloadCount ? 1 : -1; });
                 return Ok(resultlist);
             }
 
         }
 
         [HttpPost("uploadapp")]
-        public async Task<IActionResult> UploadApp([FromBody] UploadAppModel appModel)
-        {
-            if (appModel == null)
-            {
-                return BadRequest("Invalid data.");
-            }
+        public IActionResult UploadApp([FromForm] string Name,
+                                        [FromForm] string Version,
+                                        [FromForm] string Description,
+                                        [FromForm] decimal Price,
+                                        [FromForm] string Category
 
+
+                                        )
+        {
+            // if (appModel == null)
+            // {
+            //     return BadRequest("Invalid data.");
+            // }
+            Console.WriteLine($"Received parameters: Name={Name}, Version={Version}, Description={Description}, Price={Price}, Category={Category}");
             var application = new Application
             {
-                Version = appModel.Version,
-                MerchantId = appModel.MerchantId,
-                Name = appModel.Name,
-                Category = appModel.Category,
-                Description = appModel.Description,
-                ReleaseState = appModel.ReleaseState,
-                Image = appModel.Image,
+                Version = Version,
+                MerchantId = 7,
+                Name = Name,
+                Category = Category,
+                Description = Description,
+                ReleaseState = "test",
+                Image = "img_url",
                 DownloadCount = 0,
+<<<<<<< HEAD
+<<<<<<< HEAD
                 Price = appModel.Price,
+
+                //
+                //
+                //
+                //
+                //-----------------------------添加Package---------------------
+                //
+                //
+                //
+                //
+                //
+=======
+                Price = Price,
+>>>>>>> f04b70f78f4af8d65c6668c0ad5237f11304ba43
+=======
+                Price = Price,
+>>>>>>> f04b70f78f4af8d65c6668c0ad5237f11304ba43
             };
 
             _dbContext.Applications.Add(application);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
 
             return Ok(new { ApplicationId = application.Id });
+        }
+
+        [HttpPost("installapp")]
+        public IActionResult InstallApp([FromBody] InstallAppModel installappModel)
+        {
+
+            var app = _dbContext.Applications.Find(installappModel.Id);
+            if (app == null)
+            {
+                return NotFound("app not found");
+            }
+            else
+            {
+                return Ok(app.Package);
+            }
+
         }
     }
 }

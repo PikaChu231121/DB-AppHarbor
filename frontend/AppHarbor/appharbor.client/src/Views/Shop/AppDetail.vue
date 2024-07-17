@@ -1,6 +1,9 @@
 <template>
     <div class="card">
-        <button @click="goBack">Back to Shop</button>
+        <div class="button-container">
+            <button @click="goBack">Back to Shop</button>
+            <button @click="favourite">s</button>
+        </div>
         <!--图片信息-->
         <div class="image-placeholder">
             <img :src="app.image" :alt="app.name" class="app-image" />
@@ -11,8 +14,10 @@
             <div class="tag">{{ app.category }}</div>
             <div class="price">￥{{ app.price }}</div>
             <p class="description">Text</p>
-            <button class="button">购买</button>
+            <button class="button" @click="goToPurchase(app.id)">购买</button>
             <button class="button" @click="addFavourite">收藏</button> <!-- 添加收藏按钮 -->
+            <!--<button class="button" @click="installtest">收藏</button>--> <!-- 添加收藏按钮 -->
+
             <div class="faq">
                 <div class="faq-header" @click="toggleFAQ">
                     <h3 class="faq-title">介绍</h3>
@@ -65,22 +70,12 @@
                     .catch(error => {
                         console.error("Error fetching apps:", error);
                     });
-                
-
-                
-                // 这里简单地模拟一个应用详情
-                //this.app = {
-                //    id: appId,
-                //    name: 'Keep',
-                //    image: '@/assets/A.png',
-                //    price: '$70.00',
-                //    category: '健身',
-                //    description: '「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！'
-                //};
-
             },
             goBack() {
                 this.$router.push('/WorkBanchPage');
+            },
+            goToPurchase(appId) {
+                this.$router.push(`/Purchase/${appId}`);
             },
             addFavourite() {
             const token = Cookies.get('token');
@@ -100,7 +95,21 @@
                     console.error('Error adding favourite:', error);
                     this.$notify({ type: 'error', title: '失败', text: '收藏失败，请稍后重试！' });
                 });
-            }
+            },
+            //installapp() {
+            //    axios.post('http://localhost:5118/api/application/installapp', {
+            //        Id: this.app.id
+
+            //    })
+            //        .then(response => {
+            //            window.location.href = `http://localhost:5118${response.data}`;
+                        
+            //        })
+            //        .catch(error => {
+            //            console.error("Error install:", error);
+            //        });
+            //    console.log('downloaded: ' + this.app.id);
+            //}
         }
     };
 </script>
@@ -113,6 +122,13 @@
         overflow: hidden;
         max-width: 800px;
         background-color: #fff;
+
+        margin-top:auto;
+        margin-bottom:auto;
+    }
+
+    .button-container {
+        flex-direction: column;
     }
 
     .image-placeholder {
@@ -167,6 +183,17 @@
     }
 
     .button {
+        display: inline-block;
+        background-color: #000;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .purchase-button {
         display: inline-block;
         background-color: #000;
         color: #fff;

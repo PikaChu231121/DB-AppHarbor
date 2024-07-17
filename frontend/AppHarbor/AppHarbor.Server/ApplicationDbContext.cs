@@ -163,6 +163,10 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("VERSION");
+            entity.Property(e => e.Package)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("PACKAGE");
 
             entity.HasOne(d => d.Merchant).WithMany(p => p.Applications)
                 .HasForeignKey(d => d.MerchantId)
