@@ -16,7 +16,7 @@
             <p class="description">Text</p>
             <button class="button" @click="goToPurchase(app.id)">购买</button>
             <button class="button" @click="addFavourite">收藏</button> <!-- 添加收藏按钮 -->
-            <!--<button class="button" @click="installtest">收藏</button>--> <!-- 添加收藏按钮 -->
+            <!--<button class="button" @click="installapp">收藏</button>--> <!-- 添加收藏按钮 -->
 
             <div class="faq">
                 <div class="faq-header" @click="toggleFAQ">
@@ -78,38 +78,40 @@
                 this.$router.push(`/Purchase/${appId}`);
             },
             addFavourite() {
-            const token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/favourite/addFavourite', {
-                token: token,
-                applicationId: this.app.id
-            })
-                .then(response => {
-                    const parsedData = JSON.parse(response.data);
-                    if (parsedData.success) {
-                        this.$notify({ type: 'success', title: '成功', text: '收藏成功！' });
-                    } else {
-                        this.$notify({ type: 'error', title: '失败', text: parsedData.msg });
-                    }
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/favourite/addFavourite', {
+                    token: token,
+                    applicationId: this.app.id
                 })
-                .catch(error => {
-                    console.error('Error adding favourite:', error);
-                    this.$notify({ type: 'error', title: '失败', text: '收藏失败，请稍后重试！' });
-                });
+                    .then(response => {
+                        const parsedData = JSON.parse(response.data);
+                        if (parsedData.success) {
+                            this.$notify({ type: 'success', title: '成功', text: '收藏成功！' });
+                        } else {
+                            this.$notify({ type: 'error', title: '失败', text: parsedData.msg });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding favourite:', error);
+                        this.$notify({ type: 'error', title: '失败', text: '收藏失败，请稍后重试！' });
+                    });
             },
-            //installapp() {
-            //    axios.post('http://localhost:5118/api/application/installapp', {
-            //        Id: this.app.id
+            installapp() {
+                console.log('downloading: ' + this.app.id);
+                axios.post('http://localhost:5118/api/application/installapp', {
+                    //------------------TOKEN
+                    Id: this.app.id
 
-            //    })
-            //        .then(response => {
-            //            window.location.href = `http://localhost:5118${response.data}`;
-                        
-            //        })
-            //        .catch(error => {
-            //            console.error("Error install:", error);
-            //        });
-            //    console.log('downloaded: ' + this.app.id);
-            //}
+                })
+                    .then(response => {
+                        window.location.href = `http://localhost:5118${response.data}`;
+                        console.log('downloaded: ' + this.app.id);
+                    })
+                    .catch(error => {
+                        console.error("Error install:", error);
+                    });
+                
+            }
         }
     };
 </script>

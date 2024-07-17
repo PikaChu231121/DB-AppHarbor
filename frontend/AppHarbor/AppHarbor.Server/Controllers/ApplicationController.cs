@@ -126,9 +126,13 @@ namespace AppHarbor.Server.Controllers
         {
 
             var app = _dbContext.Applications.Find(installappModel.Id);
-            if (app == null)
+            if (app == null )
             {
                 return NotFound("app not found");
+            }
+            else if(app.Package=="test"|| app.Package == null)
+            {
+                return BadRequest("app no package");
             }
             else
             {
