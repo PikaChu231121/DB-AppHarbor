@@ -1,7 +1,6 @@
 <template>
     <div class="background">
         <div class="order-container">
-
             <div class="left-container">
                 <!--送给谁显示-->
                 <div class="flex-col section_2">
@@ -14,19 +13,20 @@
                             <div class="friend-item">
                                 <img :src="friend.avatar" class="avatar" alt="Friend Avatar">
                                 <div class="friend-details">
-                                    <p class="friend-name">{{ friend.name }}</p>
+                                    <p class="friend-name">{{ friend.nickname }}</p>
                                     <p class="friend-id">{{ friend.id }}</p>
                                 </div>
-                            </div>
-                            <!--下拉菜单-->
-                            <div class="dropdown-menu" v-show="showDropdown">
-                                <p @click="changeFriend('Friend 1')">Friend 1</p>
-                                <p @click="changeFriend('Friend 2')">Friend 2</p>
-                                <!-- 可以根据需要添加更多菜单项 -->
                             </div>
                             <!--选择按钮-->
                             <img class="image" @click="toggleDropdown"
                                  src="https://ide.code.fun/api/image?token=66965fc547b10e0011256b79&name=8cbed8d2c747e746db8a785093c531af.png" />
+                        </div>
+                        <!--下拉菜单-->
+                        <div class="dropdown-menu" v-show="showDropdown">
+                            <div v-for="friend in friends" :key="friend.id" class="friendsmenu-item">
+                                <p @click="changeFriend(friend)">{{friend.nickname}}</p>
+                                <!-- 可以根据需要添加更多菜单项 -->
+                            </div>
                         </div>
                     </div>
                     <span class="self-start text_3">from (you):</span>
@@ -92,16 +92,15 @@
     export default {
         data() {
             return {
+                token: '',
                 user: null,
                 app: null,
                 friend: {
                     id: 1,
-                    name: 'Bob',
+                    nickname: 'Bob',
                     avatar:'https://randomuser.me/api/portraits/men/2.jpg'
                 },
-                friends: {
-
-                },
+                friends: [],
                 showDropdown: false,
                 user :{
                     id: 10 ,
@@ -130,9 +129,25 @@
                 // 好有菜单选项
                 this.showDropdown = !this.showDropdown;
             },
-            changeFriend(newFriendName) {
-                this.friend.name = newFriendName;
-                // 可以根据需要更新其他 friend 属性
+            fetchFriends() {
+                // 获取好友列表信息
+                let formData = new FormData();
+                var token = Cookies.get('token');
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/relationship/findall',formData)
+                    .then(response => {
+                        this.friends = response.data.$values;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching friends data:', error);
+                    });
+            },
+            changeFriend(newFriend) {
+                // 更改当前friend的属性
+                this.friend.nickname = newFriend.nickname;
+                this.friend.id = newFriend.id;
+                this.friend.id = newFriend.avatar;
+
                 this.showDropdown = false; // 关闭下拉菜单
             },
             fetchAppDetails(appId) {
@@ -151,8 +166,8 @@
             },
             fetchUserInfo() {
                 // 获取用户个人信息
-                var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                /*var token = Cookies.get('token');*/
+                axios.post('http://localhost:5118/api/user/userInfo', { token: this.token })
                     .then(response => {
                         this.user = response.data;
                     })
@@ -172,6 +187,8 @@
             const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
 
+            this.token = Cookies.get('token'); // 获取token
+
             // 获取个人信息部分
             // 读取 localStorage 中的 id
             const storedId = localStorage.getItem('globalId');
@@ -184,6 +201,9 @@
                 localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
             }
             this.fetchUserInfo();
+
+            // 获取好友信息部分
+            this.fetchFriends();
         },
     };
 </script>
@@ -321,6 +341,20 @@
         width: 1.25rem;
         height: 1.25rem;
         cursor: pointer;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 300px;
+        left: 90px;
+        background-color: #fbeaea;
+        border-radius: 12px;
+        padding: 16px;
+        width: 200px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .text_3 {
