@@ -100,8 +100,8 @@ namespace AppHarbor.Server.Controllers
             return Ok(new { Data = relativePath, Code = 2001, Msg = "Succeeded" });
         }
 
-        [HttpPost("upload_app")]
-        public IActionResult UploadAppImage(IFormFile file, decimal id, [FromServices] IWebHostEnvironment env)
+        [HttpPost("upload-app-img")]
+        public IActionResult UploadAppImage([FromForm]IFormFile file, [FromForm]decimal id, [FromServices] IWebHostEnvironment env)
         {
             // 上传应用图片
             var checkResult = CheckImage(file);
