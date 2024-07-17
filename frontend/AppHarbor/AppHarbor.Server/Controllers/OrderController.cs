@@ -75,8 +75,8 @@ namespace AppHarbor.Server.Controllers
                     {
                         var newOrder = new Order()
                         {
-                            // 确保ID是唯一的，可以使用GUID或数据库自动生成的ID
-                            Id = _dbContext.Orders.Select(u => u.Id).ToList().Max() + 1,
+                            // ID的唯一性由数据库的seq序列来保证，插入数据时，不用填写ID
+                            // Id = _dbContext.Orders.Select(u => u.Id).ToList().Max() + 1,
                             Time = DateTime.Now,
                             Amount = APPAmount.Value,
                             ApplicationId = APPID,
@@ -154,7 +154,7 @@ namespace AppHarbor.Server.Controllers
                     a.Image
                 })
                 .ToList();
-            
+
             //返回应用list
             return Ok(ownedApps);
         }
