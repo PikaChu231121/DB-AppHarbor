@@ -18,15 +18,21 @@
                                     <p class="friend-id">{{ friend.id }}</p>
                                 </div>
                             </div>
+                            <!--下拉菜单-->
+                            <div class="dropdown-menu" v-show="showDropdown">
+                                <p @click="changeFriend('Friend 1')">Friend 1</p>
+                                <p @click="changeFriend('Friend 2')">Friend 2</p>
+                                <!-- 可以根据需要添加更多菜单项 -->
+                            </div>
                             <!--选择按钮-->
-                            <img class="image" @click="friendsPopout"
+                            <img class="image" @click="toggleDropdown"
                                  src="https://ide.code.fun/api/image?token=66965fc547b10e0011256b79&name=8cbed8d2c747e746db8a785093c531af.png" />
                         </div>
                     </div>
                     <span class="self-start text_3">from (you):</span>
                     <!--我的信息-->
                     <div class="user-item">
-                        <img :src="user.avatar" class="avatar" alt="User Avatar">
+                        <img :src="getAvatarUrl(user.avatar)" class="avatar" alt="User Avatar">
                         <div class="user-details">
                             <p class="user-name">{{ user.nickname }}</p>
                             <p class="user-id">{{ user.id }}</p>
@@ -81,25 +87,22 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import global from "@/global.js";
 
     export default {
         data() {
             return {
                 user: null,
-                //app : {
-                //    /*id: appId,*/
-                //    name: 'Keep',
-                //    image: '@/assets/A.png',
-                //    price: '70.00',
-                //    /*category: '健身',*/
-                //    description: '「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！'
-                //},
                 app: null,
                 friend: {
                     id: 1,
                     name: 'Bob',
                     avatar:'https://randomuser.me/api/portraits/men/2.jpg'
                 },
+                friends: {
+
+                },
+                showDropdown: false,
                 user :{
                     id: 10 ,
                     name: 'Jerry',
@@ -113,23 +116,24 @@
                 ]
             };
         },
-        //mounted() {
-        //    // 读取 localStorage 中的 id
-        //    const storedId = localStorage.getItem('globalId');
-        //    this.isEditing = false;
-        //    if (global.id == '') {
-        //        this.user.id = storedId;
-        //        global.id = storedId; // 更新 global.js 中的 id
-        //    } else {
-        //        this.user.id = global.id;
-        //        localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
-        //    }
-        //    this.fetchUserInfo();
-        //},
         methods: {
             handlePurchase() {
                 // 购买的后端
+
+
+                //...
+
+
                 console.log('App has been puechased!');
+            },
+            toggleDropdown() {
+                // 好有菜单选项
+                this.showDropdown = !this.showDropdown;
+            },
+            changeFriend(newFriendName) {
+                this.friend.name = newFriendName;
+                // 可以根据需要更新其他 friend 属性
+                this.showDropdown = false; // 关闭下拉菜单
             },
             fetchAppDetails(appId) {
                 // 从API或其他地方获取应用详细信息
@@ -145,27 +149,41 @@
                         console.error("Error fetching apps:", error);
                     });
             },
-            //fetchUserInfo() {
-            //    // 获取用户个人信息
-            //    var token = Cookies.get('token');
-            //    axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-            //        .then(response => {
-            //            this.user = response.data;
-            //        })
-            //        .catch(error => {
-            //            console.error('Error fetching user data:', error);
-            //        });
-            //},
-            //getAvatarUrl(avatarPath) {
-            //    if (avatarPath) {
-            //        return `http://localhost:5118${avatarPath}`;
-            //    }
-            //    return '../../public/default.png'; // 默认头像路径
-            //}
+            fetchUserInfo() {
+                // 获取用户个人信息
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../public/default.png'; // 默认头像路径
+            }
         },
         created() {
+            // 获取应用信息部分
             const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
+
+            // 获取个人信息部分
+            // 读取 localStorage 中的 id
+            const storedId = localStorage.getItem('globalId');
+            this.isEditing = false;
+            if (global.id == '') {
+                this.user.id = storedId;
+                global.id = storedId; // 更新 global.js 中的 id
+            } else {
+                this.user.id = global.id;
+                localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
+            }
+            this.fetchUserInfo();
         },
     };
 </script>
