@@ -28,7 +28,7 @@
                 </button>
                 <button class="popup-item2" @click="handlePopupClick('Add friends')">
                     <img src="../../assets/addfriends.svg" alt="Add friends" class="popup-icon" />
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;添加好友</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;管理好友</span>
                 </button>
                 <button class="popup-item3" @click="handlePopupClick('Buy me')">
                     <img src="../../assets/buyme.svg" alt="Buy me" class="popup-icon" />

@@ -130,11 +130,24 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("addfriend")]
         public IActionResult AddFriend([FromForm] string token, [FromForm] decimal friendId, [FromForm] string Relationship)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No token provided.");
+            }
             // 找到给定token对应的用户ID
             var userId = _dbContext.TokenIds
                 .Where(t => t.Token == token)
                 .Select(t => t.Id)
                 .FirstOrDefault();
+
+            if(userId == friendId)
+            {
+                return NotFound(new
+                {
+                    Data = 5,
+                    Msg = "Relationship has myself"
+                });
+            }
             // 检查是否已经存在好友关系
             var friendshipExists = _dbContext.Relationships
                 .Any(r => r.User1Id == userId && r.User2Id == friendId);
@@ -142,16 +155,13 @@ namespace AppHarbor.Server.Controllers
             {
                 return NotFound(new
                 {
-                    Data = 3,
+                    Data = 4,
                     Msg = "Relationship has existed"
                 });
             }
 
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("No token provided.");
-            }
-            else
+
+            if(!string.IsNullOrEmpty(token))
             {
                 var myID = _dbContext.TokenIds.Find(token);
                 var user = _dbContext.Users.Find(myID.Id);
@@ -189,6 +199,7 @@ namespace AppHarbor.Server.Controllers
                     });
                 }
             }
+            return Ok();
         }
 
         [HttpPost("deletefriend")]

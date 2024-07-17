@@ -2,7 +2,7 @@
     <div class="friend-manager">
         <!-- Left Section -->
         <div class="left-section">
-            <h2 class="main-title">添加好友</h2>
+            <h2 class="main-title">管理好友</h2>
             <p class="sub-title">您的好友</p>
             <div class="friend-list">
                 <div v-for="friend in friends" :key="friend.id" class="friend-item">
@@ -89,7 +89,11 @@
                 formData.append('inputId', userId);
                 axios.post('http://localhost:5118/api/user/searchid', formData)
                     .then(response => {
-                        this.searchResults = [response.data];
+                        if (response.data && response.data.id) {
+                            this.searchResults = [response.data];
+                        } else {
+                            this.searchResults = [];
+                        }
                     })
                     .catch(error => {
                         console.error('Error searching users:', error);
@@ -115,7 +119,7 @@
                         this.fetchFriends();
                     })
                     .catch(error => {
-                        alert('好友'+userId+'已经是您的好友,不需要重复添加');
+                        alert('好友' + userId + '已经是您的好友,不需要重复添加');
                         console.error('Error adding friend:', error);
                     });
             },
@@ -126,7 +130,7 @@
                 formData.append('friendid', userId);
                 axios.post('http://localhost:5118/api/relationship/deletefriend', formData)
                     .then(() => {
-                        this.fetchFriends();
+                        this.friends = this.friends.filter(friend => friend.id !== userId);
                     })
                     .catch(error => {
                         console.error('Error removing friend:', error);
