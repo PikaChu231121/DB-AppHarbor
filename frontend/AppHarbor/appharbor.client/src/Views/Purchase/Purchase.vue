@@ -2,14 +2,46 @@
     <div class="background">
         <div class="order-container">
 
-            <!--钱包剩余显示-->
-            <div class="money-left">
-                <img loading="lazy"
-                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/ebfe3a97bf3fbf1744b64e98bf537a292b984f51f5a76525c09758e46a083f17?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&"
-                     class="wallet-img" />
-                <div class="money">
-                    <div class="text-money">￥{{ user.credit }}</div>
-                    <div class="text-left">Left</div>
+            <div class="left-container">
+                <!--送给谁显示-->
+                <div class="flex-col section_2">
+                    <span class="self-start text">BUY NOW</span>
+                    <div class="flex-col justify-start items-start self-stretch text-wrapper">
+                        <span class="text_2">TO :</span>
+                        <!--好有选择区域-->
+                        <div class="flex-col justify-start items-end page">
+                            <!--好有选项-->
+                            <div class="friend-item">
+                                <img :src="friend.avatar" class="avatar" alt="Friend Avatar">
+                                <div class="friend-details">
+                                    <p class="friend-name">{{ friend.name }}</p>
+                                    <p class="friend-id">{{ friend.id }}</p>
+                                </div>
+                            </div>
+                            <!--选择按钮-->
+                            <img class="image" @click="friendsPopout"
+                                 src="https://ide.code.fun/api/image?token=66965fc547b10e0011256b79&name=8cbed8d2c747e746db8a785093c531af.png" />
+                        </div>
+                    </div>
+                    <span class="self-start text_3">from (you):</span>
+                    <!--我的信息-->
+                    <div class="user-item">
+                        <img :src="user.avatar" class="avatar" alt="User Avatar">
+                        <div class="user-details">
+                            <p class="user-name">{{ user.nickname }}</p>
+                            <p class="user-id">{{ user.id }}</p>
+                        </div>
+                    </div>
+                </div>
+                <!--钱包剩余显示-->
+                <div class="money-left">
+                    <img loading="lazy"
+                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/ebfe3a97bf3fbf1744b64e98bf537a292b984f51f5a76525c09758e46a083f17?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&"
+                         class="wallet-img" />
+                    <div class="money">
+                        <div class="text-money">￥{{ user.credit }}</div>
+                        <div class="text-left">Left</div>
+                    </div>
                 </div>
             </div>
 
@@ -47,12 +79,12 @@
 </template>
 
 <script>
+    import Cookies from 'js-cookie';
+
     export default {
         data() {
             return {
-                user: {
-                    credit: 100,
-                },
+                user: null,
                 app : {
                     /*id: appId,*/
                     name: 'Keep',
@@ -60,6 +92,16 @@
                     price: '70.00',
                     /*category: '健身',*/
                     description: '「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！'
+                },
+                friend: {
+                    id: 1,
+                    name: 'Bob',
+                    avatar:'https://randomuser.me/api/portraits/men/2.jpg'
+                },
+                user :{
+                    id: 10 ,
+                    name: 'Jerry',
+                    avatar:'https://randomuser.me/api/portraits/women/2.jpg'
                 },
                 pricelist: [
                     { id: 1 },
@@ -69,10 +111,47 @@
                 ]
             };
         },
+        //mounted() {
+        //    // 读取 localStorage 中的 id
+        //    const storedId = localStorage.getItem('globalId');
+        //    this.isEditing = false;
+        //    if (global.id == '') {
+        //        this.user.id = storedId;
+        //        global.id = storedId; // 更新 global.js 中的 id
+        //    } else {
+        //        this.user.id = global.id;
+        //        localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
+        //    }
+        //    this.fetchUserInfo();
+        //},
         methods: {
             handlePurchase() {
+                // 购买的后端
                 console.log('App has been puechased!');
-            }
+            },
+            //fetchUserInfo() {
+            //    // 获取用户个人信息
+            //    var token = Cookies.get('token');
+            //    axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+            //        .then(response => {
+            //            this.user = response.data;
+            //        })
+            //        .catch(error => {
+            //            console.error('Error fetching user data:', error);
+            //        });
+            //},
+            //getAvatarUrl(avatarPath) {
+            //    if (avatarPath) {
+            //        return `http://localhost:5118${avatarPath}`;
+            //    }
+            //    return '../../public/default.png'; // 默认头像路径
+            //}
+        },
+        created() {
+            // 初始获取应用信息
+            //this.searchApps();
+            /*this.fetchApps();*/
+            /*this.paginatedApps();*/
         }
     };
 </script>
@@ -102,6 +181,153 @@
         display: flex;
     }
 
+    .left-container {
+        flex-direction: column;
+        height: 90%;
+        margin-top: auto;
+        margin-bottom: auto;
+
+        padding:10px;
+    }
+
+    .section_2 {
+        margin-left: auto;
+        margin-right:auto;
+        margin-bottom: 0px;
+        padding: 1rem 0 0;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        border-left: solid 0.063rem #e2e2e2;
+        border-right: solid 0.063rem #e2e2e2;
+        border-top: solid 0.063rem #e2e2e2;
+        border-bottom: solid 0.063rem #e2e2e2;
+    }
+
+    .text {
+        margin-left: 1.13rem;
+        color: #000000;
+        font-size: 1.5rem;
+        font-family: Inter;
+        font-weight: 600;
+        line-height: 1.12rem;
+        letter-spacing: -0.03rem;
+    }
+
+    .text-wrapper {
+        margin-top: 1.25rem;
+        padding: 0.63rem 0 1.88rem;
+        background-color: #ffe4e4;
+        border-radius: 0.5rem;
+        box-shadow: 0rem 0.25rem 0.25rem #00000040;
+        width: 15rem;
+        border-left: solid 0.063rem #c8c8c8;
+        border-right: solid 0.063rem #c8c8c8;
+        border-top: solid 0.063rem #c8c8c8;
+        border-bottom: solid 0.063rem #c8c8c8;
+    }
+
+    .text_2 {
+        margin-left: 1rem;
+        color: #ff8686;
+        font-size: 1.00rem;
+        font-family: Inder;
+        line-height: 0.87rem;
+        letter-spacing: -0.025rem;
+    }
+
+    .page {
+        background-color: #fffafa;
+        border-radius: 0.5rem;
+        border-left: solid 0.063rem #d9d9d9;
+        border-right: solid 0.063rem #d9d9d9;
+        border-top: solid 0.063rem #d9d9d9;
+        border-bottom: solid 0.063rem #d9d9d9;
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        width:90%;
+        margin-left:auto;
+        margin-right:auto;
+
+        display:flex;
+    }
+
+    .friend-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        width:80%;
+    }
+
+        .friend-item:hover {
+            background-color: #f99d85;
+        }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .friend-details {
+        flex: 1;
+    }
+
+    .image {
+        margin-left: auto;
+        /*margin-right: 0.88rem;*/
+        margin-right: auto;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+
+    .text_3 {
+        margin-left: 1rem;
+        margin-top: 0.88rem;
+        color: #9b9b9b;
+        font-size: 1rem;
+        font-family: Inder;
+        line-height: 0.95rem;
+        letter-spacing: -0.02rem;
+    }
+
+    .user-item {
+        display: flex;
+        align-items: center;
+        padding-left: 18px;
+        padding-bottom:5px;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    }
+
+        .user-item:hover {
+            background-color: #f99d85;
+        }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
     .money-left {
         /*border-radius: var(--sds-size-radius-200);*/
         border-radius: 5px ;
@@ -122,8 +348,8 @@
 
         margin-left:auto;
         margin-right:auto;
-        margin-top:auto;
-        margin-bottom:40px;
+        margin-top:30px;
+        margin-bottom:auto;
     }
 
     .wallet-img {
@@ -213,14 +439,15 @@
     }
 
     .right-container {
-        height: 80%;
+        height: 90%;
         margin-left: auto;
         margin-right: auto;
         /*justify-content: space-around;*/
         margin-top: 40px;
         margin-bottom: 40px;
         /*display:flex;*/
-        display:grid;
+        /*display:grid;*/
+        flex-direction:column;
     }
 
     .purchase-container {
@@ -238,10 +465,12 @@
         padding-left: 80px;
         padding-right: 80px;
 
-        margin-right: auto;
+        margin-bottom:auto;
+        margin-top:80px;
+        /*margin-right: auto;
         margin-left: auto;
         margin-top:auto;
-        margin-bottom:10px;
+        margin-bottom:auto;*/
     }
 
     .text-total {
