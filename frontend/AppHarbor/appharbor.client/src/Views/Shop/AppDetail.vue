@@ -14,7 +14,7 @@
             <div class="tag">{{ app.category }}</div>
             <div class="price">￥{{ app.price }}</div>
             <p class="description">Text</p>
-            <button class="button">购买</button>
+            <button class="button" @click="goToPurchase(app.id)">购买</button>
             <button class="button" @click="addFavourite">收藏</button> <!-- 添加收藏按钮 -->
             <div class="faq">
                 <div class="faq-header" @click="toggleFAQ">
@@ -71,6 +71,9 @@
             },
             goBack() {
                 this.$router.push('/WorkBanchPage');
+            },
+            goToPurchase(appId) {
+                this.$router.push(`/Purchase/${appId}`);
             },
             addFavourite() {
             const token = Cookies.get('token');
