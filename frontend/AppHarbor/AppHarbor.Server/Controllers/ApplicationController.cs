@@ -34,7 +34,8 @@ namespace AppHarbor.Server.Controllers
             var resultlist = _dbContext.Applications.Where(a =>
             getapplistModel.Category == "All" ? true : a.Category == getapplistModel.Category).ToList();
 
-            resultlist = resultlist.OrderByDescending(app => app.DownloadCount).ToList();
+            resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
+
             return Ok(resultlist);
 
 
@@ -66,7 +67,8 @@ namespace AppHarbor.Server.Controllers
                 a.Price >= searchapplistModel.Price_min &&
                 a.Price <= searchapplistModel.Price_max &&
                 a.Name.Contains(searchapplistModel.Content)).ToList();
-                resultlist = resultlist.OrderByDescending(app => app.DownloadCount).ToList();
+
+                resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
                 return Ok(resultlist);
             }
             else
@@ -77,8 +79,7 @@ namespace AppHarbor.Server.Controllers
                 a.Name.Contains(searchapplistModel.Content) &&
                 a.Category == searchapplistModel.Category).ToList();
 
-                resultlist = resultlist.OrderByDescending(app => app.DownloadCount).ToList();
-
+                resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
                 return Ok(resultlist);
             }
 

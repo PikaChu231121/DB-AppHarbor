@@ -30,8 +30,8 @@
                 <label for="appCategory">应用类别</label>
                 <input type="text" id="appCategory" v-model="appCategory" required />
             </div>
-            <button @click="upload">button</button>
         </form>
+            <button @click="upload"  :disabled="!isFormValid">发布</button>
     </div>
 </template>
 
@@ -47,19 +47,21 @@ export default {
             appFile: null,
             appDescription: '',
             appPrice: 0,
-            appCategory: ''
+            appCategory: '',
+            appId: ''
         }
     },
     methods: {
-        // handleImageUpload(event) {
-        //     this.appImage = event.target.files[0];
-        // },
+        handleImageUpload(event) {
+             this.appImage = event.target.files[0];
+        },
         // handleFileUpload(event) {
         //     this.appFile = event.target.files[0];
         // },
+        isValidInput(value) {
+            return value && value.trim() !== '';
+        },
         upload() {
-            console.log('####1');
-
             let formData = new FormData();
             formData.append('Name', this.appName);
             formData.append('Version', this.appVersion);
@@ -79,6 +81,20 @@ export default {
                 }
             })
                 .then(response => {
+                    this.appId = response.data.applicationId;
+                    console.log(this.appId);
+                    let formDataImg = new FormData();
+                    formDataImg.append('file', this.appImage);
+                    formDataImg.append('id', this.appId);
+                    axios.post('http://localhost:5118/api/Image/upload-app-img', formDataImg)
+                        .then(response => {
+                            //console.log(this.user.avatar);
+                            alert('图片上传成功');
+                        })
+                        .catch(error => {
+                            console.error('Error uploading avatar:', error);
+                            alert('图片上传失败');
+                        });
                     alert('应用发布成功');
                 })
                 .catch(error => {
@@ -90,7 +106,13 @@ export default {
     },
     computed: {
         isFormValid() {
-            return this.appName && this.appVersion && this.appDescription && this.appPrice && this.appCategory;
+            return this.isValidInput(this.appName) &&
+                this.isValidInput(this.appVersion) &&
+                this.isValidInput(this.appDescription) &&
+                this.appPrice &&
+                this.isValidInput(this.appCategory);
+                // this.appImage !== null &&
+                // this.appFile !== null;
         }
     },
 
