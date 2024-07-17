@@ -224,7 +224,7 @@ namespace AppHarbor.Server.Controllers
             }
 
             // 检查收藏夹是否已经存在该应用
-            var existingFavourite = _dbContext.Favourites.FirstOrDefault(f => f.ApplicationId == request.ApplicationId && f.UserId == tokenEntry.Id);
+            var existingFavourite = _dbContext.Favourites.FirstOrDefault(f => f.ApplicationId == request.Id && f.UserId == tokenEntry.Id);
             if (existingFavourite != null)
             {
                 var failResponse = new
@@ -236,9 +236,9 @@ namespace AppHarbor.Server.Controllers
             // 新建
             var newFavourite = new Favourite
             {
-                ApplicationId = request.ApplicationId,
+                ApplicationId = request.Id,
                 UserId = tokenEntry.Id,
-                Visibility = "invisible",
+                Visibility = "public",
                 CreateTime = DateTime.UtcNow
             };
             _dbContext.Favourites.Add(newFavourite);

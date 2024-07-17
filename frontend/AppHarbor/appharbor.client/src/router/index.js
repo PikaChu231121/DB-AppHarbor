@@ -28,6 +28,7 @@ const routes = [
     },
     {
         path: "/Favourites",
+        name: "Favourites",
         component: () => import("@/Views/Favourites.vue")
     },
     {
@@ -44,9 +45,14 @@ const routes = [
         component: () => import("@/Views/Shop/AppDetail.vue")
     },
     {
-        path: "/FliterSection",
-        component: () => import("@/Views/Shop/FliterSection.vue")
+        path: '/Purchase/:id',
+        name: 'Purchase',
+        component: () => import("@/Views/Purchase/Purchase.vue")
     },
+    {
+        path: '/Purchase',
+        component: () => import("@/Views/Purchase/Purchase.vue")
+    }
 ]
 
 const router = createRouter(

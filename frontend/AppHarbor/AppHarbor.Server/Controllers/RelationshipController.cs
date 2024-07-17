@@ -35,7 +35,7 @@ namespace AppHarbor.Server.Controllers
             var query = from user in _dbContext.Relationships
                         join friend in _dbContext.Users on user.User2Id equals friend.Id
                         join token1 in _dbContext.TokenIds on token equals token1.Token
-                        where user.User1Id == token1.Id 
+                        where user.User1Id == token1.Id
                         select new
                         {
                             id = friend.Id,
@@ -130,7 +130,23 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("addfriend")]
         public IActionResult AddFriend([FromForm] string token, [FromForm] decimal friendId, [FromForm] string Relationship)
         {
-            
+            // 找到给定token对应的用户ID
+            var userId = _dbContext.TokenIds
+                .Where(t => t.Token == token)
+                .Select(t => t.Id)
+                .FirstOrDefault();
+            // 检查是否已经存在好友关系
+            var friendshipExists = _dbContext.Relationships
+                .Any(r => r.User1Id == userId && r.User2Id == friendId);
+            if (friendshipExists)
+            {
+                return NotFound(new
+                {
+                    Data = 3,
+                    Msg = "Relationship has existed"
+                });
+            }
+
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("No token provided.");
@@ -173,6 +189,66 @@ namespace AppHarbor.Server.Controllers
                     });
                 }
             }
+        }
+
+        [HttpPost("deletefriend")]
+        public IActionResult DeleteFriend([FromForm] string token, [FromForm] decimal friendId)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            //没有找到用户
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Data = 2,
+                    Msg = "User not found"
+                });
+            }
+
+            //用户状态被禁
+            if (user.State == "banned")
+            {
+                return NotFound(new
+                {
+                    Data = 3,
+                    Msg = "User state abnormal"
+                });
+            }
+
+            var relationship = _dbContext.Relationships
+                .FirstOrDefault(r => (r.User1Id == user.Id && r.User2Id == friendId) || (r.User1Id == friendId && r.User2Id == user.Id));
+
+            //不存在关系
+            if (relationship == null)
+            {
+                return NotFound(new
+                {
+                    Data = 4,
+                    Msg = "Relationship not found"
+                });
+            }
+
+            //删除好友关系
+            _dbContext.Relationships.Remove(relationship);
+            _dbContext.SaveChanges();
+
+            //返回删除成功
+            return Ok(new
+            {
+                Data = 1,
+                Msg = "Friend deleted successfully"
+            });
         }
     }
 }

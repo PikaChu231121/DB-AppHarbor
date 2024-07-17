@@ -22,7 +22,7 @@ public class BulkDeleteRequest
 public class AddFavouriteRequest
 {
     public string Token { get; set; }
-    public decimal ApplicationId { get; set; }
+    public decimal Id { get; set; }
 }
 
 public partial class Favourite
