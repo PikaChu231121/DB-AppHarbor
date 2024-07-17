@@ -2,9 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
     {
-        path:"/",
-        // component: () => import("@/Views/UserLogin.vue")
-        component: () => import("@/Views/Merchant/MainLayout.vue")
+        path: "/",
+        component: () => import("@/Views/Merchant/MerchantLogin.vue")
+        // component: () => import("@/Views/Merchant/MainLayout.vue")
     },
     {
         path: "/RegisterAccount",
@@ -17,6 +17,10 @@ const routes = [
     {
         path: "/WorkBanchPage",
         component: () => import("@/Views/WorkBanch/MainLayout.vue")
+    },
+    {
+        path: "/MerchantWorkBanchPage",
+        component: () => import("@/Views/Merchant/MainLayout.vue")
     },
     //{
     //    path: "/Home",
