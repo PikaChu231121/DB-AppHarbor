@@ -119,8 +119,16 @@
                         this.fetchFriends();
                     })
                     .catch(error => {
-                        alert('好友' + userId + '已经是您的好友,不需要重复添加');
-                        console.error('Error adding friend:', error);
+                        if (error.response.data.data == 5)
+                        {
+                            alert('好友不能是自己');
+                        }
+                        else
+                        {
+                            alert('好友' + userId + '已经是您的好友,不需要重复添加');
+                            console.error('Error adding friend:', error);
+                        }
+                       
                     });
             },
             removeFriend(userId) {
