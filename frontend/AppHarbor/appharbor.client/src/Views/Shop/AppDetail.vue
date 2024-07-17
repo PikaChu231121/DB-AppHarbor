@@ -16,6 +16,8 @@
             <p class="description">Text</p>
             <button class="button" @click="goToPurchase(app.id)">购买</button>
             <button class="button" @click="addFavourite">收藏</button> <!-- 添加收藏按钮 -->
+            <!--<button class="button" @click="installtest">收藏</button>--> <!-- 添加收藏按钮 -->
+
             <div class="faq">
                 <div class="faq-header" @click="toggleFAQ">
                     <h3 class="faq-title">介绍</h3>
@@ -93,7 +95,21 @@
                     console.error('Error adding favourite:', error);
                     this.$notify({ type: 'error', title: '失败', text: '收藏失败，请稍后重试！' });
                 });
-            }
+            },
+            //installapp() {
+            //    axios.post('http://localhost:5118/api/application/installapp', {
+            //        Id: this.app.id
+
+            //    })
+            //        .then(response => {
+            //            window.location.href = `http://localhost:5118${response.data}`;
+                        
+            //        })
+            //        .catch(error => {
+            //            console.error("Error install:", error);
+            //        });
+            //    console.log('downloaded: ' + this.app.id);
+            //}
         }
     };
 </script>

@@ -41,6 +41,12 @@ public class UploadAppModel
     public decimal? Price { get; set; }
 }
 
+public class InstallAppModel
+{
+    public decimal Id { get; set; }
+
+}
+
 public partial class Application
 {
     public decimal Id { get; set; }
@@ -62,6 +68,8 @@ public partial class Application
     public decimal? DownloadCount { get; set; }
 
     public decimal? Price { get; set; }
+
+    public string? Package { get; set; }
 
     public virtual ICollection<ApplicationReview> ApplicationReviews { get; set; } = new List<ApplicationReview>();
 

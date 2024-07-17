@@ -111,12 +111,30 @@ namespace AppHarbor.Server.Controllers
                 Image = "img_url",
                 DownloadCount = 0,
                 Price = Price,
+                //---package
             };
 
             _dbContext.Applications.Add(application);
             _dbContext.SaveChanges();
 
-            return Ok(new { ApplicationId = application.Id });
+            return Ok(new {ApplicationId = application.Id});
+
+        }
+
+        [HttpPost("installapp")]
+        public IActionResult InstallApp([FromBody] InstallAppModel installappModel)
+        {
+
+            var app = _dbContext.Applications.Find(installappModel.Id);
+            if (app == null)
+            {
+                return NotFound("app not found");
+            }
+            else
+            {
+                return Ok(app.Package);
+            }
+
         }
     }
 }

@@ -134,6 +134,7 @@
                 console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' +this.priceRange[1]);
                 this.searchApps();
             }
+            
         },
         created() {
             // 初始获取应用信息
