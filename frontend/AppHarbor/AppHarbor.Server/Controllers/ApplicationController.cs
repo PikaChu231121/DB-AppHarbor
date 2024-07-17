@@ -82,9 +82,34 @@ namespace AppHarbor.Server.Controllers
                 resultlist.Sort((app1, app2) => { return app1.DownloadCount < app2.DownloadCount ? 1 : -1; });
                 return Ok(resultlist);
             }
-            
 
+        }
 
+        [HttpPost("uploadapp")]
+        public async Task<IActionResult> UploadApp([FromBody] UploadAppModel appModel)
+        {
+            if (appModel == null)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            var application = new Application
+            {
+                Version = appModel.Version,
+                MerchantId = appModel.MerchantId,
+                Name = appModel.Name,
+                Category = appModel.Category,
+                Description = appModel.Description,
+                ReleaseState = appModel.ReleaseState,
+                Image = appModel.Image,
+                DownloadCount = 0,
+                Price = appModel.Price,
+            };
+
+            _dbContext.Applications.Add(application);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { ApplicationId = application.Id });
         }
     }
 }

@@ -29,6 +29,18 @@ public class SearchAppListModel
     public string Content { get; set; } = null!;
 }
 
+public class UploadAppModel
+{
+    public string Version { get; set; } = null!;
+    public decimal MerchantId { get; set; }
+    public string Name { get; set; } = null!;
+    public string? Category { get; set; }
+    public string Description { get; set; } = null!;
+    public string ReleaseState { get; set; } = null!;
+    public string? Image { get; set; }
+    public decimal? Price { get; set; }
+}
+
 public partial class Application
 {
     public decimal Id { get; set; }

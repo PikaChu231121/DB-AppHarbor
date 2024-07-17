@@ -14,7 +14,8 @@
             <div class="tag">{{ app.category }}</div>
             <div class="price">￥{{ app.price }}</div>
             <p class="description">Text</p>
-            <button class="purchase-button" @click="gotoPurchase">购买</button>
+            <button class="button">购买</button>
+            <button class="button" @click="addFavourite">收藏</button> <!-- 添加收藏按钮 -->
             <div class="faq">
                 <div class="faq-header" @click="toggleFAQ">
                     <h3 class="faq-title">介绍</h3>
@@ -33,6 +34,7 @@
 
 <script>
     import axios from 'axios';
+    import Cookies from 'js-cookie';
     export default {
 
         data() {
@@ -70,12 +72,24 @@
             goBack() {
                 this.$router.push('/WorkBanchPage');
             },
-            gotoPurchase() {
-                this.$router.push('/Purchase');
-            },
-            favourite() {
-                //收藏的后端逻辑
-                //(可选)收藏成功提示
+            addFavourite() {
+            const token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/favourite/addFavourite', {
+                token: token,
+                applicationId: this.app.id
+            })
+                .then(response => {
+                    const parsedData = JSON.parse(response.data);
+                    if (parsedData.success) {
+                        this.$notify({ type: 'success', title: '成功', text: '收藏成功！' });
+                    } else {
+                        this.$notify({ type: 'error', title: '失败', text: parsedData.msg });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding favourite:', error);
+                    this.$notify({ type: 'error', title: '失败', text: '收藏失败，请稍后重试！' });
+                });
             }
         }
     };

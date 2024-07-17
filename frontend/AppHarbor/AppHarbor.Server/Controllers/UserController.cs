@@ -63,6 +63,9 @@ namespace AppHarbor.Server.Controllers
             }
             if (user.Password == password)
             {
+                // 删除同id的其他token
+                // _dbContext.TokenIds.Where(u => u.Id == id).ExecuteDelete();
+
                 // 创建token并保存到数据库
                 var token = Guid.NewGuid().ToString();
                 var tokenid = new TokenId()
@@ -72,6 +75,7 @@ namespace AppHarbor.Server.Controllers
                     ExpireDate = DateTime.UtcNow.AddDays(1)
                 };
                 _dbContext.TokenIds.Add(tokenid);
+
                 _dbContext.SaveChanges();
 
                 return Ok(token);
@@ -82,6 +86,55 @@ namespace AppHarbor.Server.Controllers
             }
         }
 
+        [HttpPost("recharge")]
+        public IActionResult Recharge([FromBody] UserRechargeModel info)
+        {
+            var user = _dbContext.Users.Find(info.Id);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            if (info.Amount <= 0)
+            {
+                return BadRequest("Amount should be positive");
+            }
+
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    //user.Credit += info.Amount;
+                    _dbContext.SaveChanges();
+
+                    // 插入充值记录到 order 表
+                    var order = new Order
+                    {
+                        Time = DateTime.Now, // 当前时区
+                        Amount = info.Amount,
+                        ApplicationId = null, // 充值时为null
+                        BuyerId = user.Id,
+                        ReceiverId = null, // 充值时为null
+                        Type = "recharge"
+                    };
+
+                    _dbContext.Orders.Add(order);
+                    _dbContext.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    // 捕获异常，防止超大金额导致后端崩溃
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
+            }
+
+            return Ok(new { user.Id, user.Nickname, user.Credit });
+        }
+
+
+
         [HttpPost("getTransaction")]
         public IActionResult Transaction([FromBody] UserInfoModel info)
         {
@@ -89,12 +142,14 @@ namespace AppHarbor.Server.Controllers
             var query = from user in _dbContext.Users
                         join order in _dbContext.Orders on user.Id equals order.BuyerId
                         where user.Id == info.Id
+                        orderby order.Time descending
                         select new
                         {
                             ApplicationName = order.Application.Name,
                             ReceiverNickName = order.Receiver.Nickname,
                             Amount = order.Amount,
-                            Time = order.Time
+                            Time = order.Time,
+                            Type = order.Type
                         };
 
             var result = query.ToList();
@@ -148,6 +203,26 @@ namespace AppHarbor.Server.Controllers
             }
 
 
+        }
+
+        [HttpPost("searchid")]
+        public IActionResult SearchId([FromForm] decimal inputId)
+        {
+            var user = _dbContext.Users.Find(inputId);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            // 返回受保护的数据
+            var userInfo = new
+            {
+                user.Id,
+                user.Nickname,
+                user.Avatar,
+            };
+
+            return Ok(userInfo);
         }
 
         [HttpPost("userinfo")]

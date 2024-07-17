@@ -6,12 +6,12 @@
                  :key="group.name"
                  :class="{ selected: selectedGroup && selectedGroup.name === group.name }"
                  @click="toggleGroupSelection(group)">
-                <div class="group-header">{{ group.name }}</div>
+                <div class="group-header">{{ group.Chinese }}</div>
                 <div class="group-friend-icons">
                     <template v-for="(friend, index) in group.friends.slice(0, 3)">
                         <img v-if="index < 3"
                              :key="friend.id"
-                             :src="friend.avatar"
+                             :src="getAvatarUrl(friend.avatar)"
                              class="friend-icon" />
                     </template>
                     <div v-if="group.friends.length > 3" class="friend-icon more">
@@ -32,18 +32,29 @@
             </div>
 
             <div class="friends-list">
-                <div class="friend-item" v-for="friend in friends" :key="friend.id">
-                    <img :src="friend.avatar" class="avatar" />
-                    <div class="friend-info">
-                        <div class="friend-title">{{ friend.name }}</div>
-                        <div class="friend-description">{{ friend.description }}</div>
+                <div class="friend-item1" v-if="selectedGroup !== null">
+                    <div class="friend-item" v-for="friend in filtered2Friends" :key="friend.id">
+                        <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
+                        <div class="friend-info">
+                            <div class="friend-title">{{ friend.nickname }}</div>
+                            <div class="friend-description">{{ friend.state }}</div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="friend-item2" v-else>
+                        <div class="friend-item" v-for="friend in friends" :key="friend.id">
+                            <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
+                            <div class="friend-info">
+                                <div class="friend-title">{{ friend.nickname }}</div>
+                                <div class="friend-description">{{ friend.state }}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 </template>
-
+s
 <script>
     import Cookies from 'js-cookie';
     import axios from 'axios';
@@ -52,13 +63,11 @@
             return {
                 searchQuery: '',
                 selectedGroup: null,
-                groups: [{ name: 'Family', friends: [] },
-                        { name: 'Friend', friends: [] },
-                        { name: 'Classmate', friends: [] },],
+                groups: [{ name: 'Family', friends: [], Chinese: '家人' },
+                        { name: 'Friend', friends: [], Chinese: '朋友' },
+                        { name: 'Classmate', friends: [], Chinese: '同学' },],
                 friends: [],
-                /*                    { id: 1, avatar: 'avatar1.png', title: 'Title 1', description: 'Description 1' },
-                                      { id: 2, avatar: 'avatar2.png', title: 'Title 2', description: 'Description 2' },
-                                      { id: 3, avatar: 'avatar3.png', title: 'Title 3', description: 'Description 3' },*/
+                map: { 'Family':'家人' }
             };
         },
         computed: {
@@ -73,27 +82,20 @@
                 );
             },
             selectedGroupName() {
-                return this.selectedGroup ? this.selectedGroup.name : 'All Friends';
-            }
+                return this.selectedGroup ? this.selectedGroup.Chinese : '全部好友';
+            },
+            filtered2Friends() {
+                console.log(this.selectedGroup.name);
+                if (!this.selectedGroup.name) {
+                    return [];
+                }
+                const group = this.groups.find(group => group.name == this.selectedGroup.name);
+                return group ? group.friends : [];
+            },
         },
         methods: {
             getfriend() {
                 var token = Cookies.get('token');
-
-                let formData4 = new FormData;
-                formData4.append('token', token);
-                axios.post('http://localhost:5118/api/relationship/findall', formData4)
-                    .then(response => {
-                        this.groups.forEach(group => {
-                            this.friends = response.data.data.$values;
-                            console.log(this.friends);
-                        });
-
-                    })
-                    .catch(error => {
-                        //this.alertMessage = error.msg;
-                        console.log(error);
-                    });
 
                 let formData1 = new FormData();
                 formData1.append('token', token);
@@ -105,7 +107,6 @@
                                 group.friends=response.data.data.$values;
                             }
                         });
-                        //console.log(this.groups);
                     })
                     .catch(error => {
                         this.alertMessage = error.response.data;
@@ -119,10 +120,8 @@
                         this.groups.forEach(group => {
                             if (group.name === 'Friend') {
                                 group.friends=response.data.data.$values;
-                                //console.log(response.data.data);
                             }
                         });
-                        //console.log(this.groups);
                     })
                     .catch(error => {
                         this.alertMessage = error.response.data;
@@ -136,16 +135,26 @@
                         this.groups.forEach(group => {
                             if (group.name === 'Classmate') {
                                 group.friends = response.data.data.$values;
-                                //console.log(response.data.data);
                             }
                         });
-                        //console.log(this.groups);
                     })
                     .catch(error => {
                         this.alertMessage = error.response.data;
                     });
 
+                let formData4 = new FormData;
+                formData4.append('token', token);
+                axios.post('http://localhost:5118/api/relationship/findall', formData4)
+                    .then(response => {
+                        this.groups.forEach(group => {
+                            this.friends = response.data.data.$values;
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
 
+                console.log(this.friends);
             
             },
 
@@ -156,6 +165,13 @@
                     this.selectedGroup = group;
                 }
             },
+
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../../public/default.png'; // Ĭ  ͷ  ·  
+            }
         },
         mounted() {
             this.getfriend();
@@ -312,6 +328,8 @@
     .friends-list {
         display: flex;
         flex-wrap: wrap;
+        flex-direction: row; /* ȷ    Ԫ  ˮƽ     */
+        gap: 10px;
     }
 
     .friend-item {
@@ -324,7 +342,11 @@
         width: 200px;
         border: 2px solid #d3d3d3;
     }
-
+    .friend-item1, .friend-item2 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
     .avatar {
         width: 50px;
         height: 50px;

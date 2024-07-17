@@ -2,8 +2,8 @@
     <div class="friend-manager">
         <!-- Left Section -->
         <div class="left-section">
-            <h2 class="main-title">ADD FRIEND</h2>
-            <p class="sub-title">Your Friends</p>
+            <h2 class="main-title">添加好友</h2>
+            <p class="sub-title">您的好友</p>
             <div class="friend-list">
                 <div v-for="friend in friends" :key="friend.id" class="friend-item">
                     <img :src="friend.avatar" class="avatar" alt="Friend Avatar">
@@ -18,11 +18,11 @@
         <!-- Right Section -->
         <div class="right-section">
             <div class="search-bar">
-                <input type="text" v-model="searchQuery" placeholder="Search by User ID" class="search-input">
+                <input type="text" v-model="searchQuery" placeholder="输入用户ID进行搜索" class="search-input">
             </div>
             <div class="search-results">
                 <div v-if="searchResults.length === 0" class="no-results">
-                    No results found.
+                    未搜索到用户
                 </div>
                 <div v-else>
                     <div v-for="result in searchResults" :key="result.id" class="search-result">
