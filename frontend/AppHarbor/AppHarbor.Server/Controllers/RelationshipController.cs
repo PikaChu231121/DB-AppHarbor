@@ -130,6 +130,22 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("addfriend")]
         public IActionResult AddFriend([FromForm] string token, [FromForm] decimal friendId, [FromForm] string Relationship)
         {
+            // 找到给定token对应的用户ID
+            var userId = _dbContext.TokenIds
+                .Where(t => t.Token == token)
+                .Select(t => t.Id)
+                .FirstOrDefault();
+            // 检查是否已经存在好友关系
+            var friendshipExists = _dbContext.Relationships
+                .Any(r => r.User1Id == userId && r.User2Id == friendId);
+            if (friendshipExists)
+            {
+                return NotFound(new
+                {
+                    Data = 3,
+                    Msg = "Relationship has existed"
+                });
+            }
 
             if (string.IsNullOrEmpty(token))
             {
