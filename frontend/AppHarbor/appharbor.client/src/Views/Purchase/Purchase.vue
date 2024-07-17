@@ -11,7 +11,7 @@
                         <div class="flex-col justify-start items-end page">
                             <!--好有选项-->
                             <div class="friend-item">
-                                <img :src="friend.avatar" class="avatar" alt="Friend Avatar">
+                                <img :src="getAvatarUrl(friend.avatar)" class="avatar" alt="Friend Avatar">
                                 <div class="friend-details">
                                     <p class="friend-name">{{ friend.nickname }}</p>
                                     <p class="friend-id">{{ friend.id }}</p>
@@ -92,7 +92,6 @@
     export default {
         data() {
             return {
-                token: '',
                 user: null,
                 app: null,
                 friend: {
@@ -100,6 +99,7 @@
                     nickname: 'Bob',
                     avatar:'https://randomuser.me/api/portraits/men/2.jpg'
                 },
+/*                friend: null,*/
                 friends: [],
                 showDropdown: false,
                 user :{
@@ -118,10 +118,20 @@
         methods: {
             handlePurchase() {
                 // 购买的后端
+                console.log(this.user.id);
+                console.log(this.friend.id);
+                console.log(this.app.id);
+                let formData = new FormData();
+                formData.append('BuyerID', this.user.id);
+                formData.append('ReceiverID', this.friend.id);
+                formData.append('APPID', this.app.id);
+                axios.post('http://localhost:5118/api/order/createneworder', formData)
+                    .then(response => {
 
-
-                //...
-
+                    })
+                    .catch(error => {
+                        console.error('Error purchase app:', error);
+                    });
 
                 console.log('App has been puechased!');
             },
@@ -136,7 +146,7 @@
                 formData.append('token', token);
                 axios.post('http://localhost:5118/api/relationship/findall',formData)
                     .then(response => {
-                        this.friends = response.data.$values;
+                        this.friends = response.data.data.$values;
                     })
                     .catch(error => {
                         console.error('Error fetching friends data:', error);
@@ -146,7 +156,7 @@
                 // 更改当前friend的属性
                 this.friend.nickname = newFriend.nickname;
                 this.friend.id = newFriend.id;
-                this.friend.id = newFriend.avatar;
+                this.friend.avatar = newFriend.avatar;
 
                 this.showDropdown = false; // 关闭下拉菜单
             },
@@ -166,8 +176,8 @@
             },
             fetchUserInfo() {
                 // 获取用户个人信息
-                /*var token = Cookies.get('token');*/
-                axios.post('http://localhost:5118/api/user/userInfo', { token: this.token })
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user = response.data;
                     })
@@ -187,8 +197,6 @@
             const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
 
-            this.token = Cookies.get('token'); // 获取token
-
             // 获取个人信息部分
             // 读取 localStorage 中的 id
             const storedId = localStorage.getItem('globalId');
@@ -204,6 +212,7 @@
 
             // 获取好友信息部分
             this.fetchFriends();
+
         },
     };
 </script>
