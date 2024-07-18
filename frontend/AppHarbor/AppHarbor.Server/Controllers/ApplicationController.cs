@@ -4,6 +4,10 @@ using System.Linq;
 using AppHarbor.Server.Models;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.IO;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.Threading.Tasks;
 
 namespace AppHarbor.Server.Controllers
 {
@@ -19,6 +23,35 @@ namespace AppHarbor.Server.Controllers
         {
             this._dbContext = dbContext;
 
+        }
+
+        private string getPath(IFormFile file,
+                                 [FromServices] IWebHostEnvironment env,
+                                 string guid)
+        {
+            // 拼接文件路径
+            string fileExt = Path.GetExtension(file.FileName);
+            string fileName = guid + fileExt;
+            string relativePath = Path.Combine(@"\uploads", fileName);
+            string fullPath = Path.Combine(env.ContentRootPath, "Uploads", fileName);
+
+            // 创建文件
+            using (FileStream fs = new FileStream(fullPath, FileMode.Create))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+            }
+
+            return relativePath.Replace("\\", "/");
+        }
+
+        private IActionResult CheckUpload(IFormFile file)
+        {
+            if (file.Length == 0)
+            {
+                return BadRequest(new { Code = 1001, Msg = "File not uploaded" });
+            }
+            return Ok();
         }
 
         [HttpPost("test")]
@@ -86,21 +119,25 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("uploadapp")]
-        public IActionResult UploadApp([FromForm] string Name,
+        public IActionResult UploadApp(IFormFile file,
+                                        [FromForm] string Name,
                                         [FromForm] string Version,
                                         [FromForm] string Description,
                                         [FromForm] decimal Price,
-                                        [FromForm] string Category
-
-
+                                        [FromForm] string Category,
+                                        [FromServices] IWebHostEnvironment env
                                         )
         {
-            // if (appModel == null)
-            // {
-            //     return BadRequest("Invalid data.");
-            // }
-            Console.WriteLine($"Received parameters: Name={Name}, Version={Version}, Description={Description}, Price={Price}, Category={Category}");
-            var application = new Application
+            var checkResult = CheckUpload(file);
+            if (checkResult is BadRequestObjectResult)
+            {
+                return checkResult;
+            }
+
+            string guid = Guid.NewGuid().ToString("N");
+            string relativePath = getPath(file, env, guid);
+
+            var application = new Application()
             {
                 Version = Version,
                 MerchantId = 7,
@@ -111,7 +148,7 @@ namespace AppHarbor.Server.Controllers
                 Image = "img_url",
                 DownloadCount = 0,
                 Price = Price,
-                //---package
+                Package = relativePath,
             };
 
             _dbContext.Applications.Add(application);
