@@ -151,7 +151,8 @@ namespace AppHarbor.Server.Controllers
                     a.Name,
                     a.Version,
                     a.Category,
-                    a.Image
+                    a.Image,
+                    a.Description
                 })
                 .ToList();
 
