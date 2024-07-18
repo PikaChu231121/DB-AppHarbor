@@ -76,7 +76,7 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("upload-personal-image")]
-        public IActionResult UploadPersonalImage([FromForm] IFormFile file,
+        public IActionResult UploadPersonalImage(IFormFile file,
                                                 [FromForm] decimal id,
                                                 [FromServices] IWebHostEnvironment env)
         {
@@ -101,7 +101,7 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("upload-app-img")]
-        public IActionResult UploadAppImage([FromForm]IFormFile file, [FromForm]decimal id, [FromServices] IWebHostEnvironment env)
+        public IActionResult UploadAppImage(IFormFile file, [FromForm]decimal id, [FromServices] IWebHostEnvironment env)
         {
             // 上传应用图片
             var checkResult = CheckImage(file);
