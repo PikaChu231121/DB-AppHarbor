@@ -67,7 +67,7 @@ namespace AppHarbor.Server.Controllers
             var resultlist = _dbContext.Applications.Where(a =>
             getapplistModel.Category == "All" ? true : a.Category == getapplistModel.Category).ToList();
 
-            resultlist.Sort((app1, app2) => { return app1.DownloadCount <= app2.DownloadCount ? 1 : -1; });
+            resultlist = resultlist.OrderBy(a => a.DownloadCount).ToList();
 
             return Ok(resultlist);
 
@@ -100,8 +100,7 @@ namespace AppHarbor.Server.Controllers
                 a.Price >= searchapplistModel.Price_min &&
                 a.Price <= searchapplistModel.Price_max &&
                 a.Name.Contains(searchapplistModel.Content)).ToList();
-
-                resultlist.Sort((app1, app2) => { return app1.DownloadCount <= app2.DownloadCount ? 1 : -1; });
+                resultlist = resultlist.OrderBy(a => a.DownloadCount).ToList();
                 return Ok(resultlist);
             }
             else
@@ -111,8 +110,7 @@ namespace AppHarbor.Server.Controllers
                 a.Price <= searchapplistModel.Price_max &&
                 a.Name.Contains(searchapplistModel.Content) &&
                 a.Category == searchapplistModel.Category).ToList();
-
-                resultlist.Sort((app1, app2) => { return app1.DownloadCount <= app2.DownloadCount ? 1 : -1; });
+                resultlist = resultlist.OrderBy(a => a.DownloadCount).ToList();
                 return Ok(resultlist);
             }
 
@@ -154,7 +152,7 @@ namespace AppHarbor.Server.Controllers
             _dbContext.Applications.Add(application);
             _dbContext.SaveChanges();
 
-            return Ok(new {ApplicationId = application.Id});
+            return Ok(new { ApplicationId = application.Id });
 
         }
 
@@ -163,11 +161,11 @@ namespace AppHarbor.Server.Controllers
         {
 
             var app = _dbContext.Applications.Find(installappModel.Id);
-            if (app == null )
+            if (app == null)
             {
                 return NotFound("app not found");
             }
-            else if(app.Package=="test"|| app.Package == null)
+            else if (app.Package == "test" || app.Package == null)
             {
                 return BadRequest("app no package");
             }
