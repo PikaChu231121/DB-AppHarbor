@@ -110,12 +110,32 @@
                     const parsedData = response.data;
                     if (parsedData.success) {
                         alert('收藏成功'); // 可能需要更改样式
+                        this.isFavourited = true; 
                     } else {
                         alert('收藏失败：' + parsedData.msg);
                     }
                 })
                 .catch(error=>{
                     console.error('Error adding favourite:',error);
+                });
+            },
+            removeFavourite() {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                    token: token,
+                    id: this.app.id
+                })
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        alert('取消收藏成功');
+                        this.isFavourited = false; 
+                    } else {
+                        alert('取消收藏失败：' + parsedData.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing favourite:', error);
                 });
             },
             checkIfFavourite(appId){
@@ -138,25 +158,6 @@
                 } else {
                     this.addFavourite();
                 }
-            },
-            removeFavourite() {
-                const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
-                    token: token,
-                    id: this.app.id
-                })
-                .then(response => {
-                    const parsedData = response.data;
-                    if (parsedData.success) {
-                        alert('取消收藏成功');
-                        this.isFavourited = false;
-                    } else {
-                        alert('取消收藏失败：' + parsedData.msg);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error removing favourite:', error);
-                });
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);

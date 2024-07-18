@@ -105,7 +105,7 @@
                     id: id
                 })
                     .then(response => {
-                        const parsedData = JSON.parse(response.data);
+                        const parsedData = response.data;
                         if (parsedData.success) {
                             this.favourites = this.favourites.filter(fav => fav.id !== id);
                             console.log("Delete successful:", parsedData);
@@ -129,6 +129,8 @@
                         const parsedData = JSON.parse(response.data);
                         if (parsedData.success) {
                             this.favourites = this.favourites.filter(fav => !this.selectedFavourites.includes(fav.id));
+                            this.selectedFavourites = []; // 清空选中项
+                            this.isBulkDeleting = false; // 重置批量删除状态
                             console.log("Bulk delete successful:", parsedData);
                             this.showNotification('批量删除应用成功');
                             this.fetchFavourites(); // 重新拉取收藏夹内容

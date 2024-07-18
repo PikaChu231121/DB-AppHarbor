@@ -131,8 +131,7 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "Favourite not found!"
                 };
-                var jResponse3 = JsonSerializer.Serialize(failResponse);
-                return new JsonResult(jResponse3);
+                return NotFound(failResponse);
             }
 
             _dbContext.Favourites.Remove(favourite);
@@ -144,8 +143,8 @@ namespace AppHarbor.Server.Controllers
                 msg = "Favourite deleted successfully!"
             };
 
-            var jsonResponse = JsonSerializer.Serialize(successResponse);
-            return new JsonResult(jsonResponse);
+            return Ok(successResponse);
+
         }
 
         [HttpPost("bulkDelete")]
