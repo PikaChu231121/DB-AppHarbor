@@ -161,21 +161,51 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("installapp")]
         public IActionResult InstallApp([FromBody] InstallAppModel installappModel)
         {
+            if (string.IsNullOrEmpty(installappModel.Token))
+            {
+                var failResponse = new
+                {
+                    msg = "No token provided!"
+                };
+                return Unauthorized(failResponse);
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == installappModel.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                var failResponse = new
+                {
+                    msg = "Invalid or expired token!"
+                };
+                return Unauthorized(failResponse);
+            }
 
             var app = _dbContext.Applications.Find(installappModel.Id);
-            if (app == null )
+            if (app == null)
             {
                 return NotFound("app not found");
             }
-            else if(app.Package=="test"|| app.Package == null)
+            else if (app.Package == "test" || app.Package == null)
             {
                 return BadRequest("app no package");
             }
-            else
+
+            var user = _dbContext.Users.FirstOrDefault(u => u.Id == tokenEntry.Id);
+            if (user == null)
             {
-                return Ok(app.Package);
+                return NotFound("user not found");
             }
 
+            var order = _dbContext.Orders.FirstOrDefault(o => o.Type == "purchase"
+                                                  && o.BuyerId == user.Id
+                                                  && o.ApplicationId == installappModel.Id);
+            if (order == null)
+            {
+                return BadRequest("User hasn't bought this app yet");
+            }
+
+            return Ok(app.Package);
         }
     }
 }

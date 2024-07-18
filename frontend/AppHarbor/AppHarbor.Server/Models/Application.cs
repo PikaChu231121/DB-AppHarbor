@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AppHarbor.Server.Models;
 
@@ -44,6 +45,7 @@ public class UploadAppModel
 public class InstallAppModel
 {
     public decimal Id { get; set; }
+    public string Token { get; set; }
 
 }
 
