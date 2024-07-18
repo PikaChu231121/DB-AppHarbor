@@ -1,9 +1,9 @@
 <template>
     <div class="home-container">
         <header class="header">
-            <div class="header-left">ø‚</div>
+            <div class="header-left">Â∫ì</div>
             <div class="header-right">
-                <img class="user-avatar" :src="userAvatar" alt="”√ªßÕ∑œÒ">
+                <img class="user-avatar" :src="userAvatar" alt="Áî®Êà∑Â§¥ÂÉè">
                 <div class="user-info">
                     <div class="user-name">{{ userName }}</div>
                     <div class="user-id">ID: {{ userId }}</div>
@@ -17,20 +17,20 @@
                  @mouseenter="showDetails(app.id)"
                  @mouseleave="hideDetails">
                 <div class="app-icon-container">
-                    <img :src="app.icon" alt="”¶”√Õº±Í" class="app-icon">
+                    <img :src="app.icon" alt="Â∫îÁî®ÂõæÊ†á" class="app-icon">
                 </div>
                 <div class="app-name">{{ app.name }}</div>
-                <button @click="downloadApp(app.id)" class="download-button">œ¬‘ÿ</button>
+                <button @click="downloadApp(app.id)" class="download-button">‰∏ãËΩΩ</button>
                 <transition name="fade">
                     <div v-if="hoveredApp === app.id" class="app-details-group">
                         <div class="app-details-header">{{ app.name }}</div>
                         <div class="app-details-body">
-                            <img :src="app.icon" alt="”¶”√Õº±Í" class="app-details-icon">
+                            <img :src="app.icon" alt="Â∫îÁî®ÂõæÊ†á" class="app-details-icon">
                             <div class="app-details-info">
-                                <div>”¶”√ID: {{ app.id }}</div>
-                                <div>∞Ê±æ: {{ app.version }}</div>
-                                <div>∑¢––…Ã: {{ app.publisher }}</div>
-                                <div>ΩÈ…‹: {{ app.description }}</div>
+                                <div>Â∫îÁî®ID: {{ app.id }}</div>
+                                <div>ÁâàÊú¨: {{ app.version }}</div>
+                                <div>ÂèëË°åÂïÜ: {{ app.publisher }}</div>
+                                <div>‰ªãÁªç: {{ app.description }}</div>
                             </div>
                         </div>
                     </div>
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       userAvatar: 'path/to/avatar.jpg',
-      userName: '∂°’Ê’‰÷È',
+      userName: '‰∏ÅÁúüÁèçÁè†',
       userId: '114514',
       hoveredApp: null,
       apps: [
@@ -55,9 +55,9 @@ export default {
           icon: 'path/to/icon.jpg',
           version: '1.0.1',
           publisher: 'xxx',
-          description: '”¶”√ΩÈ…‹...'
+          description: 'Â∫îÁî®‰ªãÁªç...'
         },
-        // ÃÌº”∏¸∂‡”¶”√
+        // Ê∑ªÂä†Êõ¥Â§öÂ∫îÁî®
       ]
     };
   },
@@ -69,7 +69,7 @@ export default {
       this.hoveredApp = null;
     },
     downloadApp(appId) {
-      // ÷¥––œ¬‘ÿ≤Ÿ◊˜
+      // ÊâßË°å‰∏ãËΩΩÊìç‰Ωú
       const appIndex = this.apps.findIndex(app => app.id === appId);
       if (appIndex !== -1) {
         this.$set(this.apps, appIndex, {
