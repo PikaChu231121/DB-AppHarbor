@@ -10,11 +10,11 @@
                         <!--好有选择区域-->
                         <div class="flex-col justify-start items-end page">
                             <!--好有选项-->
-                            <div class="friend-item">
-                                <img :src="getAvatarUrl(friend.avatar)" class="avatar" alt="Friend Avatar">
-                                <div class="friend-details">
-                                    <p class="friend-name">{{ friend.nickname }}</p>
-                                    <p class="friend-id">{{ friend.id }}</p>
+                            <div class="receiver-item">
+                                <img :src="getAvatarUrl(receiver.avatar)" class="avatar" alt="Receiver Avatar">
+                                <div class="receiver-details">
+                                    <p class="receiver-name">{{ receiver.nickname }}</p>
+                                    <p class="receiver-id">{{ receiver.id }}</p>
                                 </div>
                             </div>
                             <!--选择按钮-->
@@ -24,7 +24,7 @@
                         <!--下拉菜单-->
                         <div class="dropdown-menu" v-show="showDropdown">
                             <div v-for="friend in friends" :key="friend.id" class="friendsmenu-item">
-                                <p @click="changeFriend(friend)">{{friend.nickname}}</p>
+                                <p @click="changeReceiver(friend)">{{friend.nickname}}</p>
                                 <!-- 可以根据需要添加更多菜单项 -->
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                          src="https://cdn.builder.io/api/v1/image/assets/TEMP/ebfe3a97bf3fbf1744b64e98bf537a292b984f51f5a76525c09758e46a083f17?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&"
                          class="wallet-img" />
                     <div class="money">
-                        <div class="text-money">￥{{ user.credit }}</div>
+                        <div class="text-money">￥{{ user_credit }}</div>
                         <div class="text-left">Left</div>
                     </div>
                 </div>
@@ -94,11 +94,13 @@
             return {
                 user: null,
                 app: null,
-                friend: {
+                user_credit: 0,
+                receiver: {
                     id: 1,
                     nickname: 'Bob',
                     avatar:'https://randomuser.me/api/portraits/men/2.jpg'
                 },
+                /*receiver: null,*/
 /*                friend: null,*/
                 friends: [],
                 showDropdown: false,
@@ -119,21 +121,32 @@
             handlePurchase() {
                 // 购买的后端
                 console.log(this.user.id);
-                console.log(this.friend.id);
+                console.log(this.receiver.id);
                 console.log(this.app.id);
                 let formData = new FormData();
                 formData.append('BuyerID', this.user.id);
-                formData.append('ReceiverID', this.friend.id);
+                formData.append('ReceiverID', this.receiver.id);
                 formData.append('APPID', this.app.id);
                 axios.post('http://localhost:5118/api/order/createneworder', formData)
                     .then(response => {
-
+                        this.updateCredit();
                     })
                     .catch(error => {
                         console.error('Error purchase app:', error);
                     });
 
                 console.log('App has been puechased!');
+            },
+            updateCredit() {
+                console.log('credit change!');
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user_credit = response.data.credit;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
             },
             toggleDropdown() {
                 // 好有菜单选项
@@ -152,11 +165,12 @@
                         console.error('Error fetching friends data:', error);
                     });
             },
-            changeFriend(newFriend) {
+            changeReceiver(newReceiver) {
                 // 更改当前friend的属性
-                this.friend.nickname = newFriend.nickname;
-                this.friend.id = newFriend.id;
-                this.friend.avatar = newFriend.avatar;
+                //this.receiver.nickname = newReceiver.nickname;
+                //this.receiver.id = newReceiver.id;
+                //this.receiver.avatar = newReceiver.avatar;
+                this.receiver = newReceiver;
 
                 this.showDropdown = false; // 关闭下拉菜单
             },
@@ -180,10 +194,20 @@
                 axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user = response.data;
+                        // 默认接受者为自己
+                        this.receiver = response.data;
+                        this.friends.push(response.data);
+                        this.user_credit = response.data.credit;
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
                     });
+            },
+            receiverInit() {
+                console.log("receiver init!");
+                this.receiver.nickname = this.user.nickname;
+                this.receiver.id = this.user.id;
+                this.receiver.avatar = this.user.avatar;
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
@@ -198,21 +222,10 @@
             this.fetchAppDetails(appId);
 
             // 获取个人信息部分
-            // 读取 localStorage 中的 id
-            const storedId = localStorage.getItem('globalId');
-            this.isEditing = false;
-            if (global.id == '') {
-                this.user.id = storedId;
-                global.id = storedId; // 更新 global.js 中的 id
-            } else {
-                this.user.id = global.id;
-                localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
-            }
             this.fetchUserInfo();
 
             // 获取好友信息部分
             this.fetchFriends();
-
         },
     };
 </script>
@@ -314,7 +327,7 @@
         display:flex;
     }
 
-    .friend-item {
+    .receiver-item {
         display: flex;
         align-items: center;
         padding: 10px;
@@ -322,11 +335,10 @@
         background-color: #fff;
         transition: background-color 0.3s ease;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-        width:80%;
+        width: 80%;
     }
 
-        .friend-item:hover {
+        .receiver-item:hover {
             background-color: #f99d85;
         }
 
@@ -337,7 +349,7 @@
         margin-right: 10px;
     }
 
-    .friend-details {
+    .receiver-details {
         flex: 1;
     }
 
