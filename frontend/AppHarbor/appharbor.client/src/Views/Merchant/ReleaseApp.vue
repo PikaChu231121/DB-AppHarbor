@@ -78,12 +78,13 @@ export default {
         },
         upload() {
             let formData = new FormData();
+            formData.append('file', this.appFile);
             formData.append('Name', this.appName);
             formData.append('Version', this.appVersion);
             formData.append('Description', this.appDescription);
             formData.append('Price', this.appPrice);
             formData.append('Category', this.appCategory);
-
+            console.log(this.appFile);
             axios.post('http://localhost:5118/api/application/uploadapp', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -91,7 +92,6 @@ export default {
             })
             .then(response => {
                 this.appId = response.data.applicationId;
-
                 let formDataImg = new FormData();
                 formDataImg.append('file', this.appImage);
                 formDataImg.append('id', this.appId);
@@ -103,19 +103,6 @@ export default {
                         console.error('Error uploading avatar:', error);
                         alert('图片上传失败');
                     });
-
-                let formDataFile = new FormData();
-                formDataFile.append('file', this.appFile);
-                formDataFile.append('id', this.appId);
-                // axios.post('http://localhost:5118/api/File/upload-app-file', formDataFile)
-                //     .then(response => {
-                //         console.log(response);
-                //     })
-                //     .catch(error => {
-                //         console.error('Error uploading file:', error);
-                //         alert('文件上传失败');
-                //     });
-
                 alert('应用发布成功');
             })
             .catch(error => {
@@ -129,9 +116,10 @@ export default {
             return this.isValidInput(this.appName) &&
                 this.isValidInput(this.appVersion) &&
                 this.isValidInput(this.appDescription) &&
-                this.appPrice &&
+                this.appPrice >= 0 &&
                 this.isValidInput(this.appCategory) &&
-                this.appImage !== null;
+                this.appImage !== null &&
+                this.appFile !== null;
         }
     }
 }
