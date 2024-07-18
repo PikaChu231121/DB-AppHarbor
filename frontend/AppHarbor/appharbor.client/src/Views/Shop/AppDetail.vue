@@ -2,7 +2,6 @@
     <div class="card">
         <div class="button-container">
             <button @click="goBack">Back to Shop</button>
-            <button @click="favourite">s</button>
         </div>
         <!--图片信息-->
         <div class="image-placeholder">
@@ -30,6 +29,15 @@
             </div>
         </div>
     </div>
+    <div class="comments-container">
+        <div v-for="comment in comments" :key="comment.id" class="comment-item">
+            <img :src="comment.user.avatar" alt="Avatar" class="avatar">
+            <div class="info">
+                <span class="nickname">{{ comment.user.nickname }}</span>
+                <p class="content">{{ comment.content }}</p>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -44,7 +52,20 @@
                 //Classification: "健身",
                 //Price: "70",
                 //DetailIntro: "「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！",
-                isFAQOpen: true
+                isFAQOpen: true,
+
+                comments: [
+                    {
+                        id: 1,
+                        user: { avatar: 'https://randomuser.me/api/portraits/men/2.jpg', nickname: 'Kobe Bryant' },
+                        content: 'Man ! What can I say ? Mamba out!',
+                    },
+                    {
+                        id: 2,
+                        user: { avatar: 'https://randomuser.me/api/portraits/women/2.jpg', nickname: 'Mamba' },
+                        content: '沙克也干了',
+                    },
+                ],
             };
         },
         created() {
@@ -107,6 +128,8 @@
         max-width: 800px;
         background-color: #fff;
 
+        margin-left:auto;
+        margin-right:auto;
         margin-top:auto;
         margin-bottom:auto;
     }
@@ -220,4 +243,31 @@
             visibility: hidden;
             opacity: 0;
         }
+
+    .comments-container {
+        max-width: 800px;
+        margin-left:auto;
+        margin-right:auto;
+    }
+
+    .comment-item {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .nickname {
+        font-weight: bold;
+    }
+
+    .content {
+        margin-top: 5px;
+    }
+
 </style>
