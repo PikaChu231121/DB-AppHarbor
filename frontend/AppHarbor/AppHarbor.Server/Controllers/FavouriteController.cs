@@ -108,8 +108,8 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "No token provided!"
                 };
-                var jsonResponse = JsonSerializer.Serialize(failResponse);
-                return new JsonResult(jsonResponse);
+                var jResponse1 = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jResponse1);
             }
 
             var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
@@ -120,19 +120,19 @@ namespace AppHarbor.Server.Controllers
                 {
                     msg = "Invalid or expired token!"
                 };
-                var jsonResponse = JsonSerializer.Serialize(failResponse);
-                return new JsonResult(jsonResponse);
+                var jResponse2 = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jResponse2);
             }
 
-            var favourite = _dbContext.Favourites.FirstOrDefault(f => f.Id == request.Id && f.UserId == tokenEntry.Id);
+            var favourite = _dbContext.Favourites.FirstOrDefault(f => f.ApplicationId == request.Id && f.UserId == tokenEntry.Id);
             if (favourite == null)
             {
                 var failResponse = new
                 {
                     msg = "Favourite not found!"
                 };
-                var jsonResponse = JsonSerializer.Serialize(failResponse);
-                return new JsonResult(jsonResponse);
+                var jResponse3 = JsonSerializer.Serialize(failResponse);
+                return new JsonResult(jResponse3);
             }
 
             _dbContext.Favourites.Remove(favourite);
@@ -144,8 +144,8 @@ namespace AppHarbor.Server.Controllers
                 msg = "Favourite deleted successfully!"
             };
 
-            var jsonSuccessResponse = JsonSerializer.Serialize(successResponse);
-            return new JsonResult(jsonSuccessResponse);
+            var jsonResponse = JsonSerializer.Serialize(successResponse);
+            return new JsonResult(jsonResponse);
         }
 
         [HttpPost("bulkDelete")]
@@ -250,6 +250,38 @@ namespace AppHarbor.Server.Controllers
                 msg = "Favourite added successfully!"
             };
             return Ok(successResponse);
+        }
+
+        [HttpPost("checkIfFavourite")]
+        public IActionResult CheckIfFavourite([FromBody] CheckIfFavouriteRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                var failResponse = new
+                {
+                    msg = "No token provided!"
+                };
+                return NotFound(failResponse);
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                var failResponse = new
+                {
+                    msg = "Invalid or expired token!"
+                };
+                return Unauthorized(failResponse);
+            }
+
+            // 检查收藏夹是否已经存在该应用
+            var existingFavourite = _dbContext.Favourites.FirstOrDefault(f => f.ApplicationId == request.AppId && f.UserId == tokenEntry.Id);
+            var response = new
+            {
+                isFavourited = existingFavourite != null
+            };
+            return Ok(response);
         }
 
     }

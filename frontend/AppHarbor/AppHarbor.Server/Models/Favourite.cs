@@ -25,6 +25,12 @@ public class AddFavouriteRequest
     public decimal Id { get; set; }
 }
 
+public class CheckIfFavouriteRequest
+{
+    public string Token { get; set; }
+    public int AppId { get; set; }
+}
+
 public partial class Favourite
 {
     public decimal Id { get; set; }

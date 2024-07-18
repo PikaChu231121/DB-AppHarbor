@@ -21,14 +21,15 @@
                 <div v-for="favourite in favourites" :key="favourite.id" class="favourite-item">
                     <h3>
                         <router-link :to="{ name: 'AppDetail', params: { id: favourite.applicationId } }">
-                            应用名称: {{ favourite.applicationName }}
+                            {{ favourite.applicationName }}
                         </router-link>
                     </h3>
                     <p>收藏时间: {{ favourite.createTime }}</p>
                     <p>可见性: {{ favourite.visibility }}</p>
                     <p>分类: {{ favourite.applicationCategory  }}</p>
+                    <p>id: {{ favourite.applicationId }}</p>
                     <div class="action-buttons">
-                        <button @click="deleteFavourite(favourite.id)" :disabled="isBulkDeleting">删除</button>
+                        <button @click="deleteFavourite(favourite.applicationId)" :disabled="isBulkDeleting">删除</button>
                         <input type="checkbox" v-if="isBulkDeleting" v-model="selectedFavourites" :value="favourite.id" class="bulk-delete-checkbox">
                     </div>
                 </div>
@@ -98,6 +99,7 @@
             },
             deleteFavourite(id) {
                 var token = Cookies.get('token');
+                console.log(id);
                 axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
                     token: token,
                     id: id
@@ -263,102 +265,3 @@
         height: 20px;
     }
 </style>
-
-
-<!--商店添加收藏按钮-->
-<!--        <button @click="toggleFavourite(app.id)">
-            {{ isFavourite(app.id) ? '取消收藏' : '收藏' }}
-        </button>-->
-<!--export default {
-    props: {
-        app: {
-            type: Object,
-            required: true
-        }
-    },
-    methods: {
-        toggleFavourite(id) {
-            const token = Cookies.get('token');
-            const action = this.isFavourite(id) ? 'deleteFavourite' : 'addFavourite';
-            axios.post(`http://localhost:5118/api/favourite/${action}`, {
-                token: token,
-                applicationId: id
-            })
-            .then(response => {
-                const parsedData = JSON.parse(response.data);
-                if (parsedData.success) {
-                    this.$emit('updateFavourites'); // 触发父组件更新收藏夹内容
-                } else {
-                    console.error('Toggle favourite failed:', parsedData);
-                }
-            })
-            .catch(error => {
-                console.error('Error toggling favourite:', error);
-            });
-        },
-        isFavourite(id) {
-            // 检查当前应用是否已经在收藏夹中
-            return this.favourites.some(fav => fav.applicationId === id);
-        }
-    }
-};-->
-<!--主界面监听点击事件-->
-<!--<template>
-    <div class="store">
-        <store-app v-for="app in apps" :key="app.id" :app="app" @updateFavourites="fetchFavourites" />
-    </div>
-</template>
-
-<script>
-import StoreApp from './StoreApp.vue';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-
-export default {
-    components: {
-        StoreApp
-    },
-    data() {
-        return {
-            apps: [],
-            favourites: []
-        };
-    },
-    created() {
-        this.fetchApps();
-        this.fetchFavourites();
-    },
-    methods: {
-        fetchApps() {
-            // 拉取商店中的应用列表
-            axios.get('http://localhost:5118/api/store/apps')
-                .then(response => {
-                    this.apps = response.data;
-                })
-                .catch(error => {
-                    console.error('Error fetching apps:', error);
-                });
-        },
-        fetchFavourites() {
-            // 拉取用户的收藏夹内容
-            const token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/favourite/getfavourites', {
-                token: token
-            })
-            .then(response => {
-                const parsedData = JSON.parse(response.data);
-                if (parsedData && parsedData.Favourites) {
-                    this.favourites = parsedData.Favourites;
-                    console.log("Favourites array:", this.favourites);
-                } else {
-                    console.error('Error: Expected Favourites but got:', response.data);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching favourites:', error);
-            });
-        }
-    }
-};
-</script>
--->

@@ -14,7 +14,7 @@
             <div class="price">￥{{ app.price }}</div>
             <p class="description">Text</p>
             <button class="button" @click="goToPurchase(app.id)">购买</button>
-            <button class="button" @click="addFavourite">收藏</button> <!-- 添加收藏按钮 -->
+            <button class="button" @click="toggleFavourite">{{ isFavourited ? '取消收藏' : '收藏' }}</button>
             <!--<button class="button" @click="installapp">收藏</button>--> <!-- 添加收藏按钮 -->
 
             <div class="faq">
@@ -68,11 +68,13 @@
                         content: '沙克也干了',
                     },
                 ],
+                isFavourited:false // 是否已经收藏，默认未收藏
             };
         },
         created() {
             const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
+            this.checkIfFavourite(appId);
         },
         methods: {
             toggleFAQ() {
@@ -102,20 +104,59 @@
                 const token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/favourite/addFavourite', {
                     token: token,
-                    applicationId: this.app.id
+                    id: this.app.id
                 })
-                    .then(response => {
-                        const parsedData = JSON.parse(response.data);
-                        if (parsedData.success) {
-                            this.$notify({ type: 'success', title: '成功', text: '收藏成功！' });
-                        } else {
-                            this.$notify({ type: 'error', title: '失败', text: parsedData.msg });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error adding favourite:', error);
-                        this.$notify({ type: 'error', title: '失败', text: '收藏失败，请稍后重试！' });
-                    });
+                .then(response =>{
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        alert('收藏成功'); // 可能需要更改样式
+                    } else {
+                        alert('收藏失败：' + parsedData.msg);
+                    }
+                })
+                .catch(error=>{
+                    console.error('Error adding favourite:',error);
+                });
+            },
+            checkIfFavourite(appId){
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/favourite/checkIfFavourite', {
+                    token: token,
+                    appId: appId
+                })
+                .then(response => {
+                    const parsedData = response.data;
+                    this.isFavourited = parsedData.isFavourited;
+                })
+                .catch(error => {
+                    console.error('Error checking if favourite:', error);
+                });
+            },
+            toggleFavourite() {
+                if (this.isFavourited) {
+                    this.removeFavourite();
+                } else {
+                    this.addFavourite();
+                }
+            },
+            removeFavourite() {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                    token: token,
+                    id: this.app.id
+                })
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        alert('取消收藏成功');
+                        this.isFavourited = false;
+                    } else {
+                        alert('取消收藏失败：' + parsedData.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing favourite:', error);
+                });
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);
