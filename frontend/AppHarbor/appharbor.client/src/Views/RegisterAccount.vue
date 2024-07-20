@@ -6,10 +6,10 @@
             <div class="container" style="margin-left:350px;margin-top:190px">
                 <div class="content">
                     <div class="login-section">
-                        <div class="login-form"style="margin-top:0px">
+                        <div class="login-form" style="margin-top:0px">
                             <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px; font-weight: bolder; margin-top: 20px;">注册账号</h2><br>
                             <form @submit.prevent="register">
-                                <div class="form-group"style="margin-top:10px">
+                                <div class="form-group" style="margin-top:10px">
                                     <label for="nickname">昵称</label>
                                     <input type="text" id="nickname" v-model="nickname" required />
                                 </div>
@@ -37,17 +37,31 @@
 
 <script>
     import axios from 'axios';
+    import Cookies from 'js-cookie';
+    import global from "../global.js";
+    import LoginAlert from './LoginAlert.vue';
+    import Loading from './Tools/Loading.vue';
 
     export default {
         name: 'RegisterAccount',
+
+        components: {
+            LoginAlert,
+            Loading,
+        },
+
         data() {
             return {
                 nickname: '',
                 password: '',
+                alertMessage: '',
+                isLoading: false
             };
         },
+
         methods: {
             register() {
+                this.isLoading = true; // Show loading animation at the start of registration
                 axios.post('http://localhost:5118/api/User/register', {
                     nickname: this.nickname,
                     password: this.password,
@@ -55,11 +69,22 @@
                     .then(response => {
                         console.log("successfully registered!");
                         console.log(response.data.id);
-                        alert('注册成功！您的用户名是' + response.data.id);
+                        this.alertMessage = `注册成功！您的用户名是 ${response.data.id} `;
+                        // Display loading animation for 2 seconds and then redirect
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+                            
+                        }, 2000); // Delay for 2 seconds
                     })
                     .catch(error => {
-                        this.error = '注册失败';
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+
+                        }, 2000); // Delay for 2 seconds
+
+                        this.alertMessage = `注册失败`;
                         console.log(this.error);
+                        this.isLoading = false; // Hide loading animation if there's an error
                     });
             },
             goToRegister() {

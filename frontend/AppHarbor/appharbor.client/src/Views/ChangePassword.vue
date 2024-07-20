@@ -1,5 +1,8 @@
 <template>
     <div>
+        <Loading :loading="isLoading" />
+        <LoginAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
+
         <div class="backwrapper">
             <div class="container" style="margin-left:350px;margin-top:190px">
                 <div class="content">
@@ -39,29 +42,58 @@
 
 <script>
     import axios from 'axios';
+    import Cookies from 'js-cookie';
+    import global from "../global.js";
+    import LoginAlert from './LoginAlert.vue';
+    import Loading from './Tools/Loading.vue';
 
     export default {
         name: 'ChangePassword',
+
+        components: {
+            LoginAlert,
+            Loading,
+        },
+
         data() {
             return {
                 username: '',
                 bpassword: '',
                 apassword: '',
+
+                alertMessage: '',
+                isLoading: false
             };
         },
+
         methods: {
             changePassword() {
+                this.isLoading = true;
                 axios.post('http://localhost:5118/api/User/changepassword', {
                     Id: this.username,
                     OldPassword: this.bpassword,
                     NewPassword: this.apassword,
                 })
                     .then(response => {
+                        this.alertMessage = `尊敬的 ${this.username}用户，您的密码已修改 `;
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+
+                        }, 2000); // Delay for 2 seconds
+                        
                         console.log("成功修改！");
-                        alert('修改成功！');
+                        //alert('修改成功！');
                     })
                     .catch(error => {
-                        alert('修改失败！');
+
+                        this.alertMessage = `用户和原密码不匹配，修改失败！ `;
+
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+
+                        }, 2000); // Delay for 2 seconds
+                        //alert('修改失败！');
+                        
                         console.log(this.bpassword);
                         console.log(error.response.data);
                     });
