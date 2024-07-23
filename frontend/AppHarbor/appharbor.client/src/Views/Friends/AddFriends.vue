@@ -1,5 +1,7 @@
 <template>
     <div class="friend-manager">
+        <Loading :loading="isLoading" />
+        <LoginAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
         <!-- Left Section -->
         <div class="left-section">
             <h2 class="main-title">管理好友</h2>
@@ -76,8 +78,14 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import LoginAlert from './AddFriendAlert.vue';
+    import Loading from './Loading.vue';
 
     export default {
+        components: {
+            LoginAlert,
+            Loading,
+        },
         data() {
             return {
                 friends: [],
@@ -87,6 +95,9 @@
                 showDeleteFriendPopup: false,
                 selectedUserId: null,
                 friendToDeleteNickname: '',
+
+                alertMessage: '',
+                isLoading: false
             };
         },
         methods: {
@@ -103,18 +114,32 @@
                     });
             },
             searchUsers() {
+                this.isLoading = true;
+
                 let formData = new FormData();
                 let userId = Number(this.searchQuery);
                 formData.append('inputId', userId);
                 axios.post('http://localhost:5118/api/user/searchid', formData)
                     .then(response => {
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+
+                        }, 2000); // Delay for 2 seconds
                         if (response.data && response.data.id) {
                             this.searchResults = [response.data];
                         } else {
+                            setTimeout(() => {
+                                this.isLoading = false; // Hide loading animation
+
+                            }, 2000); // Delay for 2 seconds
                             this.searchResults = [];
                         }
                     })
                     .catch(error => {
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+
+                        }, 2000); // Delay for 2 seconds
                         console.error('Error searching users:', error);
                         this.searchResults = [];
                     });
@@ -128,6 +153,7 @@
                 this.showAddFriendPopup = false;
             },
             addFriend(userId, relationType) {
+                
                 var token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
@@ -135,14 +161,28 @@
                 formData.append('relationship', relationType);
                 axios.post('http://localhost:5118/api/relationship/addfriend', formData)
                     .then(() => {
+                        this.isLoading = true;
                         this.fetchFriends();
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+
+                        }, 2000); // Delay for 2 seconds
+                        this.alertMessage = `添加成功`;
                     })
                     .catch(error => {
                         if (error.response.data.data == 5) {
-                            alert('好友不能是自己');
+                            //alert('好友不能是自己');
+                            this.alertMessage = `好友不能是自己 `;
+
                         }
                         else {
-                            alert('好友' + userId + '已经是您的好友,不需要重复添加');
+                            this.alertMessage = `好友` + userId + `已经是您的好友,不需要重复添加`;
+
+                            setTimeout(() => {
+                                this.isLoading = false; // Hide loading animation
+
+                            }, 2000);
+                            //alert('好友' + userId + '已经是您的好友,不需要重复添加');
                             console.error('Error adding friend:', error);
                         }
 
@@ -167,7 +207,14 @@
                 formData.append('friendid', userId);
                 axios.post('http://localhost:5118/api/relationship/deletefriend', formData)
                     .then(() => {
+                        this.isLoading = true;
                         this.friends = this.friends.filter(friend => friend.id !== userId);
+                        this.alertMessage = `删除成功`;
+
+                        setTimeout(() => {
+                            this.isLoading = false; // Hide loading animation
+
+                        }, 1000);
                     })
                     .catch(error => {
                         console.error('Error removing friend:', error);
