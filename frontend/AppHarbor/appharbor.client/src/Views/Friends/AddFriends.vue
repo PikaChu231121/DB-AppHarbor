@@ -11,7 +11,7 @@
                         <p class="friend-name">{{ friend.nickname }}</p>
                         <p class="friend-group">{{ friend.group }}</p>
                     </div>
-                    <button @click="removeFriend(friend.id)" class="remove-button">-</button>
+                    <button @click="openDeleteFriendDialog(friend.id)" class="remove-button">-</button>
                 </div>
             </div>
         </div>
@@ -42,14 +42,31 @@
         <!-- Add Friend Popup -->
         <transition name="popup">
             <div v-if="showAddFriendPopup" class="add-friend-popup" ref="addFriendPopup" @click.stop>
-                <button class="popup-item" @click="confirmAddFriend('family')">
-                    <span>家人</span>
+                <p style="font-family: 'Baloo 2', cursive;">请选择添加关系的种类：</p>
+                <button class="popup-item family" @click.stop="confirmAddFriend('family')">
+                    <span style="font-family: 'Baloo 2', cursive;">家人</span>
                 </button>
-                <button class="popup-item" @click="confirmAddFriend('friend')">
-                    <span>朋友</span>
+                <button class="popup-item friend" @click.stop="confirmAddFriend('friend')">
+                    <span style="font-family: 'Baloo 2', cursive;">朋友</span>
                 </button>
-                <button class="popup-item" @click="confirmAddFriend('classmate')">
-                    <span>同学</span>
+                <button class="popup-item classmate" @click.stop="confirmAddFriend('classmate')">
+                    <span style="font-family: 'Baloo 2', cursive;">同学</span>
+                </button>
+                <button class="popup-item cancel-button" @click.stop="cancelAddFriend">
+                    <span style="font-family: 'Baloo 2', cursive;">取消</span>
+                </button>
+            </div>
+        </transition>
+
+        <!-- Delete Friend Popup -->
+        <transition name="popup">
+            <div v-if="showDeleteFriendPopup" class="delete-friend-popup" ref="deleteFriendPopup" @click.stop>
+                <p style="font-family: 'Baloo 2', cursive;">你确定要删除好友{{ friendToDeleteNickname }}吗？</p>
+                <button class="popup-item confirm-button" @click.stop="confirmDeleteFriend">
+                    <span style="font-family: 'Baloo 2', cursive;">确定</span>
+                </button>
+                <button class="popup-item cancel-button" @click.stop="cancelDeleteFriend">
+                    <span style="font-family: 'Baloo 2', cursive;">取消</span>
                 </button>
             </div>
         </transition>
@@ -67,7 +84,9 @@
                 searchQuery: '',
                 searchResults: [],
                 showAddFriendPopup: false,
+                showDeleteFriendPopup: false,
                 selectedUserId: null,
+                friendToDeleteNickname: '',
             };
         },
         methods: {
@@ -119,19 +138,29 @@
                         this.fetchFriends();
                     })
                     .catch(error => {
-                        if (error.response.data.data == 5)
-                        {
+                        if (error.response.data.data == 5) {
                             alert('好友不能是自己');
                         }
-                        else
-                        {
+                        else {
                             alert('好友' + userId + '已经是您的好友,不需要重复添加');
                             console.error('Error adding friend:', error);
                         }
-                       
+
                     });
             },
-            removeFriend(userId) {
+            openDeleteFriendDialog(userId) {
+                const friend = this.friends.find(f => f.id === userId);
+                if (friend) {
+                    this.friendToDeleteNickname = friend.nickname;
+                }
+                this.selectedUserId = userId;
+                this.showDeleteFriendPopup = true;
+            },
+            confirmDeleteFriend() {
+                this.deleteFriend(this.selectedUserId);
+                this.showDeleteFriendPopup = false;
+            },
+            deleteFriend(userId) {
                 var token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
@@ -144,14 +173,23 @@
                         console.error('Error removing friend:', error);
                     });
             },
+            cancelDeleteFriend() {
+                this.showDeleteFriendPopup = false;
+            },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
                     return `http://localhost:5118${avatarPath}`;
                 }
                 return require('../../../public/default.png');
             },
+            cancelAddFriend() {
+                this.showAddFriendPopup = false;
+            },
             handleClickOutside(event) {
+                console.log('Handling click outside');
+                // 检查点击是否在添加好友弹窗内
                 if (this.showAddFriendPopup && !this.$refs.addFriendPopup.contains(event.target)) {
+                    console.log('Clicked outside add friend popup');
                     this.showAddFriendPopup = false;
                 }
             }
@@ -231,60 +269,55 @@
     }
 
     .friend-group {
+        color: #888;
         font-size: 12px;
-        color: #666;
     }
 
     .remove-button {
-        background-color: #FF6347;
-        color: white;
+        background-color: #ff6b6b;
         border: none;
-        padding: 8px 12px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 14px;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
         cursor: pointer;
-        border-radius: 50%;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
         .remove-button:hover {
-            background-color: #FF4500;
+            background-color: #e85050;
+            transform: scale(1.1);
         }
 
     .search-bar {
+        display: flex;
         margin-bottom: 20px;
     }
 
     .search-input {
-        width: 80%;
+        flex: 1;
         padding: 10px;
-        font-size: 14px;
-        border: 1px solid #fbb1a2;
-        border-radius: 5px;
+        border: none;
+        border-radius: 5px 0 0 5px;
         outline: none;
-        display: inline-block;
     }
 
     .search-button {
         padding: 10px 20px;
-        font-size: 14px;
         border: none;
-        background-color: #4CAF50;
+        background-color: #ff6b6b;
         color: white;
-        border-radius: 5px;
+        border-radius: 0 5px 5px 0;
         cursor: pointer;
-        margin-left: 10px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
         .search-button:hover {
-            background-color: #45a049;
+            background-color: #e85050;
+            transform: scale(1.1);
         }
 
     .search-results {
-        overflow-y: auto;
-        max-height: 400px;
+        margin-top: 10px;
     }
 
     .search-result {
@@ -306,29 +339,31 @@
         flex: 1;
     }
 
+    .result-name {
+        font-weight: bold;
+    }
+
+    .result-group {
+        color: #888;
+        font-size: 12px;
+    }
+
     .add-button {
-        background-color: #4CAF50;
-        color: white;
+        background-color: #4caf50;
         border: none;
-        padding: 8px 12px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 14px;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
         cursor: pointer;
-        border-radius: 50%;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
         .add-button:hover {
-            background-color: #45a049;
+            background-color: #388e3c;
+            transform: scale(1.1);
         }
 
-    .no-results {
-        color: #ff6347;
-    }
-
-    .add-friend-popup {
+    .add-friend-popup, .delete-friend-popup {
         position: absolute;
         top: 200px;
         left: 50%;
@@ -336,39 +371,65 @@
         background-color: #fff;
         border-radius: 12px;
         padding: 16px;
-        width: 200px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         opacity: 1;
+        transition: opacity 0.3s ease;
     }
 
     .popup-item {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 8px;
-        padding: 8px 16px;
-        font-size: medium;
-        border: none;
-        border-radius: 12px;
-        font-family: 'Baloo 2', cursive;
-        font-weight: bolder;
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
         cursor: pointer;
-        transition: background-color 0.3s, transform 0.3s, color 0.3s;
-        background-color: #f5f5f5;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
         .popup-item:hover {
-            background-color: #ffe5e5;
             transform: scale(1.05);
         }
 
-        .popup-item:active {
-            background-color: #ffcccc;
-            transform: scale(0.95);
+        .popup-item.family {
+            background-color: #ffb3ba;
         }
 
-        .popup-item:last-child {
-            margin-bottom: 0;
+            .popup-item.family:hover {
+                background-color: #ff9a9a;
+            }
+
+        .popup-item.friend {
+            background-color: #ffdfba;
         }
+
+            .popup-item.friend:hover {
+                background-color: #ffcd9a;
+            }
+
+        .popup-item.classmate {
+            background-color: #ffffba;
+        }
+
+            .popup-item.classmate:hover {
+                background-color: #ffff9a;
+            }
+
+        .popup-item.cancel-button {
+            background-color: #c1c1c1;
+        }
+
+            .popup-item.cancel-button:hover {
+                background-color: #a1a1a1;
+            }
+
+        .popup-item.confirm-button {
+            background-color: #ff6b6b;
+        }
+
+            .popup-item.confirm-button:hover {
+                background-color: #e85050;
+            }
 </style>
