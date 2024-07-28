@@ -12,9 +12,11 @@
         </div>
         <div class="auto-wrapper">
             <div class="info-box" v-for="app in applications" :key="app.id">
-                <img :src="app.image" class="app-image" />
+                <img :src="app.Image ? `http://localhost:5118${app.Image}` : '../../public/default-app.png'" class="app-image" />
                 <div class="app-info">
                     <p class="app-name">{{ app.name }}</p>
+                    <p class="app-version">版本：{{ app.version }}</p>
+                    <p class="app-category">类别：{{ app.category }}</p>
                     <p class="app-description">{{ app.description }}</p>
                     <button class="purchase-button" @click="downloadApp(app.package)">下载</button>
                 </div>
@@ -179,7 +181,9 @@
     .app-image {
         width: 100%;
         height: auto;
-        border-radius: 10px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.447);
     }
 
     .app-info {
@@ -192,6 +196,11 @@
     .app-name {
         font-size: 20px;
         font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .app-version, .app-category {
+        font-size: 16px;
         margin-bottom: 10px;
     }
 
