@@ -16,14 +16,12 @@
                 <div class="app-info">
                     <p class="app-name">{{ app.name }}</p>
                     <p class="app-description">{{ app.description }}</p>
-                    <p class="app-price">{{ app.price }}</p>
                     <button class="purchase-button">下载</button>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
@@ -59,8 +57,6 @@
                 axios.post('http://localhost:5118/api/Order/fetchOwnApps', formData)
                     .then(response => {
                         this.applications = response.data.$values;
-                        console.log("!!!!!!");
-                        console.log(this.applications);
                     })
                     .catch(error => {
                         console.error('Error fetching applications:', error);
@@ -72,7 +68,6 @@
         }
     };
 </script>
-
 <style scoped>
     .Home {
         position: relative;
