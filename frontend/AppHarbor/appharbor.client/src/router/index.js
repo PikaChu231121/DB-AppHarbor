@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         path: "/",
-        component: () => import("@/Views/WorkBanch/Home.vue")
+        component: () => import("@/Views/UserLogin.vue")
         // component: () => import("@/Views/Merchant/MerchantLogin.vue")
         // component: () => import("@/Views/Merchant/MainLayout.vue")
     },
