@@ -10,45 +10,62 @@
                 </div>
             </div>
         </div>
+        <div class="auto-wrapper">
+            <div class="info-box" v-for="app in applications" :key="app.id">
+                <img :src="app.image" class="app-image" />
+                <div class="app-info">
+                    <p class="app-name">{{ app.name }}</p>
+                    <p class="app-description">{{ app.description }}</p>
+                    <p class="app-price">{{ app.price }}</p>
+                    <button class="purchase-button">购买</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+
     export default {
         data() {
             return {
                 user_nickname: '',
                 user_id: '',
+                avatar_url: '',
+                applications: []
             };
         },
         methods: {
             fetchUser() {
-                var token = Cookies.get('token');
+                const token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
-                        this.user = response.data;
-                        console.info(response.data);
-                        this.user_id = response.data.id;
-                        this.user_nickname = response.data.nickname;
-                        this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
-
-                      
+                        const data = response.data;
+                        this.user_id = data.id;
+                        this.user_nickname = data.nickname;
+                        this.avatar_url = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png';
+                        this.fetchApplications(data.id); // Fetch applications after fetching user data
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
                     });
             },
-
-           
+            fetchApplications(userId) {
+                axios.get(`http://localhost:5118/api/user/${userId}/applications`)
+                    .then(response => {
+                        this.applications = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching applications:', error);
+                    });
+            }
         },
         mounted() {
-            this.fetchUser(); // 页面加载时从cookies获取用户ID
-        },
-
-
-    }
+            this.fetchUser();
+        }
+    };
 </script>
 
 <style scoped>
@@ -75,7 +92,7 @@
         width: 100%;
         height: 200px;
         object-fit: cover;
-        filter: blur(50px)opacity(80%);
+        filter: blur(50px) opacity(80%);
     }
 
     .avatar {
@@ -149,5 +166,42 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    
+    .app-image {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .app-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .app-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .app-description {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .app-price {
+        font-size: 18px;
+        color: #fbb1a2;
+        margin-bottom: 20px;
+    }
+
+    .purchase-button {
+        background-color: #fbb1a2;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 </style>
