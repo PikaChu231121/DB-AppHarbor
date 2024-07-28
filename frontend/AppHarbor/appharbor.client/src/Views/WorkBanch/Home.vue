@@ -213,7 +213,9 @@
         padding: 10px;
         opacity: 0;
         transition: opacity 0.3s ease;
-        z-index: 1;
+        z-index: 10;
+        position: fixed; /* Position the detail box fixed to the viewport */
+        bottom: 150px; /* Adjust as needed */
     }
 
     .info-box:hover .app-detail {
@@ -226,5 +228,6 @@
         font-weight: 500;
         line-height: 1.4;
         color: #333;
+        z-index: 10; /* Make sure this is higher than .info-box's z-index */
     }
 </style>
