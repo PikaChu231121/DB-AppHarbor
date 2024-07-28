@@ -1,7 +1,7 @@
 <template>
     <div class="Home">
         <div class="header">
-            <div class="title">库</div>
+            <div class="title">{{ user_nickname }}的应用库</div>
             <div class="user-section">
                 <div class="avatar-wrapper">
                     <img :src="avatar_url" class="avatar-circle" />
@@ -27,7 +27,6 @@
         </div>
     </div>
 </template>
-
 
 <script>
     import axios from 'axios';
@@ -89,8 +88,6 @@
         }
     };
 </script>
-
-
 
 <style scoped>
     .Home {
@@ -205,10 +202,10 @@
 
     .app-detail {
         position: absolute;
-        bottom: -150px;
+        bottom: -160px;
         left: 50%;
         transform: translateX(-50%);
-        width: 100%;
+        width: 220px;
         background: #fff;
         border: 1px solid #ffd7d2;
         border-radius: 10px;
@@ -216,6 +213,7 @@
         padding: 10px;
         opacity: 0;
         transition: opacity 0.3s ease;
+        z-index: 1;
     }
 
     .info-box:hover .app-detail {
@@ -225,5 +223,8 @@
     .app-detail p {
         margin: 5px 0;
         font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: #333;
     }
 </style>
