@@ -152,7 +152,8 @@ namespace AppHarbor.Server.Controllers
                     a.Version,
                     a.Category,
                     a.Image,
-                    a.Description
+                    a.Description,
+                    a.Package,
                 })
                 .ToList();
 

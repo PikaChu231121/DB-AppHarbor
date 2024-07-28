@@ -16,12 +16,13 @@
                 <div class="app-info">
                     <p class="app-name">{{ app.name }}</p>
                     <p class="app-description">{{ app.description }}</p>
-                    <button class="purchase-button">下载</button>
+                    <button class="purchase-button" @click="downloadApp(app.package)">下载</button>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
@@ -61,6 +62,13 @@
                     .catch(error => {
                         console.error('Error fetching applications:', error);
                     });
+            },
+            downloadApp(packageUrl) {
+                if (packageUrl) {
+                    window.open(packageUrl, '_blank');
+                } else {
+                    console.error('Package URL is missing');
+                }
             }
         },
         mounted() {
@@ -68,6 +76,8 @@
         }
     };
 </script>
+
+
 <style scoped>
     .Home {
         position: relative;
