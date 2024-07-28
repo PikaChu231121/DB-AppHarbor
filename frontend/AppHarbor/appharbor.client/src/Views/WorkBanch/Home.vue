@@ -16,14 +16,12 @@
                 <div class="app-info">
                     <p class="app-name">{{ app.name }}</p>
                     <p class="app-description">{{ app.description }}</p>
-                    <p class="app-price">{{ app.price }}</p>
                     <button class="purchase-button">下载</button>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
@@ -52,10 +50,16 @@
                         console.error('Error fetching user data:', error);
                     });
             },
-            fetchApplications(token) {
-                axios.post('http://localhost:5118/api/user/fetchOwnApps', { token: token })
+            fetchApplications() {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/Order/fetchOwnApps', { token: token })
                     .then(response => {
-                        this.applications = response.data;
+                        this.applications = response.data.map(app => ({
+                            id: app.id,
+                            name: app.name,
+                            description: app.description,
+                            image: `http://localhost:5118${app.image}`
+                        }));
                     })
                     .catch(error => {
                         console.error('Error fetching applications:', error);
@@ -67,7 +71,6 @@
         }
     };
 </script>
-
 <style scoped>
     .Home {
         position: relative;
