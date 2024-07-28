@@ -17,7 +17,7 @@
                     <p class="app-name">{{ app.name }}</p>
                     <p class="app-description">{{ app.description }}</p>
                     <p class="app-price">{{ app.price }}</p>
-                    <button class="purchase-button">购买</button>
+                    <button class="purchase-button">下载</button>
                 </div>
             </div>
         </div>
@@ -46,14 +46,14 @@
                         this.user_id = data.id;
                         this.user_nickname = data.nickname;
                         this.avatar_url = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png';
-                        this.fetchApplications(data.id); // Fetch applications after fetching user data
+                        this.fetchApplications(token); // Fetch applications after fetching user data
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
                     });
             },
-            fetchApplications(userId) {
-                axios.get(`http://localhost:5118/api/user/${userId}/applications`)
+            fetchApplications(token) {
+                axios.post('http://localhost:5118/api/user/fetchOwnApps', { token: token })
                     .then(response => {
                         this.applications = response.data;
                     })
