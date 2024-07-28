@@ -1,4 +1,7 @@
 <template>
+
+    <Loading :loading="isLoading" />
+
     <div class="Home">
         <div class="header">
             <div class="title">{{ user_nickname }}的应用库</div>
@@ -18,7 +21,7 @@
                 <p class="app-name">{{ app.name }}</p>
                 <button class="purchase-button" @click="downloadApp(app.package)">下载</button>
                 <div class="app-detail" v-if="hoveredApp === app">
-                    <p>应用ID：{{ app.id }}</p>
+                    <p>应用名称：{{ app.name }}</p>
                     <p>版本：{{ app.version }}</p>
                     <p>发行商：{{ app.publisher }}</p>
                     <p>介绍：{{ app.description }}</p>
@@ -31,15 +34,21 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import Loading from '../Tools/Loading.vue';
 
     export default {
+        components: {
+            Loading,
+        },
         data() {
             return {
                 user_nickname: '',
                 user_id: '',
                 avatar_url: '',
                 applications: [],
-                hoveredApp: null
+                hoveredApp: null,
+
+                isLoading: false
             };
         },
         methods: {
@@ -70,11 +79,18 @@
                     });
             },
             downloadApp(packageUrl) {
-                if (packageUrl) {
-                    window.open(packageUrl, '_blank');
-                } else {
-                    console.error('Package URL is missing');
-                }
+                this.isLoading = true;
+                
+                setTimeout(() => {
+                    if (packageUrl) {
+                        window.open(packageUrl, '_blank');
+                    }
+                    else {
+                        console.error('Package URL is missing');
+                    }
+                    this.isLoading = false; // Hide loading animation
+
+                }, 2000); // Delay for 2 seconds
             },
             hoverApp(app) {
                 this.hoveredApp = app;
