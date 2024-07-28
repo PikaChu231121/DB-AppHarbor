@@ -115,15 +115,15 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("fetchOwnApps")]
-        public IActionResult FetchOwnApps([FromForm] TokenRequest request)
+        public IActionResult FetchOwnApps([FromForm] string token)
         {
             //检查token
-            if (string.IsNullOrEmpty(request.Token))
+            if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("No token provided.");
             }
 
-            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
 
             if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
             {

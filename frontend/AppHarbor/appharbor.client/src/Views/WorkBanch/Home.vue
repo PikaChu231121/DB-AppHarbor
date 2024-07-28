@@ -39,7 +39,7 @@
         },
         methods: {
             fetchUser() {
-                const token = Cookies.get('token');
+                var token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
                         const data = response.data;
@@ -52,10 +52,15 @@
                         console.error('Error fetching user data:', error);
                     });
             },
-            fetchApplications(token) {
-                axios.post('http://localhost:5118/api/user/fetchOwnApps', { token: token })
+            fetchApplications() {
+                var token = Cookies.get('token');
+                let formData = new FormData();
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/Order/fetchOwnApps', formData)
                     .then(response => {
-                        this.applications = response.data;
+                        this.applications = response.data.$values;
+                        console.log("!!!!!!");
+                        console.log(this.applications);
                     })
                     .catch(error => {
                         console.error('Error fetching applications:', error);
