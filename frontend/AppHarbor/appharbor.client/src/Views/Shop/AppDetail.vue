@@ -31,13 +31,26 @@
             </div>
         </div>
     </div>
+    <!--评论区域-->
     <div class="comments-container">
+        <h3>用户评论</h3>
         <div v-for="comment in comments" :key="comment.id" class="comment-item">
-            <img :src="comment.user.avatar" alt="Avatar" class="avatar">
+            <img :src="getAvatarUrl(comment.user.avatar)" alt="Avatar" class="avatar">
             <div class="info">
                 <span class="nickname">{{ comment.user.nickname }}</span>
+                <div class="rating">
+                    <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= comment.rating }">&#9733;</span>
+                </div>
                 <p class="content">{{ comment.content }}</p>
+                <span class="timestamp">{{ comment.timestamp }}</span>
             </div>
+        </div>
+        <div class="comment-editor">
+            <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
+            <div class="rating">
+                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.rating }" @click="setRating(star)">&#9733;</span>
+            </div>
+            <button class="button" @click="submitComment">发布评论</button>
         </div>
     </div>
 </template>
@@ -50,24 +63,30 @@
         data() {
             return {
                 app: null,
-                //Appname: "Keep",
-                //Classification: "健身",
-                //Price: "70",
-                //DetailIntro: "「Keep」是一款健身App，超过2亿运动爱好者的选择！无论是想减肥塑形或增肌，还是寻找健身跑步瑜伽计步等训练计划，你可以随时随地选择课程进行训练！",
                 isFAQOpen: true,
+                user: null,
 
                 comments: [
                     {
                         id: 1,
                         user: { avatar: 'https://randomuser.me/api/portraits/men/2.jpg', nickname: 'Kobe Bryant' },
+                        rating: 5,
                         content: 'Man ! What can I say ? Mamba out!',
+                        timestamp: '2024-07-28 12:00'
                     },
                     {
                         id: 2,
                         user: { avatar: 'https://randomuser.me/api/portraits/women/2.jpg', nickname: 'Mamba' },
+                        rating: 4,
                         content: '沙克也干了',
+                        timestamp: '2024-07-29 14:30'
                     },
                 ],
+                newComment: {
+                    content: '',
+                    rating: 0
+                },
+
                 isFavourited:false // 是否已经收藏，默认未收藏
             };
         },
@@ -75,8 +94,12 @@
             const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
             this.checkIfFavourite(appId);
+            this.fetchAllComments(appId);
+            this.fetchUserInfo();
         },
         methods: {
+
+            /*------------------和显示应用详情有关的方法-------------------*/
             toggleFAQ() {
                 this.isFAQOpen = !this.isFAQOpen;
             },
@@ -100,6 +123,8 @@
             goToPurchase(appId) {
                 this.$router.push(`/Purchase/${appId}`);
             },
+
+            /*------------------和收藏有关的方法-------------------*/
             addFavourite() {
                 const token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/favourite/addFavourite', {
@@ -173,8 +198,48 @@
                     .catch(error => {
                         console.error("Error install:", error);
                     });
-                
-            }
+            },
+
+            /*------------------和评论有关的方法-------------------*/
+            fetchAllComments(appId) {
+                // 在这里获取该应用的全部评论
+            },
+            fetchUserInfo() {
+                // 获取用户个人信息，便于发布评论
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
+            setRating(rating) {
+                // 设置评分
+                this.newComment.rating = rating;
+            },
+            submitComment() {
+                const token = Cookies.get('token');
+                const newComment = {
+                    user: {
+                        avatar: this.user.avatar,
+                        nickname: this.user.nickname,
+                    },
+                    content: this.newComment.content, // 评论内容
+                    rating: this.newComment.rating, // 评分(1-5)
+                    timestamp: new Date().toLocaleString() // 发布时间
+                };
+                this.comments.push(newComment);
+                // Here you should add the logic to send the new comment to the server
+
+            },
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../public/default.png'; // 默认头像路径
+            },
         }
     };
 </script>
@@ -306,8 +371,11 @@
 
     .comments-container {
         max-width: 800px;
-        margin-left:auto;
-        margin-right:auto;
+        margin: 20px auto;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
     }
 
     .comment-item {
@@ -322,12 +390,50 @@
         margin-right: 10px;
     }
 
+    .info {
+        flex: 1;
+    }
+
     .nickname {
         font-weight: bold;
     }
 
+    .rating {
+        display: flex;
+    }
+
+    .star {
+        font-size: 20px;
+        color: #ccc;
+    }
+
+    .star.filled {
+        color: #f5a623;
+    }
+
     .content {
         margin-top: 5px;
+    }
+
+    .timestamp {
+        color: #888;
+        font-size: 12px;
+    }
+
+    .comment-editor {
+        margin-top: 20px;
+    }
+
+    .comment-editor textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+    }
+
+    .comment-editor .rating {
+        margin-bottom: 10px;
     }
 
 </style>
