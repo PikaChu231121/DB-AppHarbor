@@ -1,115 +1,152 @@
 <template>
-    <div class="home-container">
-        <header class="header">
-            <div class="header-left">库</div>
-            <div class="header-right">
-                <img class="user-avatar" :src="userAvatar" alt="用户头像">
+
+    <Loading :loading="isLoading" />
+
+    <div class="Home">
+        <div class="header">
+            <div class="title">{{ user_nickname }}的应用库</div>
+            <div class="user-section">
+                <div class="avatar-wrapper">
+                    <img :src="avatar_url" class="avatar-circle" />
+                </div>
                 <div class="user-info">
-                    <div class="user-name">{{ userName }}</div>
-                    <div class="user-id">ID: {{ userId }}</div>
+                    <p class="user-nickname">{{ user_nickname }}</p>
+                    <p class="user-id">用户ID：{{ user_id }}</p>
                 </div>
             </div>
-        </header>
-        <main class="app-library">
-            <div v-for="app in apps"
-                 :key="app.id"
-                 class="app-group"
-                 @mouseenter="showDetails(app.id)"
-                 @mouseleave="hideDetails">
-                <div class="app-icon-container">
-                    <img :src="app.icon" alt="应用图标" class="app-icon">
+        </div>
+        <div class="auto-wrapper">
+            <div class="info-box" v-for="app in applications" :key="app.id" @mouseover="hoverApp(app)" @mouseleave="leaveApp">
+                <img :src="app.Image ? `http://localhost:5118${app.Image}` : '../../public/default-app.png'" class="app-image" />
+                <p class="app-name">{{ app.name }}</p>
+                <button class="purchase-button" @click="downloadApp(app.package)">下载</button>
+                <div class="app-detail" v-if="hoveredApp === app">
+                    <p>应用名称：{{ app.name }}</p>
+                    <p>版本：{{ app.version }}</p>
+                    <p>发行商：{{ app.publisher }}</p>
+                    <p>介绍：{{ app.description }}</p>
                 </div>
-                <div class="app-name">{{ app.name }}</div>
-                <button @click="downloadApp(app.id)" class="download-button">下载</button>
-                <transition name="fade">
-                    <div v-if="hoveredApp === app.id" class="app-details-group">
-                        <div class="app-details-header">{{ app.name }}</div>
-                        <div class="app-details-body">
-                            <img :src="app.icon" alt="应用图标" class="app-details-icon">
-                            <div class="app-details-info">
-                                <div>应用ID: {{ app.id }}</div>
-                                <div>版本: {{ app.version }}</div>
-                                <div>发行商: {{ app.publisher }}</div>
-                                <div>介绍: {{ app.description }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </transition>
             </div>
-        </main>
+        </div>
     </div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      userAvatar: 'path/to/avatar.jpg',
-      userName: '丁真珍珠',
-      userId: '114514',
-      hoveredApp: null,
-      apps: [
-        {
-          id: '114',
-          name: 'Office tool plus',
-          icon: 'path/to/icon.jpg',
-          version: '1.0.1',
-          publisher: 'xxx',
-          description: '应用介绍...'
+    import axios from 'axios';
+    import Cookies from 'js-cookie';
+    import Loading from '../Tools/Loading.vue';
+
+    export default {
+        components: {
+            Loading,
         },
-        // 添加更多应用
-      ]
+        data() {
+            return {
+                user_nickname: '',
+                user_id: '',
+                avatar_url: '',
+                applications: [],
+                hoveredApp: null,
+
+                isLoading: false
+            };
+        },
+        methods: {
+            fetchUser() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        const data = response.data;
+                        this.user_id = data.id;
+                        this.user_nickname = data.nickname;
+                        this.avatar_url = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png';
+                        this.fetchApplications(token); // Fetch applications after fetching user data
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
+            fetchApplications() {
+                var token = Cookies.get('token');
+                let formData = new FormData();
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/Order/fetchOwnApps', formData)
+                    .then(response => {
+                        this.applications = response.data.$values;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching applications:', error);
+                    });
+            },
+            downloadApp(packageUrl) {
+                this.isLoading = true;
+                
+                setTimeout(() => {
+                    if (packageUrl) {
+                        window.open(packageUrl, '_blank');
+                    }
+                    else {
+                        console.error('Package URL is missing');
+                    }
+                    this.isLoading = false; // Hide loading animation
+
+                }, 2000); // Delay for 2 seconds
+            },
+            hoverApp(app) {
+                this.hoveredApp = app;
+            },
+            leaveApp() {
+                this.hoveredApp = null;
+            }
+        },
+        mounted() {
+            this.fetchUser();
+        }
     };
-  },
-  methods: {
-    showDetails(appId) {
-      this.hoveredApp = appId;
-    },
-    hideDetails() {
-      this.hoveredApp = null;
-    },
-    downloadApp(appId) {
-      // 执行下载操作
-      const appIndex = this.apps.findIndex(app => app.id === appId);
-      if (appIndex !== -1) {
-        this.$set(this.apps, appIndex, {
-          ...this.apps[appIndex],
-          downloaded: true
-        });
-      }
-    }
-  }
-};
 </script>
 
 <style scoped>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Baloo+2&family=Quicksand:wght@400;700&family=Fredoka+One&display=swap');
+    .Home {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
 
     .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 16px;
-        background-color: #fff;
-        border-bottom: 1px solid #ccc;
+        width: 100%;
+        padding: 20px;
+        background-color: #ffd7d2;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
     }
 
-    .header-left {
-        font-family: 'Fredoka One', cursive;
+    .title {
         font-size: 24px;
+        color: #000;
     }
 
-    .header-right {
+    .user-section {
         display: flex;
         align-items: center;
     }
 
-    .user-avatar {
-        width: 40px;
-        height: 40px;
+    .avatar-wrapper {
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
-        margin-right: 8px;
+        overflow: hidden;
+        margin-right: 10px;
+    }
+
+    .avatar-circle {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .user-info {
@@ -117,122 +154,96 @@ export default {
         flex-direction: column;
     }
 
-    .user-name {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
+    .user-nickname {
+        font-size: 16px;
+        font-weight: bold;
     }
 
     .user-id {
-        font-family: 'Poppins', sans-serif;
-        font-size: 12px;
+        font-size: 14px;
         color: #888;
     }
 
-    .app-library {
+    .auto-wrapper {
         display: flex;
         flex-wrap: wrap;
-        padding: 16px;
+        justify-content: center;
+        width: 100%;
+        height: calc(100% - 150px);
+        overflow-y: auto;
+        padding: 10px;
     }
 
-    .app-group {
-        position: relative;
-        width: 200px;
-        height: 100px;
-        margin: 8px;
-        padding: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
+    .info-box {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        background-color: #fff;
-        cursor: pointer;
-        transition: background-color 0.3s;
+        background: #fff9f9;
+        border: 3px solid #ffd7d2;
+        padding: 20px;
+        margin: 10px;
+        width: 200px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
     }
 
-        .app-group:hover {
-            background-color: #f4f4f4;
+        .info-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
-    .app-icon-container {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 8px;
-    }
-
-    .app-icon {
-        width: 100%;
-        height: 100%;
+    .app-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
     }
 
     .app-name {
-        font-family: 'Poppins', sans-serif;
-        font-size: 14px;
-        margin-bottom: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
     }
 
-    .download-button {
-        padding: 4px 8px;
-        font-family: 'Poppins', sans-serif;
-        font-size: 12px;
-        color: #fff;
-        background-color: #007bff;
+    .purchase-button {
+        background-color: #fbb1a2;
+        color: white;
         border: none;
-        border-radius: 4px;
+        padding: 10px 20px;
+        border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.3s;
     }
 
-        .download-button:hover {
-            background-color: #0056b3;
-        }
-
-    .downloaded {
-        background-color: #d4edda;
-    }
-
-    .app-details-group {
+    .app-detail {
         position: absolute;
-        top: 100%;
+        bottom: -160px;
         left: 50%;
         transform: translateX(-50%);
-        width: 300px;
-        padding: 16px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 10;
-    }
-
-    .app-details-header {
-        font-family: 'Fredoka One', cursive;
-        font-size: 18px;
-        margin-bottom: 8px;
-    }
-
-    .app-details-body {
-        display: flex;
-        align-items: center;
-    }
-
-    .app-details-icon {
-        width: 60px;
-        height: 60px;
-        margin-right: 16px;
-    }
-
-    .app-details-info {
-        font-family: 'Poppins', sans-serif;
-        font-size: 12px;
-    }
-
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity 0.3s;
-    }
-
-    .fade-enter, .fade-leave-to {
+        width: 220px;
+        background: #fff;
+        border: 1px solid #ffd7d2;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 10px;
         opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+        position: fixed; /* Position the detail box fixed to the viewport */
+        bottom: 150px; /* Adjust as needed */
+    }
+
+    .info-box:hover .app-detail {
+        opacity: 1;
+    }
+
+    .app-detail p {
+        margin: 5px 0;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: #333;
+        z-index: 10; /* Make sure this is higher than .info-box's z-index */
     }
 </style>

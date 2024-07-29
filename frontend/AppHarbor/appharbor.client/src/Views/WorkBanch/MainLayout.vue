@@ -15,7 +15,7 @@
 <script>
     import Header from './Header.vue'; // 标题栏
     import SideNavigation from './SideNavigation.vue'; // 侧边栏
-    //import HomeView from './HomeView.vue'; // Example component
+    import HomeView from './Home.vue'; // 主页
     import Shop from '../Shop/Shop.vue'; // Example component
     import Favourites from '../Favourites.vue'; // Example component
     import Wallet from '../Wallet.vue'; // Example component
@@ -29,7 +29,7 @@
         components: {
             Header,
             SideNavigation,
-            //HomeView,
+            HomeView,
             Shop,
             Favourites,
             Wallet,
