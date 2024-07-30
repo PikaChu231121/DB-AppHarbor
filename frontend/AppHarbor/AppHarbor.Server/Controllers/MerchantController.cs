@@ -59,7 +59,18 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("getTransactions")]
-        public async Task<IActionResult> GetTransactions([FromForm] string token, [FromForm] string? search, [FromForm] string? startDate, [FromForm] string? endDate, [FromForm] int page)
+        public async Task<IActionResult> GetTransactions(
+            [FromForm] string token,
+            [FromForm] string? search,
+            [FromForm] string? applicationId,
+            [FromForm] string? buyerId,
+            [FromForm] string? receiverId,
+            [FromForm] string? applicationName,
+            [FromForm] string? buyerName,
+            [FromForm] string? receiverName,
+            [FromForm] string? startDate,
+            [FromForm] string? endDate,
+            [FromForm] int page)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -91,8 +102,40 @@ namespace AppHarbor.Server.Controllers
                     o.BuyerId.ToString().Contains(search) ||
                     o.ReceiverId.ToString().Contains(search) ||
                     o.ApplicationId.ToString().Contains(search) ||
-                    _dbContext.Applications.Any(a => a.Id == o.ApplicationId && a.Name.Contains(search))
+                    _dbContext.Applications.Any(a => a.Id == o.ApplicationId && a.Name.Contains(search)) ||
+                    _dbContext.Users.Any(u => u.Id == o.BuyerId && u.Nickname.Contains(search)) ||  
+                    _dbContext.Users.Any(u => u.Id == o.ReceiverId && u.Nickname.Contains(search))  
                 );
+            }
+
+            if (!string.IsNullOrEmpty(applicationId) && int.TryParse(applicationId, out int appId))
+            {
+                query = query.Where(o => o.ApplicationId == appId);
+            }
+
+            if (!string.IsNullOrEmpty(buyerId) && int.TryParse(buyerId, out int bId))
+            {
+                query = query.Where(o => o.BuyerId == bId);
+            }
+
+            if (!string.IsNullOrEmpty(receiverId) && int.TryParse(receiverId, out int rId))
+            {
+                query = query.Where(o => o.ReceiverId == rId);
+            }
+
+            if (!string.IsNullOrEmpty(applicationName))
+            {
+                query = query.Where(o => _dbContext.Applications.Any(a => a.Id == o.ApplicationId && a.Name.Contains(applicationName)));
+            }
+
+            if (!string.IsNullOrEmpty(buyerName))
+            {
+                query = query.Where(o => _dbContext.Users.Any(u => u.Id == o.BuyerId && u.Nickname.Contains(buyerName)));
+            }
+
+            if (!string.IsNullOrEmpty(receiverName))
+            {
+                query = query.Where(o => _dbContext.Users.Any(u => u.Id == o.ReceiverId && u.Nickname.Contains(receiverName)));
             }
 
             if (!string.IsNullOrEmpty(startDate) && DateTime.TryParse(startDate, out DateTime start))
