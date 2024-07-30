@@ -11,7 +11,9 @@
                     <ReleaseApp />
                 </div>
                 <div v-if="selectedMenu === 'trash'">原神，启动！</div>
-                <div v-if="selectedMenu === 'favorites'">Favorites content here</div>
+                <div v-if="selectedMenu === 'records'">
+                    <TransactionRecords />
+                </div>
             </div>
         </div>
     </div>
@@ -20,12 +22,14 @@
 <script>
     import SideBar from './SideBar.vue'
     import ReleaseApp from './ReleaseApp.vue'
+    import TransactionRecords from './TransactionRecords.vue';
 
     export default {
         name: 'MainLayout',
         components: {
             SideBar,
-            ReleaseApp
+            ReleaseApp,
+            TransactionRecords
         },
         data() {
             return {

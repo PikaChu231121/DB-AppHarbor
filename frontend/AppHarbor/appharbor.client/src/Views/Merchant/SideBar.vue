@@ -12,16 +12,16 @@
                     <span>应用管理</span>
                 </li>
                 <li @click="selectMenuItem('releaseApp')">
-                    <i class="icon-favorites" />
+                    <i class="icon-release" />
                     <span>发布应用</span>
                 </li>
                 <li @click="selectMenuItem('trash')">
                     <i class="icon-trash" />
                     <span>Test</span>
                 </li>
-                <li @click="selectMenuItem('favorites')">
-                    <i class="icon-release" />
-                    <span>Test</span>
+                <li @click="selectMenuItem('records')">
+                    <i class="icon-records" />
+                    <span>交易记录</span>
                 </li>
             </ul>
         </div>
@@ -82,7 +82,7 @@ export default {
 }
 
 .sidebar-menu ul li .icon-outbox,
-.sidebar-menu ul li .icon-favorites,
+.sidebar-menu ul li .icon-records,
 .sidebar-menu ul li .icon-trash,
 .sidebar-menu ul li .icon-release {
     width: 24px;
