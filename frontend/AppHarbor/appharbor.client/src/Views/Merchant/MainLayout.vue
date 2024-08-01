@@ -2,9 +2,6 @@
     <div class="main-layout">
         <SideBar @menuItemSelected="handleMenuSelection" />
         <div class="content">
-            <header class="header">
-                <input type="text" placeholder="Hinted search text" />
-            </header>
             <div class="main-content">
                 <div v-if="selectedMenu === 'outbox'">Outbox content here</div>
                 <div v-if="selectedMenu === 'releaseApp'">
