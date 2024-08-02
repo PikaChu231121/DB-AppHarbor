@@ -93,7 +93,7 @@
         height: 100%;
         width: 90%;
         border-radius: 12px;
-        background-color: #faebd7; /* 背景颜色 */
+        background-color: #f5d7c4; /* 背景颜色 */
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -103,7 +103,7 @@
     }
 
         .FilterSection:hover {
-            background-color: #f5d7c4; /* 悬停时背景颜色 */
+            background-color: #efc2bb; /* 悬停时背景颜色 */
         }
 
     .filter {

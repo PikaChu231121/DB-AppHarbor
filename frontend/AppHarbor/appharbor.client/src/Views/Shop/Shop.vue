@@ -155,7 +155,7 @@
         padding-top:10px;
         padding-bottom:10px;
 
-        background-color:aqua; /*测试颜色*/
+        background-color: #faebd7; /*测试颜色*/
         height:100%;
         width:100%;
     }
@@ -174,14 +174,13 @@
         width: 70%;
         height: 100%;
         border-radius: 10px;
-
         display: flex;
         flex-direction: column; /* 垂直布局 */
         justify-content: space-between; /* 将内容分布在顶部和底部 */
 
         margin-left: auto; /* 将搜索区域向右对齐 */
         margin-right: 20px; /* 增加右侧距离 */
-        background-color: aquamarine; /*测试颜色*/
+        background-color: #faebd7; /*测试颜色*/
     }
 
     @media (max-width: 991px) {

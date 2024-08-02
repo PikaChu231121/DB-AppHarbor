@@ -30,106 +30,103 @@
 </template>
 
 <script>
-export default {
-    name: 'PaginationComponent',
-    props: {
-        currentPage: {
-            type: Number,
-            required: true
+    export default {
+        name: 'PaginationComponent',
+        props: {
+            currentPage: {
+                type: Number,
+                required: true
+            },
+            totalPages: {
+                type: Number,
+                required: true
+            }
         },
-        totalPages: {
-            type: Number,
-            required: true
-        }
-    },
-    computed: {
-        isFirstPage() {
-            return this.currentPage === 1;
-        },
-        isLastPage() {
-            return this.currentPage === this.totalPages;
-        },
-        visiblePages() {
-            let pages = [];
-            let start = Math.max(1, this.currentPage - Math.floor(this.visiblePageCount / 2));
-            let end = Math.min(this.totalPages, start + this.visiblePageCount - 1);
+        computed: {
+            isFirstPage() {
+                return this.currentPage === 1;
+            },
+            isLastPage() {
+                return this.currentPage === this.totalPages;
+            },
+            visiblePages() {
+                let pages = [];
+                let start = Math.max(1, this.currentPage - Math.floor(this.visiblePageCount / 2));
+                let end = Math.min(this.totalPages, start + this.visiblePageCount - 1);
 
-            if (end - start + 1 < this.visiblePageCount) {
-                start = Math.max(1, end - this.visiblePageCount + 1);
-            }
+                if (end - start + 1 < this.visiblePageCount) {
+                    start = Math.max(1, end - this.visiblePageCount + 1);
+                }
 
-            for (let i = start; i <= end; i++) {
-                pages.push(i);
-            }
+                for (let i = start; i <= end; i++) {
+                    pages.push(i);
+                }
 
-            return pages;
-        },
-        showEllipsis() {
-            return this.totalPages > this.visiblePageCount; // ≈–∂œ «∑Òœ‘ æ °¬‘∫≈
-        }
-    },
-    data() {
-        return {
-            //currentPage: 1,
-            //totalPages: 10,
-            visiblePageCount: 3
-        }
-    },
-    methods: {
-        goToPreviousPage() {
-            if (!this.isFirstPage) {
-                this.$emit('page-changed', this.currentPage - 1);
+                return pages;
+            },
+            showEllipsis() {
+                return this.totalPages > this.visiblePageCount;
             }
         },
-        goToNextPage() {
-            if (!this.isLastPage) {
-                this.$emit('page-changed', this.currentPage + 1);
+        data() {
+            return {
+                visiblePageCount: 5
             }
         },
-        goToPage(page) {
-            this.$emit('page-changed', page);
-        },
+        methods: {
+            goToPreviousPage() {
+                if (!this.isFirstPage) {
+                    this.$emit('page-changed', this.currentPage - 1);
+                }
+            },
+            goToNextPage() {
+                if (!this.isLastPage) {
+                    this.$emit('page-changed', this.currentPage + 1);
+                }
+            },
+            goToPage(page) {
+                this.$emit('page-changed', page);
+            }
+        }
     }
-}
 </script>
 
 <style scoped>
-    .pagination-container {
-        border-radius: 30px;
-        background-color: #fff;
-        display: flex;
-        max-width: 517px;
-        font-size: 16px;
-        color: var(--sds-color-text-default-default);
-        font-weight: 400;
-        line-height: 100%;
-        justify-content: center;
-        padding: 0 10px;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-        margin-left: auto; 
-        margin-right: auto; /*æ”÷–∂‘∆Î*/
-        margin-top: auto;
-        background-color: aqua; /*≤‚ ‘—’…´*/
+    .pagination-container {
+        border-radius: 15px;
+        background-color: #ffffff; /* White background */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        display: flex;
+        max-width: 600px;
+        font-size: 14px;
+        color: #333;
+        justify-content: center;
+        padding: 10px;
+        margin: 0 auto; /* Center horizontally */
+        margin-top: 20px; /* Space above */
+        font-family: 'Poppins', sans-serif; /* Cute font */
     }
 
     .pagination-controls {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
     }
 
     .pagination-button {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        border-radius: var(--sds-size-radius-200);
-        color: var(--sds-color-text-default-secondary);
+        gap: 6px;
+        border-radius: 50px; /* Rounded buttons */
+        color: #555;
         padding: 8px 12px;
-        background: none;
-        border: none;
+        background-color: #f4f4f4; /* Light gray background */
+        border: 1px solid #ddd;
         cursor: pointer;
-        font-family: Inter, sans-serif;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
 
         .pagination-button:disabled {
@@ -137,9 +134,13 @@ export default {
             cursor: not-allowed;
         }
 
+        .pagination-button:hover:not(:disabled) {
+            background-color: #e0e0e0; /* Slightly darker gray on hover */
+        }
+
     .pagination-icon {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
     }
 
     .pagination-list {
@@ -151,46 +152,43 @@ export default {
     }
 
     .pagination-number {
-        font-family: Inter, sans-serif;
-        justify-content: center;
-        align-items: center;
-        border-radius: var(--sds-size-radius-200);
+        border-radius: 50%;
         background: none;
-        border: none;
+        border: 1px solid #ddd;
         cursor: pointer;
         width: 32px;
         height: 32px;
-        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
 
         .pagination-number.active {
-            background-color: var(--sds-color-background-brand-default);
-            color: var(--sds-color-text-brand-on-brand);
+            background-color: #fbb1a2; /* Highlight color */
+            color: #fff;
+            border-color: #fbb1a2;
+        }
+
+        .pagination-number:hover:not(.active) {
+            background-color: #f4f4f4; /* Light gray on hover */
         }
 
     .pagination-ellipsis {
-        font-family: Inter, sans-serif;
-        justify-content: center;
-        border-radius: 8px;
-        color: var(--black-100, #000);
-        font-weight: 700;
-        line-height: 140%;
-        padding: 8px 16px;
+        font-size: 18px;
+        color: #777;
+        font-weight: bold;
+        padding: 0 8px;
     }
 
     @media (max-width: 991px) {
         .pagination-container {
-            white-space: initial;
+            flex-direction: column;
         }
 
         .pagination-controls {
             flex-wrap: wrap;
-        }
-
-        .pagination-button,
-        .pagination-number,
-        .pagination-ellipsis {
-            white-space: initial;
         }
     }
 </style>
