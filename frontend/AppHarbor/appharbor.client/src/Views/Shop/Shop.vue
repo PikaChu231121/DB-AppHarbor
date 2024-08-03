@@ -171,7 +171,7 @@
     }
 
     .title {
-        font-size: 3rem; /* Adjust font size as needed */
+        font-size: 2rem; /* Adjust font size as needed */
         color: black; /* Cute color for the title */
         font-family: 'Comic Sans MS', cursive, sans-serif; /* Cute font style */
     }

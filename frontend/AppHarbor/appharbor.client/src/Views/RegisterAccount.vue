@@ -232,7 +232,8 @@
     }
 
     .login-form {
-        height: 530px;
+        height: 480px;
+        width: 420px;
         background: white;
         padding: 2em;
         border-radius: 2px;

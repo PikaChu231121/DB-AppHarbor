@@ -158,7 +158,7 @@
     }
 
     .login-form {
-        height: 500px;
+        height: 480px;
         background: white;
         padding: 2em;
         border-radius: 2px;

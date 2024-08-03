@@ -104,8 +104,8 @@
         color: #333;
         justify-content: center;
         padding: 10px;
-        margin: 0 auto; /* Center horizontally */
-        margin-top: 20px; /* Space above */
+        margin-left: 100px; /* Center horizontally */
+        margin-top: 0px; /* Space above */
         font-family: 'Poppins', sans-serif; /* Cute font */
     }
 
