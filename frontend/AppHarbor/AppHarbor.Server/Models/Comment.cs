@@ -3,6 +3,14 @@ using System.Collections.Generic;
 
 namespace AppHarbor.Server.Models;
 
+
+
+public class GetAppCommentModel
+{
+    public decimal ApplicationId { get; set; }
+}
+
+
 public partial class Comment
 {
     public decimal Id { get; set; }

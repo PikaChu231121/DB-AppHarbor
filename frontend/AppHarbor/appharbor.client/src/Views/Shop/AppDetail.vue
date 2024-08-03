@@ -203,6 +203,18 @@
             /*------------------和评论有关的方法-------------------*/
             fetchAllComments(appId) {
                 // 在这里获取该应用的全部评论
+                axios.post('http://localhost:5118/api/comment/getappcomment', {
+                    ApplicationId: appId
+                })
+                .then(response => {
+                        this.comments = response.data.$value;
+                        console.log("12");
+                        console.log(this.comments[0].id);
+                })
+                .catch(error => {
+                        console.error('Error fetching app comments:', error);
+                        console.log("21");
+                });
             },
             fetchUserInfo() {
                 // 获取用户个人信息，便于发布评论
