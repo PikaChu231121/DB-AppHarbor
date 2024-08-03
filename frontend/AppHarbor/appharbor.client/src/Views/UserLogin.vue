@@ -68,16 +68,15 @@
                 if (this.id[0] === 'a') {
                     let formData = new FormData();
                     formData.append('id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
-                    console.log(this.id.substring(1));
                     formData.append('password', this.password);
                     axios.post('http://localhost:5118/api/admin/adminlogin', formData)
                         .then(response => {
                             Cookies.set("token", response.data);
                             this.isLoading = true; // Show loading animation on login attempt
-                            this.alertMessage = `您好! 尊敬的 ${this.id} 管理员, 欢迎来到 AppHarbor!`;
+                            this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 管理员, 欢迎来到 AppHarbor!`;
                             global.id = this.id;
                             setTimeout(() => {
-                                this.$router.push('/');//#################################跳转到需要的地方
+                                this.$router.push('/');//#################################跳转到需要的地方（跳转到管理员页面）
 
                             }, 3000);
 
@@ -88,7 +87,25 @@
                         });
                 }
                 else if (this.id[0] === 'm') {
-                    //#################################添加商家的登入和跳转
+                    let formData = new FormData();
+                    formData.append('merchant_id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
+                    formData.append('password', this.password);
+                    axios.post('http://localhost:5118/api/Merchant/login', formData)
+                        .then(response => {
+                            Cookies.set("token", response.data);
+                            this.isLoading = true; // Show loading animation on login attempt
+                            this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 商家, 欢迎来到 AppHarbor!`;
+                            global.id = this.id;
+                            setTimeout(() => {
+                                this.$router.push('/');//#################################跳转到需要的地方（跳转到商家页面）
+
+                            }, 3000);
+
+                        })
+                        .catch(error => {
+                            this.isLoading = false;
+                            this.alertMessage = '登录失败: ' + error.response.data;
+                        });
 
                 }
                 else {
