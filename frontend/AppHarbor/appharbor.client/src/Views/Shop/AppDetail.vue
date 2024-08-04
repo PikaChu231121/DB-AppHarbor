@@ -207,13 +207,13 @@
                     ApplicationId: appId
                 })
                 .then(response => {
-                        this.comments = response.data.$value;
-                        console.log("12");
-                        console.log(this.comments[0].id);
+                    this.comments = response.data.$values;
+                    console.log("12");
+                    console.log(this.comments[0].id);
                 })
                 .catch(error => {
-                        console.error('Error fetching app comments:', error);
-                        console.log("21");
+                    console.error('Error fetching app comments:', error);
+                    console.log("21");
                 });
             },
             fetchUserInfo() {
