@@ -38,8 +38,8 @@
             <img :src="getAvatarUrl(comment.user.avatar)" alt="Avatar" class="avatar">
             <div class="info">
                 <span class="nickname">{{ comment.user.nickname }}</span>
-                <div class="rating">
-                    <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= comment.rating }">&#9733;</span>
+                <div class="score">
+                    <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= comment.score }">&#9733;</span>
                 </div>
                 <p class="content">{{ comment.content }}</p>
                 <span class="timestamp">{{ comment.timestamp }}</span>
@@ -47,8 +47,8 @@
         </div>
         <div class="comment-editor">
             <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
-            <div class="rating">
-                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.rating }" @click="setRating(star)">&#9733;</span>
+            <div class="score">
+                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }" @click="setScore(star)">&#9733;</span>
             </div>
             <button class="button" @click="submitComment">发布评论</button>
         </div>
@@ -70,21 +70,21 @@
                     {
                         id: 1,
                         user: { avatar: 'https://randomuser.me/api/portraits/men/2.jpg', nickname: 'Kobe Bryant' },
-                        rating: 5,
+                        score: 5,
                         content: 'Man ! What can I say ? Mamba out!',
                         timestamp: '2024-07-28 12:00'
                     },
                     {
                         id: 2,
                         user: { avatar: 'https://randomuser.me/api/portraits/women/2.jpg', nickname: 'Mamba' },
-                        rating: 4,
+                        score: 4,
                         content: '沙克也干了',
                         timestamp: '2024-07-29 14:30'
                     },
                 ],
                 newComment: {
                     content: '',
-                    rating: 0
+                    score: 0
                 },
 
                 isFavourited:false // 是否已经收藏，默认未收藏
@@ -227,9 +227,9 @@
                         console.error('Error fetching user data:', error);
                     });
             },
-            setRating(rating) {
+            setScore(score) {
                 // 设置评分
-                this.newComment.rating = rating;
+                this.newComment.score = score;
             },
             submitComment() {
                 const token = Cookies.get('token');
@@ -239,7 +239,7 @@
                         nickname: this.user.nickname,
                     },
                     content: this.newComment.content, // 评论内容
-                    rating: this.newComment.rating, // 评分(1-5)
+                    score: this.newComment.score, // 评分(1-5)
                     timestamp: new Date().toLocaleString() // 发布时间
                 };
                 this.comments.push(newComment);
@@ -410,7 +410,7 @@
         font-weight: bold;
     }
 
-    .rating {
+    .score {
         display: flex;
     }
 
@@ -444,7 +444,7 @@
         border-radius: 4px;
     }
 
-    .comment-editor .rating {
+    .comment-editor .score {
         margin-bottom: 10px;
     }
 
