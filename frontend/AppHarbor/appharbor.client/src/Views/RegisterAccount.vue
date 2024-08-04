@@ -72,6 +72,9 @@
         },
 
         methods: {
+            goToRegister() {
+                this.register();
+            },
             register() {
                 this.isLoading = true; // Show loading animation at the start of registration
 
@@ -84,17 +87,19 @@
                     url = 'http://localhost:5118/api/Admin/register';
                 }
 
-                axios.post(url, {
-                    nickname: this.nickname,
-                    password: this.password,
-                })
+                let formData = new FormData();
+                formData.append('nickname', this.nickname);
+                formData.append('password', this.password);
+                axios.post(url, formData)
                     .then(response => {
                         console.log("successfully registered!");
                         console.log(response.data.id);
-                        this.alertMessage = `注册成功！您的用户名是 ${response.data.id} `;
+                        this.alertMessage = `${this.userType}注册成功！您的用户ID是 ${response.data.id} `;
                         // Display loading animation for 2 seconds and then redirect
                         setTimeout(() => {
                             this.isLoading = false; // Hide loading animation
+                            this.$router.push('/');
+
                         }, 2000); // Delay for 2 seconds
                     })
                     .catch(error => {
@@ -107,9 +112,7 @@
                         this.isLoading = false; // Hide loading animation if there's an error
                     });
             },
-            goToRegister() {
-                this.register();
-            }
+            
         }
     };
 </script>

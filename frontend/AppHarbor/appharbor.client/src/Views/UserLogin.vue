@@ -97,7 +97,7 @@
                             this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 商家, 欢迎来到 AppHarbor!`;
                             global.id = this.id;
                             setTimeout(() => {
-                                this.$router.push('/');//#################################跳转到需要的地方（跳转到商家页面）
+                                this.$router.push('/MerchantWorkBanchPage');//#################################跳转到需要的地方（跳转到商家页面）
 
                             }, 3000);
 

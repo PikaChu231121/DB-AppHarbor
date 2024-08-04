@@ -24,12 +24,15 @@ namespace AppHarbor.Server.Controllers
             return Ok(_dbContext.Admins.ToList());
         }
 
-        [HttpPost("adminsregister")]
+        [HttpPost("register")]
         public IActionResult Register([FromForm] string Nickname, [FromForm] string password)
         {
+            var curMaxId = Math.Max(_dbContext.Users.Select(u => u.Id).ToList().Max(), _dbContext.Merchants.Select(u => u.Id).ToList().Max());
+            curMaxId = Math.Max(curMaxId, _dbContext.Admins.Select(u => u.Id).ToList().Max());
+
             var newuser = new Admin()
             {
-                Id = _dbContext.Admins.Select(u => u.Id).ToList().Max() + 1,
+                Id = curMaxId + 1,
                 Password = password,
                 Nickname = Nickname,
                 Avatar = "default.png",
@@ -41,7 +44,7 @@ namespace AppHarbor.Server.Controllers
             _dbContext.Admins.Add(newuser);
             _dbContext.SaveChanges();
 
-            return Ok(newuser.Id);
+            return Ok(newuser);
 
         }
 
