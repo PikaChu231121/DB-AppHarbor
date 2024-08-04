@@ -142,12 +142,14 @@ namespace AppHarbor.Server.Controllers
 
             if (!string.IsNullOrEmpty(startDate) && DateTime.TryParse(startDate, out DateTime start))
             {
+                start = start.Date;
                 query = query.Where(o => o.Time >= start);
             }
 
             if (!string.IsNullOrEmpty(endDate) && DateTime.TryParse(endDate, out DateTime end))
             {
-                query = query.Where(o => o.Time <= end);
+                end = end.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(o => o.Time < end);
             }
 
             // 添加排序逻辑  
