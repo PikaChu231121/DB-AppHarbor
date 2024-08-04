@@ -205,5 +205,88 @@ namespace AppHarbor.Server.Controllers
 
             return Ok(app.Package);
         }
+        [HttpPost("selectseleased")]
+        public IActionResult Selectseleased()
+        {
+
+            var query = from app in _dbContext.Applications
+                        where app.ReleaseState == "released"
+                        select new
+                        {
+                            Id = app.Id,
+                            Version = app.Version,
+                            MerchantId = app.MerchantId,
+                            Name = app.Name,
+                            Category = app.Category,
+                            Description = app.Description,
+                            ReleaseState = app.ReleaseState,
+                            Image = app.Image,
+                            DownloadCount = app.DownloadCount,
+                            Price = app.Price,
+                            Package = app.Package,
+                        };
+
+            var result = query.ToList();
+            return Ok(result);
+        }
+
+        [HttpPost("selectseleasing")]
+        public IActionResult Selectseleasing()
+        {
+            var query = from app in _dbContext.Applications
+                        where app.ReleaseState != "released"
+                        select new
+                        {
+                            Id = app.Id,
+                            Version = app.Version,
+                            MerchantId = 0,
+                            Name = app.Name,
+                            Category = app.Category,
+                            Description = app.Description,
+                            ReleaseState = app.ReleaseState,
+                            Image = app.Image,
+                            DownloadCount = app.DownloadCount,
+                            Price = app.Price,
+                            Package = app.Package,
+                        };
+
+            var result = query.ToList();
+            return Ok(result);
+        }
+
+        [HttpPost("confirmrelease")]
+        public IActionResult Confirmrelease([FromForm] decimal Id,[FromForm] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No token provided.");
+            }
+            // 找到给定token对应的用户ID
+            var adminId = _dbContext.TokenIds
+                .Where(t => t.Token == token)
+                .Select(t => t.Id)
+                .FirstOrDefault();
+            if (adminId == 0)
+            {
+                return NotFound("user not found");
+            }
+
+            var application = _dbContext.Applications
+                .Where(app => app.Id == Id)
+                .FirstOrDefault();
+
+            if (application == null)
+            {
+                return NotFound("Application not found.");
+            }
+            // 更新应用的状态
+            application.ReleaseState = "Released";
+            _dbContext.Applications.Update(application);
+            _dbContext.SaveChanges();
+            return Ok("Application status updated successfully.");
+        }
     }
 }
+
+
+
