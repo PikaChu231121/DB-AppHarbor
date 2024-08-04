@@ -233,6 +233,7 @@
             },
             submitComment() {
                 const token = Cookies.get('token');
+                /*
                 const newComment = {
                     user: {
                         avatar: this.user.avatar,
@@ -243,8 +244,26 @@
                     timestamp: new Date().toLocaleString() // 发布时间
                 };
                 this.comments.push(newComment);
+                */
                 // Here you should add the logic to send the new comment to the server
-
+                axios.post('http://localhost:5118/api/comment/postappcomment', {
+                    token: token,
+                    content: this.newComment.content,
+                    rating: this.newComment.rating,
+                    applicationId: this.app.id
+                })
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        alert('评论成功！');
+                        this.isFavourited = true;
+                    } else {
+                        alert('评论失败：' + parsedData.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                });
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {

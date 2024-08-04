@@ -10,6 +10,14 @@ public class GetAppCommentModel
     public decimal ApplicationId { get; set; }
 }
 
+public class PostAppCommentModel
+{
+    public required string Token { get; set; }
+    public required string Content { get; set; }
+    public decimal Rating { get; set; }
+    public decimal ApplicationId { get; set; }
+}
+
 
 public partial class Comment
 {

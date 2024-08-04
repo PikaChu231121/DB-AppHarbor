@@ -62,5 +62,47 @@ namespace AppHarbor.Server.Controllers
 
 
         }
+
+
+        [HttpPost("postappcomment")]
+        public IActionResult PostAppComment([FromBody] PostAppCommentModel postAppCommentModel)
+        {
+            if (string.IsNullOrEmpty(postAppCommentModel.Token))
+            {
+                var failResponse = new
+                {
+                    msg = "No token provided!"
+                };
+                return Unauthorized(failResponse);
+            }
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == postAppCommentModel.Token);
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                var failResponse = new
+                {
+                    msg = "Invalid or expired token!"
+                };
+                return Unauthorized(failResponse);
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            if(user == null)
+            {
+                return BadRequest("User not exist!");
+            }
+
+            var newComment = new Comment
+            {
+                Content = postAppCommentModel.Content,
+                Score = postAppCommentModel.Rating,
+                ApplicationId = postAppCommentModel.ApplicationId,
+                UserId = user.Id,
+                PublishTime = DateTime.UtcNow
+            };
+            _dbContext.Comments.Add(newComment);
+            _dbContext.SaveChanges();
+
+            return Ok();
+        }
     }
 }
