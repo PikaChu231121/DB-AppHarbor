@@ -65,26 +65,70 @@
         },
         methods: {
             login() {
-                
-                let formData = new FormData();
-                formData.append('id', this.id);
-                formData.append('password', this.password);
-                axios.post('http://localhost:5118/api/user/login', formData)
-                    .then(response => {
-                        Cookies.set("token", response.data);
-                        this.isLoading = true; // Show loading animation on login attempt
-                        this.alertMessage = `您好! 尊敬的 ${this.id} 用户, 欢迎来到 AppHarbor!`;
-                        global.id = this.id;
-                        setTimeout(() => {
-                            this.$router.push('/WorkBanchPage');
-                            
-                        }, 3000); // Redirect after 2 seconds
-                        
-                    })
-                    .catch(error => {
-                        this.isLoading = false; // Hide loading animation on login failure
-                        this.alertMessage = '登录失败: ' + error.response.data;
-                    });
+                if (this.id[0] === 'a') {
+                    let formData = new FormData();
+                    formData.append('id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
+                    formData.append('password', this.password);
+                    axios.post('http://localhost:5118/api/admin/adminlogin', formData)
+                        .then(response => {
+                            Cookies.set("token", response.data);
+                            this.isLoading = true; // Show loading animation on login attempt
+                            this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 管理员, 欢迎来到 AppHarbor!`;
+                            global.id = this.id;
+                            setTimeout(() => {
+                                this.$router.push('/');//#################################跳转到需要的地方（跳转到管理员页面）
+
+                            }, 3000);
+
+                        })
+                        .catch(error => {
+                            this.isLoading = false;
+                            this.alertMessage = '登录失败: ' + error.response.data;
+                        });
+                }
+                else if (this.id[0] === 'm') {
+                    let formData = new FormData();
+                    formData.append('merchant_id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
+                    formData.append('password', this.password);
+                    axios.post('http://localhost:5118/api/Merchant/login', formData)
+                        .then(response => {
+                            Cookies.set("token", response.data);
+                            this.isLoading = true; // Show loading animation on login attempt
+                            this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 商家, 欢迎来到 AppHarbor!`;
+                            global.id = this.id;
+                            setTimeout(() => {
+                                this.$router.push('/');//#################################跳转到需要的地方（跳转到商家页面）
+
+                            }, 3000);
+
+                        })
+                        .catch(error => {
+                            this.isLoading = false;
+                            this.alertMessage = '登录失败: ' + error.response.data;
+                        });
+
+                }
+                else {
+                    let formData = new FormData();
+                    formData.append('id', this.id);
+                    formData.append('password', this.password);
+                    axios.post('http://localhost:5118/api/user/login', formData)
+                        .then(response => {
+                            Cookies.set("token", response.data);
+                            this.isLoading = true; // Show loading animation on login attempt
+                            this.alertMessage = `您好! 尊敬的 ${this.id} 用户, 欢迎来到 AppHarbor!`;
+                            global.id = this.id;
+                            setTimeout(() => {
+                                this.$router.push('/WorkBanchPage');
+
+                            }, 3000); // Redirect after 2 seconds
+
+                        })
+                        .catch(error => {
+                            this.isLoading = false; // Hide loading animation on login failure
+                            this.alertMessage = '登录失败: ' + error.response.data;
+                        });
+                }
             },
             goToLogin() {
                 this.login();
@@ -158,7 +202,7 @@
     }
 
     .login-form {
-        height: 500px;
+        height: 480px;
         background: white;
         padding: 2em;
         border-radius: 2px;

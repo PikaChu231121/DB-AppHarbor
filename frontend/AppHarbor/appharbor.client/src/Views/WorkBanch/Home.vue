@@ -231,7 +231,7 @@
         transition: opacity 0.3s ease;
         z-index: 10;
         position: fixed; /* Position the detail box fixed to the viewport */
-        bottom: 150px; /* Adjust as needed */
+        bottom: 100px; /* Adjust as needed */
     }
 
     .info-box:hover .app-detail {

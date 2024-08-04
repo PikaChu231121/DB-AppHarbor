@@ -1,11 +1,13 @@
 <template>
     <div class="app-search">
         <aside class="filter-section">
-            <FilterSection @tags-changed="handleTagsChange" @price-range-updated = "handlePriceChange" />
+            <FilterSection @tags-changed="handleTagsChange" @price-range-updated="handlePriceChange" />
         </aside>
         <main class="search-section">
-            <!--<SearchBar />--> 
-            <SearchBar @search="handleSearch"/>
+            <div class="title-container">
+                <h1 class="title">应用商店</h1>
+            </div>
+            <SearchBar @search="handleSearch" />
             <AppGrid :apps="appsShown" />
             <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
@@ -30,13 +32,11 @@
         data() {
             return {
                 apps: [], // 后端返回的应用列表
-                /*searchedApps: [],*/
                 appsShown: [], // 当前页显示应用
                 selectedTags: [], // 选中的标签
                 Category: "All", // 检索属性
-                priceRange: [0,1000],
+                priceRange: [0, 1000],
                 searchQuery: "",
-                
                 currentPage: 1, // 当前页码，初始为1
                 totalPages: 1, // 总页数，初始为1
                 appsPerPage: 10 // 每页显示的应用数量
@@ -44,11 +44,9 @@
         },
         methods: {
             fetchApps() {
-                // 从远端数据库获取应用信息
                 console.log('fetchApps has been execute!');
                 axios.post('http://localhost:5118/api/application/getapplist', {
                     Category: this.Category
-                    /*Page: this.currentPage */  
                 })
                     .then(response => {
                         this.apps = response.data.$values;
@@ -61,20 +59,16 @@
                     });
             },
             searchApps() {
-                /*console.log('searching for ' + this.searchQuery + ' ' + this.Category + ' price: ' + this.priceRange[0] + ' to ' this.priceRange[1]);*/
                 console.log(this.searchQuery);
                 console.log(this.Category);
                 console.log(this.priceRange[0]);
                 console.log(this.priceRange[1]);
+
                 axios.post('http://localhost:5118/api/application/searchapplist', {
                     Category: this.Category,
-
                     Price_min: this.priceRange[0],
-
                     Price_max: this.priceRange[1],
-
                     Content: this.searchQuery
-
                 })
                     .then(response => {
                         this.apps = response.data.$values;
@@ -85,62 +79,63 @@
                     .catch(error => {
                         console.error("Error searching apps:", error);
                     });
-                console.log('num of apps searched: '+ this.apps.length);
+                console.log('num of apps searched: ' + this.apps.length);
             },
+
+            // 计算当前页需要展示的应用
             paginatedApps() {
-                // 计算当前页需要展示的应用
                 const start = (this.currentPage - 1) * this.appsPerPage;
                 const end = start + this.appsPerPage < this.apps.length ? start + this.appsPerPage : this.apps.length;
-                console.log('slice apps from '+ start + ' to '+ end + ' in apps');
-                this.appsShown = this.apps.slice(start, end); // slice不取最后一个元素
+                console.log('slice apps from ' + start + ' to ' + end + ' in apps');
+                this.appsShown = this.apps.slice(start, end);
             },
+
+            // 判断应用列表是否为空
             AppsIsEmpty() {
-                // 判断应用列表是否为空
                 return this.apps.length === 0;
             },
+
+            // 判断标签数组是否为空
             TagsIsEmpty() {
-                // 判断标签数组是否为空
                 return this.selectedTags.length === 0;
             },
-            handleSearch(searchTerm) {
 
+            // 处理搜索操作
+            handleSearch(searchTerm) {
                 this.searchQuery = searchTerm;
                 this.searchApps();
-                /*this.fetchApps();*/
             },
+
+            // 处理当前页号的变化
             handlePageChange(newPage) {
-                // 处理当前页号的变化
                 this.currentPage = newPage;
-                /*this.fetchApps();*/
                 this.paginatedApps();
             },
+
+            // 处理当前标签的变化
             handleTagsChange(newTags) {
-                // 处理当前标签的变化
-                this.selectedTags = newTags;
+
                 /*测试：先取selectedTags的第一个作为筛选*/
+                this.selectedTags = newTags;
                 if (this.TagsIsEmpty()) {
-                    /*this.selectedTags.push('All');*/
                     this.Category = 'All';
                 } else {
                     this.Category = this.selectedTags[0];
                 }
                 console.log("changed");
-                /*this.fetchApps();*/
                 this.searchApps();
                 console.log("TEST");
             },
+
+            // 处理价格变化
             handlePriceChange(newRange) {
                 this.priceRange = newRange;
-                console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' +this.priceRange[1]);
+                console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' + this.priceRange[1]);
                 this.searchApps();
             }
-            
         },
         created() {
-            // 初始获取应用信息
-            //this.searchApps();
             this.fetchApps();
-            /*this.paginatedApps();*/
         }
     }
 </script>
@@ -148,40 +143,37 @@
 <style scoped>
     .app-search {
         border-radius: 20px;
-        background-color: var(--sds-color-background-default-default);
+        background-color: #faebd7; /* Background color for the entire search area */
         display: flex;
         justify-content: center;
-        /*padding: 20px;*/
-        padding-top:10px;
-        padding-bottom:10px;
-
-        background-color:aqua; /*测试颜色*/
-        height:100%;
-        width:100%;
+        padding: 20px; /* Adjust padding for better spacing */
+        height: 100%;
+        width: 100%;
     }
 
     .filter-section {
-        width: 30%;
-        height: 100%;
+        width: 25%; /* Adjust width for better spacing */
         margin-right: 20px;
         border-radius: 10px;
-
-        margin-right: auto; /* 将搜索区域向右对齐 */
-        margin-left: 10px; /* 增加右侧距离 */
     }
 
     .search-section {
-        width: 70%;
-        height: 100%;
-        border-radius: 10px;
-
+        width: 75%; /* Adjust width for better spacing */
         display: flex;
-        flex-direction: column; /* 垂直布局 */
-        justify-content: space-between; /* 将内容分布在顶部和底部 */
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: #faebd7; /* Match background color */
+    }
 
-        margin-left: auto; /* 将搜索区域向右对齐 */
-        margin-right: 20px; /* 增加右侧距离 */
-        background-color: aquamarine; /*测试颜色*/
+    .title-container {
+        text-align: center; /* Center align title */
+        margin-bottom: 20px; /* Space between title and search bar */
+    }
+
+    .title {
+        font-size: 2rem; /* Adjust font size as needed */
+        color: black; /* Cute color for the title */
+        font-family: 'Comic Sans MS', cursive, sans-serif; /* Cute font style */
     }
 
     @media (max-width: 991px) {
@@ -192,12 +184,12 @@
 
         .filter-section {
             margin-bottom: 40px;
+            width: 100%;
         }
 
         .search-section {
             width: 100%;
             margin-right: 0;
         }
-
     }
 </style>

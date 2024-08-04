@@ -1,6 +1,5 @@
 <template>
     <div class="FilterSection">
-
         <div class="filter">
             <!-- 标签筛选部分 -->
             <div class="tag-filter">
@@ -9,35 +8,29 @@
                     <span>{{ tag }}</span>
                     <button class="close-btn" @click="removeTag(tag)">×</button>
                 </div>
-                <input v-model="newTag" @keyup.enter="addTag" placeholder="添加关键词" />
+                <input v-model="newTag" @keyup.enter="addTag" placeholder="请添加关键词" />
             </div>
 
             <!-- 价格筛选部分 -->
             <div class="price-filter">
                 <h2>价格</h2>
                 <label for="priceRange">价格范围: {{ priceRange[0] }} - {{ priceRange[1] }} 元</label>
-                <input type="range"
-                       id="priceRangeMin"
-                       v-model="priceRange[0]"
-                       :min="minPrice"
-                       :max="maxPrice"
-                       @input="updatePriceRange" />
-                <input type="range"
-                       id="priceRangeMax"
-                       v-model="priceRange[1]"
-                       :min="minPrice"
-                       :max="maxPrice"
-                       @input="updatePriceRange" />
+                <div class="range-container">
+                    <input type="range"
+                           id="priceRangeMin"
+                           v-model="priceRange[0]"
+                           :min="minPrice"
+                           :max="maxPrice"
+                           @input="updatePriceRange" />
+                    <input type="range"
+                           id="priceRangeMax"
+                           v-model="priceRange[1]"
+                           :min="minPrice"
+                           :max="maxPrice"
+                           @input="updatePriceRange" />
+                </div>
             </div>
         </div>
-
-        <!--<div class="app-list">
-            <div v-for="app in filteredApps" :key="app.id" class="app-item">
-                <h2>{{ app.name }}</h2>
-                <p>类别: {{ app.tags.join(', ') }}</p>
-                <p>价格: {{ app.price }} 元</p>
-            </div>
-        </div>-->
     </div>
 </template>
 
@@ -46,7 +39,7 @@
         data() {
             return {
                 newTag: '',
-                selectedTags: [], // 默认选中的标签
+                selectedTags: ['game', 'life', 'social', 'love', 'sport'], // 默认选中的标签
                 priceRange: [0, 1000], // 价格范围初始值
                 minPrice: 0,
                 maxPrice: 1000,
@@ -96,68 +89,169 @@
 </script>
 
 <style scoped>
+    .FilterSection {
+        height: 100%;
+        width: 90%;
+        border-radius: 12px;
+        background-color: #f5d7c4; /* 背景颜色 */
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        transition: background-color 0.3s ease;
+    }
+
+        .FilterSection:hover {
+            background-color: #efc2bb; /* 悬停时背景颜色 */
+        }
+
     .filter {
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        width:150px;
-        margin-bottom: 20px;
-        margin:auto;
+        gap: 32px; /* 增大组件之间的间隔 */
+        margin: auto;
     }
 
     .tag-filter {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-
+        gap: 20px; /* 增大标签部分的间隔 */
     }
 
     .tag {
-        display: inline-block;
-        background-color: #f0f0f0;
-        padding: 5px 10px;
-        margin-right: 5px;
-        border-radius: 5px;
-        position: relative;
+        display: inline-flex;
+        align-items: center;
         background-color: #fbb1a2;
-        padding-right: 20px; /* 增加右边距，给关闭按钮留空间 */
+        color: #fff;
+        padding: 10px 20px; /* 增加内边距 */
+        margin-right: 10px; /* 增加标签之间的间隔 */
+        border-radius: 20px;
+        position: relative;
+        font-size: 16px;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
-    .FilterSection {
-        height: 100%;
-        width: 90%;
-        border-radius: 10px;
-        background-color: antiquewhite;
-        text-align: center;
 
-        display: flex;
-        flex-direction: column; /* 垂直布局 */
-    }
+        .tag:hover {
+            background-color: #f99c8e;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
     .close-btn {
         position: absolute;
-        top: 2px;
-        right: 2px;
+        top: 4px;
+        right: 6px;
         background: transparent;
         border: none;
         cursor: pointer;
-        font-size: 16px;
-        color: #888;
+        font-size: 18px;
+        color: #fff;
         padding: 0;
         line-height: 1;
+        transition: color 0.3s ease;
     }
 
         .close-btn:hover {
-            color: #333;
+            color: #ddd;
         }
 
     .price-filter {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 20px; /* 增大价格部分的间隔 */
     }
 
-    .app-item {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
+        .price-filter label {
+            font-size: 18px;
+            color: #444;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: 500;
+        }
+
+    .range-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px; /* 增大价格范围部分的间隔 */
     }
+
+    input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 12px;
+        background: #f0a8a2;
+        border-radius: 5px;
+        outline: none;
+        margin: 5px 0;
+        transition: background 0.3s ease;
+    }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #fbb1a2;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+        }
+
+            input[type="range"]::-webkit-slider-thumb:hover {
+                background: #f99c8e;
+            }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #fbb1a2;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+        }
+
+            input[type="range"]::-moz-range-thumb:hover {
+                background: #f99c8e;
+            }
+
+        input[type="range"]::-ms-thumb {
+            width: 24px;
+            height: 24px;
+            background: #fbb1a2;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+        }
+
+            input[type="range"]::-ms-thumb:hover {
+                background: #f99c8e;
+            }
+
+    input[type="text"] {
+        width: calc(100% - 32px); /* 输入框宽度减去左右内边距 */
+        padding: 16px 20px; /* 增加内边距，使输入框更长 */
+        border: 2px solid #fbb1a2;
+        border-radius: 20px;
+        font-size: 18px; /* 增加字体大小 */
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        color: #333;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        outline: none;
+    }
+
+        input[type="text"]::placeholder {
+            color: #aaa;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        input[type="text"]:focus {
+            border-color: #f99c8e;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
 </style>

@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>ID</label>
+                <label>用户ID</label>
                 <p>{{ user.id }}</p>
             </div>
             <div class="form-group">
@@ -155,9 +155,9 @@
 <style scoped>
     .profile-settings {
         max-width: 500px;
-        min-height: 780px;
+        min-height: 90px;
         margin: 0 auto;
-        padding: 40px;
+        padding: 32px;
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -165,7 +165,7 @@
 
     h1 {
         margin-bottom: 20px;
-        font-size: 32px;
+        font-size: 30px;
         color: #333;
         text-align: center;
         border: 3px solid #F3C7BA;
@@ -184,8 +184,9 @@
     }
 
     .avatar-group {
-        max-width: 250px;
-        padding: 20px;
+        text-align:center;
+        max-width: 240px;
+        padding: 15px;
         border: 1px solid #F3C7BA;
         border-radius: 8px;
         box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
