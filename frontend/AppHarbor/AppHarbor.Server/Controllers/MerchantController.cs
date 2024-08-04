@@ -60,17 +60,19 @@ namespace AppHarbor.Server.Controllers
 
         [HttpPost("getTransactions")]
         public async Task<IActionResult> GetTransactions(
-            [FromForm] string token,
-            [FromForm] string? search,
-            [FromForm] string? applicationId,
-            [FromForm] string? buyerId,
-            [FromForm] string? receiverId,
-            [FromForm] string? applicationName,
-            [FromForm] string? buyerName,
-            [FromForm] string? receiverName,
-            [FromForm] string? startDate,
-            [FromForm] string? endDate,
-            [FromForm] int page)
+     [FromForm] string token,
+     [FromForm] string? search,
+     [FromForm] string? applicationId,
+     [FromForm] string? buyerId,
+     [FromForm] string? receiverId,
+     [FromForm] string? applicationName,
+     [FromForm] string? buyerName,
+     [FromForm] string? receiverName,
+     [FromForm] string? startDate,
+     [FromForm] string? endDate,
+     [FromForm] int page,
+     [FromForm] string? sortBy,
+     [FromForm] string? sortOrder)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -103,8 +105,8 @@ namespace AppHarbor.Server.Controllers
                     o.ReceiverId.ToString().Contains(search) ||
                     o.ApplicationId.ToString().Contains(search) ||
                     _dbContext.Applications.Any(a => a.Id == o.ApplicationId && a.Name.Contains(search)) ||
-                    _dbContext.Users.Any(u => u.Id == o.BuyerId && u.Nickname.Contains(search)) ||  
-                    _dbContext.Users.Any(u => u.Id == o.ReceiverId && u.Nickname.Contains(search))  
+                    _dbContext.Users.Any(u => u.Id == o.BuyerId && u.Nickname.Contains(search)) ||
+                    _dbContext.Users.Any(u => u.Id == o.ReceiverId && u.Nickname.Contains(search))
                 );
             }
 
@@ -146,6 +148,19 @@ namespace AppHarbor.Server.Controllers
             if (!string.IsNullOrEmpty(endDate) && DateTime.TryParse(endDate, out DateTime end))
             {
                 query = query.Where(o => o.Time <= end);
+            }
+
+            // 添加排序逻辑  
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                if (sortBy == "time")
+                {
+                    query = sortOrder == "asc" ? query.OrderBy(o => o.Time) : query.OrderByDescending(o => o.Time);
+                }
+                else if (sortBy == "amount")
+                {
+                    query = sortOrder == "asc" ? query.OrderBy(o => o.Amount) : query.OrderByDescending(o => o.Amount);
+                }
             }
 
             var totalRecords = await query.CountAsync();
