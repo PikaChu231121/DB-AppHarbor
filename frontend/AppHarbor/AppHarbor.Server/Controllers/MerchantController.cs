@@ -27,12 +27,8 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromForm] string Nickname, [FromForm] string password)
         {
-            var curMaxId = Math.Max(_dbContext.Users.Select(u => u.Id).ToList().Max(), _dbContext.Merchants.Select(u => u.Id).ToList().Max());
-            curMaxId = Math.Max(curMaxId, _dbContext.Admins.Select(u => u.Id).ToList().Max());
-
             var newuser = new Merchant()
             {
-                Id = curMaxId + 1,
                 Password = password,
                 Nickname = Nickname,
                 Avatar = "default.png",
