@@ -14,10 +14,4 @@
   <ItemGroup>
     <None Remove="public\loginBack.jpg" />
   </ItemGroup>
-  <ItemGroup>
-    <TypeScriptConfiguration Remove="src\Views\新文件夹\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="src\Views\新文件夹\**" />
-  </ItemGroup>
 </Project>

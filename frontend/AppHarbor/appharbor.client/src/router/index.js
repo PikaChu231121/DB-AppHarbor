@@ -4,8 +4,6 @@ const routes = [
     {
         path: "/",
          component: () => import("@/Views/UserLogin.vue")
-        // component: () => import("@/Views/Merchant/MerchantLogin.vue")
-        // component: () => import("@/Views/Merchant/MainLayout.vue")
     },
     {
         path: "/RegisterAccount",
@@ -23,10 +21,6 @@ const routes = [
         path: "/MerchantWorkBanchPage",
         component: () => import("@/Views/Merchant/MainLayout.vue")
     },
-    //{
-    //    path: "/Home",
-    //    component: () => import("@/Views/Home.vue")
-    //},
     {
         path: "/Shop",
         component: () => import("@/Views/Shop/Shop.vue")
@@ -57,6 +51,10 @@ const routes = [
     {
         path: '/Purchase',
         component: () => import("@/Views/Purchase/Purchase.vue")
+    },
+    {
+        path: '/AdminPage',
+        component: () => import("@/Views/AdminPage/AdminPage.vue")
     }
 ]
 

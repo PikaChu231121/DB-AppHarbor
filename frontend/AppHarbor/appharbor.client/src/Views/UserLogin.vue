@@ -76,10 +76,8 @@
                             this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 管理员, 欢迎来到 AppHarbor!`;
                             global.id = this.id;
                             setTimeout(() => {
-                                this.$router.push('/');//#################################跳转到需要的地方（跳转到管理员页面）
-
+                                this.$router.push('/AdminPage');
                             }, 3000);
-
                         })
                         .catch(error => {
                             this.isLoading = false;

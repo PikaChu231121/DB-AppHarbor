@@ -253,7 +253,7 @@ namespace AppHarbor.Server.Controllers
             var result = query.ToList();
             return Ok(result);
         }
-
+        
         [HttpPost("confirmrelease")]
         public IActionResult Confirmrelease([FromForm] decimal Id,[FromForm] string token)
         {
