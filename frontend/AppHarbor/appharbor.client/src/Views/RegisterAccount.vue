@@ -7,7 +7,17 @@
                 <div class="content">
                     <div class="login-section">
                         <div class="login-form" style="margin-top:0px">
-                            <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px; font-weight: bolder; margin-top: 20px;">注册账号</h2><br>
+                            <div class="header">
+                                <h2 class="login_text" style="font-family: 'Heiti SC'; font-size: 40px; font-weight: bolder; margin-top: 20px;">注册账号</h2>
+                                <div class="user-type">
+                                    <label for="userType" style="font-family: 'Hanyi Wenhei 85W', sans-serif; font-size: 20px;">选择用户类型</label>
+                                    <select id="userType" v-model="userType" style="font-size: 15px;">
+                                        <option value="普通用户">普通用户</option>
+                                        <option value="商家">商家</option>
+                                        <option value="管理员">管理员</option>
+                                    </select>
+                                </div>
+                            </div>
                             <form @submit.prevent="register">
                                 <div class="form-group" style="margin-top:10px">
                                     <label for="nickname">昵称</label>
@@ -35,6 +45,7 @@
     </div>
 </template>
 
+
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
@@ -54,6 +65,7 @@
             return {
                 nickname: '',
                 password: '',
+                userType: '普通用户', // 默认用户类型
                 alertMessage: '',
                 isLoading: false
             };
@@ -62,7 +74,17 @@
         methods: {
             register() {
                 this.isLoading = true; // Show loading animation at the start of registration
-                axios.post('http://localhost:5118/api/User/register', {
+
+                let url = '';
+                if (this.userType === '普通用户') {
+                    url = 'http://localhost:5118/api/User/register';
+                } else if (this.userType === '商家') {
+                    url = 'http://localhost:5118/api/Merchant/register';
+                } else if (this.userType === '管理员') {
+                    url = 'http://localhost:5118/api/Admin/register';
+                }
+
+                axios.post(url, {
                     nickname: this.nickname,
                     password: this.password,
                 })
@@ -73,13 +95,11 @@
                         // Display loading animation for 2 seconds and then redirect
                         setTimeout(() => {
                             this.isLoading = false; // Hide loading animation
-                            
                         }, 2000); // Delay for 2 seconds
                     })
                     .catch(error => {
                         setTimeout(() => {
                             this.isLoading = false; // Hide loading animation
-
                         }, 2000); // Delay for 2 seconds
 
                         this.alertMessage = `注册失败`;
@@ -93,6 +113,7 @@
         }
     };
 </script>
+
 
 <style scoped>
     .login-container {
@@ -128,6 +149,18 @@
         font-weight: bold;
     }
 
+    .header {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .user-type {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
     .form-group {
         margin-bottom: 0.75em; /* Adjust this value to bring the fields closer */
         width: 100%;
@@ -139,7 +172,7 @@
         color: #333;
     }
 
-    input {
+    input, select {
         width: 100%;
         padding: 0.5em;
         border: 1px solid #ccc;
