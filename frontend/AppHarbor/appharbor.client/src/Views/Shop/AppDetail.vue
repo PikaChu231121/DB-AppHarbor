@@ -42,7 +42,7 @@
                     <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= comment.score }">&#9733;</span>
                 </div>
                 <p class="content">{{ comment.content }}</p>
-                <span class="timestamp">{{ comment.timestamp }}</span>
+                <span class="publishTime">{{ comment.publishTime }}</span>
             </div>
         </div>
         <div class="comment-editor">
@@ -72,14 +72,14 @@
                         user: { avatar: 'https://randomuser.me/api/portraits/men/2.jpg', nickname: 'Kobe Bryant' },
                         score: 5,
                         content: 'Man ! What can I say ? Mamba out!',
-                        timestamp: '2024-07-28 12:00'
+                        publishTime: '2024-07-28 12:00'
                     },
                     {
                         id: 2,
                         user: { avatar: 'https://randomuser.me/api/portraits/women/2.jpg', nickname: 'Mamba' },
                         score: 4,
                         content: '沙克也干了',
-                        timestamp: '2024-07-29 14:30'
+                        publishTime: '2024-07-29 14:30'
                     },
                 ],
                 newComment: {
@@ -240,7 +240,7 @@
                     },
                     content: this.newComment.content, // 评论内容
                     score: this.newComment.score, // 评分(1-5)
-                    timestamp: new Date().toLocaleString() // 发布时间
+                    publishTime: new Date().toLocaleString() // 发布时间
                 };
                 this.comments.push(newComment);
                 // Here you should add the logic to send the new comment to the server
@@ -427,7 +427,7 @@
         margin-top: 5px;
     }
 
-    .timestamp {
+    .publishTime {
         color: #888;
         font-size: 12px;
     }
