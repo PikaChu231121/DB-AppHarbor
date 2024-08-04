@@ -280,7 +280,7 @@ namespace AppHarbor.Server.Controllers
                 return NotFound("Application not found.");
             }
             // 更新应用的状态
-            application.ReleaseState = "Released";
+            application.ReleaseState = "released";
             _dbContext.Applications.Update(application);
             _dbContext.SaveChanges();
             return Ok("Application status updated successfully.");
