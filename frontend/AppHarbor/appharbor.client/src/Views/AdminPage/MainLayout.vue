@@ -53,10 +53,6 @@
                             <button @click="showDetails(item)" class="action-button">查看应用</button>
                         </span>
                     </div>
-                    <div class="app-actions">
-                        <button @click="handleShelve(item)" class="action-button">上架</button>
-                        <button @click="handleView(item)" class="action-button">查看</button>
-                    </div>
                 </div>
             </div>
 
@@ -176,7 +172,26 @@
                     });
             },
             handleShelve(item) {
-                console.log('上架:', item);
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('Id', item.id);
+                formData.append('token', token);
+
+                axios.post('http://localhost:5118/api/application/confirmrelease', formData)
+                    .then(response => {
+                        alert('应用已通过审核');
+                        // 更新列表或执行其他操作
+                        this.fetchData('http://localhost:5118/api/application/selectseleasing');
+                    })
+                    .catch(error => {
+                        console.error('审核失败:', error);
+                        alert('审核失败，请重试');
+                    });
             },
             showDetails(item) {
                 this.selectedApp = item;
