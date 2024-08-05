@@ -44,6 +44,23 @@ namespace AppHarbor.Server.Controllers
 
         }
 
+        [HttpPost("searchunbanmerchant")]
+        public IActionResult SearchunbanMerchant()
+        {
+            var query = from merchant in _dbContext.Merchants
+                        where merchant.State != "banned"
+                        select new
+                        {
+                            Id = merchant.Id,
+                            Nickname = merchant.Nickname,
+                            RegisterTime = merchant.RegisterTime,
+                        };
+
+            var resultList = query.ToList();
+
+            return Ok(resultList);
+        }
+
         [HttpPost("login")]
         public IActionResult Login([FromForm] decimal merchant_id, [FromForm] string password)
         {

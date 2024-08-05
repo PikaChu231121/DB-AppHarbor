@@ -23,5 +23,22 @@ namespace AppHarbor.Server.Controllers
         {
             return Ok(_dbContext.BanMerchants.ToList());
         }
+
+        [HttpPost("searchbanmerchant")]
+        public IActionResult Searchbanuser()
+        {
+            var query = from banmerchant in _dbContext.BanMerchants
+                        select new
+                        {
+                            AdminId = banmerchant.AdminId,
+                            UserId = banmerchant.MerchantId,
+                            Time = banmerchant.Time,
+                            Reason = banmerchant.Reason,
+                        };
+
+            var resultList = query.ToList();
+
+            return Ok(query);
+        }
     }
 }
