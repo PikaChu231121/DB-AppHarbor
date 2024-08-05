@@ -66,22 +66,7 @@
                 isFAQOpen: true,
                 user: null,
 
-                comments: [
-                    {
-                        id: 1,
-                        user: { avatar: 'https://randomuser.me/api/portraits/men/2.jpg', nickname: 'Kobe Bryant' },
-                        score: 5,
-                        content: 'Man ! What can I say ? Mamba out!',
-                        publishTime: '2024-07-28 12:00'
-                    },
-                    {
-                        id: 2,
-                        user: { avatar: 'https://randomuser.me/api/portraits/women/2.jpg', nickname: 'Mamba' },
-                        score: 4,
-                        content: '沙克也干了',
-                        publishTime: '2024-07-29 14:30'
-                    },
-                ],
+                comments: [],
                 newComment: {
                     content: '',
                     score: 0
@@ -208,7 +193,7 @@
                 })
                 .then(response => {
                     this.comments = response.data.$values;
-                    console.log("12");
+                    console.log("12 length of comments is"+this.comments.length);
                     console.log(this.comments[0].id);
                 })
                 .catch(error => {
@@ -249,20 +234,32 @@
                 axios.post('http://localhost:5118/api/comment/postappcomment', {
                     token: token,
                     content: this.newComment.content,
-                    rating: this.newComment.rating,
+                    rating: this.newComment.score,
                     applicationId: this.app.id
                 })
                 .then(response => {
                     const parsedData = response.data;
-                    if (parsedData.success) {
+                    if (parsedData && parsedData.success) {
                         alert('评论成功！');
-                        this.isFavourited = true;
+                        // 将新评论添加到评论列表中
+                        this.comments.push({
+                            id: parsedData.commentId, // 服务器返回的新评论ID
+                            content: this.newComment.content,
+                            score: this.newComment.score,
+                            user: this.user,
+                            publishTime: new Date().toLocaleString()
+                        });
+                        // 清空评论表单
+                        this.newComment.content = '';
+                        this.newComment.score = 0;
+                        /*this.isFavourited = true;*/
                     } else {
                         alert('评论失败：' + parsedData.msg);
                     }
                 })
                 .catch(error => {
                     console.error('Error adding comment:', error);
+                    alert('评论失败：' + error.message);
                 });
             },
             getAvatarUrl(avatarPath) {

@@ -59,8 +59,6 @@ namespace AppHarbor.Server.Controllers
             {
                 return Ok(comments);
             }
-
-
         }
 
 
@@ -71,6 +69,7 @@ namespace AppHarbor.Server.Controllers
             {
                 var failResponse = new
                 {
+                    success = false,
                     msg = "No token provided!"
                 };
                 return Unauthorized(failResponse);
@@ -80,6 +79,7 @@ namespace AppHarbor.Server.Controllers
             {
                 var failResponse = new
                 {
+                    success = false,
                     msg = "Invalid or expired token!"
                 };
                 return Unauthorized(failResponse);
@@ -88,7 +88,7 @@ namespace AppHarbor.Server.Controllers
             var user = _dbContext.Users.Find(tokenEntry.Id);
             if(user == null)
             {
-                return BadRequest("User not exist!");
+                return BadRequest(new { success = false, msg = "User not exist!" });
             }
 
             var newComment = new Comment
@@ -102,7 +102,13 @@ namespace AppHarbor.Server.Controllers
             _dbContext.Comments.Add(newComment);
             _dbContext.SaveChanges();
 
-            return Ok();
+            var successResponse = new
+            {
+                success = true,
+                msg = "Comment added successfully",
+                commentId = newComment.Id
+            };
+            return Ok(successResponse);
         }
     }
 }
