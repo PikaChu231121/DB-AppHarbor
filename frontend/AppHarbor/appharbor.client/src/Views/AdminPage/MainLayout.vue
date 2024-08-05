@@ -1,3 +1,4 @@
+
 <template>
     <div class="main-layout">
         <div class="sidebar">
@@ -63,7 +64,7 @@
                         <p>封禁操作执行ID：{{ user.adminId }}</p>
                         <p>封禁时间：{{ user.time }}</p>
                         <p>封建原因：{{ user.reason }}</p>
-                        
+
                     </div>
                     <div class="app-actions">
                         <button @click="handleShelve(item)" class="action-button">上架</button>
@@ -84,6 +85,19 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div v-if="showPopup" class="popup-overlay" @click="closePopup">
+        <div class="popup-content" @click.stop>
+            <h3>&nbsp;&nbsp;&nbsp;{{ selectedApp.name }}</h3>
+            <p>&nbsp;&nbsp;应用版本: &nbsp;&nbsp;&nbsp;{{ selectedApp.version }}</p>
+            <p>&nbsp;&nbsp;应用类型:&nbsp;&nbsp;&nbsp; {{ selectedApp.category }}</p>
+            <p>&nbsp;&nbsp;应用ID: &nbsp;&nbsp;&nbsp;{{ selectedApp.id }}</p>
+            <p>&nbsp;&nbsp;应用价格:&nbsp;&nbsp;&nbsp; {{ selectedApp.price === 0 ? '免费' : selectedApp.price }}</p>
+            <p>&nbsp;&nbsp;应用描述: &nbsp;&nbsp;&nbsp;{{ selectedApp.description }}</p>
+            <button @click="closePopup" class="popup-close-button">关闭</button>
         </div>
     </div>
 </template>
@@ -116,7 +130,7 @@
         methods: {
             toggleSection(section) {
                 this.section = section;
-                this.sections[section]=!this.sections[section];
+                this.sections[section] = !this.sections[section];
             },
             selectseleasing() {
                 this.selectedStatus = '待审核应用';
