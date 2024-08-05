@@ -64,5 +64,23 @@ namespace AppHarbor.Server.Controllers
 
             return Ok(user);
         }
+
+        [HttpPost("searchbanuser")]
+        public IActionResult Searchbanuser()
+        {
+            var query = from banuser in _dbContext.BanUsers
+                        select new
+                        {
+                            AdminId = banuser.AdminId,
+                            UserId = banuser.UserId,
+                            Time = banuser.Time,
+                            Reason = banuser.Reason,
+                        };
+
+            var resultList = query.ToList();
+
+            return Ok(resultList);
+        }
+        
     }
 }

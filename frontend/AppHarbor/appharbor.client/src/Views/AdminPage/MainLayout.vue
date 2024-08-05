@@ -1,15 +1,50 @@
 <template>
     <div class="main-layout">
         <div class="sidebar">
-            <div class="menu">
-                <div class="menu-item"
-                     :class="{ active: selectedStatus === '待审核应用' }"
-                     @click="selectseleasing">待审核</div>
-                <div class="menu-item"
-                     :class="{ active: selectedStatus === '已审核应用' }"
-                     @click="selectseleased">已审核</div>
+            <div @click="toggleSection('appManagement')" class="menu-item section-header">
+                应用管理
+            </div>
+            <div v-show="sections.appManagement" class="section-content">
+                <div class="menu">
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '待审核应用' }"
+                         @click="selectseleasing">待审核</div>
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '已审核应用' }"
+                         @click="selectseleased">已审核</div>
+                </div>
+            </div>
+
+            <div @click="toggleSection('userManagement')" class="menu-item section-header">
+                用户管理
+            </div>
+            <div v-show="sections.userManagement" class="section-content">
+                <div class="menu">
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '封禁用户' }"
+                         @click="searchbanuser">封禁用户</div>
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '未封禁用户' }"
+                         @click="selectseleased">活跃用户</div>
+                </div>
+            </div>
+
+            <div @click="toggleSection('comment')" class="menu-item section-header">
+                评论
+            </div>
+            <div v-show="sections.comment" class="section-content">
+<!--                <div class="menu">
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '待审核应用' }"
+                         @click="selectseleasing">已审核评论</div>
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '已审核应用' }"
+                         @click="selectseleased">未审核评论</div>
+                </div>-->
+
             </div>
         </div>
+
         <div class="main-content">
             <div v-if="loading" class="loading">加载中...</div>
             <div v-if="error" class="error">加载失败: {{ error.message }}</div>
@@ -45,12 +80,21 @@
         data() {
             return {
                 items: [],
+                users: [],
                 loading: false,
                 error: null,
                 selectedStatus: '请在右侧选择你要查看的应用状态', // 默认状态
+                sections: {
+                    appManagement: false,
+                    userManagement: false,
+                    comment: false,
+                },
             };
         },
         methods: {
+            toggleSection(section) {
+                this.sections[section]=!this.sections[section];
+            },
             selectseleasing() {
                 this.selectedStatus = '待审核应用';
                 this.fetchData('http://localhost:5118/api/application/selectseleasing');
@@ -62,12 +106,30 @@
                 formData.append('token', token);
                 this.fetchData('http://localhost:5118/api/application/selectseleased', formData);
             },
+            searchbanuser() {
+                this.selectedStatus = '封禁用户';
+                this.fetchUserData('http://localhost:5118/api/banuser/searchbanuser');
+            },
             fetchData(url, data = null) {
                 this.loading = true;
                 this.error = null;
                 axios.post(url, data)
                     .then(response => {
                         this.items = response.data.$values;
+                    })
+                    .catch(error => {
+                        this.error = error;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            },
+            fetchUserData(url, data = null) {
+                this.loading = true;
+                this.error = null;
+                axios.post(url, data)
+                    .then(response => {
+                        this.users = response.data.$values;
                     })
                     .catch(error => {
                         this.error = error;
@@ -104,31 +166,32 @@
         overflow-y: auto;
     }
 
-    .menu {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .menu-item {
+    .section-header {
         padding: 12px;
         cursor: pointer;
-        font-weight: 600; /* 粗体字体 */
+        font-weight: 600;
         color: #6a1b9a;
         transition: background-color 0.3s ease, color 0.3s ease;
-        font-size: 18px; /* 增大的字体大小 */
-        font-family: 'Poppins', sans-serif; /* 字体变化 */
-        border-radius: 8px; /* 圆角 */
+        font-size: 18px;
+        font-family: 'Poppins', sans-serif;
+        border-radius: 8px;
+        background-color: #fff;
     }
 
-        .menu-item:hover {
+        .section-header:hover {
             background-color: #e1bee7;
             color: #4a0072;
         }
 
-        .menu-item.active {
-            background-color: #6a1b9a;
-            color: #fff;
-        }
+    .menu-item.active {
+        background-color: #6a1b9a;
+        color: #fff;
+    }
+
+    .section-content {
+        padding-left: 10px;
+        padding-top: 5px;
+    }
 
     .main-content {
         padding: 20px;
@@ -144,10 +207,10 @@
 
         .status-display h2 {
             margin: 0;
-            font-size: 28px; /* 更大的字体大小 */
+            font-size: 28px;
             color: #6a1b9a;
-            font-family: 'Poppins', sans-serif; /* 字体变化 */
-            font-weight: 600; /* 粗体字体 */
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
         }
 
     .app-list {
@@ -162,12 +225,12 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         transition: box-shadow 0.3s ease, transform 0.3s ease;
         background-color: #f9f5ff;
-        font-family: 'Poppins', sans-serif; /* 可爱的字体 */
+        font-family: 'Poppins', sans-serif;
     }
 
         .app-item:hover {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            transform: scale(1.03); /* 略微放大的比例 */
+            transform: scale(1.03);
         }
 
     .app-header {
@@ -177,16 +240,16 @@
 
         .app-header h3 {
             margin: 0;
-            font-size: 22px; /* 更大的字体大小 */
+            font-size: 22px;
             color: #6a1b9a;
-            font-family: 'Poppins', sans-serif; /* 字体变化 */
-            font-weight: 600; /* 粗体字体 */
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
         }
 
         .app-header p {
             margin: 5px 0;
-            font-size: 16px; /* 更大的字体大小 */
-            font-family: 'Poppins', sans-serif; /* 字体变化 */
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
         }
 
     .app-actions {
@@ -201,10 +264,10 @@
         border-radius: 8px;
         padding: 10px 20px;
         cursor: pointer;
-        font-weight: 600; /* 粗体字体 */
+        font-weight: 600;
         font-size: 14px;
         transition: background-color 0.3s ease, transform 0.2s ease;
-        font-family: 'Poppins', sans-serif; /* 字体变化 */
+        font-family: 'Poppins', sans-serif;
     }
 
         .action-button:hover {
@@ -214,8 +277,8 @@
 
     .loading, .error {
         color: #d32f2f;
-        font-weight: 600; /* 粗体字体 */
+        font-weight: 600;
         font-size: 16px;
-        font-family: 'Poppins', sans-serif; /* 字体变化 */
+        font-family: 'Poppins', sans-serif;
     }
 </style>
