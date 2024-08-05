@@ -56,31 +56,29 @@
                 </div>
             </div>
 
-            <div v-if="section==='userManagement'&&!userstate" class="app-list">
+            <div v-if="section==='userManagement' && !userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
                         <h3>用户ID：{{ user.userId }}</h3>
                         <p>封禁操作执行ID：{{ user.adminId }}</p>
                         <p>封禁时间：{{ user.time }}</p>
-                        <p>封建原因：{{ user.reason }}</p>
-
+                        <p>封禁原因：{{ user.reason }}</p>
                     </div>
                     <div class="app-actions">
-                        <button @click="handleShelve(item)" class="action-button">上架</button>
-                        <button @click="handleView(item)" class="action-button">查看</button>
+                        <!-- 只保留一个解除封禁按钮 -->
+                        <button @click="handleUnban(user)" class="action-button">解除封禁</button>
                     </div>
                 </div>
             </div>
+
             <div v-if="section==='userManagement'&&userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
                         <h3>用户ID：{{ user.id }}</h3>
-                        <p>用户昵称：{{ user.nickname }}</p>
-                        <p>账号注册时间：{{ user.registerTime }}</p>
                     </div>
                     <div class="app-actions">
                         <button @click="handleShelve(item)" class="action-button">封禁</button>
-                        <button @click="handleView(item)" class="action-button">查看</button>
+                        <button @click="showUserDetails(user)" class="action-button">查看</button>
                     </div>
                 </div>
             </div>
@@ -121,6 +119,16 @@
         </div>
     </div>
 
+    <!-- 用户详情弹窗 -->
+    <div v-if="showUserPopup" class="popup-overlay" @click="closeUserPopup">
+        <div class="popup-content user-popup" @click.stop>
+            <h3>用户ID：{{ selectedUser.id }}</h3>
+            <p>用户昵称：{{ selectedUser.nickname }}</p>
+            <p>账号注册时间：{{ selectedUser.registerTime }}</p>
+            <button @click="closeUserPopup" class="popup-close-button">关闭</button>
+        </div>
+    </div>
+
 </template>
 
 <script>
@@ -148,9 +156,19 @@
                 showSuccessPopup: false, // 新增
                 selectedApp: null,
                 appToShelve: null, // 新增
+                selectedUser: null,
+                showUserPopup: false,
             };
         },
         methods: {
+            showUserDetails(user) {
+                this.selectedUser = user;
+                this.showUserPopup = true;
+            },
+            closeUserPopup() {
+                this.showUserPopup = false;
+                this.selectedUser = null;
+            },
             toggleSection(section) {
                 this.section = section;
                 this.sections[section] = !this.sections[section];
@@ -262,6 +280,43 @@
 
 <style scoped>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    .user-popup {
+        max-width: 400px;
+        padding: 20px;
+        background-color: #fff;
+        color: #333;
+    }
+
+    .user-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: block;
+        margin: 0 auto 10px;
+    }
+
+    .user-popup h3, .user-popup p {
+        margin: 10px 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .user-popup .popup-close-button {
+        background-color: #6a1b9a;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        margin-top: 15px;
+    }
+
+        .user-popup .popup-close-button:hover {
+            background-color: #4a0072;
+        }
 
     .main-layout {
         display: flex;
@@ -382,9 +437,11 @@
 
     .app-actions {
         display: flex;
+        justify-content: flex-end;
         gap: 12px;
     }
 
+    /* 按钮样式更新 */
     .action-button {
         background-color: #6a1b9a;
         color: #fff;
@@ -396,6 +453,7 @@
         font-size: 14px;
         transition: background-color 0.3s ease, transform 0.2s ease;
         font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
         .action-button:hover {
@@ -557,5 +615,23 @@
 
         .popup-close-button:hover {
             background-color: #4a0072;
+        }
+
+    .user-header {
+        margin-bottom: 15px;
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+    }
+
+        .user-header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #6a1b9a; /* 紫色标题 */
+        }
+
+        .user-header p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #555; /* 暗灰色字体 */
         }
 </style>
