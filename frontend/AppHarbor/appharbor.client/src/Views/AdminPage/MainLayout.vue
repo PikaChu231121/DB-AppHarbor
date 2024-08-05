@@ -34,15 +34,7 @@
                 评论
             </div>
             <div v-show="sections.comment" class="section-content">
-<!--                <div class="menu">
-                    <div class="menu-item"
-                         :class="{ active: selectedStatus === '待审核应用' }"
-                         @click="selectseleasing">已审核评论</div>
-                    <div class="menu-item"
-                         :class="{ active: selectedStatus === '已审核应用' }"
-                         @click="selectseleased">未审核评论</div>
-                </div>-->
-
+                <!-- 评论相关内容 -->
             </div>
         </div>
 
@@ -56,11 +48,10 @@
                 <div v-for="item in items" :key="item.id" class="app-item">
                     <div class="app-header">
                         <h3>{{ item.name }}</h3>
-                        <p>版本: {{ item.version }}</p>
-                        <p>类型: {{ item.category }}</p>
-                        <p>ID: {{ item.id }}</p>
-                        <p>价格: {{ item.price === 0 ? '免费' : item.price }}</p> <!-- 更新后的价格显示 -->
-                        <p>描述: {{ item.description }}</p>
+                        <span class="app-actions">
+                            <button v-if="selectedStatus === '待审核应用'" @click="handleShelve(item)" class="action-button">上架应用</button>
+                            <button @click="showDetails(item)" class="action-button">查看应用</button>
+                        </span>
                     </div>
                     <div class="app-actions">
                         <button @click="handleShelve(item)" class="action-button">上架</button>
@@ -101,6 +92,7 @@
     </div>
 </template>
 
+
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
@@ -121,6 +113,8 @@
                     userManagement: false,
                     comment: false,
                 },
+                showPopup: false,
+                selectedApp: null,
             };
         },
         methods: {
@@ -184,8 +178,13 @@
             handleShelve(item) {
                 console.log('上架:', item);
             },
-            handleView(item) {
-                console.log('查看:', item);
+            showDetails(item) {
+                this.selectedApp = item;
+                this.showPopup = true;
+            },
+            closePopup() {
+                this.showPopup = false;
+                this.selectedApp = null;
             }
         }
     };
@@ -219,6 +218,7 @@
         font-family: 'Poppins', sans-serif;
         border-radius: 8px;
         background-color: #fff;
+        margin-bottom: 10px;
     }
 
         .section-header:hover {
@@ -235,6 +235,18 @@
         padding-left: 10px;
         padding-top: 5px;
     }
+
+    .menu-item {
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        .menu-item:hover {
+            background-color: #f3e5f5;
+        }
 
     .main-content {
         padding: 20px;
@@ -277,6 +289,9 @@
         }
 
     .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 15px;
         font-size: 18px;
     }
@@ -323,5 +338,88 @@
         font-weight: 600;
         font-size: 16px;
         font-family: 'Poppins', sans-serif;
+    }
+
+    /* 弹窗样式 */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3); /* Slight dark overlay */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    .popup-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+        width: 100%;
+        position: relative;
+        animation: scaleIn 0.3s ease-out;
+    }
+
+        .popup-content h3 {
+            margin-top: 0;
+            font-size: 26px;
+            color: #6a1b9a; /* Purple color */
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .popup-content p {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #333;
+            font-family: 'Poppins', sans-serif;
+        }
+
+    .popup-close-button {
+        background-color: #6a1b9a; /* Purple color */
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .popup-close-button:hover {
+            background-color: #4a0072; /* Darker purple */
+            transform: scale(1.1);
+        }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.8);
+        }
+
+        to {
+            transform: scale(1);
+        }
     }
 </style>
