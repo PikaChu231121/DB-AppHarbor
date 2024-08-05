@@ -35,9 +35,9 @@
     <div class="comments-container">
         <h3>用户评论</h3>
         <div v-for="comment in comments" :key="comment.id" class="comment-item">
-            <img :src="getAvatarUrl(comment.user.avatar)" alt="Avatar" class="avatar">
+            <img :src="getAvatarUrl(comment.avatar)" alt="Avatar" class="avatar">
             <div class="info">
-                <span class="nickname">{{ comment.user.nickname }}</span>
+                <span class="nickname">{{ comment.nickname }}</span>
                 <div class="score">
                     <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= comment.score }">&#9733;</span>
                 </div>
@@ -193,8 +193,9 @@
                 })
                 .then(response => {
                     this.comments = response.data.$values;
-                    console.log("12 length of comments is"+this.comments.length);
+                    console.log("12 length of comments is "+this.comments.length);
                     console.log(this.comments[0].id);
+                    console.log(this.comments[1].id);
                 })
                 .catch(error => {
                     console.error('Error fetching app comments:', error);
@@ -246,8 +247,9 @@
                             id: parsedData.commentId, // 服务器返回的新评论ID
                             content: this.newComment.content,
                             score: this.newComment.score,
-                            user: this.user,
-                            publishTime: new Date().toLocaleString()
+                            avatar: this.user.avatar,
+                            nickname: this.user.nickname,
+                            publishTime: new Date().toLocaleString() // 注意这是个假的时间
                         });
                         // 清空评论表单
                         this.newComment.content = '';

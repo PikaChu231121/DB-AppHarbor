@@ -41,15 +41,30 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("getappcomment")]
         public IActionResult GetAppComment([FromBody] GetAppCommentModel getappcommentModel)
         {
-            var comments = _dbContext.Comments.Where(a => a.ApplicationId == getappcommentModel.ApplicationId).ToList();
-            //comment_[] resultlist = new comment_[100];
-            comments.ForEach(a =>
-            {
-                a.User = _dbContext.Users.Find(a.UserId);
-            });
-            comments = comments.OrderBy(a => a.PublishTime).ToList();
+            //var comments = _dbContext.Comments.Where(a => a.ApplicationId == getappcommentModel.ApplicationId).ToList();
+            ////comment_[] resultlist = new comment_[100];
+            //comments.ForEach(a =>
+            //{
+            //    a.User = _dbContext.Users.Find(a.UserId);
+            //});
+            //comments = comments.OrderBy(a => a.PublishTime).ToList();
 
-            //return Ok(comments);
+            ////return Ok(comments);
+            ///
+            var comments = _dbContext.Comments
+                .Where(a => a.ApplicationId == getappcommentModel.ApplicationId)
+                .Include(c => c.User)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Score,
+                    c.Content,
+                    c.PublishTime,
+                    Avatar = c.User.Avatar,
+                    Nickname = c.User.Nickname
+                })
+                .OrderByDescending(c => c.PublishTime)
+                .ToList();
 
             if (comments == null)
             {
