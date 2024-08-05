@@ -9,10 +9,10 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '待审核应用' }"
-                         @click="selectseleasing">待审核</div>
+                         @click="selectseleasing();changeSection('appManagement')">待审核</div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '已审核应用' }"
-                         @click="selectseleased">已审核</div>
+                         @click="selectseleased();changeSection('appManagement')">已审核</div>
                 </div>
             </div>
 
@@ -23,10 +23,10 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '封禁用户' }"
-                         @click="searchbanuser">封禁用户</div>
+                         @click="searchbanuser();changeSection('userManagement')">封禁用户</div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '活跃用户' }"
-                         @click="searchunbanuser">活跃用户</div>
+                         @click="searchunbanuser();changeSection('userManagement')">活跃用户</div>
                 </div>
             </div>
 
@@ -131,6 +131,9 @@
             toggleSection(section) {
                 this.section = section;
                 this.sections[section] = !this.sections[section];
+            },
+            changeSection(section) {
+                this.section = section;
             },
             selectseleasing() {
                 this.selectedStatus = '待审核应用';
