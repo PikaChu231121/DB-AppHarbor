@@ -280,14 +280,12 @@ namespace AppHarbor.Server.Controllers
         public IActionResult Searchunbanuser()
         {
             var query = from user in _dbContext.Users
-                        join banuser in _dbContext.BanUsers on user.Id equals banuser.UserId
                         where user.State != "banned"
                         select new
                         {
-                            AdminId = banuser.AdminId,
-                            UserId = banuser.UserId,
-                            Time = banuser.Time,
-                            Reason = banuser.Reason,
+                            Id = user.Id,
+                            Nickname = user.Nickname,
+                            RegisterTime = user.RegisterTime,
                         };
 
             var resultList = query.ToList();

@@ -24,10 +24,11 @@
                          :class="{ active: selectedStatus === '封禁用户' }"
                          @click="searchbanuser">封禁用户</div>
                     <div class="menu-item"
-                         :class="{ active: selectedStatus === '未封禁用户' }"
+                         :class="{ active: selectedStatus === '活跃用户' }"
                          @click="searchunbanuser">活跃用户</div>
                 </div>
             </div>
+
 
             <div @click="toggleSection('comment')" class="menu-item section-header">
                 评论
@@ -51,7 +52,7 @@
             <div v-if="!loading && !error" class="status-display">
                 <h2>{{ selectedStatus }}</h2>
             </div>
-            <div class="app-list">
+            <div v-if="section==='appManagement'" class="app-list">
                 <div v-for="item in items" :key="item.id" class="app-item">
                     <div class="app-header">
                         <h3>{{ item.name }}</h3>
@@ -63,6 +64,35 @@
                     </div>
                     <div class="app-actions">
                         <button @click="handleShelve(item)" class="action-button">上架</button>
+                        <button @click="handleView(item)" class="action-button">查看</button>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="section==='userManagement'&&!userstate" class="app-list">
+                <div v-for="user in users" :key="user.id" class="app-item">
+                    <div class="user-header">
+                        <h3>用户ID：{{ user.userId }}</h3>
+                        <p>封禁操作执行ID：{{ user.adminId }}</p>
+                        <p>封禁时间：{{ user.time }}</p>
+                        <p>封建原因：{{ user.reason }}</p>
+                        
+                    </div>
+                    <div class="app-actions">
+                        <button @click="handleShelve(item)" class="action-button">上架</button>
+                        <button @click="handleView(item)" class="action-button">查看</button>
+                    </div>
+                </div>
+            </div>
+            <div v-if="section==='userManagement'&&userstate" class="app-list">
+                <div v-for="user in users" :key="user.id" class="app-item">
+                    <div class="user-header">
+                        <h3>用户ID：{{ user.id }}</h3>
+                        <p>用户昵称：{{ user.nickname }}</p>
+                        <p>账号注册时间：{{ user.registerTime }}</p>
+                    </div>
+                    <div class="app-actions">
+                        <button @click="handleShelve(item)" class="action-button">封禁</button>
                         <button @click="handleView(item)" class="action-button">查看</button>
                     </div>
                 </div>
@@ -83,6 +113,8 @@
                 users: [],
                 loading: false,
                 error: null,
+                userstate: 0,
+                section: null,
                 selectedStatus: '请在右侧选择你要查看的应用状态', // 默认状态
                 sections: {
                     appManagement: false,
@@ -93,6 +125,7 @@
         },
         methods: {
             toggleSection(section) {
+                this.section = section;
                 this.sections[section]=!this.sections[section];
             },
             selectseleasing() {
@@ -108,18 +141,10 @@
             },
             searchbanuser() {
                 this.selectedStatus = '封禁用户';
-                this.fetchUserData('http://localhost:5118/api/banuser/searchbanuser');
-            },
-            searchunbanuser() {
-                this.selectedStatus = '未封禁用户';
-                this.fetchUserData('http://localhost:5118/api/user/searchunbanuser');
-            },
-            fetchData(url, data = null) {
-                this.loading = true;
-                this.error = null;
-                axios.post(url, data)
+                this.userstate = 0;
+                axios.post('http://localhost:5118/api/banuser/searchbanuser')
                     .then(response => {
-                        this.items = response.data.$values;
+                        this.users = response.data;
                     })
                     .catch(error => {
                         this.error = error;
@@ -128,12 +153,26 @@
                         this.loading = false;
                     });
             },
-            fetchUserData(url, data = null) {
+            searchunbanuser() {
+                this.selectedStatus = '活跃用户';
+                this.userstate = 1;
+                axios.post('http://localhost:5118/api/user/searchunbanuser')
+                    .then(response => {
+                        this.users = response.data.$values;
+                    })
+                    .catch(error => {
+                        this.error = error;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            },
+            fetchData(url, data = null) {
                 this.loading = true;
                 this.error = null;
                 axios.post(url, data)
                     .then(response => {
-                        this.users = response.data.$values;
+                        this.items = response.data.$values;
                     })
                     .catch(error => {
                         this.error = error;
