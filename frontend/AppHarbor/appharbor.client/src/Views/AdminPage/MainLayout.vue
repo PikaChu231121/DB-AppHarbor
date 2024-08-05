@@ -25,7 +25,7 @@
                          @click="searchbanuser">封禁用户</div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '未封禁用户' }"
-                         @click="selectseleased">活跃用户</div>
+                         @click="searchunbanuser">活跃用户</div>
                 </div>
             </div>
 
@@ -109,6 +109,10 @@
             searchbanuser() {
                 this.selectedStatus = '封禁用户';
                 this.fetchUserData('http://localhost:5118/api/banuser/searchbanuser');
+            },
+            searchunbanuser() {
+                this.selectedStatus = '未封禁用户';
+                this.fetchUserData('http://localhost:5118/api/user/searchunbanuser');
             },
             fetchData(url, data = null) {
                 this.loading = true;
