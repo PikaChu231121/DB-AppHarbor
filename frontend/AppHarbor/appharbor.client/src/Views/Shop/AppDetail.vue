@@ -32,13 +32,26 @@
             </div>
         </div>
     </div>
+    <!--评论区域-->
     <div class="comments-container">
+        <h3>用户评论</h3>
         <div v-for="comment in comments" :key="comment.id" class="comment-item">
-            <img :src="comment.user.avatar" alt="Avatar" class="avatar">
+            <img :src="getAvatarUrl(comment.avatar)" alt="Avatar" class="avatar">
             <div class="info">
-                <span class="nickname">{{ comment.user.nickname }}</span>
+                <span class="nickname">{{ comment.nickname }}</span>
+                <div class="score">
+                    <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= comment.score }">&#9733;</span>
+                </div>
                 <p class="content">{{ comment.content }}</p>
+                <span class="publishTime">{{ comment.publishTime }}</span>
             </div>
+        </div>
+        <div class="comment-editor">
+            <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
+            <div class="score">
+                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }" @click="setScore(star)">&#9733;</span>
+            </div>
+            <button class="button" @click="submitComment">发布评论</button>
         </div>
     </div>
 </template>
@@ -53,27 +66,26 @@
             return {
                 app: null,
                 isFAQOpen: true,
-                comments: [
-                    {
-                        id: 1,
-                        user: { avatar: 'https://randomuser.me/api/portraits/men/2.jpg', nickname: 'Kobe Bryant' },
-                        content: 'Man ! What can I say ? Mamba out!',
-                    },
-                    {
-                        id: 2,
-                        user: { avatar: 'https://randomuser.me/api/portraits/women/2.jpg', nickname: 'Mamba' },
-                        content: '沙克也干了',
-                    },
-                ],
-                isFavourited: false // 是否已经收藏，默认未收藏
+
+                comments: [],
+                newComment: {
+                    content: '',
+                    score: 0
+                },
+
+                isFavourited:false // 是否已经收藏，默认未收藏
             };
         },
         created() {
             const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
             this.checkIfFavourite(appId);
+            this.fetchAllComments(appId);
+            this.fetchUserInfo();
         },
         methods: {
+
+            /*------------------和显示应用详情有关的方法-------------------*/
             toggleFAQ() {
                 this.isFAQOpen = !this.isFAQOpen;
             },
@@ -94,6 +106,8 @@
             goToPurchase(appId) {
                 this.$router.push(`/Purchase/${appId}`);
             },
+
+            /*------------------和收藏有关的方法-------------------*/
             addFavourite() {
                 const token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/favourite/addFavourite', {
@@ -165,7 +179,93 @@
                     .catch(error => {
                         console.error("Error install:", error);
                     });
-            }
+            },
+
+            /*------------------和评论有关的方法-------------------*/
+            fetchAllComments(appId) {
+                // 在这里获取该应用的全部评论
+                axios.post('http://localhost:5118/api/comment/getappcomment', {
+                    ApplicationId: appId
+                })
+                .then(response => {
+                    this.comments = response.data.$values;
+                    console.log("12 length of comments is "+this.comments.length);
+                    console.log(this.comments[0].id);
+                    console.log(this.comments[1].id);
+                })
+                .catch(error => {
+                    console.error('Error fetching app comments:', error);
+                    console.log("21");
+                });
+            },
+            fetchUserInfo() {
+                // 获取用户个人信息，便于发布评论
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
+            setScore(score) {
+                // 设置评分
+                this.newComment.score = score;
+            },
+            submitComment() {
+                const token = Cookies.get('token');
+                /*
+                const newComment = {
+                    user: {
+                        avatar: this.user.avatar,
+                        nickname: this.user.nickname,
+                    },
+                    content: this.newComment.content, // 评论内容
+                    score: this.newComment.score, // 评分(1-5)
+                    publishTime: new Date().toLocaleString() // 发布时间
+                };
+                this.comments.push(newComment);
+                */
+                // Here you should add the logic to send the new comment to the server
+                axios.post('http://localhost:5118/api/comment/postappcomment', {
+                    token: token,
+                    content: this.newComment.content,
+                    rating: this.newComment.score,
+                    applicationId: this.app.id
+                })
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData && parsedData.success) {
+                        alert('评论成功！');
+                        // 将新评论添加到评论列表中
+                        this.comments.push({
+                            id: parsedData.commentId, // 服务器返回的新评论ID
+                            content: this.newComment.content,
+                            score: this.newComment.score,
+                            avatar: this.user.avatar,
+                            nickname: this.user.nickname,
+                            publishTime: new Date().toLocaleString() // 注意这是个假的时间
+                        });
+                        // 清空评论表单
+                        this.newComment.content = '';
+                        this.newComment.score = 0;
+                        /*this.isFavourited = true;*/
+                    } else {
+                        alert('评论失败：' + parsedData.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                    alert('评论失败：' + error.message);
+                });
+            },
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../public/default.png'; // 默认头像路径
+            },
         }
     };
 </script>
@@ -341,7 +441,11 @@
 
     .comments-container {
         max-width: 800px;
-        margin: auto;
+        margin: 20px auto;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e5e5e5;
     }
 
     .comment-item {
@@ -356,8 +460,25 @@
         margin-right: 10px;
     }
 
+    .info {
+        flex: 1;
+    }
+
     .nickname {
         font-weight: bold;
+    }
+
+    .score {
+        display: flex;
+    }
+
+    .star {
+        font-size: 20px;
+        color: #ccc;
+    }
+
+    .star.filled {
+        color: #f5a623;
     }
 
     .content {
@@ -377,4 +498,25 @@
         gap: 15px; /* 增加按钮间距 */
         margin-top: 10px; /* 调整与其他元素的间距 */
     }
+    .publishTime {
+        color: #888;
+        font-size: 12px;
+    }
+
+    .comment-editor {
+        margin-top: 20px;
+    }
+
+    .comment-editor textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+    }
+
+    .comment-editor .score {
+        margin-bottom: 10px;
+    }
+
 </style>
