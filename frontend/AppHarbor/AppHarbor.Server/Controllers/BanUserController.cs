@@ -68,6 +68,40 @@ namespace AppHarbor.Server.Controllers
             return Ok(user);
         }
 
+        [HttpPost("unbanuser")]
+        public IActionResult Unbanuser([FromForm] string mytoken, [FromForm] decimal user_id)
+        {
+            var tokenEntity = _dbContext.TokenIds.SingleOrDefault(token => token.Token == mytoken);
+            if (tokenEntity == null)
+            {
+                return Unauthorized("无效的管理员");
+            }
+
+            // 检查用户是否被封禁
+            var bannedUser = _dbContext.BanUsers.SingleOrDefault(ban => ban.UserId == user_id);
+            if (bannedUser == null)
+            {
+                return NotFound("用户没有被封禁");
+            }
+
+            // 更新用户的状态
+            var userEntity = _dbContext.Users.SingleOrDefault(user => user.Id == user_id);
+            if (userEntity == null)
+            {
+                return NotFound("用户未找到");
+            }
+
+            userEntity.State = "active"; 
+            _dbContext.SaveChanges();
+
+            // 从封禁用户列表中移除该用户
+            _dbContext.BanUsers.Remove(bannedUser);
+            _dbContext.SaveChanges();
+
+            return Ok(new { Message = "用户已解除封禁", UserId = user_id });
+        }
+
+
         [HttpPost("searchbanuser")]
         public IActionResult Searchbanuser()
         {
