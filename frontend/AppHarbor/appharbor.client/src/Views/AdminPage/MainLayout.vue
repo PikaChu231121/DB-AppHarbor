@@ -30,12 +30,25 @@
                 </div>
             </div>
 
+            <div @click="toggleSection('merchant')" class="menu-item section-header">
+                商家管理
+            </div>
+            <div v-show="sections.merchant" class="section-content">
+                <!-- 商家相关内容 -->
+            </div>
 
             <div @click="toggleSection('comment')" class="menu-item section-header">
-                评论
+                评论管理
             </div>
             <div v-show="sections.comment" class="section-content">
                 <!-- 评论相关内容 -->
+            </div>
+
+            <div @click="toggleSection('anouncement')" class="menu-item section-header">
+                通知管理
+            </div>
+            <div v-show="sections.anouncement" class="section-content">
+                <!-- 通知相关内容 -->
             </div>
         </div>
 
