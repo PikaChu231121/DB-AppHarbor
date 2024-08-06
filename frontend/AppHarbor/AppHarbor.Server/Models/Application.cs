@@ -49,6 +49,8 @@ public class InstallAppModel
 
 }
 
+
+
 public partial class Application
 {
     public decimal Id { get; set; }

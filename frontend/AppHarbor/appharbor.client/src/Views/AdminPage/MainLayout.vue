@@ -1,4 +1,3 @@
-
 <template>
     <div class="main-layout">
         <div class="sidebar">
@@ -57,21 +56,21 @@
                 </div>
             </div>
 
-            <div v-if="section==='userManagement'&&!userstate" class="app-list">
+            <div v-if="section==='userManagement' && !userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
                         <h3>用户ID：{{ user.userId }}</h3>
                         <p>封禁操作执行ID：{{ user.adminId }}</p>
                         <p>封禁时间：{{ user.time }}</p>
-                        <p>封建原因：{{ user.reason }}</p>
-
+                        <p>封禁原因：{{ user.reason }}</p>
                     </div>
                     <div class="app-actions">
-                        <button @click="handleShelve(item)" class="action-button">上架</button>
-                        <button @click="handleView(item)" class="action-button">查看</button>
+                        <!-- 只保留一个解除封禁按钮 -->
+                        <button @click="handleUnban(user)" class="action-button">解除封禁</button>
                     </div>
                 </div>
             </div>
+
             <div v-if="section==='userManagement'&&userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
@@ -80,9 +79,17 @@
                         <p>账号注册时间：{{ user.registerTime }}</p>
                     </div>
                     <div class="app-actions">
-                        <button @click="handleShelve(item)" class="action-button">封禁</button>
-                        <button @click="handleView(item)" class="action-button">查看</button>
+                        <button @click="handleBan(user)" class="action-button">封禁</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- 封禁成功弹窗 -->
+            <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
+                <div class="popup-content success-popup" @click.stop>
+                    <h3>封禁成功</h3>
+                    <p>该用户已成功封禁！</p>
+                    <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
             </div>
         </div>
@@ -100,8 +107,42 @@
             <button @click="closePopup" class="popup-close-button">关闭</button>
         </div>
     </div>
-</template>
 
+
+    <!-- 确认弹窗 -->
+    <div v-if="showConfirmPopup" class="popup-overlay" @click="cancelShelve">
+        <div class="popup-content confirm-popup" @click.stop>
+            <h3>确认上架</h3>
+            <p>您确定要上架 {{ appToShelve ? appToShelve.name : '' }} 应用吗？</p>
+            <div class="confirm-buttons">
+                <button @click="confirmShelve" class="popup-confirm-button">确定</button>
+                <button @click="cancelShelve" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="showSuccessPopup" class="popup-overlay" @click="closeSuccessPopup">
+        <div class="popup-content success-popup" @click.stop>
+            <h3>审核成功</h3>
+            <p>应用 {{ appToShelve ? appToShelve.name : '' }} 已成功上架！</p>
+            <button @click="closeSuccessPopup" class="popup-close-button">关闭</button>
+        </div>
+    </div>
+
+    <!-- 封禁确认弹窗 -->
+    <div v-if="showBanConfirmPopup" class="popup-overlay" @click="cancelBan">
+        <div class="popup-content ban-confirm-popup" @click.stop>
+            <h3>确认封禁</h3>
+            <p>请填写封禁理由：</p>
+            <textarea v-model="banReason" rows="4" placeholder="请输入封禁理由"></textarea>
+            <div class="confirm-buttons">
+                <button @click="confirmBan" class="popup-confirm-button">确定封禁</button>
+                <button @click="cancelBan" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
+
+</template>
 
 <script>
     import axios from 'axios';
@@ -117,17 +158,66 @@
                 error: null,
                 userstate: 0,
                 section: null,
-                selectedStatus: '请在右侧选择你要查看的应用状态', // 默认状态
+                selectedStatus: '请在右侧选择你要查看的应用状态',
                 sections: {
                     appManagement: false,
                     userManagement: false,
                     comment: false,
                 },
                 showPopup: false,
+                showConfirmPopup: false,
+                showSuccessPopup: false,
+                showBanConfirmPopup: false,
+                showBanSuccessPopup: false,
                 selectedApp: null,
+                appToShelve: null,
+                selectedUser: null,
+                banReason: '',
+                userToBan: null,
             };
         },
         methods: {
+            handleBan(user) {
+                this.userToBan = user;
+                this.showBanConfirmPopup = true;
+            },
+            confirmBan() {
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('mytoken', token);
+                formData.append('user_id', this.userToBan.id);
+                formData.append('reason', this.banReason);
+
+                axios.post('http://localhost:5118/api/BanUser/banuser', formData)
+                    .then(response => {
+                        this.showBanConfirmPopup = false;
+                        this.banReason = '';
+                        this.userToBan = null;
+                        this.showBanSuccessPopup = true;
+                        this.searchbanuser();
+                    })
+                    .catch(error => {
+                        console.error('封禁失败:', error);
+                        alert('封禁失败，请重试');
+                    });
+            },
+            cancelBan() {
+                this.showBanConfirmPopup = false;
+                this.banReason = '';
+                this.userToBan = null;
+            },
+            closeBanSuccessPopup() {
+                this.showBanSuccessPopup = false;
+            },
+            closeUserPopup() {
+                this.showUserPopup = false;
+                this.selectedUser = null;
+            },
             toggleSection(section) {
                 this.section = section;
                 this.sections[section] = !this.sections[section];
@@ -189,6 +279,11 @@
                     });
             },
             handleShelve(item) {
+                this.appToShelve = item; // 保存要上架的应用信息
+                this.showConfirmPopup = true; // 显示确认弹窗
+            },
+
+            confirmShelve() {
                 const token = Cookies.get('token');
                 if (!token) {
                     alert('未提供 token');
@@ -196,20 +291,28 @@
                 }
 
                 const formData = new FormData();
-                formData.append('Id', item.id);
+                formData.append('Id', this.appToShelve.id);
                 formData.append('token', token);
-
                 axios.post('http://localhost:5118/api/application/confirmrelease', formData)
                     .then(response => {
-                        alert('应用已通过审核');
-                        // 更新列表或执行其他操作
+                        this.showConfirmPopup = false; // 隐藏确认弹窗
+                        this.showSuccessPopup = true; // 显示成功弹窗
                         this.fetchData('http://localhost:5118/api/application/selectseleasing');
                     })
                     .catch(error => {
                         console.error('审核失败:', error);
                         alert('审核失败，请重试');
+                    })
+                    .finally(() => {
+                        this.appToShelve = null; // 清除应用信息
                     });
             },
+
+            cancelShelve() {
+                this.showConfirmPopup = false; // 取消上架操作，隐藏确认弹窗
+                this.appToShelve = null; // 清除应用信息
+            },
+
             showDetails(item) {
                 this.selectedApp = item;
                 this.showPopup = true;
@@ -217,13 +320,104 @@
             closePopup() {
                 this.showPopup = false;
                 this.selectedApp = null;
+            },
+            closeSuccessPopup() {
+                this.showSuccessPopup = false;
+                this.appToShelve = null;
             }
         }
     };
 </script>
 
+
 <style scoped>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    .ban-confirm-popup {
+        max-width: 400px;
+        padding: 20px;
+    }
+
+        .ban-confirm-popup textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+    .confirm-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .popup-confirm-button, .popup-cancel-button {
+        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .popup-confirm-button:hover {
+            background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+            transform: scale(1.05);
+        }
+
+    .popup-cancel-button {
+        background: linear-gradient(135deg, #f44336, #e53935);
+    }
+
+        .popup-cancel-button:hover {
+            background: linear-gradient(135deg, #e53935, #f44336);
+            transform: scale(1.05);
+        }
+
+    .user-popup {
+        max-width: 400px;
+        padding: 20px;
+        background-color: #fff;
+        color: #333;
+    }
+
+    .user-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: block;
+        margin: 0 auto 10px;
+    }
+
+    .user-popup h3, .user-popup p {
+        margin: 10px 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .user-popup .popup-close-button {
+        background-color: #6a1b9a;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        margin-top: 15px;
+    }
+
+        .user-popup .popup-close-button:hover {
+            background-color: #4a0072;
+        }
 
     .main-layout {
         display: flex;
@@ -344,9 +538,11 @@
 
     .app-actions {
         display: flex;
+        justify-content: flex-end;
         gap: 12px;
     }
 
+    /* 按钮样式更新 */
     .action-button {
         background-color: #6a1b9a;
         color: #fff;
@@ -358,6 +554,7 @@
         font-size: 14px;
         transition: background-color 0.3s ease, transform 0.2s ease;
         font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
         .action-button:hover {
@@ -454,4 +651,88 @@
             transform: scale(1);
         }
     }
+
+    .confirm-popup {
+        max-width: 400px;
+        padding: 20px;
+    }
+
+    .confirm-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .popup-confirm-button, .popup-cancel-button {
+        background: linear-gradient(135deg, #6a1b9a, #9c27b0); /* 渐变背景 */
+        color: #fff;
+        border: none;
+        border-radius: 12px; /* 更圆润的边框 */
+        padding: 12px 24px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px; /* 增加字体大小 */
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影 */
+    }
+
+    .popup-confirm-button {
+        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+    }
+
+    .popup-cancel-button {
+        background: linear-gradient(135deg, #f44336, #e53935); /* 红色渐变背景 */
+    }
+
+        .popup-confirm-button:hover, .popup-cancel-button:hover {
+            background: linear-gradient(135deg, #9c27b0, #6a1b9a); /* 悬停时反转渐变 */
+            transform: scale(1.05); /* 缩放动画 */
+        }
+
+        .popup-confirm-button:active, .popup-cancel-button:active {
+            transform: scale(0.98); /* 按下时缩小效果 */
+        }
+
+    .success-popup {
+        max-width: 400px;
+        padding: 20px;
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+        .success-popup h3 {
+            color: #155724;
+        }
+
+        .success-popup p {
+            color: #155724;
+        }
+
+    .popup-close-button {
+        background-color: #6a1b9a;
+        color: #fff;
+    }
+
+        .popup-close-button:hover {
+            background-color: #4a0072;
+        }
+
+    .user-header {
+        margin-bottom: 15px;
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+    }
+
+        .user-header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #6a1b9a; /* 紫色标题 */
+        }
+
+        .user-header p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #555; /* 暗灰色字体 */
+        }
 </style>
