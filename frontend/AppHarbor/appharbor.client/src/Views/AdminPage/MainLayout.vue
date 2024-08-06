@@ -87,8 +87,17 @@
             <!-- 封禁成功弹窗 -->
             <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
                 <div class="popup-content success-popup" @click.stop>
-                    <h3>封禁成功</h3>
-                    <p>该用户已成功封禁！</p>
+                    <h3>成功封禁</h3>
+                    <p>管理员操作成功！</p>
+                    <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
+                </div>
+            </div>
+
+            <!-- 封禁解除成功弹窗 -->
+            <div v-if="showUnBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
+                <div class="popup-content success-popup" @click.stop>
+                    <h3>成功解除封禁</h3>
+                    <p>管理员操作成功！</p>
                     <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
             </div>
@@ -142,6 +151,18 @@
         </div>
     </div>
 
+    <!-- 封禁解除确认弹窗 -->
+    <div v-if="showUnbanConfirmPopup" class="popup-overlay" @click="cancelUnban">
+        <div class="popup-content unban-confirm-popup" @click.stop>
+            <h3>确认解除封禁</h3>
+            <p>您确定要解除用户 {{ userToUnban ? userToUnban.userId : '' }} 的封禁吗？</p>
+            <div class="confirm-buttons">
+                <button @click="confirmUnban" class="popup-confirm-button">确定</button>
+                <button @click="cancelUnban" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
+
 </template>
 
 <script>
@@ -172,11 +193,46 @@
                 selectedApp: null,
                 appToShelve: null,
                 selectedUser: null,
+
                 banReason: '',
                 userToBan: null,
+
+                userToUnban: null,
+                showUnbanConfirmPopup: false,
             };
         },
         methods: {
+            handleUnban(user) {
+                this.userToUnban = user;
+                this.showUnbanConfirmPopup = true;
+            },
+            confirmUnban() {
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('mytoken', token);
+                formData.append('user_id', this.userToUnban.userId); // 确保传递正确的用户 ID
+
+                axios.post('http://localhost:5118/api/BanUser/unbanuser', formData)
+                    .then(response => {
+                        this.showUnbanConfirmPopup = false;
+                        this.userToUnban = null;
+                        this.showBanSuccessPopup = true;
+                        this.searchbanuser();
+                    })
+                    .catch(error => {
+                        console.error('解除封禁失败:', error);
+                        alert('解除封禁失败，请重试');
+                    });
+            },
+            cancelUnban() {
+                this.showUnbanConfirmPopup = false;
+                this.userToUnban = null;
+            },
             handleBan(user) {
                 this.userToBan = user;
                 this.showBanConfirmPopup = true;
