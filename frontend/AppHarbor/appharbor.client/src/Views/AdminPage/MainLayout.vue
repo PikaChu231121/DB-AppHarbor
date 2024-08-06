@@ -1,4 +1,5 @@
 <template>
+    <BanAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
     <div class="main-layout">
         <div class="sidebar">
             <div @click="toggleSection('appManagement')" class="menu-item section-header">
@@ -60,7 +61,7 @@
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
                         <h3>用户ID：{{ user.userId }}</h3>
-                        <p>封禁操作执行ID：{{ user.adminId }}</p>
+                        <p>封禁操作执行管理员ID：{{ user.adminId }}</p>
                         <p>封禁时间：{{ user.time }}</p>
                         <p>封禁原因：{{ user.reason }}</p>
                     </div>
@@ -168,11 +169,17 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import BanAlert from './BanAlert.vue';
 
     export default {
         name: "MainLayout",
+        components: {
+            BanAlert,
+        },
         data() {
             return {
+                alertMessage: '',
+
                 items: [],
                 users: [],
                 loading: false,
@@ -259,7 +266,8 @@
                     })
                     .catch(error => {
                         console.error('封禁失败:', error);
-                        alert('封禁失败，请重试');
+                        //this.alertMessage = '请输入封禁理由';
+                        alert('请输入封禁理由');
                     });
             },
             cancelBan() {
