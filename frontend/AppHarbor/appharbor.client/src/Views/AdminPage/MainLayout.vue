@@ -75,11 +75,21 @@
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
                         <h3>用户ID：{{ user.id }}</h3>
+                        <p>用户昵称：{{ user.nickname }}</p>
+                        <p>账号注册时间：{{ user.registerTime }}</p>
                     </div>
                     <div class="app-actions">
-                        <button @click="handleShelve(item)" class="action-button">封禁</button>
-                        <button @click="showUserDetails(user)" class="action-button">查看</button>
+                        <button @click="handleBan(user)" class="action-button">封禁</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- 封禁成功弹窗 -->
+            <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
+                <div class="popup-content success-popup" @click.stop>
+                    <h3>封禁成功</h3>
+                    <p>该用户已成功封禁！</p>
+                    <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
             </div>
         </div>
@@ -119,13 +129,16 @@
         </div>
     </div>
 
-    <!-- 用户详情弹窗 -->
-    <div v-if="showUserPopup" class="popup-overlay" @click="closeUserPopup">
-        <div class="popup-content user-popup" @click.stop>
-            <h3>用户ID：{{ selectedUser.id }}</h3>
-            <p>用户昵称：{{ selectedUser.nickname }}</p>
-            <p>账号注册时间：{{ selectedUser.registerTime }}</p>
-            <button @click="closeUserPopup" class="popup-close-button">关闭</button>
+    <!-- 封禁确认弹窗 -->
+    <div v-if="showBanConfirmPopup" class="popup-overlay" @click="cancelBan">
+        <div class="popup-content ban-confirm-popup" @click.stop>
+            <h3>确认封禁</h3>
+            <p>请填写封禁理由：</p>
+            <textarea v-model="banReason" rows="4" placeholder="请输入封禁理由"></textarea>
+            <div class="confirm-buttons">
+                <button @click="confirmBan" class="popup-confirm-button">确定封禁</button>
+                <button @click="cancelBan" class="popup-cancel-button">取消</button>
+            </div>
         </div>
     </div>
 
@@ -153,17 +166,53 @@
                 },
                 showPopup: false,
                 showConfirmPopup: false,
-                showSuccessPopup: false, // 新增
+                showSuccessPopup: false,
+                showBanConfirmPopup: false,
+                showBanSuccessPopup: false,
                 selectedApp: null,
-                appToShelve: null, // 新增
+                appToShelve: null,
                 selectedUser: null,
-                showUserPopup: false,
+                banReason: '',
+                userToBan: null,
             };
         },
         methods: {
-            showUserDetails(user) {
-                this.selectedUser = user;
-                this.showUserPopup = true;
+            handleBan(user) {
+                this.userToBan = user;
+                this.showBanConfirmPopup = true;
+            },
+            confirmBan() {
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('mytoken', token);
+                formData.append('user_id', this.userToBan.id);
+                formData.append('reason', this.banReason);
+
+                axios.post('http://localhost:5118/api/BanUser/banuser', formData)
+                    .then(response => {
+                        this.showBanConfirmPopup = false;
+                        this.banReason = '';
+                        this.userToBan = null;
+                        this.showBanSuccessPopup = true;
+                        this.searchbanuser();
+                    })
+                    .catch(error => {
+                        console.error('封禁失败:', error);
+                        alert('封禁失败，请重试');
+                    });
+            },
+            cancelBan() {
+                this.showBanConfirmPopup = false;
+                this.banReason = '';
+                this.userToBan = null;
+            },
+            closeBanSuccessPopup() {
+                this.showBanSuccessPopup = false;
             },
             closeUserPopup() {
                 this.showUserPopup = false;
@@ -280,6 +329,55 @@
 
 <style scoped>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    .ban-confirm-popup {
+        max-width: 400px;
+        padding: 20px;
+    }
+
+        .ban-confirm-popup textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+    .confirm-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .popup-confirm-button, .popup-cancel-button {
+        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .popup-confirm-button:hover {
+            background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+            transform: scale(1.05);
+        }
+
+    .popup-cancel-button {
+        background: linear-gradient(135deg, #f44336, #e53935);
+    }
+
+        .popup-cancel-button:hover {
+            background: linear-gradient(135deg, #e53935, #f44336);
+            transform: scale(1.05);
+        }
 
     .user-popup {
         max-width: 400px;
