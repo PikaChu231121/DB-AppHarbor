@@ -9,10 +9,10 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '待审核应用' }"
-                         @click="selectseleasing">待审核</div>
+                         @click="selectseleasing();changeSection('appManagement')">待审核</div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '已审核应用' }"
-                         @click="selectseleased">已审核</div>
+                         @click="selectseleased();changeSection('appManagement')">已审核</div>
                 </div>
             </div>
 
@@ -23,10 +23,10 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '封禁用户' }"
-                         @click="searchbanuser">封禁用户</div>
+                         @click="searchbanuser();changeSection('userManagement')">封禁用户</div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '活跃用户' }"
-                         @click="searchunbanuser">活跃用户</div>
+                         @click="searchunbanuser();changeSection('userManagement')">活跃用户</div>
                 </div>
             </div>
 
@@ -34,7 +34,14 @@
                 商家管理
             </div>
             <div v-show="sections.merchant" class="section-content">
-                <!-- 商家相关内容 -->
+                <div class="menu">
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '封禁商家' }"
+                         @click="searchbanmerchant();changeSection('MerManagement')">封禁商家</div>
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '活跃商家' }"
+                         @click="searchunbanMerchant();changeSection('MerManagement')">活跃商家</div>
+                </div>
             </div>
 
             <div @click="toggleSection('comment')" class="menu-item section-header">
@@ -52,7 +59,12 @@
             </div>
         </div>
 
+
+
+
+
         <div class="main-content">
+            <!--应用-->
             <div v-if="loading" class="loading">加载中...</div>
             <div v-if="error" class="error">加载失败: {{ error.message }}</div>
             <div v-if="!loading && !error" class="status-display">
@@ -70,6 +82,7 @@
                 </div>
             </div>
 
+            <!--用户-->
             <div v-if="section==='userManagement' && !userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
@@ -97,6 +110,42 @@
                     </div>
                 </div>
             </div>
+
+            <!--商家-->
+            <div v-if="section==='MerManagement' && !merstate" class="app-list">
+                <div v-for="mer in mers" :key="mer.id" class="app-item">
+                    <div class="user-header">
+                        <h3>商家ID：{{ mer.userId}}</h3>
+                        <p>封禁操作执行管理员ID：{{ mer.adminId }}</p>
+                        <p>封禁时间：{{ mer.time }}</p>
+                        <p>封禁原因：{{ mer.reason }}</p>
+                    </div>
+                    <div class="app-actions">
+                        <!-- 只保留一个解除封禁按钮 -->
+                        <button @click="handleUnban(user)" class="action-button">解除封禁</button>
+                    </div>
+                </div>
+            </div>
+            <div v-if="section==='MerManagement'&&merstate" class="app-list">
+                <div v-for="mer in mers" :key="mer.id" class="app-item">
+                    <div class="user-header">
+                        <h3>用户ID：{{ mer.id }}</h3>
+                        <p>用户昵称：{{ mer.nickname }}</p>
+                        <p>账号注册时间：{{ mer.registerTime }}</p>
+                    </div>
+                    <div class="app-actions">
+                        <button @click="handleBan(user)" class="action-button">封禁</button>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
 
             <!-- 封禁成功弹窗 -->
             <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
@@ -195,9 +244,11 @@
 
                 items: [],
                 users: [],
+                mers:[],
                 loading: false,
                 error: null,
                 userstate: 0,
+                merstate:0,
                 section: null,
                 selectedStatus: '请在右侧选择你要查看的应用状态',
                 sections: {
@@ -299,6 +350,9 @@
                 this.section = section;
                 this.sections[section] = !this.sections[section];
             },
+            changeSection(section) {
+                this.section = section;
+            },
             selectseleasing() {
                 this.selectedStatus = '待审核应用';
                 this.fetchData('http://localhost:5118/api/application/selectseleasing');
@@ -330,6 +384,35 @@
                 axios.post('http://localhost:5118/api/user/searchunbanuser')
                     .then(response => {
                         this.users = response.data.$values;
+                    })
+                    .catch(error => {
+                        this.error = error;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            },
+            searchbanmerchant() {
+                this.selectedStatus = '封禁商家';
+                this.merstate = 0;
+                axios.post('http://localhost:5118/api/banmerchant/searchbanmerchant')
+                    .then(response => {
+                        this.mers = response.data;
+                    })
+                    .catch(error => {
+                        this.error = error;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            },
+            searchunbanMerchant() {
+                this.selectedStatus = '活跃商家';
+                this.merstate = 1;
+                axios.post('http://localhost:5118/api/merchant/searchunbanmerchant')
+                    .then(response => {
+                        this.mers = response.data.$values;
+                        console.log(this.mers);
                     })
                     .catch(error => {
                         this.error = error;
