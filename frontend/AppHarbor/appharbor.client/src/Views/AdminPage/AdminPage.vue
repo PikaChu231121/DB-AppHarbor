@@ -1,5 +1,5 @@
 <template>
-    <img src="@/assets/admin.png">
+    <img class="background-image" src="@/assets/admin.png">
     <div class="admin-page">
         <Header />
         <MainLayout />
@@ -27,10 +27,17 @@
         width: 100%;
         margin: 0;
         padding: 0;
-        background-image: url('~@/assets/admin.png');
+    }
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('@/assets/admin.png');
         background-size: cover;
         background-position: center;
-        z-index: 9999;
+        z-index: -1; /* È·±£±³¾°Í¼Æ¬ÔÚµ×²ã */
     }
 
     header {
