@@ -129,12 +129,12 @@
             <div v-if="section==='MerManagement'&&merstate" class="app-list">
                 <div v-for="mer in mers" :key="mer.id" class="app-item">
                     <div class="user-header">
-                        <h3>用户ID：{{ mer.id }}</h3>
-                        <p>用户昵称：{{ mer.nickname }}</p>
-                        <p>账号注册时间：{{ mer.registerTime }}</p>
+                        <h3>商家ID：{{ mer.id }}</h3>
+                        <p>商家昵称：{{ mer.nickname }}</p>
+                        <p>商家注册时间：{{ mer.registerTime }}</p>
                     </div>
                     <div class="app-actions">
-                        <button @click="handleBan(user)" class="action-button">封禁</button>
+                        <button @click="handleMerBan(mer)" class="action-button">封禁</button>
                     </div>
                 </div>
             </div>
@@ -226,6 +226,18 @@
         </div>
     </div>
 
+    <!-- 封禁商家确认弹窗 -->
+    <div v-if="showMerBanConfirmPopup" class="popup-overlay" @click="cancelMerBan">
+        <div class="popup-content ban-confirm-popup" @click.stop>
+            <h3>确认封禁商家</h3>
+            <p>请填写封禁理由：</p>
+            <textarea v-model="merBanReason" rows="4" placeholder="请输入封禁理由"></textarea>
+            <div class="confirm-buttons">
+                <button @click="confirmMerBan" class="popup-confirm-button">确定封禁</button>
+                <button @click="cancelMerBan" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -244,35 +256,71 @@
 
                 items: [],
                 users: [],
-                mers:[],
+                mers: [],
                 loading: false,
                 error: null,
                 userstate: 0,
-                merstate:0,
+                merstate: 0,
                 section: null,
                 selectedStatus: '请在右侧选择你要查看的应用状态',
                 sections: {
                     appManagement: false,
                     userManagement: false,
                     comment: false,
+                    merchant: false
                 },
                 showPopup: false,
                 showConfirmPopup: false,
                 showSuccessPopup: false,
                 showBanConfirmPopup: false,
                 showBanSuccessPopup: false,
+                showUnbanConfirmPopup: false,
+                showMerBanConfirmPopup: false,
                 selectedApp: null,
                 appToShelve: null,
                 selectedUser: null,
-
-                banReason: '',
-                userToBan: null,
+                merToBan: null,
+                merBanReason: '',
 
                 userToUnban: null,
                 showUnbanConfirmPopup: false,
             };
         },
         methods: {
+            handleMerBan(merchant) {
+                this.merToBan = merchant;
+                this.showMerBanConfirmPopup = true;
+            },
+            confirmMerBan() {
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('mytoken', token);
+                formData.append('merchant_id', this.merToBan.id);
+                formData.append('reason', this.merBanReason);
+
+                axios.post('http://localhost:5118/api/BanMerchant/banmerchant', formData)
+                    .then(response => {
+                        this.showMerBanConfirmPopup = false;
+                        this.merBanReason = '';
+                        this.merToBan = null;
+                        this.showBanSuccessPopup = true;
+                        this.searchbanmerchant();
+                    })
+                    .catch(error => {
+                        console.error('封禁商家失败:', error);
+                        alert('封禁商家失败，请重试');
+                    });
+            },
+            cancelMerBan() {
+                this.showMerBanConfirmPopup = false;
+                this.merBanReason = '';
+                this.merToBan = null;
+            },
             handleUnban(user) {
                 this.userToUnban = user;
                 this.showUnbanConfirmPopup = true;
