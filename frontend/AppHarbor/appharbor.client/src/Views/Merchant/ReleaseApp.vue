@@ -1,6 +1,6 @@
 <template>
     <div class="release-app">
-        <h2>发布应用</h2>
+        <h1>发布应用</h1>
         <div class="form-container">
             <div class="form-column">
                 <div class="form-group">
@@ -138,11 +138,10 @@ export default {
     font-size: 16px;
 }
 
-.release-app h2 {
+.release-app h1 {
     margin-bottom: 20px;
     color: #1976d2;
     /* 更改字体颜色为蓝色调 */
-    text-align: center;
 }
 
 .form-container {

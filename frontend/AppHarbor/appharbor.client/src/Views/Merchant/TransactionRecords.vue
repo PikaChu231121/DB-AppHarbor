@@ -174,16 +174,21 @@ export default {
   flex-direction: column;
   background-color: #f0f9ff;
   /* 更改背景色为浅蓝色 */
-  padding: 10px;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
-  margin: 10px auto;
+  margin: 0 auto;
   font-family: 'Baloo 2', cursive, Arial, sans-serif;
   font-size: 16px;
   color: #333;
   min-height: 90vh;
+  max-height: 93vh;
   justify-content: space-between;
+}
+
+h1 {
+  color: #1976d2;
 }
 
 .search-bar {
@@ -266,6 +271,7 @@ td {
   border: 1px solid #ddd;
   border-left: none;
   border-right: none;
+  text-align: center;
 }
 
 td .date {
