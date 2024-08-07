@@ -59,10 +59,6 @@
             </div>
         </div>
 
-
-
-
-
         <div class="main-content">
             <!--应用-->
             <div v-if="loading" class="loading">加载中...</div>
@@ -138,14 +134,6 @@
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
-
 
             <!-- 封禁成功弹窗 -->
             <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
@@ -581,5 +569,4 @@
 
 <style scoped>
     @import './MainLayout.css';
-
 </style>
