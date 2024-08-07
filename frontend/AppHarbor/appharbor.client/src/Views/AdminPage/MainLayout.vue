@@ -82,7 +82,8 @@
             <div v-if="section==='userManagement' && !userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
-                        <h3>用户ID：{{ user.userId }}</h3>
+                        <h3>用户昵称：{{ user.nickname }}</h3>
+                        <p>用户ID：{{ user.userId }}</p>
                         <p>封禁操作执行管理员ID：{{ user.adminId }}</p>
                         <p>封禁时间：{{ user.time }}</p>
                         <p>封禁原因：{{ user.reason }}</p>
@@ -97,7 +98,8 @@
             <div v-if="section==='userManagement'&&userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
-                        <h3>用户ID：{{ user.id }}</h3>
+                        <h3>用户昵称：{{ user.nickname }}</h3>
+                        <p>用户ID：{{ user.id }}</p>
                         <p>用户昵称：{{ user.nickname }}</p>
                         <p>账号注册时间：{{ user.registerTime }}</p>
                     </div>
@@ -111,7 +113,8 @@
             <div v-if="section==='MerManagement' && !merstate" class="app-list">
                 <div v-for="mer in mers" :key="mer.id" class="app-item">
                     <div class="user-header">
-                        <h3>商家ID：{{ mer.userId}}</h3>
+                        <h3>商家昵称：{{ mer.merchantNickname }}</h3>
+                        <p>商家ID：{{ mer.userId}}</p>
                         <p>封禁操作执行管理员ID：{{ mer.adminId }}</p>
                         <p>封禁时间：{{ mer.time }}</p>
                         <p>封禁原因：{{ mer.reason }}</p>
@@ -125,7 +128,8 @@
             <div v-if="section==='MerManagement'&&merstate" class="app-list">
                 <div v-for="mer in mers" :key="mer.id" class="app-item">
                     <div class="user-header">
-                        <h3>商家ID：{{ mer.id }}</h3>
+                        <h3>商家昵称：{{ mer.nickname }}</h3>
+                        <p>商家ID：{{ mer.id }}</p>
                         <p>商家昵称：{{ mer.nickname }}</p>
                         <p>商家注册时间：{{ mer.registerTime }}</p>
                     </div>
@@ -138,8 +142,8 @@
             <!-- 封禁成功弹窗 -->
             <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
                 <div class="popup-content success-popup" @click.stop>
-                    <h3>成功封禁</h3>
-                    <p>管理员操作成功！</p>
+                    <h3>成功执行</h3>
+                    <p>管理员权限操作成功！</p>
                     <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
             </div>
@@ -147,8 +151,8 @@
             <!-- 封禁解除成功弹窗 -->
             <div v-if="showUnBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
                 <div class="popup-content success-popup" @click.stop>
-                    <h3>成功解除封禁</h3>
-                    <p>管理员操作成功！</p>
+                    <h3>成功执行</h3>
+                    <p>管理员权限操作成功！</p>
                     <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
             </div>
@@ -183,8 +187,8 @@
 
     <div v-if="showSuccessPopup" class="popup-overlay" @click="closeSuccessPopup">
         <div class="popup-content success-popup" @click.stop>
-            <h3>审核成功</h3>
-            <p>应用 {{ appToShelve ? appToShelve.name : '' }} 已成功上架！</p>
+            <h3>管理员审核成功</h3>
+            <p>该应用已成功上架！</p>
             <button @click="closeSuccessPopup" class="popup-close-button">关闭</button>
         </div>
     </div>
@@ -192,7 +196,7 @@
     <!-- 封禁确认弹窗 -->
     <div v-if="showBanConfirmPopup" class="popup-overlay" @click="cancelBan">
         <div class="popup-content ban-confirm-popup" @click.stop>
-            <h3>确认封禁</h3>
+            <h3>确认封禁&nbsp;{{ userToBan ? userToBan.nickname : '' }}</h3>
             <p>请填写封禁理由：</p>
             <textarea v-model="banReason" rows="4" placeholder="请输入封禁理由"></textarea>
             <div class="confirm-buttons">
@@ -205,8 +209,8 @@
     <!-- 封禁解除确认弹窗 -->
     <div v-if="showUnbanConfirmPopup" class="popup-overlay" @click="cancelUnban">
         <div class="popup-content unban-confirm-popup" @click.stop>
-            <h3>确认解除封禁</h3>
-            <p>您确定要解除用户 {{ userToUnban ? userToUnban.userId : '' }} 的封禁吗？</p>
+            <h3>确认解除封禁&nbsp;{{ userToUnban ? userToUnban.nickname : '' }}</h3>
+            <p>您确定要解除用户 {{ userToUnban ? userToUnban.nickname : '' }} 的封禁吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmUnban" class="popup-confirm-button">确定</button>
                 <button @click="cancelUnban" class="popup-cancel-button">取消</button>
@@ -217,7 +221,7 @@
     <!-- 封禁商家确认弹窗 -->
     <div v-if="showMerBanConfirmPopup" class="popup-overlay" @click="cancelMerBan">
         <div class="popup-content ban-confirm-popup" @click.stop>
-            <h3>确认封禁商家</h3>
+            <h3>确认封禁商家&nbsp;{{ merToBan ? merToBan.nickname : '' }}</h3>
             <p>请填写封禁理由：</p>
             <textarea v-model="merBanReason" rows="4" placeholder="请输入封禁理由"></textarea>
             <div class="confirm-buttons">
@@ -230,8 +234,8 @@
     <!-- 封禁解除确认弹窗 -->
     <div v-if="showMerUnbanConfirmPopup" class="popup-overlay" @click="cancelMerUnban">
         <div class="popup-content unban-confirm-popup" @click.stop>
-            <h3>确认解除封禁</h3>
-            <p>您确定要解除商家 {{ merToUnban ? merToUnban.userId : '' }} 的封禁吗？</p>
+            <h3>确认解除封禁&nbsp;{{ merToUnban ? merToUnban.merchantNickname : '' }}</h3>
+            <p>您确定要解除商家 {{ merToUnban ? merToUnban.merchantNickname : '' }} 的封禁吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmMerUnban" class="popup-confirm-button">确定</button>
                 <button @click="cancelMerUnban" class="popup-cancel-button">取消</button>
