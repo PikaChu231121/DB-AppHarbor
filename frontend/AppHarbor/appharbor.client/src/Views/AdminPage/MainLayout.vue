@@ -122,7 +122,7 @@
                     </div>
                     <div class="app-actions">
                         <!-- 只保留一个解除封禁按钮 -->
-                        <button @click="handleUnban(user)" class="action-button">解除封禁</button>
+                        <button @click="handleMerUnban(mer)" class="action-button">解除封禁</button>
                     </div>
                 </div>
             </div>
@@ -238,6 +238,18 @@
             </div>
         </div>
     </div>
+
+    <!-- 封禁解除确认弹窗 -->
+    <div v-if="showMerUnbanConfirmPopup" class="popup-overlay" @click="cancelMerUnban">
+        <div class="popup-content unban-confirm-popup" @click.stop>
+            <h3>确认解除封禁</h3>
+            <p>您确定要解除商家 {{ merToUnban ? merToUnban.userId : '' }} 的封禁吗？</p>
+            <div class="confirm-buttons">
+                <button @click="confirmMerUnban" class="popup-confirm-button">确定</button>
+                <button @click="cancelMerUnban" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -284,9 +296,42 @@
 
                 userToUnban: null,
                 showUnbanConfirmPopup: false,
+                showMerUnbanConfirmPopup: false,
+                merToUnban: null,
             };
         },
         methods: {
+            handleMerUnban(merchant) {
+                this.merToUnban = merchant;
+                this.showMerUnbanConfirmPopup = true;
+            },
+            confirmMerUnban() {
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('mytoken', token);
+                formData.append('merchant_id', this.merToUnban.userId);
+
+                axios.post('http://localhost:5118/api/BanMerchant/unbanmerchant', formData)
+                    .then(response => {
+                        this.showMerUnbanConfirmPopup = false;
+                        this.merToUnban = null;
+                        this.showBanSuccessPopup = true;
+                        this.searchbanmerchant();
+                    })
+                    .catch(error => {
+                        console.error('解除封禁商家失败:', error);
+                        alert('解除封禁商家失败，请重试');
+                    });
+            },
+            cancelMerUnban() {
+                this.showMerUnbanConfirmPopup = false;
+                this.merToUnban = null;
+            },
             handleMerBan(merchant) {
                 this.merToBan = merchant;
                 this.showMerBanConfirmPopup = true;
