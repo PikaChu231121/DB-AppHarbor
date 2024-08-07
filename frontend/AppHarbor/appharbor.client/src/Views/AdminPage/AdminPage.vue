@@ -23,25 +23,22 @@
     .admin-page {
         display: flex;
         flex-direction: column;
-        height: 85vh; /* 调整后的高度 */
-        width: 100%; /* 视口宽度的全部 */
+        height: 85vh;
+        width: 100%;
         margin: 0;
         padding: 0;
-        /* 使用相对路径 */
-        background-image: url('../../assets/admin.png');
-        /* 使用绝对路径 */
-        background-image: url('~@/assets/admin.png'); /* Webpack 别名 */
-        /* 如果直接引用可以工作，尝试相对于根目录的路径 */
-        background-image: url('/src/assets/admin.png');
+        background-image: url('~@/assets/admin.png');
+        background-size: cover;
+        background-position: center;
+        z-index: 9999;
     }
 
     header {
-        /* 如有需要，调整头部的高度 */
-        flex-shrink: 0; /* 防止头部收缩 */
+        flex-shrink: 0; 
     }
 
     main {
-        flex-grow: 1; /* 允许 MainLayout 填充剩余空间 */
-        overflow: hidden; /* 防止溢出问题 */
+        flex-grow: 1; 
+        overflow: hidden;
     }
 </style>
