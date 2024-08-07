@@ -1,4 +1,5 @@
 <template>
+    <img src="@/assets/admin.png">
     <div class="admin-page">
         <Header />
         <MainLayout />
@@ -26,6 +27,12 @@
         width: 100%; /* 视口宽度的全部 */
         margin: 0;
         padding: 0;
+        /* 使用相对路径 */
+        background-image: url('../../assets/admin.png');
+        /* 使用绝对路径 */
+        background-image: url('~@/assets/admin.png'); /* Webpack 别名 */
+        /* 如果直接引用可以工作，尝试相对于根目录的路径 */
+        background-image: url('/src/assets/admin.png');
     }
 
     header {
