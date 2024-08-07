@@ -71,10 +71,19 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("unbanuser")]
         public IActionResult Unbanuser([FromForm] string mytoken, [FromForm] decimal user_id)
         {
-            var tokenEntity = _dbContext.TokenIds.SingleOrDefault(token => token.Token == mytoken);
-            if (tokenEntity == null)
+            //获得管理员id
+            var query = from token in _dbContext.TokenIds
+                        where mytoken == token.Token
+                        select new
+                        {
+                            token = token.Token,
+                            id = token.Id,
+                        };
+
+            var resultList = query.ToList();
+            if (resultList.Count != 1)
             {
-                return Unauthorized("无效的管理员");
+                return NotFound("user more than one");
             }
 
             // 检查用户是否被封禁

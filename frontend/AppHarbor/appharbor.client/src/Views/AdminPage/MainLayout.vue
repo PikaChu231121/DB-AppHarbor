@@ -1,4 +1,5 @@
 <template>
+    <BanAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
     <div class="main-layout">
         <div class="sidebar">
             <div @click="toggleSection('appManagement')" class="menu-item section-header">
@@ -29,12 +30,25 @@
                 </div>
             </div>
 
+            <div @click="toggleSection('merchant')" class="menu-item section-header">
+                商家管理
+            </div>
+            <div v-show="sections.merchant" class="section-content">
+                <!-- 商家相关内容 -->
+            </div>
 
             <div @click="toggleSection('comment')" class="menu-item section-header">
-                评论
+                评论管理
             </div>
             <div v-show="sections.comment" class="section-content">
                 <!-- 评论相关内容 -->
+            </div>
+
+            <div @click="toggleSection('anouncement')" class="menu-item section-header">
+                通知管理
+            </div>
+            <div v-show="sections.anouncement" class="section-content">
+                <!-- 通知相关内容 -->
             </div>
         </div>
 
@@ -60,7 +74,7 @@
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
                         <h3>用户ID：{{ user.userId }}</h3>
-                        <p>封禁操作执行ID：{{ user.adminId }}</p>
+                        <p>封禁操作执行管理员ID：{{ user.adminId }}</p>
                         <p>封禁时间：{{ user.time }}</p>
                         <p>封禁原因：{{ user.reason }}</p>
                     </div>
@@ -87,8 +101,17 @@
             <!-- 封禁成功弹窗 -->
             <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
                 <div class="popup-content success-popup" @click.stop>
-                    <h3>封禁成功</h3>
-                    <p>该用户已成功封禁！</p>
+                    <h3>成功封禁</h3>
+                    <p>管理员操作成功！</p>
+                    <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
+                </div>
+            </div>
+
+            <!-- 封禁解除成功弹窗 -->
+            <div v-if="showUnBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
+                <div class="popup-content success-popup" @click.stop>
+                    <h3>成功解除封禁</h3>
+                    <p>管理员操作成功！</p>
                     <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
             </div>
@@ -142,16 +165,34 @@
         </div>
     </div>
 
+    <!-- 封禁解除确认弹窗 -->
+    <div v-if="showUnbanConfirmPopup" class="popup-overlay" @click="cancelUnban">
+        <div class="popup-content unban-confirm-popup" @click.stop>
+            <h3>确认解除封禁</h3>
+            <p>您确定要解除用户 {{ userToUnban ? userToUnban.userId : '' }} 的封禁吗？</p>
+            <div class="confirm-buttons">
+                <button @click="confirmUnban" class="popup-confirm-button">确定</button>
+                <button @click="cancelUnban" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
+
 </template>
 
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import BanAlert from './BanAlert.vue';
 
     export default {
         name: "MainLayout",
+        components: {
+            BanAlert,
+        },
         data() {
             return {
+                alertMessage: '',
+
                 items: [],
                 users: [],
                 loading: false,
@@ -172,11 +213,46 @@
                 selectedApp: null,
                 appToShelve: null,
                 selectedUser: null,
+
                 banReason: '',
                 userToBan: null,
+
+                userToUnban: null,
+                showUnbanConfirmPopup: false,
             };
         },
         methods: {
+            handleUnban(user) {
+                this.userToUnban = user;
+                this.showUnbanConfirmPopup = true;
+            },
+            confirmUnban() {
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('mytoken', token);
+                formData.append('user_id', this.userToUnban.userId); // 确保传递正确的用户 ID
+
+                axios.post('http://localhost:5118/api/BanUser/unbanuser', formData)
+                    .then(response => {
+                        this.showUnbanConfirmPopup = false;
+                        this.userToUnban = null;
+                        this.showBanSuccessPopup = true;
+                        this.searchbanuser();
+                    })
+                    .catch(error => {
+                        console.error('解除封禁失败:', error);
+                        alert('解除封禁失败，请重试');
+                    });
+            },
+            cancelUnban() {
+                this.showUnbanConfirmPopup = false;
+                this.userToUnban = null;
+            },
             handleBan(user) {
                 this.userToBan = user;
                 this.showBanConfirmPopup = true;
@@ -203,7 +279,8 @@
                     })
                     .catch(error => {
                         console.error('封禁失败:', error);
-                        alert('封禁失败，请重试');
+                        //this.alertMessage = '请输入封禁理由';
+                        alert('请输入封禁理由');
                     });
             },
             cancelBan() {
@@ -329,410 +406,7 @@
     };
 </script>
 
-
 <style scoped>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    @import './MainLayout.css';
 
-    .ban-confirm-popup {
-        max-width: 400px;
-        padding: 20px;
-    }
-
-        .ban-confirm-popup textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-    .confirm-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .popup-confirm-button, .popup-cancel-button {
-        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 12px 24px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px;
-        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-        .popup-confirm-button:hover {
-            background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-            transform: scale(1.05);
-        }
-
-    .popup-cancel-button {
-        background: linear-gradient(135deg, #f44336, #e53935);
-    }
-
-        .popup-cancel-button:hover {
-            background: linear-gradient(135deg, #e53935, #f44336);
-            transform: scale(1.05);
-        }
-
-    .user-popup {
-        max-width: 400px;
-        padding: 20px;
-        background-color: #fff;
-        color: #333;
-    }
-
-    .user-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        display: block;
-        margin: 0 auto 10px;
-    }
-
-    .user-popup h3, .user-popup p {
-        margin: 10px 0;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .user-popup .popup-close-button {
-        background-color: #6a1b9a;
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        margin-top: 15px;
-    }
-
-        .user-popup .popup-close-button:hover {
-            background-color: #4a0072;
-        }
-
-    .main-layout {
-        display: flex;
-        height: 100%;
-        width: 100%;
-    }
-
-    .sidebar {
-        width: 250px;
-        background-color: #f4f4f4;
-        padding: 20px;
-        border-right: 2px solid #e0e0e0;
-        box-sizing: border-box;
-        overflow-y: auto;
-    }
-
-    .section-header {
-        padding: 12px;
-        cursor: pointer;
-        font-weight: 600;
-        color: #6a1b9a;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        font-size: 18px;
-        font-family: 'Poppins', sans-serif;
-        border-radius: 8px;
-        background-color: #fff;
-        margin-bottom: 10px;
-    }
-
-        .section-header:hover {
-            background-color: #e1bee7;
-            color: #4a0072;
-        }
-
-    .menu-item.active {
-        background-color: #6a1b9a;
-        color: #fff;
-    }
-
-    .section-content {
-        padding-left: 10px;
-        padding-top: 5px;
-    }
-
-    .menu-item {
-        padding: 10px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-    }
-
-        .menu-item:hover {
-            background-color: #f3e5f5;
-        }
-
-    .main-content {
-        padding: 20px;
-        flex-grow: 1;
-        background-color: #fff;
-        box-sizing: border-box;
-        overflow-y: auto;
-    }
-
-    .status-display {
-        margin-bottom: 20px;
-    }
-
-        .status-display h2 {
-            margin: 0;
-            font-size: 28px;
-            color: #6a1b9a;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-    .app-list {
-        max-height: calc(100vh - 80px);
-    }
-
-    .app-item {
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-        background-color: #f9f5ff;
-        font-family: 'Poppins', sans-serif;
-    }
-
-        .app-item:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            transform: scale(1.03);
-        }
-
-    .app-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-        font-size: 18px;
-    }
-
-        .app-header h3 {
-            margin: 0;
-            font-size: 22px;
-            color: #6a1b9a;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-        .app-header p {
-            margin: 5px 0;
-            font-size: 16px;
-            font-family: 'Poppins', sans-serif;
-        }
-
-    .app-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-    }
-
-    /* 按钮样式更新 */
-    .action-button {
-        background-color: #6a1b9a;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-        .action-button:hover {
-            background-color: #4a0072;
-            transform: scale(1.05);
-        }
-
-    .loading, .error {
-        color: #d32f2f;
-        font-weight: 600;
-        font-size: 16px;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    /* 弹窗样式 */
-    .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3); /* Slight dark overlay */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        animation: fadeIn 0.3s ease-in;
-    }
-
-    .popup-content {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        max-width: 500px;
-        width: 100%;
-        position: relative;
-        animation: scaleIn 0.3s ease-out;
-    }
-
-        .popup-content h3 {
-            margin-top: 0;
-            font-size: 26px;
-            color: #6a1b9a; /* Purple color */
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-        .popup-content p {
-            margin: 10px 0;
-            font-size: 18px;
-            color: #333;
-            font-family: 'Poppins', sans-serif;
-        }
-
-    .popup-close-button {
-        background-color: #6a1b9a; /* Purple color */
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-        .popup-close-button:hover {
-            background-color: #4a0072; /* Darker purple */
-            transform: scale(1.1);
-        }
-
-    /* Animations */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    @keyframes scaleIn {
-        from {
-            transform: scale(0.8);
-        }
-
-        to {
-            transform: scale(1);
-        }
-    }
-
-    .confirm-popup {
-        max-width: 400px;
-        padding: 20px;
-    }
-
-    .confirm-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .popup-confirm-button, .popup-cancel-button {
-        background: linear-gradient(135deg, #6a1b9a, #9c27b0); /* 渐变背景 */
-        color: #fff;
-        border: none;
-        border-radius: 12px; /* 更圆润的边框 */
-        padding: 12px 24px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px; /* 增加字体大小 */
-        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影 */
-    }
-
-    .popup-confirm-button {
-        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
-    }
-
-    .popup-cancel-button {
-        background: linear-gradient(135deg, #f44336, #e53935); /* 红色渐变背景 */
-    }
-
-        .popup-confirm-button:hover, .popup-cancel-button:hover {
-            background: linear-gradient(135deg, #9c27b0, #6a1b9a); /* 悬停时反转渐变 */
-            transform: scale(1.05); /* 缩放动画 */
-        }
-
-        .popup-confirm-button:active, .popup-cancel-button:active {
-            transform: scale(0.98); /* 按下时缩小效果 */
-        }
-
-    .success-popup {
-        max-width: 400px;
-        padding: 20px;
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-        .success-popup h3 {
-            color: #155724;
-        }
-
-        .success-popup p {
-            color: #155724;
-        }
-
-    .popup-close-button {
-        background-color: #6a1b9a;
-        color: #fff;
-    }
-
-        .popup-close-button:hover {
-            background-color: #4a0072;
-        }
-
-    .user-header {
-        margin-bottom: 15px;
-        font-family: 'Poppins', sans-serif;
-        color: #333;
-    }
-
-        .user-header h3 {
-            margin: 0;
-            font-size: 20px;
-            color: #6a1b9a; /* 紫色标题 */
-        }
-
-        .user-header p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #555; /* 暗灰色字体 */
-        }
 </style>
