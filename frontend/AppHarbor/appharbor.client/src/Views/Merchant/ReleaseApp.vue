@@ -24,9 +24,9 @@
                 <div class="form-group">
                     <label for="appImage">应用图片</label>
                     <div class="app-img">
-                        <img  :src="appImageUrl" alt="应用图片" class="preview-img"/>
+                        <img :src="appImageUrl" alt="应用图片" class="preview-img" />
                         <div class="edit-icon">
-                        <img src="../../../public/editing.png" @click="triggerImageUpload"/>
+                            <img src="../../../public/editing.png" @click="triggerImageUpload" />
                         </div>
                     </div>
                     <input type="file" id="appImage" ref="imageInput" @change="handleImageUpload" class="img-input" />
@@ -90,25 +90,25 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-            .then(response => {
-                this.appId = response.data.applicationId;
-                let formDataImg = new FormData();
-                formDataImg.append('file', this.appImage);
-                formDataImg.append('id', this.appId);
-                axios.post('http://localhost:5118/api/Image/upload-app-img', formDataImg)
-                    .then(response => {
-                        console.log(response);
-                    })
-                    .catch(error => {
-                        console.error('Error uploading avatar:', error);
-                        alert('图片上传失败');
-                    });
-                alert('应用发布成功');
-            })
-            .catch(error => {
-                console.log(error);
-                alert('应用发布失败');
-            });
+                .then(response => {
+                    this.appId = response.data.applicationId;
+                    let formDataImg = new FormData();
+                    formDataImg.append('file', this.appImage);
+                    formDataImg.append('id', this.appId);
+                    axios.post('http://localhost:5118/api/Image/upload-app-img', formDataImg)
+                        .then(response => {
+                            console.log(response);
+                        })
+                        .catch(error => {
+                            console.error('Error uploading avatar:', error);
+                            alert('图片上传失败');
+                        });
+                    alert('应用发布成功');
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert('应用发布失败');
+                });
         }
     },
     computed: {
@@ -127,19 +127,21 @@ export default {
 
 <style scoped>
 .release-app {
-    background-color: #e8f5e9;
+    background-color: #f0f9ff;
+    /* 更改背景色为浅蓝色 */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    min-width: 1000px;
+    min-width: 900px;
     margin: 0 auto;
-    font-family: Arial, sans-serif;
+    font-family: 'Baloo 2', cursive, Arial, sans-serif;
     font-size: 16px;
 }
 
 .release-app h2 {
     margin-bottom: 20px;
-    color: #2e7d32;
+    color: #1976d2;
+    /* 更改字体颜色为蓝色调 */
     text-align: center;
 }
 
@@ -160,7 +162,8 @@ export default {
     display: block;
     margin-bottom: 10px;
     font-weight: bold;
-    color: #2e7d32;
+    color: #1976d2;
+    /* 更改字体颜色为蓝色调 */
 }
 
 .form-group input,
@@ -169,6 +172,8 @@ export default {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    background-color: #ffffff;
+    /* 确保输入框背景色为白色 */
 }
 
 .form-group input[type="file"] {
@@ -185,11 +190,13 @@ export default {
     width: 185px;
     height: 185px;
     padding: 10px;
-    border: 1px solid #4ca483;
-    background-color: #ccf6ee;
+    border: 1px solid #42a5f5;
+    /* 更改边框颜色 */
+    background-color: #e3f2fd;
+    /* 更改背景色为浅蓝色 */
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
-    margin:auto;
+    margin: auto;
 }
 
 .file-input {
@@ -197,7 +204,8 @@ export default {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #ffffff;
+    /* 确保输入框背景色为白色 */
     font-family: 'Baloo 2', cursive;
     font-size: 16px;
 }
@@ -212,19 +220,22 @@ export default {
 }
 
 .edit-icon img {
-    width: 24px; /* 调整图标大小 */
-    height: 24px; /* 调整图标大小 */
+    width: 24px;
+    /* 调整图标大小 */
+    height: 24px;
+    /* 调整图标大小 */
     transition: box-shadow 0.3s ease, filter 0.3s ease;
 }
 
 .edit-icon:hover img {
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-        filter: brightness(1.1);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    filter: brightness(1.1);
 }
 
 button {
     padding: 10px 20px;
-    background-color: #27CCA6;
+    background-color: #1e88e5;
+    /* 更改按钮背景色为蓝色 */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -238,12 +249,13 @@ button {
 }
 
 button:disabled {
-            cursor: not-allowed;
-        }
+    cursor: not-allowed;
+}
 
-        button:hover:enabled {
-            background-color: #27CCA6;;
-            transform: scale(1.02);
-            transition: background-color 0.3s, transform 0.3s, color 0.3s;
-        }
+button:hover:enabled {
+    background-color: #1565c0;
+    /* 更改悬停时背景色为深蓝色 */
+    transform: scale(1.02);
+    transition: background-color 0.3s, transform 0.3s, color 0.3s;
+}
 </style>
