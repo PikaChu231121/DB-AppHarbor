@@ -115,10 +115,12 @@ namespace AppHarbor.Server.Controllers
         public IActionResult Searchbanuser()
         {
             var query = from banuser in _dbContext.BanUsers
+                        join user in _dbContext.Users on banuser.UserId equals user.Id
                         select new
                         {
                             AdminId = banuser.AdminId,
                             UserId = banuser.UserId,
+                            Nickname = user.Nickname, // 从 User 表中获取 Nickname
                             Time = banuser.Time,
                             Reason = banuser.Reason,
                         };
