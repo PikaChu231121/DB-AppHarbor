@@ -1,405 +1,408 @@
 
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-    .ban-confirm-popup {
-        max-width: 400px;
-        padding: 20px;
-    }
+.ban-confirm-popup {
+    max-width: 400px;
+    padding: 20px;
+}
 
-        .ban-confirm-popup textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-    .confirm-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .popup-confirm-button, .popup-cancel-button {
-        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 12px 24px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px;
-        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-        .popup-confirm-button:hover {
-            background: linear-gradient(135deg, #9c27b0, #6a1b9a);
-            transform: scale(1.05);
-        }
-
-    .popup-cancel-button {
-        background: linear-gradient(135deg, #f44336, #e53935);
-    }
-
-        .popup-cancel-button:hover {
-            background: linear-gradient(135deg, #e53935, #f44336);
-            transform: scale(1.05);
-        }
-
-    .user-popup {
-        max-width: 400px;
-        padding: 20px;
-        background-color: #fff;
-        color: #333;
-    }
-
-    .user-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        display: block;
-        margin: 0 auto 10px;
-    }
-
-    .user-popup h3, .user-popup p {
-        margin: 10px 0;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .user-popup .popup-close-button {
-        background-color: #6a1b9a;
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        margin-top: 15px;
-    }
-
-        .user-popup .popup-close-button:hover {
-            background-color: #4a0072;
-        }
-
-    .main-layout {
-        display: flex;
-        height: 100%;
+    .ban-confirm-popup textarea {
         width: 100%;
-    }
-
-    .sidebar {
-        width: 250px;
-        background-color: #f4f4f4;
-        padding: 20px;
-        border-right: 2px solid #e0e0e0;
-        box-sizing: border-box;
-        overflow-y: auto;
-    }
-
-    .section-header {
-        padding: 12px;
-        cursor: pointer;
-        font-weight: 600;
-        color: #6a1b9a;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        font-size: 18px;
-        font-family: 'Poppins', sans-serif;
-        border-radius: 8px;
-        background-color: #fff;
-        margin-bottom: 10px;
-    }
-
-        .section-header:hover {
-            background-color: #e1bee7;
-            color: #4a0072;
-        }
-
-    .menu-item.active {
-        background-color: #6a1b9a;
-        color: #fff;
-    }
-
-    .section-content {
-        padding-left: 10px;
-        padding-top: 5px;
-    }
-
-    .menu-item {
         padding: 10px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-    }
-
-        .menu-item:hover {
-            background-color: #f3e5f5;
-        }
-
-    .main-content {
-        padding: 20px;
-        flex-grow: 1;
-        background-color: #fff;
-        box-sizing: border-box;
-        overflow-y: auto;
-    }
-
-    .status-display {
         margin-bottom: 20px;
-    }
-
-        .status-display h2 {
-            margin: 0;
-            font-size: 28px;
-            color: #6a1b9a;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-    .app-list {
-        max-height: calc(100vh - 80px);
-    }
-
-    .app-item {
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-        background-color: #f9f5ff;
-        font-family: 'Poppins', sans-serif;
-    }
-
-        .app-item:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            transform: scale(1.03);
-        }
-
-    .app-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-        font-size: 18px;
-    }
-
-        .app-header h3 {
-            margin: 0;
-            font-size: 22px;
-            color: #6a1b9a;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-        .app-header p {
-            margin: 5px 0;
-            font-size: 16px;
-            font-family: 'Poppins', sans-serif;
-        }
-
-    .app-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-    }
-
-    /* 按钮样式更新 */
-    .action-button {
-        background-color: #6a1b9a;
-        color: #fff;
-        border: none;
         border-radius: 8px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
         font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-        .action-button:hover {
-            background-color: #4a0072;
-            transform: scale(1.05);
-        }
+.confirm-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
 
-    .loading, .error {
-        color: #d32f2f;
+.popup-confirm-button, .popup-cancel-button {
+    background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+    .popup-confirm-button:hover {
+        background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+        transform: scale(1.05);
+    }
+
+.popup-cancel-button {
+    background: linear-gradient(135deg, #f44336, #e53935);
+}
+
+    .popup-cancel-button:hover {
+        background: linear-gradient(135deg, #e53935, #f44336);
+        transform: scale(1.05);
+    }
+
+.user-popup {
+    max-width: 400px;
+    padding: 20px;
+    background-color: #fff;
+    color: #333;
+}
+
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.user-popup h3, .user-popup p {
+    margin: 10px 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.user-popup .popup-close-button {
+    background-color: #6a1b9a;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 15px;
+}
+
+    .user-popup .popup-close-button:hover {
+        background-color: #4a0072;
+    }
+
+.main-layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-right: 2px solid #e0e0e0;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.section-header {
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #6a1b9a;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 18px;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 8px;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+
+    .section-header:hover {
+        background-color: #e1bee7;
+        color: #4a0072;
+    }
+
+.menu-item.active {
+    background-color: #6a1b9a;
+    color: #fff;
+}
+
+.section-content {
+    padding-left: 10px;
+    padding-top: 5px;
+}
+
+.menu-item {
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+    .menu-item:hover {
+        background-color: #f3e5f5;
+    }
+
+.main-content {
+    width: 800px; 
+    height: 700px;
+    overflow: auto;
+    padding: 20px;
+    flex-grow: 1;
+    background-color: #fff;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.status-display {
+    margin-bottom: 20px;
+}
+
+    .status-display h2 {
+        margin: 0;
+        font-size: 28px;
+        color: #6a1b9a;
+        font-family: 'Poppins', sans-serif;
         font-weight: 600;
+    }
+
+.app-list {
+    max-height: calc(100vh - 80px);
+}
+
+.app-item {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background-color: #f9f5ff;
+    font-family: 'Poppins', sans-serif;
+}
+
+    .app-item:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        transform: scale(1.03);
+    }
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+    .app-header h3 {
+        margin: 0;
+        font-size: 22px;
+        color: #6a1b9a;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+    }
+
+    .app-header p {
+        margin: 5px 0;
         font-size: 16px;
         font-family: 'Poppins', sans-serif;
     }
 
-    /* 弹窗样式 */
-    .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3); /* Slight dark overlay */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        animation: fadeIn 0.3s ease-in;
+.app-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* 按钮样式更新 */
+.action-button {
+    background-color: #6a1b9a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .action-button:hover {
+        background-color: #4a0072;
+        transform: scale(1.05);
     }
 
-    .popup-content {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        max-width: 500px;
-        width: 100%;
-        position: relative;
-        animation: scaleIn 0.3s ease-out;
-    }
+.loading, .error {
+    color: #d32f2f;
+    font-weight: 600;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+}
 
-        .popup-content h3 {
-            margin-top: 0;
-            font-size: 26px;
-            color: #6a1b9a; /* Purple color */
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
+/* 弹窗样式 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Slight dark overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in;
+}
 
-        .popup-content p {
-            margin: 10px 0;
-            font-size: 18px;
-            color: #333;
-            font-family: 'Poppins', sans-serif;
-        }
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    animation: scaleIn 0.3s ease-out;
+}
 
-    .popup-close-button {
-        background-color: #6a1b9a; /* Purple color */
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-        .popup-close-button:hover {
-            background-color: #4a0072; /* Darker purple */
-            transform: scale(1.1);
-        }
-
-    /* Animations */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    @keyframes scaleIn {
-        from {
-            transform: scale(0.8);
-        }
-
-        to {
-            transform: scale(1);
-        }
-    }
-
-    .confirm-popup {
-        max-width: 400px;
-        padding: 20px;
-    }
-
-    .confirm-buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .popup-confirm-button, .popup-cancel-button {
-        background: linear-gradient(135deg, #6a1b9a, #9c27b0); /* 渐变背景 */
-        color: #fff;
-        border: none;
-        border-radius: 12px; /* 更圆润的边框 */
-        padding: 12px 24px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 16px; /* 增加字体大小 */
-        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    .popup-content h3 {
+        margin-top: 0;
+        font-size: 26px;
+        color: #6a1b9a; /* Purple color */
         font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影 */
+        font-weight: 600;
     }
 
-    .popup-confirm-button {
-        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+    .popup-content p {
+        margin: 10px 0;
+        font-size: 18px;
+        color: #333;
+        font-family: 'Poppins', sans-serif;
     }
 
-    .popup-cancel-button {
-        background: linear-gradient(135deg, #f44336, #e53935); /* 红色渐变背景 */
+.popup-close-button {
+    background-color: #6a1b9a; /* Purple color */
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .popup-close-button:hover {
+        background-color: #4a0072; /* Darker purple */
+        transform: scale(1.1);
     }
 
-        .popup-confirm-button:hover, .popup-cancel-button:hover {
-            background: linear-gradient(135deg, #9c27b0, #6a1b9a); /* 悬停时反转渐变 */
-            transform: scale(1.05); /* 缩放动画 */
-        }
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
 
-        .popup-confirm-button:active, .popup-cancel-button:active {
-            transform: scale(0.98); /* 按下时缩小效果 */
-        }
+    to {
+        opacity: 1;
+    }
+}
 
-    .success-popup {
-        max-width: 400px;
-        padding: 20px;
-        background-color: #d4edda;
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.confirm-popup {
+    max-width: 400px;
+    padding: 20px;
+}
+
+.confirm-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.popup-confirm-button, .popup-cancel-button {
+    background: linear-gradient(135deg, #6a1b9a, #9c27b0); /* 渐变背景 */
+    color: #fff;
+    border: none;
+    border-radius: 12px; /* 更圆润的边框 */
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px; /* 增加字体大小 */
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影 */
+}
+
+.popup-confirm-button {
+    background: linear-gradient(135deg, #6a1b9a, #9c27b0);
+}
+
+.popup-cancel-button {
+    background: linear-gradient(135deg, #f44336, #e53935); /* 红色渐变背景 */
+}
+
+    .popup-confirm-button:hover, .popup-cancel-button:hover {
+        background: linear-gradient(135deg, #9c27b0, #6a1b9a); /* 悬停时反转渐变 */
+        transform: scale(1.05); /* 缩放动画 */
+    }
+
+    .popup-confirm-button:active, .popup-cancel-button:active {
+        transform: scale(0.98); /* 按下时缩小效果 */
+    }
+
+.success-popup {
+    max-width: 400px;
+    padding: 20px;
+    background-color: #d4edda;
+    color: #155724;
+}
+
+    .success-popup h3 {
         color: #155724;
     }
 
-        .success-popup h3 {
-            color: #155724;
-        }
-
-        .success-popup p {
-            color: #155724;
-        }
-
-    .popup-close-button {
-        background-color: #6a1b9a;
-        color: #fff;
+    .success-popup p {
+        color: #155724;
     }
 
-        .popup-close-button:hover {
-            background-color: #4a0072;
-        }
+.popup-close-button {
+    background-color: #6a1b9a;
+    color: #fff;
+}
 
-    .user-header {
-        margin-bottom: 15px;
-        font-family: 'Poppins', sans-serif;
-        color: #333;
+    .popup-close-button:hover {
+        background-color: #4a0072;
     }
 
-        .user-header h3 {
-            margin: 0;
-            font-size: 20px;
-            color: #6a1b9a; /* 紫色标题 */
-        }
+.user-header {
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
 
-        .user-header p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #555; /* 暗灰色字体 */
-        }
+    .user-header h3 {
+        margin: 0;
+        font-size: 20px;
+        color: #6a1b9a; /* 紫色标题 */
+    }
+
+    .user-header p {
+        margin: 5px 0;
+        font-size: 16px;
+        color: #555; /* 暗灰色字体 */
+    }

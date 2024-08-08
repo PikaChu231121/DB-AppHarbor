@@ -181,6 +181,7 @@
     .form-group {
         display: flex;
         flex-direction: column;
+        color:black;
     }
 
     .avatar-group {
@@ -271,5 +272,6 @@
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
         filter: brightness(1.1);
     }
+
 </style>
 

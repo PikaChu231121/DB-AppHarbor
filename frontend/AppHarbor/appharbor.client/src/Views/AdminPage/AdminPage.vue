@@ -1,4 +1,5 @@
 <template>
+    <img class="background-image" src="@/assets/admin.png">
     <div class="admin-page">
         <Header />
         <MainLayout />
@@ -22,19 +23,29 @@
     .admin-page {
         display: flex;
         flex-direction: column;
-        height: 85vh; /* 调整后的高度 */
-        width: 100%; /* 视口宽度的全部 */
+        height: 85vh;
+        width: 100%;
         margin: 0;
         padding: 0;
     }
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('@/assets/admin.png');
+        background-size: cover;
+        background-position: center;
+        z-index: -1; /* 确保背景图片在底层 */
+    }
 
     header {
-        /* 如有需要，调整头部的高度 */
-        flex-shrink: 0; /* 防止头部收缩 */
+        flex-shrink: 0; 
     }
 
     main {
-        flex-grow: 1; /* 允许 MainLayout 填充剩余空间 */
-        overflow: hidden; /* 防止溢出问题 */
+        flex-grow: 1; 
+        overflow: hidden;
     }
 </style>

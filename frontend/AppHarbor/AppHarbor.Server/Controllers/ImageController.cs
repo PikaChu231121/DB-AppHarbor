@@ -100,6 +100,31 @@ namespace AppHarbor.Server.Controllers
             return Ok(new { Data = relativePath, Code = 2001, Msg = "Succeeded" });
         }
 
+        [HttpPost("upload-admin-image")]
+        public IActionResult UploadAdminImage(IFormFile file,
+                                       [FromForm] decimal id,
+                                       [FromServices] IWebHostEnvironment env)
+        {
+            var checkResult = CheckImage(file);
+            if (checkResult is BadRequestObjectResult)
+            {
+                return checkResult;
+            }
+
+            var admin = _dbContext.Admins.Find(id);
+            if (admin == null)
+            {
+                return BadRequest(new { Code = 1003, Msg = "Admin Not Found" });
+            }
+
+            string guid = Guid.NewGuid().ToString("N");
+            string relativePath = SaveImage(file, env, guid);
+            admin.Avatar = relativePath;
+            _dbContext.Admins.Update(admin);
+            _dbContext.SaveChanges();
+            return Ok(new { Data = relativePath, Code = 2001, Msg = "Succeeded" });
+        }
+
         [HttpPost("upload-app-img")]
         public IActionResult UploadAppImage(IFormFile file, [FromForm]decimal id, [FromServices] IWebHostEnvironment env)
         {

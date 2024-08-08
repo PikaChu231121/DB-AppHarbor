@@ -28,10 +28,12 @@ namespace AppHarbor.Server.Controllers
         public IActionResult Searchbanmerchant()
         {
             var query = from banmerchant in _dbContext.BanMerchants
+                        join merchant in _dbContext.Merchants on banmerchant.MerchantId equals merchant.Id
                         select new
                         {
                             AdminId = banmerchant.AdminId,
-                            UserId = banmerchant.MerchantId,
+                            UserId = banmerchant.MerchantId, // 使用 MerchantId 而不是 UserId
+                            MerchantNickname = merchant.Nickname, // 从 Merchant 表中获取 Nickname
                             Time = banmerchant.Time,
                             Reason = banmerchant.Reason,
                         };

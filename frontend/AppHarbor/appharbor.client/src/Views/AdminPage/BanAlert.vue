@@ -25,7 +25,7 @@
     };
 </script>
 
-<style>
+<style scoped>
     .alert-box {
         position: fixed;
         bottom: 10px;
