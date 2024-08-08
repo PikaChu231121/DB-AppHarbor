@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace AppHarbor.Server.Models;
 
+public class UpdateAdminNicknameModel
+{
+    public decimal Id { get; set; }
+    public string NewNickname { get; set; } = null!;
+}
+
 public partial class Admin
 {
     public decimal Id { get; set; }

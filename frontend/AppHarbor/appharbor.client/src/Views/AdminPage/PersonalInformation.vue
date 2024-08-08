@@ -1,6 +1,5 @@
 <template>
     <div class="profile-settings">
-        <!--<alert-box :message="alertMessage"></alert-box>-->
         <h1>管理员信息</h1>
         <div class="user-info">
             <div class="avatar-group">
@@ -33,17 +32,22 @@
 
         </div>
     </div>
+    <div>
+        <NotificationPopup :show="showPopup"
+                           :message="popupMessage"
+                           @update:show="showPopup = $event" />
+    </div>
 </template>
 
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
-    //import AlertBox from '../WorkBanch/AlertBox.vue';
+    import NotificationPopup from './NotificationPopup.vue';
 
     export default {
         name: 'ProfileSettings',
         components: {
-            //AlertBox
+            NotificationPopup
         },
         data() {
             return {
@@ -54,7 +58,9 @@
                     registerTime: ''
                 },
                 isSaveEnabled: false,
-                alertMessage: ''
+                alertMessage: '',
+                showPopup: false,
+                popupMessage: '',
             }
         },
         mounted() {
@@ -110,7 +116,27 @@
 
             },
             save() {
-
+                var token = Cookies.get('token');
+                if (this.user.adminNickname == "") {
+                    this.popupMessage = "昵称不允许为空，请重新输入";
+                    this.showPopup = true;
+                    return;
+                }
+                axios.post('http://localhost:5118/api/admin/updateAdminNickname', {
+                    id: this.user.adminId,
+                    newnickname: this.user.adminNickname
+                })
+                    .then(response => {
+                        console.log('User nickname updated successfully');
+                        this.popupMessage = '昵称修改成功';
+                        this.showPopup = true;
+                        this.isSaveEnabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error updating user nickname:', error);
+                        this.popupMessage = '更新昵称失败，请重试';
+                        this.showPopup = true;
+                    });
             },
 
             getAvatarUrl(avatarPath) {
@@ -229,9 +255,9 @@
         }
 
         button:hover:enabled {
-            background-color: #ffe5e5;
+            background-color: #6a1b9a;
             transform: scale(1.05);
-            color: #F8887D;
+            color: #d7a6f6;
             transition: background-color 0.3s, transform 0.3s, color 0.3s;
         }
 

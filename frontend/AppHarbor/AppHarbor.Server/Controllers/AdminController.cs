@@ -111,6 +111,18 @@ namespace AppHarbor.Server.Controllers
             return Ok(adminInfo);
         }
 
+        [HttpPost("updateAdminNickname")]
+        public IActionResult UpdateAdminNickname([FromBody] UpdateAdminNicknameModel nicknameModel)
+        {
+            var admin = _dbContext.Admins.Find(nicknameModel.Id);
+            if (admin == null)
+            {
+                return NotFound("Admin not found");
+            }
+            admin.Nickname = nicknameModel.NewNickname;
+            _dbContext.SaveChanges();
+            return Ok(admin);
+        }
 
     }
 }
