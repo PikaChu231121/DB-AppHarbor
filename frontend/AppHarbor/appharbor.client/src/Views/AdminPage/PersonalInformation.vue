@@ -1,7 +1,7 @@
 <template>
     <div class="profile-settings">
         <!--<alert-box :message="alertMessage"></alert-box>-->
-        <h1>个人信息</h1>
+        <h1>管理员信息</h1>
         <div class="user-info">
             <div class="avatar-group">
                 <div class="avatar-edit">
@@ -17,7 +17,7 @@
                 <p class="admin">{{ user.adminId }}</p>
             </div>
             <div class="form-group">
-                <label>昵称</label>
+                <label>管理员昵称</label>
                 <div class="nickname-edit">
                     <input type="text"
                            v-model="user.adminNickname"
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>注册时间</label>
+                <label>管理员注册时间</label>
                 <p class="admin">{{ user.registerTime }}</p>
             </div>
 
@@ -147,7 +147,7 @@
         font-size: 30px;
         color: #333;
         text-align: center;
-        border: 3px solid #F3C7BA;
+        border: 3px solid #6a1b9a;
         border-radius: 8px;
     }
 
@@ -167,7 +167,7 @@
         text-align: center;
         max-width: 240px;
         padding: 15px;
-        border: 1px solid #F3C7BA;
+        border: 1px solid #6a1b9a;
         border-radius: 8px;
         box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
     }
@@ -181,7 +181,7 @@
 
     input[type="text"], p {
         padding: 10px;
-        border: 2px solid #ebebeb;
+        border: 2px solid #6a1b9a;
         border-radius: 4px;
         font-size: 16px;
     }
@@ -215,10 +215,10 @@
 
     button {
         padding: 10px 20px;
-        background-color: #fbeaea;
+        background-color: #d7a6f6;
         font-size: 15px;
-        color: #F8887D;
-        border: 3px solid #FADAD6;
+        color: #6a1b9a;
+        border: 3px solid #6a1b9a;
         border-radius: 10px;
         cursor: pointer;
         transition: background-color 0.3s, transform 0.3s, color 0.3s;

@@ -1,13 +1,14 @@
 <template>
-    <div class="header">
+    <div class="header" @click="handleClickOutside">
         <div class="user-info">
-            <img :src="adminAvatar" alt="Avatar" class="user-avatar" @click="changeState" />
+            <img :src="adminAvatar" alt="Avatar" class="user-avatar" @click="togglePopup" />
             <div class="user-details">
+                <div class="user-id">管理员ID: {{ adminId }}</div>
                 <div class="user-nickname">您好，{{ adminNickname }}管理员~</div>
             </div>
         </div>
         <transition name="popup">
-            <div v-if="showAdmin" class="admin-profile-popup">
+            <div v-if="showAdmin" class="admin-profile-popup" ref="popup">
                 <PersonalInformation />
             </div>
         </transition>
@@ -17,7 +18,7 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
-    import PersonalInformation from "./PersonalInformation.vue"
+    import PersonalInformation from "./PersonalInformation.vue";
 
     export default {
         name: "Header",
@@ -29,21 +30,24 @@
                 adminId: '',
                 adminNickname: '',
                 adminAvatar: '',
-                showAdmin: 0,
+                showAdmin: false
             };
         },
         created() {
             this.fetchAdminInfo();
+            document.addEventListener('click', this.handleClickOutside); // Add event listener for clicks
+        },
+        beforeDestroy() {
+            document.removeEventListener('click', this.handleClickOutside); // Clean up the event listener
         },
         methods: {
             fetchAdminInfo() {
-                var token = Cookies.get('token');
+                const token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
                 axios.post('http://localhost:5118/api/admin/adminInfo', formData)
                     .then(response => {
                         const data = response.data;
-                        console.info(data);
                         this.adminId = data.id;
                         this.adminNickname = data.nickname;
                         this.adminAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png'; // avatar 判空
@@ -52,8 +56,14 @@
                         console.error('Error fetching admin data:', error);
                     });
             },
-            changeState() {
+            togglePopup(event) {
                 this.showAdmin = !this.showAdmin;
+                event.stopPropagation();
+            },
+            handleClickOutside(event) {
+                if (this.showAdmin && !this.$refs.popup.contains(event.target) && !this.$el.contains(event.target)) {
+                    this.showAdmin = false;
+                }
             }
         }
     };
@@ -81,9 +91,21 @@
         width: 50px;
         height: 50px;
         border-radius: 50%;
+        margin-left: 10px;
         margin-right: 20px; /* 头像和文字间距 */
         border: 2px solid #fff; /* 增加边框 */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* 添加过渡效果 */
+        cursor: pointer; /* 设置鼠标样式为点击手型 */
     }
+
+        .user-avatar:hover {
+            transform: scale(1.1); /* 鼠标悬浮时放大头像 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬浮时增加阴影 */
+        }
+
+        .user-avatar:active {
+            transform: scale(0.95); /* 点击头像时缩小头像 */
+        }
 
     .user-details {
         display: flex;
@@ -93,7 +115,7 @@
     .user-id {
         font-size: 20px;
         font-weight: 600;
-        margin-right: 15px;
+        margin-right: 20px;
         font-family: 'Poppins', sans-serif;
         letter-spacing: 0.5px;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
@@ -106,7 +128,7 @@
         font-family: 'Poppins', sans-serif;
         letter-spacing: 0.5px;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        padding-left: 500px;
+        padding-left: 300px;
     }
 
     .search-container {
@@ -132,9 +154,10 @@
         font-size: 18px;
         color: #6a1b9a;
     }
+
     .admin-profile-popup {
         position: absolute;
-        top: 50px; /* 根据需要调整位 ?*/
+        top: 50px; /* 根据需要调整位置 */
         left: 210px;
         background-color: rgba(101, 85, 143);
         border-radius: 12px;
