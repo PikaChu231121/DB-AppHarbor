@@ -1,7 +1,6 @@
 <template>
     <transition name="popup">
         <div v-if="show" class="notification-popup">
-            <span class="close-icon" @click="close">&#x2715;</span>
             <div class="popup-content">
                 <p>{{ message }}</p>
             </div>
@@ -15,12 +14,30 @@
             show: Boolean,
             message: String
         },
+        watch: {
+            show(newVal) {
+                if (newVal) {
+                    // Start the timer to automatically hide the popup after 2 seconds
+                    this.autoHideTimer = setTimeout(() => {
+                        this.close();
+                    }, 2000);
+                } else {
+                    // Clear timer if popup is manually closed
+                    clearTimeout(this.autoHideTimer);
+                }
+            }
+        },
+        data() {
+            return {
+                autoHideTimer: null
+            }
+        },
         methods: {
             close() {
                 this.$emit('update:show', false);
             }
         }
-    };
+    }
 </script>
 
 <style scoped>
@@ -41,16 +58,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-    }
-
-    .close-icon {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        cursor: pointer;
-        color: #D6AEDD;
-        font-family: 'Poppins', sans-serif;
     }
 
     .popup-content {

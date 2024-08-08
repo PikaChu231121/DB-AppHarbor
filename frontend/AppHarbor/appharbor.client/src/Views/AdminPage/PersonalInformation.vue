@@ -27,9 +27,8 @@
             </div>
             <div class="form-group">
                 <label>管理员注册时间</label>
-                <p class="admin">{{ user.registerTime }}</p>
+                <p class="admin">{{ formattedRegisterTime }}</p>
             </div>
-
         </div>
     </div>
     <div>
@@ -58,17 +57,17 @@
                     registerTime: ''
                 },
                 isSaveEnabled: false,
-                alertMessage: '',
                 showPopup: false,
                 popupMessage: '',
             }
         },
         mounted() {
             this.fetchUserInfo();
+            this.clearPopupStatus();
         },
         methods: {
             fetchUserInfo() {
-                var token = Cookies.get('token');
+                const token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
                 axios.post('http://localhost:5118/api/admin/adminInfo', formData)
@@ -76,9 +75,8 @@
                         const data = response.data;
                         this.user.adminId = data.id;
                         this.user.adminNickname = data.nickname;
-                        this.user.adminAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '@/../public/default.png'; // avatar 判空
+                        this.user.adminAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '@/../public/default.png';
                         this.user.registerTime = data.registerTime;
-                        console.log(this.user.adminId);
                     })
                     .catch(error => {
                         console.error('Error fetching admin data:', error);
@@ -95,29 +93,41 @@
                 if (file) {
                     let formData = new FormData();
                     formData.append('file', file);
-                    formData.append('id', this.user.id);
-                    for (let pair of formData.entries()) {
-                        console.log(`${pair[0]}: ${pair[1]}`);
-                    };
-                    var token = Cookies.get('token');
-                    axios.post('http://localhost:5118/api/Image/upload-personal-image', formData)
+                    formData.append('id', this.user.adminId);
+
+                    const token = Cookies.get('token');
+                    axios.post('http://localhost:5118/api/Image/upload-admin-image', formData, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
                         .then(response => {
-                            this.user.avatar = response.data.data;
-                            //console.log(this.user.avatar);
-                            this.showAlert('头像上传成功');
+                            this.popupMessage = '头像上传成功';
+                            this.showPopup = true;
+                            // Only set popupStatusChecked to true after setting localStorage
+                            setTimeout(() => {
+                                this.showPopup = false;
+                                this.popupMessage = '';
+                                window.location.reload();
+                            }, 2000);
                         })
                         .catch(error => {
                             console.error('Error uploading avatar:', error);
-                            this.showAlert('头像上传失败');
+                            this.popupMessage = '头像上传失败';
+                            this.showPopup = true;
+                            // Only set popupStatusChecked to true after setting localStorage
+                            setTimeout(() => {
+                                this.showPopup = false;
+                                this.popupMessage = '';
+                                window.location.reload();
+                            }, 2000);
                         });
                 }
             },
-            showAlert(message) {
-
-            },
             save() {
-                var token = Cookies.get('token');
-                if (this.user.adminNickname == "") {
+                const token = Cookies.get('token');
+                if (this.user.adminNickname === "") {
                     this.popupMessage = "昵称不允许为空，请重新输入";
                     this.showPopup = true;
                     return;
@@ -127,23 +137,26 @@
                     newnickname: this.user.adminNickname
                 })
                     .then(response => {
-                        console.log('User nickname updated successfully');
                         this.popupMessage = '昵称修改成功';
                         this.showPopup = true;
                         this.isSaveEnabled = false;
+                        // Only set popupStatusChecked to true after setting localStorage
+                        setTimeout(() => {
+                            this.showPopup = false;
+                            this.popupMessage = '';
+                            window.location.reload();
+                        }, 2000);
                     })
                     .catch(error => {
                         console.error('Error updating user nickname:', error);
                         this.popupMessage = '更新昵称失败，请重试';
                         this.showPopup = true;
+                        return;
                     });
             },
-
-            getAvatarUrl(avatarPath) {
-                if (avatarPath) {
-                    return `http://localhost:5118${avatarPath}`;
-                }
-                return '../../public/default.png'; // 默认头像路径
+            clearPopupStatus() {
+                // Clear any popup status from localStorage
+                localStorage.removeItem('popupStatus');
             }
         },
         computed: {
@@ -154,8 +167,9 @@
                 return '';
             }
         }
-    };
+    }
 </script>
+
 
 <style scoped>
     .profile-settings {
