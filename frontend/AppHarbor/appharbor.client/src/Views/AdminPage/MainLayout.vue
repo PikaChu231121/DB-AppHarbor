@@ -2,8 +2,7 @@
     <BanAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
     <div class="main-layout">
         <div class="sidebar">
-            <div @click="
-                 ('appManagement')" class="menu-item section-header">
+            <div @click="toggleSection('appManagement')" class="menu-item section-header">
                 应用管理
             </div>
             <div v-show="sections.appManagement" class="section-content">
