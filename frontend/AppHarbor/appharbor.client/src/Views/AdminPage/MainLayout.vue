@@ -2,7 +2,8 @@
     <BanAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
     <div class="main-layout">
         <div class="sidebar">
-            <div @click="toggleSection('appManagement')" class="menu-item section-header">
+            <div @click="
+                 ('appManagement')" class="menu-item section-header">
                 应用管理
             </div>
             <div v-show="sections.appManagement" class="section-content">
@@ -48,7 +49,12 @@
                 评论管理
             </div>
             <div v-show="sections.comment" class="section-content">
-                <!-- 评论相关内容 -->
+                <!-- 评论相关内容 实现 serachComments-->
+                <div class="menu">
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '删除评论' }"
+                         @click="searchComments();changeSection('commentManagement')">删除评论</div>
+                </div>
             </div>
 
             <div @click="toggleSection('anouncement')" class="menu-item section-header">
@@ -156,6 +162,24 @@
                     <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
             </div>
+
+            <!--评论 实现 handleDeleteComment -->
+            <div v-if="section==='commentManagement'" class="app-list">
+                <div v-for="comment in comments" :key="comment.id" class="app-item">
+                    <div class="user-header">
+                        <h3>用户: {{ comment.nickname }}</h3>
+                        <p>评论应用: {{ comment.appName }}</p> <!--考虑改成应用id或应用名称-->
+                        <p>评分: {{ comment.score }}</p>
+                        <p>评论时间: {{ comment.publishTime }}</p>
+                    </div>
+                    <div class="comment-content">
+                        <p>{{ comment.content }}</p>
+                    </div>
+                    <div class="app-actions">
+                        <button @click="handleDeleteComment(comment.id)" class="action-button">删除评论</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -261,6 +285,7 @@
                 items: [],
                 users: [],
                 mers: [],
+                comments:[],
                 loading: false,
                 error: null,
                 userstate: 0,
@@ -505,6 +530,22 @@
                     .finally(() => {
                         this.loading = false;
                     });
+            },
+            searchComments() {
+                this.selectedStatus = '删除评论';
+                axios.get('http://localhost:5118/api/comment/getallcomments')
+                    .then(response => {
+                        this.comments = response.data.$values;
+                        /*console.log(this.mers);*/
+                    })
+                    .catch(error => {
+                        this.error = error;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            },
+            handleDeleteComment() {
             },
             fetchData(url, data = null) {
                 this.loading = true;

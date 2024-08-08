@@ -101,7 +101,7 @@ namespace AppHarbor.Server.Controllers
             }
 
             var user = _dbContext.Users.Find(tokenEntry.Id);
-            if(user == null)
+            if (user == null)
             {
                 return BadRequest(new { success = false, msg = "User not exist!" });
             }
@@ -124,6 +124,34 @@ namespace AppHarbor.Server.Controllers
                 commentId = newComment.Id
             };
             return Ok(successResponse);
+        }
+
+        // 获取所有评论的API
+        [HttpGet("getallcomments")]
+        public IActionResult GetAllComments()
+        {
+            var comments = _dbContext.Comments
+                .Include(c => c.Application)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Score,
+                    c.Content,
+                    c.PublishTime,
+                    Nickname = c.User.Nickname,  // 从 User 实体获取 nickname
+                    AppName = c.Application.Name,  // 从 Application 实体获取应用名称
+                })
+                .OrderByDescending(c => c.PublishTime)
+                .ToList();
+
+            if (comments == null || !comments.Any())
+            {
+                return NotFound("No comments found.");
+            }
+            else
+            {
+                return Ok(comments);
+            }
         }
     }
 }
