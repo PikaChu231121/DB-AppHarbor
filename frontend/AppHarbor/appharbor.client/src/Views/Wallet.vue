@@ -1,9 +1,9 @@
 <template>
     <div class="Wallet">
         <div class="header">
-            <img :src="avatar_url"  class="avatar-header"  />
+            <img :src="avatar_url" class="avatar-header" />
             <div class="avatar">
-                <img :src="avatar_url"  class="avatar-circle" />
+                <img :src="avatar_url" class="avatar-circle" />
                 <div class="user-info">
                     <p class="user-nickname">用户昵称：{{ user_nickname }}</p>
                     <p class="user-id">用户ID：{{ user_id }}</p>
@@ -32,7 +32,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(transaction, index) in transactions" :key="index"
-                                :class="{'recharge': transaction.type === 'recharge', 'purchase': transaction.type === 'purchase'}">
+                                :class="{ 'recharge': transaction.type === 'recharge', 'purchase': transaction.type === 'purchase' }">
                                 <td>{{ transaction.time.replace('T', ' ') }}</td>
                                 <td v-if="transaction.type === 'recharge'">充值</td>
                                 <td v-else-if="transaction.type === 'purchase'">
@@ -63,32 +63,32 @@ export default {
             user_id: '',
             transactions: [],
             avatar_url: '',
-            credit: -1, 
+            credit: -1,
             rechargeAmount: 0 // 充值金额
         };
     },
     methods: {
         fetchUserAndTransactions() {
-                var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-                    .then(response => {
-                        this.user = response.data;
-                        console.info(response.data);
-                        this.user_id = response.data.id;
-                        this.user_nickname = response.data.nickname;
-                        this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
-                        this.credit = response.data.credit;
+            var token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                .then(response => {
+                    this.user = response.data;
+                    console.info(response.data);
+                    this.user_id = response.data.id;
+                    this.user_nickname = response.data.nickname;
+                    this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
+                    this.credit = response.data.credit;
 
-                        // 确保在user_id被设置之后调用fetchTransactions
-                        this.fetchTransactions();
-                        // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
-                        // 理想状态是通过cookies直接能得到所有的信息
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user data:', error);
-                    });
+                    // 确保在user_id被设置之后调用fetchTransactions
+                    this.fetchTransactions();
+                    // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
+                    // 理想状态是通过cookies直接能得到所有的信息
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                });
         },
-            
+
         fetchTransactions() {
             console.info(this.user_id);
             axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
@@ -106,7 +106,7 @@ export default {
                 alert('请输入有效的充值金额');
                 return;
             }
-        
+
             if (this.rechargeAmount + this.credit > 1e6) {
                 alert(`充值失败，账户金额不能超过 1000000 元`);
                 return;
@@ -116,7 +116,7 @@ export default {
                 alert('请输入最多两位小数的有效金额');
                 return;
             }
-            
+
             axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
                 .then(response => {
                     this.fetchUserAndTransactions();
@@ -128,27 +128,21 @@ export default {
                 });
 
         },
-        prevPage() {
-            // 上一页按钮的点击事件处理逻辑
-        },
-        nextPage() {
-            // 下一页按钮的点击事件处理逻辑
-        }
     },
     mounted() {
         this.fetchUserAndTransactions(); // 页面加载时从cookies获取用户ID，再获取交易信息
     },
 
     computed: {
-    formattedCredit() {
-      // 将credit转换为字符串并拆分为整数部分和小数部分
-      let creditStr = this.credit.toFixed(2).split('.');
-      let integerPart = creditStr[0];
-      let decimalPart = creditStr[1];
-      // 返回带有HTML标记的字符串
-      return `<span>￥ </span><span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
+        formattedCredit() {
+            // 将credit转换为字符串并拆分为整数部分和小数部分
+            let creditStr = this.credit.toFixed(2).split('.');
+            let integerPart = creditStr[0];
+            let decimalPart = creditStr[1];
+            // 返回带有HTML标记的字符串
+            return `<span>￥ </span><span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
+        }
     }
-  }
 }
 </script>
 
@@ -192,7 +186,7 @@ export default {
 .avatar-circle {
     position: relative;
     background-color: #ffffff;
-    object-fit:cover;
+    object-fit: cover;
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
@@ -251,14 +245,16 @@ export default {
 }
 
 .user-credit {
-  font-size: 30px; /* 基本字体大小 */
+    font-size: 30px;
+    /* 基本字体大小 */
 }
 
 ::v-deep .integer-part {
-  font-size: 50px;
+    font-size: 50px;
 }
+
 ::v-deep .decimal-part {
-  font-size: 20px;
+    font-size: 20px;
 }
 
 .input-recharge {
@@ -312,7 +308,8 @@ thead th {
     border-bottom: 3px solid #fadad6;
 }
 
-th, td {
+th,
+td {
     padding: 12px 15px;
     border-bottom: 1px solid #fadad6;
 }
@@ -343,7 +340,10 @@ tr:hover {
 }
 
 /* 给表格添加圆角效果 */
-table, th, td, tr {
+table,
+th,
+td,
+tr {
     border-radius: 10px;
 }
 
@@ -372,25 +372,24 @@ tr:last-child td:last-child {
 }
 
 button {
-        padding: 10px 20px;
-        background-color: #fbeaea;
-        font-size: 18px;
-        color: #F8887D;
-        border: 3px solid #FADAD6;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.3s, color 0.3s;
-    }
+    padding: 10px 20px;
+    background-color: #fbeaea;
+    font-size: 18px;
+    color: #F8887D;
+    border: 3px solid #FADAD6;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, color 0.3s;
+}
 
-        button:disabled {
-            cursor: not-allowed;
-        }
+button:disabled {
+    cursor: not-allowed;
+}
 
-        button:hover:enabled {
-            background-color: #ffe5e5;
-            transform: scale(1.05);
-            color: #F8887D;
-            transition: background-color 0.3s, transform 0.3s, color 0.3s;
-        }
-        
+button:hover:enabled {
+    background-color: #ffe5e5;
+    transform: scale(1.05);
+    color: #F8887D;
+    transition: background-color 0.3s, transform 0.3s, color 0.3s;
+}
 </style>

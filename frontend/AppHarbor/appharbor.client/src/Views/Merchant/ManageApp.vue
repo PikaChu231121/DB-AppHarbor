@@ -1,18 +1,15 @@
 <template>
-    <div class="card-container">
-        <div class="card" v-for="item in items" :key="item.id">
-            <div class="card-header">
-                <div class="app-img" :style="{ backgroundImage: `url(${item.img_url})` }"></div>
-                <div class="text-content">
-                    <div class="header">{{ item.app_name }}</div>
-                    <div class="subhead">{{ item.app_detail }}</div>
+    <div class="manage-app">
+        <div class="card-container">
+            <div class="card" v-for="item in items" :key="item.id">
+                <div class="card-header">
+                    <div class="app-img" :style="{ backgroundImage: `url(${item.img_url})` }"></div>
+                    <div class="text-content">
+                        <div class="header">{{ item.app_name }}</div>
+                        <div class="subhead">{{ item.app_detail }}</div>
+                    </div>
+                    <div class="more">⋮</div>
                 </div>
-                <div class="toggle-container" @mouseenter="showTooltip(item.enabled, $event)" @mouseleave="hideTooltip"
-                    @mousemove="updateTooltipPosition(item.enabled, $event)">
-                    <ToggleSwitch class="toggle-switch" :value="item.enabled" onColor="#448080" offColor="#cccccc"
-                        @change="handleToggleChange(item, $event)" />
-                </div>
-                <div class="more">⋮</div>
             </div>
         </div>
     </div>
@@ -22,12 +19,8 @@
 </template>
 
 <script>
-import ToggleSwitch from '../Tools/ToggleSwitch.vue';
 export default {
-    name: 'ParentComponent',
-    components: {
-        ToggleSwitch
-    },
+    name: 'ManageApp',
     data() {
         return {
             items: [

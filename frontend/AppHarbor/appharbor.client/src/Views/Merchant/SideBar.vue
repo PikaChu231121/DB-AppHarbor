@@ -22,6 +22,9 @@
                 <li @click="selectMenuItem('records')">
                     <span>交易记录</span>
                 </li>
+                <li @click="selectMenuItem('wallet')">
+                    <span>钱包管理</span>
+                </li>
             </ul>
         </div>
     </div>

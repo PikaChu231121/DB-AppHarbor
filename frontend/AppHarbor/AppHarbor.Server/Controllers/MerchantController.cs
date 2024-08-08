@@ -262,5 +262,66 @@ namespace AppHarbor.Server.Controllers
             return Ok(merchantInfo);
         }
 
+        [HttpPost("getCredit")]
+        public IActionResult GetCredit([FromBody] TokenRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var merchant = _dbContext.Merchants.Find(tokenEntry.Id);
+            if (merchant == null)
+            {
+                return Unauthorized("Merchant not found.");
+            }
+
+            return Ok(new { Credit = merchant.Credit });
+        }
+
+        [HttpPost("withdrawCredit")]
+        public IActionResult WithdrawCredit([FromBody] MerchanrWithdrawModel request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var merchant = _dbContext.Merchants.Find(tokenEntry.Id);
+            if (merchant == null)
+            {
+                return Unauthorized("Merchant not found.");
+            }
+
+            if (request.Amount <= 0)
+            {
+                return BadRequest("Invalid amount.");
+            }
+
+            if (merchant.Credit < request.Amount)
+            {
+                return BadRequest("Insufficient balance.");
+            }
+
+            merchant.Credit -= request.Amount;
+            _dbContext.SaveChanges();
+
+            return Ok(new { NewCredit = merchant.Credit });
+        }
+
     }
 }

@@ -23,3 +23,10 @@ public partial class Merchant
 
     public virtual ICollection<BanMerchant> BanMerchants { get; set; } = new List<BanMerchant>();
 }
+
+public class MerchanrWithdrawModel 
+{
+    public string Token { get; set; }
+
+    public decimal Amount { get; set; }
+}
