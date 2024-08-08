@@ -1,13 +1,13 @@
-<!--<template>
+<template>
     <div class="profile-settings">
-        <alert-box :message="alertMessage"></alert-box>
+        <!--<alert-box :message="alertMessage"></alert-box>-->
         <h1>个人信息</h1>
         <div class="user-info">
             <div class="avatar-group">
                 <div class="avatar-edit">
                     <img :src="user.adminAvatar" alt="管理员头像" class="avatar" />
                     <div class="edit-icon">
-                        <img src="../../public/editing.png" @click="triggerFileInput" />
+                        <img src="../../../public/editing.png" @click="triggerFileInput" />
                     </div>
                     <input type="file" ref="fileInput" @change="onFileChange" class="file-input" />
                 </div>
@@ -28,8 +28,9 @@
             </div>
             <div class="form-group">
                 <label>注册时间</label>
-                <p class="admin>{{ user.registerTime }}</p>
+                <p class="admin">{{ user.registerTime }}</p>
             </div>
+
         </div>
     </div>
 </template>
@@ -37,12 +38,12 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
-    import AlertBox from '../WorkBanch/AlertBox.vue';
+    //import AlertBox from '../WorkBanch/AlertBox.vue';
 
     export default {
         name: 'ProfileSettings',
         components: {
-            AlertBox
+            //AlertBox
         },
         data() {
             return {
@@ -159,9 +160,6 @@
     .form-group {
         display: flex;
         flex-direction: column;
-    }
-
-    .admin-id {
         color: black;
     }
 
@@ -179,6 +177,13 @@
         font-weight: bold;
         font-size: 20px;
         color: #333;
+    }
+
+    input[type="text"], p {
+        padding: 10px;
+        border: 2px solid #ebebeb;
+        border-radius: 4px;
+        font-size: 16px;
     }
 
     .nickname-edit {
@@ -246,4 +251,8 @@
             box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
             filter: brightness(1.1);
         }
-</style>-->
+
+    .admin-id {
+        color: black;
+    }
+</style>
