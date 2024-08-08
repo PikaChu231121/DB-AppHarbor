@@ -77,5 +77,40 @@ namespace AppHarbor.Server.Controllers
             }
         }
 
+        [HttpPost("admininfo")]
+        public IActionResult AdminInfo([FromBody] TokenRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var admin = _dbContext.Admins.Find(tokenEntry.Id);
+            if (admin == null)
+            {
+                return Unauthorized("Admin not found.");
+            }
+
+            // 返回受保护的管理员数据
+            var adminInfo = new
+            {
+                admin.Id,
+                admin.Nickname,  
+                admin.Avatar,
+                admin.RegisterTime,
+                admin.State
+            };
+
+            return Ok(adminInfo);
+        }
+
+
     }
 }
