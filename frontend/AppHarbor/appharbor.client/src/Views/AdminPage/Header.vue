@@ -4,7 +4,7 @@
             <img :src="adminAvatar" alt="Avatar" class="user-avatar" />
             <div class="user-details">
                 <div class="user-id">管理员ID: {{ adminId }}</div>
-                <div class="user-nickname">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;您好，{{ adminNickname }}管理员~</div>
+                <div class="user-nickname">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;您好，{{ adminNickname }}管理员~</div>
             </div>
         </div>
         <div class="search-container">
@@ -50,10 +50,12 @@
 </script>
 
 <style scoped>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap'); /* 引入Poppins字体 */
+
     .header {
         display: flex;
         justify-content: space-between;
-        align-items: center; /* 垂直对齐 */
+        align-items: center; 
         padding: 15px; /* 调整内边距 */
         background-color: #6a1b9a;
         color: white;
@@ -66,10 +68,10 @@
     }
 
     .user-avatar {
-        width: 50px; /* 增加头像宽度 */
-        height: 50px; /* 增加头像高度 */
-        border-radius: 50%; /* 圆形头像 */
-        margin-right: 15px; /* 头像和文字间距 */
+        width: 50px; 
+        height: 50px; 
+        border-radius: 50%; 
+        margin-right: 20px; /* 头像和文字间距 */
         border: 2px solid #fff; /* 增加边框 */
     }
 
@@ -79,26 +81,31 @@
     }
 
     .user-id {
-        font-size: 20px; /* 增加ID字体大小 */
-        font-weight: bold; /* 加粗字体 */
-        margin-right: 15px; /* 增加ID和昵称间距 */
+        font-size: 20px; 
+        font-weight: 600; 
+        margin-right: 15px; 
+        font-family: 'Poppins', sans-serif; 
+        letter-spacing: 0.5px; 
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
     }
 
     .user-nickname {
-        font-size: 20px; /* 增加昵称字体大小 */
-        font-weight: 600; /* 使昵称字体稍微加粗 */
-        color: #fff; /* 白色字体 */
+        font-size: 20px; 
+        font-weight: 600; 
+        color: #fff; 
+        font-family: 'Poppins', sans-serif; 
+        letter-spacing: 0.5px; 
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
     }
-
 
     .search-container {
         display: flex;
-        align-items: center; /* 垂直对齐 */
-        position: relative; /* 相对定位以便图标绝对定位 */
+        align-items: center; 
+        position: relative; 
     }
 
     .search-bar {
-        width: 300px; /* 增加宽度 */
+        width: 300px; 
         padding: 10px;
         padding-left: 40px; /* 为图标留出空间 */
         border: none;
@@ -110,8 +117,8 @@
 
     .search-icon {
         position: absolute;
-        left: 10px; /* 调整位置 */
-        font-size: 18px; /* 调整图标大小 */
+        left: 10px; 
+        font-size: 18px;
         color: #6a1b9a;
     }
 </style>
