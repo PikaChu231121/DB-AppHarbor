@@ -78,14 +78,14 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("admininfo")]
-        public IActionResult AdminInfo([FromBody] TokenRequest request)
+        public IActionResult AdminInfo([FromForm] string token)
         {
-            if (string.IsNullOrEmpty(request.Token))
+            if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("No token provided.");
             }
 
-            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
 
             if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
             {

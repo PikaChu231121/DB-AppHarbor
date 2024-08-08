@@ -1,11 +1,11 @@
-<template>
+<!--<template>
     <div class="profile-settings">
         <alert-box :message="alertMessage"></alert-box>
         <h1>个人信息</h1>
         <div class="user-info">
             <div class="avatar-group">
                 <div class="avatar-edit">
-                    <img :src="getAvatarUrl(user.avatar)" alt="用户头像" class="avatar" />
+                    <img :src="user.adminAvatar" alt="管理员头像" class="avatar" />
                     <div class="edit-icon">
                         <img src="../../public/editing.png" @click="triggerFileInput" />
                     </div>
@@ -13,14 +13,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>用户ID</label>
-                <p>{{ user.id }}</p>
+                <label>管理员ID</label>
+                <p class="admin">{{ user.adminId }}</p>
             </div>
             <div class="form-group">
                 <label>昵称</label>
                 <div class="nickname-edit">
                     <input type="text"
-                           v-model="user.nickname"
+                           v-model="user.adminNickname"
                            @input="enableSaveButton"
                            class="nickname-input" />
                     <button :disabled="!isSaveEnabled" @click="save">保存修改</button>
@@ -28,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label>注册时间</label>
-                <p>{{ formattedRegisterTime }}</p>
+                <p class="admin>{{ user.registerTime }}</p>
             </div>
         </div>
     </div>
@@ -36,9 +36,8 @@
 
 <script>
     import axios from 'axios';
-    import global from "../global.js";
     import Cookies from 'js-cookie';
-    import AlertBox from './AlertBox.vue';
+    import AlertBox from '../WorkBanch/AlertBox.vue';
 
     export default {
         name: 'ProfileSettings',
@@ -48,9 +47,9 @@
         data() {
             return {
                 user: {
-                    id: '',
-                    avatar: '',
-                    nickname: '',
+                    adminId: '',
+                    adminAvatar: '',
+                    adminNickname: '',
                     registerTime: ''
                 },
                 isSaveEnabled: false,
@@ -58,27 +57,24 @@
             }
         },
         mounted() {
-            // 读取 localStorage 中的 id
-            const storedId = localStorage.getItem('globalId');
-            this.isEditing = false;
-            if (global.id == '') {
-                this.user.id = storedId;
-                global.id = storedId; // 更新 global.js 中的 id
-            } else {
-                this.user.id = global.id;
-                localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
-            }
             this.fetchUserInfo();
         },
         methods: {
             fetchUserInfo() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                let formData = new FormData();
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/admin/adminInfo', formData)
                     .then(response => {
-                        this.user = response.data;
+                        const data = response.data;
+                        this.user.adminId = data.id;
+                        this.user.adminNickname = data.nickname;
+                        this.user.adminAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '@/../public/default.png'; // avatar 判空
+                        this.user.registerTime = data.registerTime;
+                        console.log(this.user.adminId);
                     })
                     .catch(error => {
-                        console.error('Error fetching user data:', error);
+                        console.error('Error fetching admin data:', error);
                     });
             },
             enableSaveButton() {
@@ -109,31 +105,13 @@
                         });
                 }
             },
-            save() {
-                var token = Cookies.get('token');
-                if (this.user.nickname == "") {
-                    this.showAlert("昵称不允许为空，请重新输入");
-                    return;
-                }
-                axios.post('http://localhost:5118/api/user/updateUserNickname', {
-                    id: this.user.id,
-                    newnickname: this.user.nickname
-                })
-                    .then(response => {
-                        console.log('User nickname updated successfully');
-                        this.showAlert('昵称修改成功');
-                        this.isSaveEnabled = false;
-                    })
-                    .catch(error => {
-                        console.error('Error updating user nickname:', error);
-                    });
-            },
             showAlert(message) {
-                this.alertMessage = message;
-                setTimeout(() => {
-                    this.alertMessage = '';
-                }, 3000);
+
             },
+            save() {
+
+            },
+
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
                     return `http://localhost:5118${avatarPath}`;
@@ -181,11 +159,14 @@
     .form-group {
         display: flex;
         flex-direction: column;
-        color:black;
+    }
+
+    .admin-id {
+        color: black;
     }
 
     .avatar-group {
-        text-align:center;
+        text-align: center;
         max-width: 240px;
         padding: 15px;
         border: 1px solid #F3C7BA;
@@ -198,13 +179,6 @@
         font-weight: bold;
         font-size: 20px;
         color: #333;
-    }
-
-    input[type="text"], p {
-        padding: 10px;
-        border: 2px solid #ebebeb;
-        border-radius: 4px;
-        font-size: 16px;
     }
 
     .nickname-edit {
@@ -262,16 +236,14 @@
         align-items: center;
     }
 
-    .edit-icon img {
-        width: 24px; /* 调整图标大小 */
-        height: 24px; /* 调整图标大小 */
-        transition: box-shadow 0.3s ease, filter 0.3s ease;
-    }
+        .edit-icon img {
+            width: 24px; /* 调整图标大小 */
+            height: 24px; /* 调整图标大小 */
+            transition: box-shadow 0.3s ease, filter 0.3s ease;
+        }
 
-    .edit-icon:hover img {
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-        filter: brightness(1.1);
-    }
-
-</style>
-
+        .edit-icon:hover img {
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+            filter: brightness(1.1);
+        }
+</style>-->
