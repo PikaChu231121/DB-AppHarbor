@@ -23,5 +23,17 @@ namespace AppHarbor.Server.Controllers
         {
             return Ok(_dbContext.Announcements.ToList());
         }
+
+        [HttpPost("getannouncementlist")]
+        public IActionResult GetAnnouncementList()
+        {
+            // 从数据库中获取所有公告
+            var announcementList = _dbContext.Announcements
+                .OrderBy(a => a.PublishTime) // 根据发布时间排序
+                .ToList();
+
+            // 返回公告列表
+            return Ok(announcementList);
+        }
     }
 }
