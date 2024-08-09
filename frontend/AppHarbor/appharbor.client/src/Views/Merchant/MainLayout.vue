@@ -1,5 +1,5 @@
 <template>
-    <img class="background-image" src="@/assets/admin.png">
+    <img class="background-image" src="@/assets/merchant.png">
     <div class="main-layout">
         <SideBar @menuItemSelected="handleMenuSelection" />
         <div class="content">
