@@ -1,4 +1,5 @@
 <template>
+    <img class="background-image" src="@/assets/admin.png">
     <div class="main-layout">
         <SideBar @menuItemSelected="handleMenuSelection" />
         <div class="content">
@@ -52,6 +53,7 @@ export default {
 <style scoped>
 .main-layout {
     display: flex;
+    background-color: #dbefff;
 }
 
 .header {
@@ -75,7 +77,20 @@ export default {
 }
 
 .main-content {
+    flex: 1;
     display: flex;
     padding: 16px;
 }
+
+.background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('@/assets/admin.png');
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+    }
 </style>

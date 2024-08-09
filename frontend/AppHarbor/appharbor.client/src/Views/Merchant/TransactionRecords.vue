@@ -182,8 +182,8 @@ export default {
   font-family: 'Baloo 2', cursive, Arial, sans-serif;
   font-size: 16px;
   color: #333;
-  min-height: 90vh;
-  max-height: 93vh;
+  min-height: 85vh;
+  max-height: 85vh;
   justify-content: space-between;
 }
 

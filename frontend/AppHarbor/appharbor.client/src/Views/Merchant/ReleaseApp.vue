@@ -132,10 +132,12 @@ export default {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    min-width: 900px;
     margin: 0 auto;
     font-family: 'Baloo 2', cursive, Arial, sans-serif;
     font-size: 16px;
+    min-width: 940px;
+    display: flex;
+    flex-direction: column;
 }
 
 .release-app h1 {

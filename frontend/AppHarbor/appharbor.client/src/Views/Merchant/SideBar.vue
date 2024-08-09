@@ -97,7 +97,7 @@ export default {
 .sidebar {
     width: 240px;
     background-color: #ffffff;
-    height: 95vh;
+    height: 90vh;
     padding: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
