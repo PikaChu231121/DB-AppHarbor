@@ -2,7 +2,8 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="icon">
-                <img :src="getAvatarUrl(merchant.avatar)" class="avatar" />
+                <img :src="getAvatarUrl(merchant.avatar)" class="avatar" 
+                @click = "togglePopup"/>
             </div>
             <div class="merchant-info">
                 <span class="nickname">{{ merchant.nickname }}</span>
@@ -16,9 +17,6 @@
                 <li @click="selectMenuItem('releaseApp')">
                     <span>发布应用</span>
                 </li>
-                <li @click="selectMenuItem('trash')">
-                    <span>Test</span>
-                </li>
                 <li @click="selectMenuItem('records')">
                     <span>交易记录</span>
                 </li>
@@ -27,21 +25,31 @@
                 </li>
             </ul>
         </div>
+        <transition name="popup">
+            <div v-if="showMerchant" class="merchant-profile-popup" ref="popup">
+                <PersonalInformation />
+            </div>
+        </transition>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import PersonalInformation from './PersonalInformation.vue';
 export default {
     name: 'SideBar',
+    components: {
+        PersonalInformation
+    },
     data() {
         return {
             merchant: {
                 id: '',
                 nickname: '',
                 avatar: '',
-            }
+            },
+            showMerchant: false
         }
     },
     methods: {
@@ -54,6 +62,9 @@ export default {
             } else {
                 return '../../public/default.png';
             }
+        },
+        togglePopup() {
+            this.showMerchant = !this.showMerchant;
         }
     },
     created() {
@@ -103,6 +114,15 @@ export default {
     /* 为头像添加边框 */
 }
 
+    .avatar:hover {
+        transform: scale(1.1); /* 鼠标悬浮时放大头像 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬浮时增加阴影 */
+    }
+
+    .avatar:active {
+        transform: scale(0.95); /* 点击头像时缩小头像 */
+    }
+
 .merchant-info {
     display: flex;
     flex-direction: column;
@@ -148,4 +168,27 @@ span {
     background-color: #e6f7ff;
     color: #007bff;
 }
+
+.merchant-profile-popup {
+        position: absolute;
+        top: 100px; /* 根据需要调整位置*/
+        left: 260px;
+        background-color: #f0f9ff;
+        border-radius: 12px;
+        padding: 16px;
+        width: 500px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .popup-enter-active, .popup-leave-active {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .popup-enter-from, .popup-leave-to {
+        opacity: 0;
+        transform: translateX(-10px) translateY(-10px);
+    }
 </style>

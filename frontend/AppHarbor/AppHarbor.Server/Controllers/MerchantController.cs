@@ -254,12 +254,28 @@ namespace AppHarbor.Server.Controllers
                 id = merchant.Id,
                 nickName = merchant.Nickname,
                 avatar = merchant.Avatar,
-                regiterTime = merchant.RegisterTime,
+                registerTime = merchant.RegisterTime,
                 credit = merchant.Credit,
                 state = merchant.State
             };
 
             return Ok(merchantInfo);
+        }
+
+        [HttpPost("updateMerchantNickName")]
+        public IActionResult UpdateMerchantNickName([FromForm] decimal id,
+        [FromForm] string nickName)
+        {
+            var merchant = _dbContext.Merchants.Find(id);
+            if (merchant == null)
+            {
+                return NotFound("merchant not found");
+            }
+
+            merchant.Nickname = nickName;
+            _dbContext.SaveChanges();
+
+            return Ok(merchant);
         }
 
         [HttpPost("getCredit")]
