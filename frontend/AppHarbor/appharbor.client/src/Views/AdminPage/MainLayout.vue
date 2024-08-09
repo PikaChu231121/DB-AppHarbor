@@ -51,8 +51,8 @@
                 <!-- 评论相关内容 实现 serachComments-->
                 <div class="menu">
                     <div class="menu-item"
-                         :class="{ active: selectedStatus === '删除评论' }"
-                         @click="searchComments();changeSection('commentManagement')">删除评论</div>
+                         :class="{ active: selectedStatus === '审核评论' }"
+                         @click="searchComments();changeSection('commentManagement')">已发布评论</div>
                 </div>
             </div>
 
@@ -167,7 +167,7 @@
                 <div v-for="comment in comments" :key="comment.id" class="app-item">
                     <div class="user-header">
                         <h3>用户: {{ comment.nickname }}</h3>
-                        <p>评论应用: {{ comment.appName }}</p> <!--考虑改成应用id或应用名称-->
+                        <p>评论应用: {{ comment.appName }}</p>
                         <p>评分: {{ comment.score }}</p>
                         <p>评论时间: {{ comment.publishTime }}</p>
                     </div>
@@ -175,7 +175,7 @@
                         <p>{{ comment.content }}</p>
                     </div>
                     <div class="app-actions">
-                        <button @click="handleDeleteComment(comment.id)" class="action-button">删除评论</button>
+                        <button @click="handleDeleteComment(comment)" class="action-button">封禁</button>
                     </div>
                 </div>
             </div>
@@ -265,6 +265,19 @@
             </div>
         </div>
     </div>
+
+    <!-- 封禁评论确认弹窗 -->
+    <div v-if="showCommentBanConfirmPopup" class="popup-overlay" @click="cancelCommentBan">
+        <div class="popup-content ban-confirm-popup" @click.stop>
+            <h3>确认封禁这条评论吗？</h3>
+            <p>请填写封禁理由：</p>
+            <textarea v-model="banReason" rows="4" placeholder="请输入封禁理由"></textarea>
+            <div class="confirm-buttons">
+                <button @click="confirmCommentBan" class="popup-confirm-button">确定封禁</button>
+                <button @click="cancelCommentBan" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -314,6 +327,9 @@
                 showUnbanConfirmPopup: false,
                 showMerUnbanConfirmPopup: false,
                 merToUnban: null,
+
+                commentToBan: null,
+                showCommentBanConfirmPopup: false,
             };
         },
         methods: {
@@ -531,7 +547,7 @@
                     });
             },
             searchComments() {
-                this.selectedStatus = '删除评论';
+                this.selectedStatus = '审核评论';
                 axios.get('http://localhost:5118/api/comment/getallcomments')
                     .then(response => {
                         this.comments = response.data.$values;
@@ -544,7 +560,17 @@
                         this.loading = false;
                     });
             },
-            handleDeleteComment() {
+            handleDeleteComment(comment) {
+                this.commentToBan = comment;
+                this.showCommentBanConfirmPopup = true;
+            },
+            confirmCommentBan() {
+
+            },
+            cancelCommentBan() {
+                this.showCommentBanConfirmPopup = false;
+                this.banReason = '';
+                this.commentToBan = null;
             },
             fetchData(url, data = null) {
                 this.loading = true;

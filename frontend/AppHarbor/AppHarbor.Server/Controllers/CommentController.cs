@@ -52,7 +52,7 @@ namespace AppHarbor.Server.Controllers
             ////return Ok(comments);
             ///
             var comments = _dbContext.Comments
-                .Where(a => a.ApplicationId == getappcommentModel.ApplicationId)
+                .Where(a => a.ApplicationId == getappcommentModel.ApplicationId /*&& a.State != 'banned'*/) // 加入state判断
                 .Include(c => c.User)
                 .Select(c => new
                 {
@@ -113,6 +113,7 @@ namespace AppHarbor.Server.Controllers
                 ApplicationId = postAppCommentModel.ApplicationId,
                 UserId = user.Id,
                 PublishTime = DateTime.UtcNow
+                //State = 'Publishded' // 默认直接发布
             };
             _dbContext.Comments.Add(newComment);
             _dbContext.SaveChanges();
@@ -131,6 +132,7 @@ namespace AppHarbor.Server.Controllers
         public IActionResult GetAllComments()
         {
             var comments = _dbContext.Comments
+                //.Where(a => a.State != 'banned')
                 .Include(c => c.Application)
                 .Select(c => new
                 {

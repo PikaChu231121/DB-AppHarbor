@@ -215,19 +215,6 @@
             },
             submitComment() {
                 const token = Cookies.get('token');
-                /*
-                const newComment = {
-                    user: {
-                        avatar: this.user.avatar,
-                        nickname: this.user.nickname,
-                    },
-                    content: this.newComment.content, // 评论内容
-                    score: this.newComment.score, // 评分(1-5)
-                    publishTime: new Date().toLocaleString() // 发布时间
-                };
-                this.comments.push(newComment);
-                */
-                // Here you should add the logic to send the new comment to the server
                 axios.post('http://localhost:5118/api/comment/postappcomment', {
                     token: token,
                     content: this.newComment.content,
@@ -239,14 +226,15 @@
                     if (parsedData && parsedData.success) {
                         alert('评论成功！');
                         // 将新评论添加到评论列表中
-                        this.comments.push({
-                            id: parsedData.commentId, // 服务器返回的新评论ID
-                            content: this.newComment.content,
-                            score: this.newComment.score,
-                            avatar: this.user.avatar,
-                            nickname: this.user.nickname,
-                            publishTime: new Date().toLocaleString() // 注意这是个假的时间
-                        });
+                        //this.comments.push({
+                        //    id: parsedData.commentId, // 服务器返回的新评论ID
+                        //    content: this.newComment.content,
+                        //    score: this.newComment.score,
+                        //    avatar: this.user.avatar,
+                        //    nickname: this.user.nickname,
+                        //    publishTime: new Date().toLocaleString() // 注意这是个假的时间
+                        //});
+                        this.fetchAllComments(this.app.Id);
                         // 清空评论表单
                         this.newComment.content = '';
                         this.newComment.score = 0;
