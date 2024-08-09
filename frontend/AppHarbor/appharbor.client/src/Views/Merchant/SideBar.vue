@@ -63,8 +63,15 @@ export default {
                 return '../../public/default.png';
             }
         },
-        togglePopup() {
+        togglePopup(event) {
             this.showMerchant = !this.showMerchant;
+            event.stopPropagation();
+        },
+        handleClickOutside(event) {
+            if (this.showMerchant && !this.$refs.popup.contains(event.target)
+                && !this.$el.contains(event.target)) {
+                this.showMerchant = false;
+            }
         }
     },
     created() {
@@ -78,6 +85,10 @@ export default {
             .catch(error => {
                 console.error(error);
             });
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    beforeUnmount() {
+        document.removeEventListener('click', this.handleClickOutside);
     }
 }  
 </script>
