@@ -1,155 +1,595 @@
 <template>
     <div class="manage-app">
-        <div class="card-container">
-            <div class="card" v-for="item in items" :key="item.id">
-                <div class="card-header">
-                    <div class="app-img" :style="{ backgroundImage: `url(${item.img_url})` }"></div>
-                    <div class="text-content">
-                        <div class="header">{{ item.app_name }}</div>
-                        <div class="subhead">{{ item.app_detail }}</div>
+        <h1>应用管理</h1>
+        <div class="search-bar">
+            <input v-model="searchQuery" placeholder="全局搜索..." class="global-search" />
+            <button @click="toggleAdvancedSearch" class="advanced-search-toggle">
+                {{ showAdvancedSearch ? '隐藏高级检索' : '高级检索' }}
+            </button>
+            <div v-if="showAdvancedSearch" class="advanced-search">
+                <input v-model="searchName" placeholder="应用名称搜索..." />
+                <input v-model="searchCategory" placeholder="应用种类搜索..." />
+                <input v-model="searchState" placeholder="状态搜索..." />
+                <input v-model="searchVersion" placeholder="版本搜索..." />
+            </div>
+            <button @click="initiateSearch" class="search-button">全局搜索</button>
+        </div>
+        <div class="app-list-container">
+            <div class="app-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th @click="changeSort('appId')" class="sortable">
+                                应用ID
+                                <span class="sort-icons">
+                                    <span v-if="sortBy === 'appId' && sortOrder === 'asc'" class="arrow-up">▲</span>
+                                    <span v-if="sortBy === 'appId' && sortOrder === 'desc'" class="arrow-down">▼</span>
+                                </span>
+                            </th>
+                            <th @click="changeSort('name')" class="sortable">
+                                应用名称
+                                <span class="sort-icons">
+                                    <span v-if="sortBy === 'name' && sortOrder === 'asc'" class="arrow-up">▲</span>
+                                    <span v-if="sortBy === 'name' && sortOrder === 'desc'" class="arrow-down">▼</span>
+                                </span>
+                            </th>
+                            <th @click="changeSort('version')" class="sortable">
+                                版本
+                                <span class="sort-icons">
+                                    <span v-if="sortBy === 'version' && sortOrder === 'asc'" class="arrow-up">▲</span>
+                                    <span v-if="sortBy === 'version' && sortOrder === 'desc'" class="arrow-down">▼</span>
+                                </span>
+                            </th>
+                            <th @click="changeSort('releaseState')" class="sortable">
+                                状态
+                                <span class="sort-icons">
+                                    <span v-if="sortBy === 'releaseState' && sortOrder === 'asc'" class="arrow-up">▲</span>
+                                    <span v-if="sortBy === 'releaseState' && sortOrder === 'desc'" class="arrow-down">▼</span>
+                                </span>
+                            </th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="app in apps" :key="app.id">
+                            <td>{{ app.id }}</td>
+                            <td>{{ app.name }}</td>
+                            <td>{{ app.version }}</td>
+                            <td>{{ app.releaseState }}</td>
+                            <td>
+                                <button @click="openEditModal(app)" class="advanced-search-toggle">编辑</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
+                <span>第 {{ currentPage }} 页</span>
+                <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
+            </div>
+
+            <div v-if="showEditModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" @click="closeEditModal">&times;</span>
+                    <h2>编辑应用</h2>
+                    <div>
+                        <label>应用ID: {{ selectedApp.id }}</label>
                     </div>
-                    <div class="more">⋮</div>
+                    <div>
+                        <label>名称: {{ selectedApp.name }}</label>
+                    </div>
+                    <div>
+                        <label>分类: {{ selectedApp.category }}</label>
+                    </div>
+                    <div>
+                        <label>下载量: {{ selectedApp.downloadCount }}</label>
+                    </div>
+                    <div>
+                        <label>版本:</label>
+                        <input v-model="selectedApp.version" />
+                    </div>
+                    <div>
+                        <label>状态:</label>
+                        <input v-model="selectedApp.releaseState" />
+                    </div>
+                    <div>
+                        <label style="vertical-align: top;">描述:</label>
+                        <textarea v-model="selectedApp.description" rows="4" style="resize: none; width: 80%;"></textarea>
+                    </div>               <div>
+                        <label>图标:</label>
+                        <input v-model="selectedApp.image" />
+                    </div>                <div>
+                        <label>价格:</label>
+                        <input v-model="selectedApp.price" />
+                    </div>
+
+                    <div>
+                        <button @click="saveAppChanges" class="save-button">保存</button>
+                        <button @click="confirmDelete" class="delete-button">删除应用</button>
+                    </div>
+
+                    <div v-if="showConfirmDelete" class="modal">
+                        <div class="modal-content">
+                            <p>确定要删除这个应用吗？</p>
+                            <button @click="deleteApp(selectedApp.id)" class="confirm-button">是</button>
+                            <button @click="closeConfirmDelete" class="cancel-button">否</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- <div v-if="tooltip.visible" :style="tooltipStyle" class="tooltip">
-        {{ tooltip.content }}
-    </div> -->
 </template>
 
 <script>
-export default {
-    name: 'ManageApp',
-    data() {
-        return {
-            items: [
-                { id: 1, img_url: 'https://via.placeholder.com/40', app_name: 'app1', app_detail: '111', enabled: true },
-                { id: 2, img_url: 'https://via.placeholder.com/40', app_name: 'app2', app_detail: '222', enabled: false },
-                { id: 3, img_url: 'https://via.placeholder.com/40', app_name: 'app3', app_detail: '333', enabled: true }
-            ],
-            // tooltip: {
-            //     visible: false,
-            //     content: '',
-            //     x: 0,
-            //     y: 0
-            // }
-        }
-    },
-    methods: {
-        handleToggleChange(item, newValue) {
-            item.enabled = newValue;
-            console.log(`Item with id ${id} is now ${newValue ? 'enabled' : 'disabled'}`);
-            // 在此处添加其他函数逻辑，例如更新状态到服务器
+    import Cookies from 'js-cookie';
+    import axios from 'axios';
+
+    export default {
+        data() {
+            return {
+                merchantId: '',
+                apps: [],
+                currentPage: 1,
+                totalPages: 1,
+                searchQuery: '',
+                searchName: '',
+                searchCategory: '',
+                searchState: '',
+                searchVersion: '',
+                showAdvancedSearch: false,
+                sortBy: 'id', // 默认按应用ID排序
+                sortOrder: 'asc', // 默认升序
+                showEditModal: false, // 控制模态框的显示
+                showConfirmDelete: false, // 控制确认删除模态框的显示
+                selectedApp: null, // 当前被选中的应用
+            };
         },
-        // showTooltip(enabled, event) {
-        //     this.tooltip.content = enabled ? '已开启' : '未开启';
-        //     this.updateTooltipPosition(enabled, event);
-        //     this.tooltip.visible = true;
-        // },
-        // hideTooltip() {
-        //     this.tooltip.visible = false;
-        // },
-        // updateTooltipPosition(enabled, event) {
-        //     this.tooltip.content = enabled ? '已开启' : '未开启';
-        //     this.tooltip.x = event.clientX + 10; // 鼠标右下方
-        //     this.tooltip.y = event.clientY + 10; // 鼠标右下方
-        // }
-    },
-    computed: {
-        // tooltipStyle() {
-        //     return {
-        //         position: 'absolute',
-        //         left: `${this.tooltip.x}px`,
-        //         top: `${this.tooltip.y}px`
-        //     };
-        // }
-    }
-}
+        methods: {
+            fetchApps(page = 1) {
+                const token = Cookies.get('token');
+                let formData = new FormData();
+                formData.append('token', token);
+                formData.append('search', this.searchQuery);
+                formData.append('name', this.searchName);
+                formData.append('category', this.searchCategory);
+                formData.append('state', this.searchState);
+                formData.append('version', this.searchVersion);
+                formData.append('page', page);
+                formData.append('sortBy', this.sortBy);
+                formData.append('sortOrder', this.sortOrder);
+
+                axios.post('http://localhost:5118/api/merchant/getApps', formData)
+                    .then(response => {
+                        this.apps = response.data.apps.$values;
+                        this.totalPages = response.data.totalPages;
+                        this.currentPage = page;
+                        this.merchantId = response.data.merchantId;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching apps:', error);
+                        alert('Error fetching apps:', error);
+                    });
+            },
+            initiateSearch() {
+                this.currentPage = 1;
+                this.fetchApps();
+            },
+            fetchPage(page) {
+                if (page > 0 && page <= this.totalPages) {
+                    this.fetchApps(page);
+                }
+            },
+            prevPage() {
+                if (this.currentPage > 1) {
+                    this.fetchApps(this.currentPage - 1);
+                }
+            },
+            nextPage() {
+                if (this.currentPage < this.totalPages) {
+                    this.fetchApps(this.currentPage + 1);
+                }
+            },
+            toggleAdvancedSearch() {
+                this.showAdvancedSearch = !this.showAdvancedSearch;
+            },
+            openEditModal(app) {
+                this.selectedApp = { ...app }; // 复制应用数据
+                this.showEditModal = true; // 显示模态框
+            },
+            closeEditModal() {
+                this.showEditModal = false; // 关闭模态框
+            },
+            async saveAppChanges() {
+                try {
+                    await this.updateApp(this.selectedApp); // 更新应用信息
+                    this.fetchApps(this.currentPage); // 刷新应用列表
+                } catch (error) {
+                    console.error('Error saving app changes:', error);
+                }
+                this.closeEditModal(); // 关闭编辑模态框
+            },
+            async updateApp(app) {
+                if (!app.name || !app.version) {
+                    alert("应用名称和版本号不能为空！");
+                    return;
+                }
+
+                let formData = new FormData();
+                formData.append('merchantId', this.merchantId); 
+                formData.append('appId', this.selectedApp.id);
+                formData.append('version', this.selectedApp.version);
+                formData.append('state', this.selectedApp.releaseState);
+                formData.append('description', this.selectedApp.description);
+                formData.append('price', this.selectedApp.price);
+
+                axios.post('http://localhost:5118/api/merchant/updateApp', formData)
+                    .then(() => {
+                        this.popupMessage = '应用信息修改成功';
+                        this.showPopup = true;
+                        this.isSaveEnabled = false;
+                        setTimeout(() => {
+                            this.showPopup = false;
+                            this.popupMessage = '';
+                            this.closeEditModal(); // 关闭编辑模态框
+                            this.fetchApps(this.currentPage); // 刷新应用列表
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        console.error('Error updating app:', error);
+                        this.popupMessage = '更新应用信息失败，请重试';
+                        this.showPopup = true;
+                        return;
+                    });
+            },
+            updateAppImage(app, event) {
+                const file = event.target.files[0];
+                if (file && !file.type.startsWith('image/')) {
+                    alert('请选择有效的图片文件！');
+                    return;
+                }
+                const token = Cookies.get('token');
+                let formData = new FormData();
+                formData.append('token', token);
+                formData.append('appId', app.id);
+                formData.append('image', file);
+
+                axios.post('http://localhost:5118/api/merchant/updateAppImage', formData)
+                    .then(response => {
+                        app.image = response.data.image; // 更新前端显示的图标
+                        console.log('App image updated:', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error updating app image:', error);
+                        alert('图片更新失败，请稍后再试。');
+                    });
+            },
+            selectPackage(app, event) {
+                app.packageFile = event.target.files[0];
+            },
+            updateAppPackage(app) {
+                if (!app.packageFile) {
+                    alert('请先选择一个应用包文件！');
+                    return;
+                }
+                const token = Cookies.get('token');
+                let formData = new FormData();
+                formData.append('token', token);
+                formData.append('appId', app.id);
+                formData.append('version', app.version);
+                formData.append('package', app.packageFile); // 添加文件到请求
+
+                axios.post('http://localhost:5118/api/merchant/updateAppPackage', formData)
+                    .then(response => {
+                        console.log('App package updated:', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error updating app package:', error);
+                        alert('Error updating app package:');
+                    });
+            },
+            deleteApp(appId) {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/merchant/deleteApp', {
+                    token,
+                    appId
+                })
+                    .then(response => {
+                        this.apps = this.apps.filter(app => app.id !== appId);
+                        console.log('App deleted:', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error deleting app:', error);
+                        alert('删除应用时出错，请稍后再试。');
+                    });
+                this.showConfirmDelete = false; // 关闭确认删除模态框
+                this.closeEditModal(); // 关闭编辑模态框
+            },
+            changeSort(column) {
+                if (this.sortBy === column) {
+                    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+                }
+                else {
+                    this.sortBy = column;
+                    this.sortOrder = 'asc'; // 默认升序
+                }
+                this.currentPage = 1; 
+                this.initiateSearch(); 
+            },
+            confirmDelete() {
+                this.showConfirmDelete = true; 
+            },
+            closeConfirmDelete() {
+                this.showConfirmDelete = false;
+            },
+        },
+        mounted() {
+            this.fetchApps();
+        }
+    };
 </script>
 
 <style scoped>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #e6f4f1;
-    margin: 0;
-    padding: 20px;
-}
+    .manage-app {
+        display: flex;
+        flex-direction: column;
+        background-color: #f0f9ff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        margin: 0 auto;
+        font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        font-size: 16px;
+        color: #333;
+        min-height: 85vh;
+    }
 
-.card-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+    h1 {
+        color: #1976d2;
+    }
 
-.card {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: 0.2s;
-}
+    .search-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
 
-.card:hover {
-    box-shadow: 0 4px 8px rgba(90, 176, 150, 0.405);
-    transform: scale(1.01);
-}
+    .global-search,
+    .search-button,
+    .advanced-search-toggle {
+        flex: 1 1 150px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
 
-.card-header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
+    .search-button,
+    .advanced-search-toggle {
+        cursor: pointer;
+        background-color: #1e88e5;
+        color: #fff;
+    }
 
-.app-img {
-    background-color: #73c2b5;
-    border-radius: 10px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    margin-right: 10px;
-    background-size: cover;
-    background-position: center;
-}
+        .advanced-search-toggle:hover,
+        .search-button:hover {
+            background-color: #1565c0;
+        }
 
-.toggle-switch {
-    right: 20px;
-}
+    .advanced-search {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 5px;
+    }
 
-.text-content {
-    flex: 1;
-}
+        .advanced-search input {
+            flex: 1 1 150px;
+        }
 
-.header {
-    font-weight: bold;
-    font-size: 16px;
-}
+    .app-list-container {
+        flex: 1;
+        width: 100%;
+        overflow-x: auto;
+        max-height: 65vh;
+        overflow-y: scroll;
+    }
+    .app-list table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        word-wrap: break-word;
+        max-height: 100%;
+        background-color: #fff;
+    }
+    th {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+        background-color: #1e88e5; /* 表头背景颜色为蓝色 */
+        color: #fff; /* 表头字体颜色为白色 */
+        position: sticky;
+        top: 0;
+    }
 
-.subhead {
-    color: #777;
-    font-size: 14px;
-}
+    td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+        background-color: #fff; /* 表格内容背景颜色为白色 */
+        color: #000; /* 表格内容字体颜色为黑色 */
+    }
 
-.more {
-    cursor: pointer;
-    font-size: 20px;
-    color: #888;
-}
+    td .app-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        margin-bottom: 5px;
+    }
 
-/* .tooltip {
-    overflow: hidden;
-    background-color: #333;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    white-space: nowrap;
-    z-index: 1000;
-    font-size: 12px;
-} */
+    td input[type="file"] {
+        display: block;
+        margin-top: 5px;
+    }
+
+    .sortable {
+        cursor: pointer;
+    }
+
+    .sort-icons {
+        margin-left: 5px;
+    }
+
+    .arrow-up,
+    .arrow-down {
+        font-size: 12px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+        .pagination button {
+            padding: 5px 10px;
+            background-color: #1e88e5;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s, color 0.3s;
+            font-family: 'Baloo 2', cursive;
+            font-size: 14px;
+        }
+
+            .pagination button:disabled {
+                cursor: not-allowed;
+                background-color: #ccc;
+            }
+
+            .pagination button:hover:enabled {
+                background-color: #1565c0;
+                transform: scale(1.05);
+            }
+
+        .pagination span {
+            display: flex;
+            align-items: center;
+        }
+
+    @media (max-width: 768px) {
+
+        .advanced-search-toggle,
+        .search-button,
+        .global-search {
+            width: 100%;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+        }
+    }
+
+    /* 模态框背景 */
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    /* 模态框内容 */
+    .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 300px;
+        position: relative;
+    }
+
+    /* 关闭按钮 */
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .save-button {
+        background-color: #5cb85c; /*#28a745*/
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-right: 50px;
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+
+        .save-button:hover {
+            background-color: #4cae4c;
+/*            #218838;*/
+        }
+
+    .delete-button {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-left: 10px;
+        margin-right: 20px; /* 不靠近右边界 */
+    }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+    .confirm-button {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-right: 10px;
+    }
+
+        .confirm-button:hover {
+            background-color: #c82333;
+        }
+
+    .cancel-button {
+        background-color: #6c757d;
+        color: #fff;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .cancel-button:hover {
+            background-color: #5a6268;
+        }
 </style>

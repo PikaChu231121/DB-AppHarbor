@@ -4,7 +4,7 @@
         <SideBar @menuItemSelected="handleMenuSelection" />
         <div class="content">
             <div class="main-content">
-                <div v-if="selectedMenu === 'outbox'">
+                <div v-if="selectedMenu === 'manageApp'">
                     <ManageApp />
                 </div>
                 <div v-if="selectedMenu === 'releaseApp'">
@@ -39,7 +39,7 @@ export default {
     },
     data() {
         return {
-            selectedMenu: 'outbox'
+            selectedMenu: 'manageApp'
         }
     },
     methods: {

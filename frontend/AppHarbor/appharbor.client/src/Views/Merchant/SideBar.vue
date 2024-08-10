@@ -11,7 +11,7 @@
         </div>
         <div class="sidebar-menu">
             <ul>
-                <li @click="selectMenuItem('outbox')">
+                <li @click="selectMenuItem('manageApp')">
                     <span>应用管理</span>
                 </li>
                 <li @click="selectMenuItem('releaseApp')">
