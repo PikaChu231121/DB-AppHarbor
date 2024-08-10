@@ -123,7 +123,8 @@ namespace AppHarbor.Server.Controllers
                                         [FromForm] string Description,
                                         [FromForm] decimal Price,
                                         [FromForm] string Category,
-                                        [FromServices] IWebHostEnvironment env
+                                        [FromServices] IWebHostEnvironment env,
+                                        [FromForm] string token
                                         )
         {
             var checkResult = CheckUpload(file);
@@ -135,10 +136,25 @@ namespace AppHarbor.Server.Controllers
             string guid = Guid.NewGuid().ToString("N");
             string relativePath = getPath(file, env, guid);
 
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No token provided.");
+            }
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+            var merchant = _dbContext.Merchants.Find(tokenEntry.Id);
+            if (merchant == null)
+            {
+                return Unauthorized("Merchant not found.");
+            }
+
             var application = new Application()
             {
                 Version = Version,
-                MerchantId = 7,
+                MerchantId = merchant.Id,
                 Name = Name,
                 Category = Category,
                 Description = Description,

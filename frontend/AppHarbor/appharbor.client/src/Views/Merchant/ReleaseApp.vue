@@ -47,6 +47,7 @@
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie';
 export default {
     name: 'ReleaseApp',
     data() {
@@ -77,6 +78,7 @@ export default {
             this.$refs.imageInput.click();
         },
         upload() {
+            const token = Cookies.get('token');
             let formData = new FormData();
             formData.append('file', this.appFile);
             formData.append('Name', this.appName);
@@ -84,6 +86,7 @@ export default {
             formData.append('Description', this.appDescription);
             formData.append('Price', this.appPrice);
             formData.append('Category', this.appCategory);
+            formData.append('Token', token);
             console.log(this.appFile);
             axios.post('http://localhost:5118/api/application/uploadapp', formData, {
                 headers: {
