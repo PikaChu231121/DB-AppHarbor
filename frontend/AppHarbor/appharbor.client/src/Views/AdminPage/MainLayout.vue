@@ -10,10 +10,13 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '待审核应用' }"
-                         @click="selectseleasing();changeSection('appManagement')">待审核</div>
+                         @click="selectseleasing();changeSection('appManagement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 2048 2048"><path fill="currentColor" d="M1033 1280q-14 30-21 62t-13 66H384v-128zm-649 384v-128h613q5 33 14 65t23 63zm-128 256h1349l127 128H128V0h1115l549 549v568q-29-26-61-47t-67-37V640h-512V128H256zM1280 219v293h293zm24 805q-109 41-187 128H384v-128zM384 512h640v128H384zm1152 256v128H384V768zm512 1216q0 26-19 45t-45 19t-45-19l-291-290q-39 26-84 39t-92 14q-66 0-124-25t-102-68t-69-102t-25-125t25-124t68-101t102-69t125-26t124 25t101 69t69 102t26 124q0 47-13 92t-40 84l290 291q19 19 19 45m-768-512q0 40 15 75t41 61t61 41t75 15t75-15t61-41t41-61t15-75t-15-75t-41-61t-61-41t-75-15t-75 15t-61 41t-41 61t-15 75" /></svg>&nbsp;&nbsp;待审核</div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '已审核应用' }"
-                         @click="selectseleased();changeSection('appManagement')">已审核</div>
+                         @click="selectseleased();changeSection('appManagement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="m17.275 20.25l3.475-3.45l-1.05-1.05l-2.425 2.375l-.975-.975l-1.05 1.075zM6 9h12V7H6zm12 14q-2.075 0-3.537-1.463T13 18t1.463-3.537T18 13t3.538 1.463T23 18t-1.463 3.538T18 23M3 22V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v6.675q-.475-.225-.975-.375T19 11.075V5H5v14.05h6.075q.125.775.388 1.475t.687 1.325L12 22l-1.5-1.5L9 22l-1.5-1.5L6 22l-1.5-1.5zm3-5h5.075q.075-.525.225-1.025t.375-.975H6zm0-4h7.1q.95-.925 2.213-1.463T18 11H6zm-1 6.05V5z" /></svg>&nbsp;&nbsp;已审核
+                    </div>
                 </div>
             </div>
 
@@ -25,10 +28,14 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '封禁用户' }"
-                         @click="searchbanuser();changeSection('userManagement')">封禁用户</div>
+                         @click="searchbanuser();changeSection('userManagement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 1024 1024"><path fill="currentColor" d="M1024 800q0 93-65.5 158.5T800 1024H436l-81-1l-87-2.5l-80-4.5l-75.5-8.5l-57.5-12L13.5 979L0 957q2-88 110-155.5T384 712v-33q-52-23-90-65t-60-98.5t-32-121T192 256q0-65 25-114.5t69-80t101-46T512 0t125 15.5t101 46t69 80T832 256q0 214-71 324q23-4 39-4q93 0 158.5 65.5T1024 800m-64 0q0-50-29-91L709 931q41 29 91 29q66 0 113-47t47-113M768 273q0-103-71.5-156T512 64t-184.5 53T256 273q0 68 10 125t32 106.5t60 82.5t90 46v138q-60 6-117.5 21T232 825.5t-72.5 38T112 898t-16 22q0 14 38 23t114 12t126.5 4t137.5 1q85 0 131-1q-67-66-67-159q0-6 3-28q-1-1-2-1h-1V633q192-41 192-360M640 800q0 50 29 91l222-222q-41-29-91-29q-66 0-113 47t-47 113" /></svg>&nbsp;&nbsp;封禁用户
+                    </div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '活跃用户' }"
-                         @click="searchunbanuser();changeSection('userManagement')">活跃用户</div>
+                         @click="searchunbanuser();changeSection('userManagement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 256 256"><path fill="currentColor" d="M144 157.68a68 68 0 1 0-71.9 0c-20.65 6.76-39.23 19.39-54.17 37.17a8 8 0 0 0 12.25 10.3C50.25 181.19 77.91 168 108 168s57.75 13.19 77.87 37.15a8 8 0 0 0 12.25-10.3c-14.94-17.78-33.52-30.41-54.12-37.17M56 100a52 52 0 1 1 52 52a52.06 52.06 0 0 1-52-52m197.66 33.66l-32 32a8 8 0 0 1-11.32 0l-16-16a8 8 0 0 1 11.32-11.32L216 148.69l26.34-26.35a8 8 0 0 1 11.32 11.32" /></svg>&nbsp;&nbsp;活跃用户
+                    </div>
                 </div>
             </div>
 
@@ -74,7 +81,8 @@
             <div v-if="section==='appManagement'" class="app-list">
                 <div v-for="item in items" :key="item.id" class="app-item">
                     <div class="app-header">
-                        <h3>{{ item.name }}</h3>
+                        <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256"><path fill="currentColor" d="m64.34 196.07l-9.45 16a8 8 0 1 1-13.78-8.14l9.46-16a8 8 0 1 1 13.77 8.14M232 152h-47.8l-30.73-52a8 8 0 1 0-13.77 8.14l61.41 103.93a8 8 0 0 0 13.78-8.14L193.66 168H232a8 8 0 0 0 0-16m-89.53 0H90.38l68.51-115.93a8 8 0 0 0-13.78-8.14L128 56.89l-17.11-29a8 8 0 1 0-13.78 8.14l21.6 36.55L71.8 152H24a8 8 0 0 0 0 16h118.47a8 8 0 1 0 0-16" /></svg>
+                        &nbsp;{{ item.name }}</h3>
                         <span class="app-actions">
                             <button v-if="selectedStatus === '待审核应用'" @click="handleShelve(item)" class="action-button">上架应用</button>
                             <button @click="showDetails(item)" class="action-button">查看应用</button>
@@ -87,7 +95,8 @@
             <div v-if="section==='userManagement' && !userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
-                        <h3>用户昵称：{{ user.nickname }}</h3>
+                        <h3><svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 256 256"><path fill="currentColor" d="M128 28a100 100 0 1 0 100 100A100.11 100.11 0 0 0 128 28M68.87 198.42a68 68 0 0 1 118.26 0a91.8 91.8 0 0 1-118.26 0m124.3-5.55a75.6 75.6 0 0 0-44.51-34a44 44 0 1 0-41.32 0a75.6 75.6 0 0 0-44.51 34a92 92 0 1 1 130.34 0M128 156a36 36 0 1 1 36-36a36 36 0 0 1-36 36" /></svg>
+                        &nbsp;用户昵称：{{ user.nickname }}</h3>
                         <p>用户ID：{{ user.userId }}</p>
                         <p>封禁操作执行管理员ID：{{ user.adminId }}</p>
                         <p>封禁时间：{{ user.time }}</p>
@@ -103,7 +112,8 @@
             <div v-if="section==='userManagement'&&userstate" class="app-list">
                 <div v-for="user in users" :key="user.id" class="app-item">
                     <div class="user-header">
-                        <h3>用户昵称：{{ user.nickname }}</h3>
+                        <h3><svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 256 256"><path fill="currentColor" d="M128 28a100 100 0 1 0 100 100A100.11 100.11 0 0 0 128 28M68.87 198.42a68 68 0 0 1 118.26 0a91.8 91.8 0 0 1-118.26 0m124.3-5.55a75.6 75.6 0 0 0-44.51-34a44 44 0 1 0-41.32 0a75.6 75.6 0 0 0-44.51 34a92 92 0 1 1 130.34 0M128 156a36 36 0 1 1 36-36a36 36 0 0 1-36 36" /></svg>
+                        &nbsp;用户昵称：{{ user.nickname }}</h3>
                         <p>用户ID：{{ user.id }}</p>
                         <p>用户昵称：{{ user.nickname }}</p>
                         <p>账号注册时间：{{ user.registerTime }}</p>
@@ -118,7 +128,8 @@
             <div v-if="section==='MerManagement' && !merstate" class="app-list">
                 <div v-for="mer in mers" :key="mer.id" class="app-item">
                     <div class="user-header">
-                        <h3>商家昵称：{{ mer.merchantNickname }}</h3>
+                        <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7H2v-2l1-5h18l1 5v2zM5 13v6h14v-6zm-.96-2h15.92l-.6-3H4.64zM6 14h8v3H6zM3 3h18v2H3z" /></svg>
+                        &nbsp;商家昵称：{{ mer.merchantNickname }}</h3>
                         <p>商家ID：{{ mer.userId}}</p>
                         <p>封禁操作执行管理员ID：{{ mer.adminId }}</p>
                         <p>封禁时间：{{ mer.time }}</p>
@@ -133,7 +144,8 @@
             <div v-if="section==='MerManagement'&&merstate" class="app-list">
                 <div v-for="mer in mers" :key="mer.id" class="app-item">
                     <div class="user-header">
-                        <h3>商家昵称：{{ mer.nickname }}</h3>
+                        <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7H2v-2l1-5h18l1 5v2zM5 13v6h14v-6zm-.96-2h15.92l-.6-3H4.64zM6 14h8v3H6zM3 3h18v2H3z" /></svg>
+                        &nbsp;商家昵称：{{ mer.nickname }}</h3>
                         <p>商家ID：{{ mer.id }}</p>
                         <p>商家昵称：{{ mer.nickname }}</p>
                         <p>商家注册时间：{{ mer.registerTime }}</p>
@@ -147,7 +159,8 @@
             <!-- 封禁成功弹窗 -->
             <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
                 <div class="popup-content success-popup" @click.stop>
-                    <h3>成功执行</h3>
+                    <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36"><path fill="currentColor" d="M18 2a16 16 0 1 0 16 16A16 16 0 0 0 18 2m0 30a14 14 0 1 1 14-14a14 14 0 0 1-14 14" class="clr-i-outline clr-i-outline-path-1" /><path fill="currentColor" d="M28 12.1a1 1 0 0 0-1.41 0l-11.1 11.05l-6-6A1 1 0 0 0 8 18.53L15.49 26L28 13.52a1 1 0 0 0 0-1.42" class="clr-i-outline clr-i-outline-path-2" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+                    成功执行</h3>
                     <p>管理员权限操作成功！</p>
                     <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
@@ -156,7 +169,8 @@
             <!-- 封禁解除成功弹窗 -->
             <div v-if="showUnBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
                 <div class="popup-content success-popup" @click.stop>
-                    <h3>成功执行</h3>
+                    <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36"><path fill="currentColor" d="M18 2a16 16 0 1 0 16 16A16 16 0 0 0 18 2m0 30a14 14 0 1 1 14-14a14 14 0 0 1-14 14" class="clr-i-outline clr-i-outline-path-1" /><path fill="currentColor" d="M28 12.1a1 1 0 0 0-1.41 0l-11.1 11.05l-6-6A1 1 0 0 0 8 18.53L15.49 26L28 13.52a1 1 0 0 0 0-1.42" class="clr-i-outline clr-i-outline-path-2" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+                    成功执行</h3>
                     <p>管理员权限操作成功！</p>
                     <button @click="closeBanSuccessPopup" class="popup-close-button">关闭</button>
                 </div>
@@ -167,7 +181,8 @@
     <!-- 弹窗 -->
     <div v-if="showPopup" class="popup-overlay" @click="closePopup">
         <div class="popup-content" @click.stop>
-            <h3>&nbsp;&nbsp;&nbsp;{{ selectedApp.name }}</h3>
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256"><path fill="currentColor" d="m64.34 196.07l-9.45 16a8 8 0 1 1-13.78-8.14l9.46-16a8 8 0 1 1 13.77 8.14M232 152h-47.8l-30.73-52a8 8 0 1 0-13.77 8.14l61.41 103.93a8 8 0 0 0 13.78-8.14L193.66 168H232a8 8 0 0 0 0-16m-89.53 0H90.38l68.51-115.93a8 8 0 0 0-13.78-8.14L128 56.89l-17.11-29a8 8 0 1 0-13.78 8.14l21.6 36.55L71.8 152H24a8 8 0 0 0 0 16h118.47a8 8 0 1 0 0-16" /></svg>
+            &nbsp;&nbsp;&nbsp;{{ selectedApp.name }}</h3>
             <p>&nbsp;&nbsp;应用版本: &nbsp;&nbsp;&nbsp;{{ selectedApp.version }}</p>
             <p>&nbsp;&nbsp;应用类型:&nbsp;&nbsp;&nbsp; {{ selectedApp.category }}</p>
             <p>&nbsp;&nbsp;应用ID: &nbsp;&nbsp;&nbsp;{{ selectedApp.id }}</p>
@@ -181,7 +196,8 @@
     <!-- 确认弹窗 -->
     <div v-if="showConfirmPopup" class="popup-overlay" @click="cancelShelve">
         <div class="popup-content confirm-popup" @click.stop>
-            <h3>确认上架</h3>
+            <h3> <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+            确认上架</h3>
             <p>您确定要上架 {{ appToShelve ? appToShelve.name : '' }} 应用吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmShelve" class="popup-confirm-button">确定</button>
@@ -192,7 +208,8 @@
 
     <div v-if="showSuccessPopup" class="popup-overlay" @click="closeSuccessPopup">
         <div class="popup-content success-popup" @click.stop>
-            <h3>管理员审核成功</h3>
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36"><path fill="currentColor" d="M18 2a16 16 0 1 0 16 16A16 16 0 0 0 18 2m0 30a14 14 0 1 1 14-14a14 14 0 0 1-14 14" class="clr-i-outline clr-i-outline-path-1" /><path fill="currentColor" d="M28 12.1a1 1 0 0 0-1.41 0l-11.1 11.05l-6-6A1 1 0 0 0 8 18.53L15.49 26L28 13.52a1 1 0 0 0 0-1.42" class="clr-i-outline clr-i-outline-path-2" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+            管理员审核成功</h3>
             <p>该应用已成功上架！</p>
             <button @click="closeSuccessPopup" class="popup-close-button">关闭</button>
         </div>
@@ -201,7 +218,10 @@
     <!-- 封禁确认弹窗 -->
     <div v-if="showBanConfirmPopup" class="popup-overlay" @click="cancelBan">
         <div class="popup-content ban-confirm-popup" @click.stop>
-            <h3>确认封禁&nbsp;{{ userToBan ? userToBan.nickname : '' }}</h3>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+                确认封禁&nbsp;{{ userToBan ? userToBan.nickname : '' }}
+            </h3>
             <p>请填写封禁理由：</p>
             <textarea v-model="banReason" rows="4" placeholder="请输入封禁理由"></textarea>
             <div class="confirm-buttons">
@@ -214,7 +234,8 @@
     <!-- 封禁解除确认弹窗 -->
     <div v-if="showUnbanConfirmPopup" class="popup-overlay" @click="cancelUnban">
         <div class="popup-content unban-confirm-popup" @click.stop>
-            <h3>确认解除封禁&nbsp;{{ userToUnban ? userToUnban.nickname : '' }}</h3>
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+            确认解除封禁&nbsp;{{ userToUnban ? userToUnban.nickname : '' }}</h3>
             <p>您确定要解除用户 {{ userToUnban ? userToUnban.nickname : '' }} 的封禁吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmUnban" class="popup-confirm-button">确定</button>
@@ -226,7 +247,10 @@
     <!-- 封禁商家确认弹窗 -->
     <div v-if="showMerBanConfirmPopup" class="popup-overlay" @click="cancelMerBan">
         <div class="popup-content ban-confirm-popup" @click.stop>
-            <h3>确认封禁商家&nbsp;{{ merToBan ? merToBan.nickname : '' }}</h3>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+                确认封禁商家&nbsp;{{ merToBan ? merToBan.nickname : '' }}
+            </h3>
             <p>请填写封禁理由：</p>
             <textarea v-model="merBanReason" rows="4" placeholder="请输入封禁理由"></textarea>
             <div class="confirm-buttons">
@@ -239,7 +263,8 @@
     <!-- 封禁解除确认弹窗 -->
     <div v-if="showMerUnbanConfirmPopup" class="popup-overlay" @click="cancelMerUnban">
         <div class="popup-content unban-confirm-popup" @click.stop>
-            <h3>确认解除封禁&nbsp;{{ merToUnban ? merToUnban.merchantNickname : '' }}</h3>
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+            确认解除封禁&nbsp;{{ merToUnban ? merToUnban.merchantNickname : '' }}</h3>
             <p>您确定要解除商家 {{ merToUnban ? merToUnban.merchantNickname : '' }} 的封禁吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmMerUnban" class="popup-confirm-button">确定</button>
