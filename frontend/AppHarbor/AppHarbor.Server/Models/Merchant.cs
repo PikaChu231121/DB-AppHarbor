@@ -24,9 +24,16 @@ public partial class Merchant
     public virtual ICollection<BanMerchant> BanMerchants { get; set; } = new List<BanMerchant>();
 }
 
-public class MerchanrWithdrawModel 
+public class MerchantWithdrawModel 
 {
     public string Token { get; set; }
 
     public decimal Amount { get; set; }
+}
+
+public class MerchantIncomeStatModel
+{
+    public string Token { get; set; }
+
+    public string Period { get; set; }
 }

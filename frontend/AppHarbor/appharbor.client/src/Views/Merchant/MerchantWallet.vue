@@ -9,24 +9,92 @@
                     <button type="button" class="button" @click="withdraw">提现</button>
                 </div>
             </div>
+            <div class="info-box">
+                <p class="text">近期收益统计</p>
+                <div class="income-stat">
+                    <select v-model="selectedPeriod" @change="renderChart">
+                        <option value="week">最近一周</option>
+                        <option value="month">最近一月</option>
+                        <option value="year">最近一年</option>
+                    </select>
+                    <div v-if="!chartData.datasets[0].data.length">
+                        <p class="no-data-text">暂无数据可显示</p>
+                    </div>
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
+
+
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, PieController, CategoryScale } from 'chart.js';
+
+ChartJS.register(Title, Tooltip, Legend, ArcElement, PieController, CategoryScale);
+
 export default {
     data() {
         return {
             credit: -1,
-            withdrawAmount: 0 // 提现金额
+            withdrawAmount: 0,
+            selectedPeriod: 'month',  // 默认选择最近一月
+            chartData: {
+                labels: [],
+                datasets: [
+                    {
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40',
+                            '#FF9FF3',
+                            '#00F2E2',
+                            '#FF7F50',
+                            '#9FE2BF'
+                        ],
+                        data: [],
+                        salesCount: []  // 售出份数数据
+                    }
+                ]
+            },
+            chartOptions: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                const dataIndex = tooltipItem.dataIndex;
+                                const count = tooltipItem.dataset.salesCount[dataIndex] || 0;  // 获取售出份数
+                                const value = tooltipItem.raw || 0;
+                                const total = tooltipItem.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                                const percentage = ((value / total) * 100).toFixed(2);
+
+                                return [
+                                    `售出: ${count}份`,
+                                    `收入: ￥${value.toLocaleString()}`,
+                                    `占比: ${percentage}%`
+                                ];
+                            }
+                        }
+                    }
+                }
+            },
+            chartInstance: null  // 用于保存Chart实例
         };
     },
     methods: {
         fetchCredit() {
-            var token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/merchant/getCredit', { token: token })
+            const token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/merchant/getCredit', { token })
                 .then(response => {
                     this.credit = response.data.credit;
                 })
@@ -44,10 +112,9 @@ export default {
                 alert('请输入最多两位小数的有效金额');
                 return;
             }
-            var token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/merchant/withdrawCredit', { token: token, amount: this.withdrawAmount })
+            const token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/merchant/withdrawCredit', { token, amount: this.withdrawAmount })
                 .then(response => {
-                    // console.log(response.data);
                     this.credit = response.data.newCredit;
                     alert('提现成功');
                 })
@@ -56,25 +123,128 @@ export default {
                     alert('提现失败，请联系管理员');
                 });
         },
+
+        renderChart() {
+            const token = Cookies.get('token');
+            const period = this.selectedPeriod;  // 使用选中的时间范围
+
+            axios.post('http://localhost:5118/api/merchant/incomeStat', { token, period })
+                .then(response => {
+                    const data = response.data.$values;
+
+                    console.log(data); // 检查 data 的结构
+
+                    if (Array.isArray(data)) {
+                        // 提取应用名称和总收入数据
+                        const labels = data.map(item => item.applicationName);
+                        const amounts = data.map(item => item.totalAmount);
+                        const salesCount = data.map(item => item.purchaseCount);  // 售出份数
+                        // 更新图表数据
+                        this.chartData = {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    backgroundColor: [
+                                        '#FF6384',
+                                        '#36A2EB',
+                                        '#FFCE56',
+                                        '#4BC0C0',
+                                        '#9966FF',
+                                        '#FF9F40',
+                                        '#FF9FF3',
+                                        '#00F2E2',
+                                        '#FF7F50',
+                                        '#9FE2BF'
+                                    ],
+                                    data: amounts,
+                                    salesCount: salesCount
+                                }
+                            ]
+                        };
+
+                        // 销毁旧的图表实例
+                        if (this.chartInstance) {
+                            this.chartInstance.destroy();
+                        }
+
+                        // 重新绘制图表
+                        const ctx = document.getElementById('myChart').getContext('2d');
+                        this.chartInstance = new ChartJS(ctx, {
+                            type: 'pie',
+                            data: this.chartData,
+                            options: this.chartOptions
+                        });
+                    } else {
+                        console.error("Unexpected data format:", data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching income statistics:', error);
+                });
+        }
     },
     mounted() {
-        this.fetchCredit(); // 页面加载时从cookies获取用户ID，再获取交易信息
+        this.fetchCredit();
+        this.renderChart();
     },
-
     computed: {
         formattedCredit() {
-            // 将credit转换为字符串并拆分为整数部分和小数部分
-            let creditStr = this.credit.toFixed(2).split('.');
-            let integerPart = creditStr[0];
-            let decimalPart = creditStr[1];
-            // 返回带有HTML标记的字符串
+            if (this.credit < 0) {
+                return "正在加载";
+            }
+            const creditStr = this.credit.toFixed(2).split('.');
+            const integerPart = creditStr[0];
+            const decimalPart = creditStr[1];
             return `<span>￥ </span><span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
         }
     }
 }
+
+
 </script>
 
 <style scoped>
+.Wallet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.auto-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    margin: 10px 10px 3px;
+}
+
+.info-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff9f9;
+    border: 3px solid #ffd7d2;
+    padding: 2% 5% 2% 5%;
+    width: calc(50% - 8px);
+    height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.income-stat select {
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 16px;
+    border: 2px solid #FADAD6;
+    border-radius: 5px;
+    background-color: #fff9f9;
+    color: #F8887D;
+}
+
 .merchant-credit {
     font-size: 30px;
     /* 基本字体大小 */
@@ -108,31 +278,10 @@ export default {
     margin-bottom: 1rem;
 }
 
-.transaction-table {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: scroll;
-    margin-bottom: 1rem;
-}
-
-/* 表格基本样式 */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 18px;
-    text-align: left;
-    background-color: #fbeaea;
-    border: 3px solid #fadad6;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
 .button-row {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     margin-top: 1em;
 }
 

@@ -302,8 +302,66 @@ namespace AppHarbor.Server.Controllers
             return Ok(new { Credit = merchant.Credit });
         }
 
+        [HttpPost("incomeStat")]
+        public IActionResult IncomeStat([FromBody] MerchantIncomeStatModel request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var merchant = _dbContext.Merchants.Find(tokenEntry.Id);
+            if (merchant == null)
+            {
+                return Unauthorized("Merchant not found.");
+            }
+
+            // 获取period并转换为时间跨度
+            TimeSpan periodSpan;
+            switch (request.Period.ToLower())
+            {
+                case "week":
+                    periodSpan = TimeSpan.FromDays(7);
+                    break;
+                case "month":
+                    periodSpan = TimeSpan.FromDays(30);
+                    break;
+                case "year":
+                    periodSpan = TimeSpan.FromDays(365);
+                    break;
+                default:
+                    return BadRequest("Invalid period specified.");
+            }
+
+            var cutoffDate = DateTime.UtcNow.Subtract(periodSpan);
+
+            var query = from application in _dbContext.Applications
+                        join order in _dbContext.Orders on application.Id equals order.ApplicationId
+                        where application.MerchantId == merchant.Id && order.Time >= cutoffDate
+                        group order by new { application.Id, application.Name } into appGroup
+                        orderby appGroup.Sum(o => o.Amount) descending
+                        select new
+                        {
+                            ApplicationId = appGroup.Key.Id,
+                            ApplicationName = appGroup.Key.Name,
+                            TotalAmount = appGroup.Sum(o => o.Amount),
+                            PurchaseCount = appGroup.Count()  // 计算购买次数
+                        };
+
+            var result = query.ToList();
+
+            return Ok(result);
+        }
+
         [HttpPost("withdrawCredit")]
-        public IActionResult WithdrawCredit([FromBody] MerchanrWithdrawModel request)
+        public IActionResult WithdrawCredit([FromBody] MerchantWithdrawModel request)
         {
             if (string.IsNullOrEmpty(request.Token))
             {

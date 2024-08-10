@@ -14,7 +14,8 @@
                 <div v-if="selectedMenu === 'records'">
                     <TransactionRecords />
                 </div>
-                <div v-if="selectedMenu === 'wallet'">
+                <div v-if="selectedMenu === 'wallet'" class="main-content">
+                    <!-- 为了让 main-content样式作用于wallet-->
                     <MerchantWallet />
                 </div>
             </div>

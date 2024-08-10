@@ -135,11 +135,12 @@ export default {
 
     computed: {
         formattedCredit() {
-            // 将credit转换为字符串并拆分为整数部分和小数部分
-            let creditStr = this.credit.toFixed(2).split('.');
-            let integerPart = creditStr[0];
-            let decimalPart = creditStr[1];
-            // 返回带有HTML标记的字符串
+            if (this.credit < 0) {
+                return "正在加载";
+            }
+            const creditStr = this.credit.toFixed(2).split('.');
+            const integerPart = creditStr[0];
+            const decimalPart = creditStr[1];
             return `<span>￥ </span><span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
         }
     }
