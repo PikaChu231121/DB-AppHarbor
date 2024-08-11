@@ -36,4 +36,6 @@ public partial class Comment
     public virtual Application Application { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
+
+    public virtual ICollection<BanComment> BanComments { get; set; } = new List<BanComment>();
 }
