@@ -277,7 +277,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("ADMIN_ID");
             entity.Property(e => e.CommentId)
                 .HasColumnType("NUMBER")
-                .HasColumnName("USER_ID");
+                .HasColumnName("COMMENT_ID");
             entity.Property(e => e.Reason)
                 .IsUnicode(false)
                 .HasColumnName("REASON");
