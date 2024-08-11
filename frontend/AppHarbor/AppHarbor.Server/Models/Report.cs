@@ -21,3 +21,14 @@ public partial class Report
 
     public virtual User User { get; set; } = null!;
 }
+
+public class PublishReportModel
+{
+    public string Token { get; set; } = null!;
+
+    public string Content { get; set; } = null!;
+
+    public decimal ApplicationId { get; set; }
+
+    public DateTime ReportTime { get; set; }
+}
