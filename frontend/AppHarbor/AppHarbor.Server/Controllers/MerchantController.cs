@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using AppHarbor.Server.Models;
+using System.Text.RegularExpressions;
 
 namespace AppHarbor.Server.Controllers
 {
@@ -486,8 +487,10 @@ namespace AppHarbor.Server.Controllers
             if (sortBy == "version")
             {
                 appsQuery = sortOrder == "asc"
-                    ? appsQuery.OrderBy(a => VersionStringToComparable(a.Version)).ToList()
-                    : appsQuery.OrderByDescending(a => VersionStringToComparable(a.Version)).ToList();
+                    ? appsQuery.OrderBy(a => a.Version,
+                    Comparer<string>.Create((v1, v2) => CompareVersions(v1, v2))).ToList()
+                    : appsQuery.OrderByDescending(a => a.Version, 
+                    Comparer<string>.Create((v1, v2) => CompareVersions(v1, v2))).ToList();
             }
             else if (sortBy == "appId")
             {
@@ -520,45 +523,22 @@ namespace AppHarbor.Server.Controllers
                 totalPages,
                 merchantId = merchant.Id
             });
-            /*            var totalRecords = await query.CountAsync();
-                        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
-
-                        var apps = await query
-                            .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
-                            .Select(a => new
-                            {
-                                a.Id,
-                                a.Name,
-                                a.Version,
-                                a.Category,
-                                a.Description,
-                                a.ReleaseState,
-                                a.Image,
-                                a.DownloadCount,
-                                a.Price,
-                                a.Package,
-                            })
-                            .ToListAsync();
-
-                        return Ok(new
-                        {
-                            apps,
-                            totalPages,
-                            merchantId = merchant.Id
-                        });*/
         }
-        private static List<int> VersionStringToComparable(string version)
+        private int CompareVersions(string version1, string version2)
         {
-            if (string.IsNullOrEmpty(version))
-                return new List<int>(); // 返回空列表，防止空字符串的处理
+            var parts1 = version1.Split('.').Select(int.Parse).ToArray();
+            var parts2 = version2.Split('.').Select(int.Parse).ToArray();
 
-            // 将版本号的每个部分转为整数
-            return version.Split('.').Select(part =>
+            int maxLength = Math.Max(parts1.Length, parts2.Length);
+            for (int i = 0; i < maxLength; i++)
             {
-                int.TryParse(part, out int num); // 尝试解析为整数
-                return num;
-            }).ToList();
+                int part1 = i < parts1.Length ? parts1[i] : 0; // 超出范围视为0
+                int part2 = i < parts2.Length ? parts2[i] : 0;
+
+                if (part1 > part2) return 1;
+                if (part1 < part2) return -1;
+            }
+            return 0;
         }
 
         [HttpPost("deleteApp")]
@@ -594,9 +574,10 @@ namespace AppHarbor.Server.Controllers
                 return NotFound("Application not found.");
             }
 
-            if (string.IsNullOrEmpty(version))
+            var versionPattern = @"^(?!0)\d+\.(?!0)\d+$";
+            if (!Regex.IsMatch(version, versionPattern))
             {
-                return BadRequest("Invalid name or version.");
+                return BadRequest("版本号格式不正确，请重试！");
             }
 
             app.Version = version;

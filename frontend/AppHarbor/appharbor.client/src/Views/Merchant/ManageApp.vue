@@ -2,7 +2,7 @@
     <div class="manage-app">
         <h1>应用管理</h1>
         <div class="search-bar">
-            <input v-model="searchQuery" placeholder="输入你想搜索的内容..." class="global-search" />
+            <input v-model="searchQuery" placeholder="输入您的应用的任何相关内容..." class="global-search" />
             <button @click="initiateSearch" class="search-button">全局搜索</button>
             <button @click="toggleAdvancedSearch" class="advanced-search-toggle">
                 {{ showAdvancedSearch ? '隐藏高级检索' : '高级检索' }}
@@ -11,8 +11,8 @@
             <div v-if="showAdvancedSearch" class="advanced-search">
                 <input v-model="searchName" placeholder="应用名称搜索..." />
                 <input v-model="searchCategory" placeholder="应用种类搜索..." />
-                <input v-model="searchState" placeholder="状态搜索..." />
                 <input v-model="searchVersion" placeholder="版本搜索..." />
+                <input v-model="searchState" placeholder="状态搜索..." />
             </div>
         </div>
         <div class="app-list-container">
@@ -87,12 +87,11 @@
                         <label>下载量: {{ selectedApp.downloadCount }}</label>
                     </div>
                     <div>
-                        <label>版本:</label>
-                        <input v-model="selectedApp.version" />
+                        <label>状态: {{ selectedApp.releaseState }}</label>
                     </div>
                     <div>
-                        <label>状态:</label>
-                        <input v-model="selectedApp.releaseState" />
+                        <label>版本:</label>
+                        <input v-model="selectedApp.version" />
                     </div>
                     <div>
                         <label style="vertical-align: top;">描述:</label>
@@ -146,7 +145,7 @@
                 searchState: '',
                 searchVersion: '',
                 showAdvancedSearch: false,
-                sortBy: 'id', // 默认按应用ID排序
+                sortBy: 'appId', // 默认按应用ID排序
                 sortOrder: 'asc', // 默认升序
                 showEditModal: false, 
                 showConfirmDelete: false,
@@ -213,6 +212,11 @@
                     })
                     .catch(error => {
                         console.error('Error updating app:', error);
+                        if (error.response && error.response.status === 400) {
+                            alert(error.response.data); 
+                        } else {
+                            alert("更新应用时出错，请稍后再试。");
+                        }
                         return;
                     });
             },
