@@ -512,6 +512,7 @@ namespace AppHarbor.Server.Controllers
             var pagedApps = appsQuery.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             var totalPages = (int)Math.Ceiling(appsQuery.Count / (double)pageSize);
+            totalPages = Math.Max(totalPages, 1); // 确保至少有一页
 
             return Ok(new
             {
@@ -560,6 +561,23 @@ namespace AppHarbor.Server.Controllers
             }).ToList();
         }
 
+        [HttpPost("deleteApp")]
+        public async Task<IActionResult> DeleteApp(
+        [FromForm] int appId,
+        [FromForm] int merchantId)
+        {
+            var app = await _dbContext.Applications.FirstOrDefaultAsync(a => a.Id == appId && a.MerchantId == merchantId);
+            if (app == null)
+            {
+                return NotFound("Application not found.");
+            }
+
+            _dbContext.Applications.Remove(app);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Application deleted successfully." });
+        }
+
         [HttpPost("updateApp")]
         public async Task<IActionResult> UpdateApp(
     [FromForm] int appId,
@@ -582,7 +600,7 @@ namespace AppHarbor.Server.Controllers
             }
 
             app.Version = version;
-            app.ReleaseState = state;
+            app.ReleaseState = "test";
             app.Price = price;
             app.Description = description;
 
@@ -694,40 +712,6 @@ namespace AppHarbor.Server.Controllers
             return filePath;
         }
 
-        [HttpPost("deleteApp")]
-        public async Task<IActionResult> DeleteApp(
-    [FromForm] string token,
-    [FromForm] int appId)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("No token provided.");
-            }
-
-            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
-
-            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
-            {
-                return Unauthorized("Invalid or expired token.");
-            }
-
-            var merchant = _dbContext.Merchants.Find(tokenEntry.Id);
-            if (merchant == null)
-            {
-                return Unauthorized("Merchant not found.");
-            }
-
-            var app = _dbContext.Applications.FirstOrDefault(a => a.Id == appId && a.MerchantId == merchant.Id);
-            if (app == null)
-            {
-                return NotFound("Application not found.");
-            }
-
-            _dbContext.Applications.Remove(app);
-            await _dbContext.SaveChangesAsync();
-
-            return Ok(new { message = "Application deleted successfully." });
-        }
-
+     
     }
 }

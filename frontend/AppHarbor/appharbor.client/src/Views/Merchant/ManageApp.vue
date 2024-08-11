@@ -2,17 +2,18 @@
     <div class="manage-app">
         <h1>应用管理</h1>
         <div class="search-bar">
-            <input v-model="searchQuery" placeholder="全局搜索..." class="global-search" />
+            <input v-model="searchQuery" placeholder="输入你想搜索的内容..." class="global-search" />
+            <button @click="initiateSearch" class="search-button">全局搜索</button>
             <button @click="toggleAdvancedSearch" class="advanced-search-toggle">
                 {{ showAdvancedSearch ? '隐藏高级检索' : '高级检索' }}
             </button>
+            <button @click="refreshPage" class="refresh-button">刷新</button>
             <div v-if="showAdvancedSearch" class="advanced-search">
                 <input v-model="searchName" placeholder="应用名称搜索..." />
                 <input v-model="searchCategory" placeholder="应用种类搜索..." />
                 <input v-model="searchState" placeholder="状态搜索..." />
                 <input v-model="searchVersion" placeholder="版本搜索..." />
             </div>
-            <button @click="initiateSearch" class="search-button">全局搜索</button>
         </div>
         <div class="app-list-container">
             <div class="app-list">
@@ -66,7 +67,7 @@
             <div class="pagination">
                 <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
                 <span>第 {{ currentPage }} 页</span>
-                <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
+                <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 1">下一页</button>
             </div>
 
             <div v-if="showEditModal" class="modal">
@@ -112,11 +113,17 @@
                     <div v-if="showConfirmDelete" class="modal">
                         <div class="modal-content">
                             <p>确定要删除这个应用吗？</p>
-                            <button @click="deleteApp(selectedApp.id)" class="confirm-button">是</button>
+                            <button @click="deleteApp()" class="confirm-button">是</button>
                             <button @click="closeConfirmDelete" class="cancel-button">否</button>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div v-if="showNotification" class="notification-modal">
+            <div class="notification-content">
+                <span class="close" @click="closeNotification">&times;</span>
+                <p>{{ notificationMessage }}</p>
             </div>
         </div>
     </div>
@@ -141,9 +148,11 @@
                 showAdvancedSearch: false,
                 sortBy: 'id', // 默认按应用ID排序
                 sortOrder: 'asc', // 默认升序
-                showEditModal: false, // 控制模态框的显示
-                showConfirmDelete: false, // 控制确认删除模态框的显示
-                selectedApp: null, // 当前被选中的应用
+                showEditModal: false, 
+                showConfirmDelete: false,
+                selectedApp: null,
+                showNotification: false, 
+                notificationMessage: '',
             };
         },
         methods: {
@@ -172,35 +181,6 @@
                         alert('Error fetching apps:', error);
                     });
             },
-            initiateSearch() {
-                this.currentPage = 1;
-                this.fetchApps();
-            },
-            fetchPage(page) {
-                if (page > 0 && page <= this.totalPages) {
-                    this.fetchApps(page);
-                }
-            },
-            prevPage() {
-                if (this.currentPage > 1) {
-                    this.fetchApps(this.currentPage - 1);
-                }
-            },
-            nextPage() {
-                if (this.currentPage < this.totalPages) {
-                    this.fetchApps(this.currentPage + 1);
-                }
-            },
-            toggleAdvancedSearch() {
-                this.showAdvancedSearch = !this.showAdvancedSearch;
-            },
-            openEditModal(app) {
-                this.selectedApp = { ...app }; // 复制应用数据
-                this.showEditModal = true; // 显示模态框
-            },
-            closeEditModal() {
-                this.showEditModal = false; // 关闭模态框
-            },
             async saveAppChanges() {
                 try {
                     await this.updateApp(this.selectedApp); // 更新应用信息
@@ -226,22 +206,43 @@
 
                 axios.post('http://localhost:5118/api/merchant/updateApp', formData)
                     .then(() => {
-                        this.popupMessage = '应用信息修改成功';
-                        this.showPopup = true;
-                        this.isSaveEnabled = false;
-                        setTimeout(() => {
-                            this.showPopup = false;
-                            this.popupMessage = '';
-                            this.closeEditModal(); // 关闭编辑模态框
-                            this.fetchApps(this.currentPage); // 刷新应用列表
-                        }, 2000);
+                        this.notificationMessage = "应用信息修改成功";
+                        this.showNotification = true;
+                        this.closeEditModal(); // 关闭编辑模态框
+                        this.fetchApps(this.currentPage); // 刷新应用列表
                     })
                     .catch(error => {
                         console.error('Error updating app:', error);
-                        this.popupMessage = '更新应用信息失败，请重试';
-                        this.showPopup = true;
                         return;
                     });
+            },
+            deleteApp() {
+                let formData = new FormData();
+                formData.append('appId', this.selectedApp.id);
+                formData.append('merchantId', this.merchantId);
+
+                axios.post('http://localhost:5118/api/merchant/deleteApp', formData)
+                    .then(() => {
+                        this.notificationMessage = "应用删除成功";
+                        this.showNotification = true;
+                        this.closeConfirmDelete(); // 关闭确认删除模态框
+                        this.fetchApps(this.currentPage); // 刷新应用列表
+                    })
+                    .catch(error => {
+                        console.error('Error deleting app:', error);
+                        return;
+                    });
+            },
+            changeSort(column) {
+                if (this.sortBy === column) {
+                    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+                }
+                else {
+                    this.sortBy = column;
+                    this.sortOrder = 'asc'; // 默认升序
+                }
+                this.currentPage = 1;
+                this.initiateSearch();
             },
             updateAppImage(app, event) {
                 const file = event.target.files[0];
@@ -289,33 +290,27 @@
                         alert('Error updating app package:');
                     });
             },
-            deleteApp(appId) {
-                const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/merchant/deleteApp', {
-                    token,
-                    appId
-                })
-                    .then(response => {
-                        this.apps = this.apps.filter(app => app.id !== appId);
-                        console.log('App deleted:', response.data);
-                    })
-                    .catch(error => {
-                        console.error('Error deleting app:', error);
-                        alert('删除应用时出错，请稍后再试。');
-                    });
-                this.showConfirmDelete = false; // 关闭确认删除模态框
-                this.closeEditModal(); // 关闭编辑模态框
+            initiateSearch() {
+                this.currentPage = 1;
+                this.fetchApps();
             },
-            changeSort(column) {
-                if (this.sortBy === column) {
-                    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            fetchPage(page) {
+                if (page > 0 && page <= this.totalPages) {
+                    this.fetchApps(page);
                 }
-                else {
-                    this.sortBy = column;
-                    this.sortOrder = 'asc'; // 默认升序
+            },
+            prevPage() {
+                if (this.currentPage > 1) {
+                    this.fetchApps(this.currentPage - 1);
                 }
-                this.currentPage = 1; 
-                this.initiateSearch(); 
+            },
+            nextPage() {
+                if (this.currentPage < this.totalPages) {
+                    this.fetchApps(this.currentPage + 1);
+                }
+            },
+            toggleAdvancedSearch() {
+                this.showAdvancedSearch = !this.showAdvancedSearch;
             },
             confirmDelete() {
                 this.showConfirmDelete = true; 
@@ -323,6 +318,26 @@
             closeConfirmDelete() {
                 this.showConfirmDelete = false;
             },
+            closeNotification() {
+                this.showNotification = false;
+            },
+            openEditModal(app) {
+                this.selectedApp = { ...app }; // 复制应用数据
+                this.showEditModal = true; // 显示模态框
+            },
+            closeEditModal() {
+                this.showEditModal = false; // 关闭模态框
+            },
+            refreshPage() {
+                this.currentPage = 1; 
+                this.searchQuery = '';
+                this.searchName = '';
+                this.searchCategory = '';
+                this.searchState = '';
+                this.searchVersion = '';
+                this.showAdvancedSearch = false; 
+                this.fetchApps(); 
+            }
         },
         mounted() {
             this.fetchApps();
@@ -376,9 +391,20 @@
     }
 
         .advanced-search-toggle:hover,
-        .search-button:hover {
+        .search-button:hover,
+        .refresh-button:hover{
             background-color: #1565c0;
         }
+
+    .refresh-button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: #1e88e5;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
     .advanced-search {
         width: 100%;
@@ -592,4 +618,33 @@
         .cancel-button:hover {
             background-color: #5a6268;
         }
+
+    .notification-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .notification-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+        .notification-content .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
 </style>
