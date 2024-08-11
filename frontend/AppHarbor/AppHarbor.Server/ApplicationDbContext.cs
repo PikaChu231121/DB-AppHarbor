@@ -270,7 +270,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => new { e.AdminId, e.CommentId }).HasName("SYS_C008574");
 
-            entity.ToTable("ban_user");
+            entity.ToTable("ban_comment");
 
             entity.Property(e => e.AdminId)
                 .HasColumnType("NUMBER")
@@ -321,6 +321,10 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.UserId)
                 .HasColumnType("NUMBER")
                 .HasColumnName("USER_ID");
+            entity.Property(e => e.State)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("STATE");
 
             entity.HasOne(d => d.Application).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.ApplicationId)
