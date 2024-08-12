@@ -1,6 +1,7 @@
 <template>
     <div class="profile-settings">
-        <alert-box :message="alertMessage"></alert-box>
+        <alert-box :msg="alert"></alert-box>
+        <confirm-box :msg="confirm"></confirm-box>
         <h1>个人信息</h1>
         <div class="user-info">
             <div class="avatar-group">
@@ -39,11 +40,13 @@
     import global from "../global.js";
     import Cookies from 'js-cookie';
     import AlertBox from './AlertBox.vue';
+    import ConfirmBox from './ConfirmBox.vue';
 
     export default {
         name: 'ProfileSettings',
         components: {
-            AlertBox
+            AlertBox,
+            ConfirmBox
         },
         data() {
             return {
@@ -54,7 +57,8 @@
                     registerTime: ''
                 },
                 isSaveEnabled: false,
-                alertMessage: ''
+                alert: '',
+                comfirm: ''
             }
         },
         mounted() {
@@ -95,44 +99,42 @@
                     formData.append('id', this.user.id);
                     for (let pair of formData.entries()) {
                         console.log(`${pair[0]}: ${pair[1]}`);
-                    };
-                    var token = Cookies.get('token');
+                    }
                     axios.post('http://localhost:5118/api/Image/upload-personal-image', formData)
                         .then(response => {
                             this.user.avatar = response.data.data;
                             //console.log(this.user.avatar);
-                            this.showAlert('头像上传成功');
+                            this.confirmNotification('头像上传成功');
                         })
                         .catch(error => {
                             console.error('Error uploading avatar:', error);
-                            this.showAlert('头像上传失败');
+                            this.alertNotification('头像上传失败');
                         });
                 }
             },
             save() {
-                var token = Cookies.get('token');
                 if (this.user.nickname == "") {
-                    this.showAlert("昵称不允许为空，请重新输入");
+                    this.alertNotification("昵称不允许为空，请重新输入");
                     return;
                 }
                 axios.post('http://localhost:5118/api/user/updateUserNickname', {
                     id: this.user.id,
                     newnickname: this.user.nickname
                 })
-                    .then(response => {
+                    .then(() => {
                         console.log('User nickname updated successfully');
-                        this.showAlert('昵称修改成功');
+                        this.confirmNotification('昵称修改成功');
                         this.isSaveEnabled = false;
                     })
                     .catch(error => {
                         console.error('Error updating user nickname:', error);
                     });
             },
-            showAlert(message) {
-                this.alertMessage = message;
-                setTimeout(() => {
-                    this.alertMessage = '';
-                }, 3000);
+            alertNotification(message) {
+                this.alert = message;
+            },
+            confirmNotification(message) {
+                this.confirm = message;
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
