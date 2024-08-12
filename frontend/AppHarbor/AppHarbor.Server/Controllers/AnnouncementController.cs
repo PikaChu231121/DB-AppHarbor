@@ -37,15 +37,14 @@ namespace AppHarbor.Server.Controllers
         }
 
         [HttpPost("publishannouncement")]
-        public IActionResult PublishAnnouncement([FromBody] PublishAnnouncementModel model)
+        public IActionResult PublishAnnouncement([FromForm] string token, [FromForm] string title, [FromForm] string content)
         {
             //验证管理员 Token 并找到管理员 ID
-            var adminToken = model.Token;
-            var admin = (from token in _dbContext.TokenIds
-                         where token.Token == adminToken
+            var admin = (from mytoken in _dbContext.TokenIds
+                         where mytoken.Token == token
                          select new
                          {
-                             token.Id
+                             mytoken.Id
                          }).FirstOrDefault();
 
             if (admin == null)
@@ -65,10 +64,10 @@ namespace AppHarbor.Server.Controllers
             var newAnnouncement = new Announcement
             {
                 Id = newAnnouncementId,
-                Title = model.Title,
-                Content = model.Content,
+                Title = title,
+                Content = content,
                 AdminId = adminId,
-                PublishTime = model.PublishTime
+                PublishTime = DateTime.Now,
             };
 
             _dbContext.Announcements.Add(newAnnouncement);
