@@ -14,4 +14,10 @@
   <ItemGroup>
     <None Remove="public\loginBack.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="src\Views\Folder.vue" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="src\Views\Folder.vue" />
+  </ItemGroup>
 </Project>
