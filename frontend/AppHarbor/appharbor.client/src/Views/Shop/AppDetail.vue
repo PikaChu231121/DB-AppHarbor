@@ -1,13 +1,17 @@
 <template>
     <div class="card">
+        <NotificationModal :visible="showNotification"
+                           :title="notificationTitle"
+                           :message="notificationMessage"
+                           @close="showNotification = false" />
         <div class="button-container">
             <button class="back-button" @click="goBack">Back to Shop</button>
         </div>
-        <!--图片信息-->
+        <!-- 图片信息 -->
         <div class="image-placeholder">
             <img :src="app.image" :alt="app.name" class="app-image" />
         </div>
-        <!--应用详情-->
+        <!-- 应用详情 -->
         <div class="app-details">
             <h2 class="text-heading">{{ app.name }}</h2>
             <div class="tag">{{ app.category }}</div>
@@ -30,9 +34,14 @@
                     <p>{{ app.description }}</p>
                 </div>
             </div>
+
+            <!-- 举报按钮 -->
+            <div class="report-button-container">
+                <button class="button report-button" @click="openReportModal">举报</button>
+            </div>
         </div>
     </div>
-    <!--评论区域-->
+    <!-- 评论区域 -->
     <div class="comments-container">
         <h3>用户评论</h3>
         <div v-for="comment in comments" :key="comment.id" class="comment-item">
@@ -54,26 +63,41 @@
             <button class="button" @click="submitComment">发布评论</button>
         </div>
     </div>
-</template>
 
+    <!-- 举报弹窗 -->
+    <div v-if="showReportModal" class="report-modal">
+        <div class="modal-content">
+            <h3 style="font-size:30px;font-weight:bold">举报应用&nbsp;{{ app.name }}</h3>
+            <p  style="font-size:15px;font-family:'Times New Roman', Times, serif">你确定要举报{{ app.name }}吗?请在下方填写举报内容</p>
+            <textarea v-model="reportContent" placeholder="请输入举报内容"></textarea>
+            <button class="rbutton" @click="submitReport">提交举报</button>
+            <button class="rbutton" @click="closeReportModal">取消</button>
+        </div>
+    </div>
+</template>
 
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
-    export default {
+    import NotificationModal from './NotificationModal.vue';
 
+    export default {
+        components: { NotificationModal },
         data() {
             return {
                 app: null,
                 isFAQOpen: true,
-
                 comments: [],
                 newComment: {
                     content: '',
                     score: 0
                 },
-
-                isFavourited:false // 是否已经收藏，默认未收藏
+                isFavourited: false,
+                showReportModal: false, // 是否显示举报弹窗
+                reportContent: '', // 举报内容
+                showNotification: false,
+                notificationTitle: '',
+                notificationMessage: ''
             };
         },
         created() {
@@ -84,15 +108,11 @@
             this.fetchUserInfo();
         },
         methods: {
-
-            /*------------------和显示应用详情有关的方法-------------------*/
             toggleFAQ() {
                 this.isFAQOpen = !this.isFAQOpen;
             },
             fetchAppDetails(appId) {
-                axios.post('http://localhost:5118/api/application/getappdetail', {
-                    Id: appId
-                })
+                axios.post('http://localhost:5118/api/application/getappdetail', { Id: appId })
                     .then(response => {
                         this.app = response.data;
                     })
@@ -106,8 +126,6 @@
             goToPurchase(appId) {
                 this.$router.push(`/Purchase/${appId}`);
             },
-
-            /*------------------和收藏有关的方法-------------------*/
             addFavourite() {
                 const token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/favourite/addFavourite', {
@@ -169,9 +187,7 @@
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);
-                axios.post('http://localhost:5118/api/application/installapp', {
-                    Id: this.app.id
-                })
+                axios.post('http://localhost:5118/api/application/installapp', { Id: this.app.id })
                     .then(response => {
                         window.location.href = `http://localhost:5118${response.data}`;
                         console.log('downloaded: ' + this.app.id);
@@ -180,26 +196,20 @@
                         console.error("Error install:", error);
                     });
             },
-
-            /*------------------和评论有关的方法-------------------*/
             fetchAllComments(appId) {
-                // 在这里获取该应用的全部评论
-                axios.post('http://localhost:5118/api/comment/getappcomment', {
-                    ApplicationId: appId
-                })
-                .then(response => {
-                    this.comments = response.data.$values;
-                    console.log("12 length of comments is "+this.comments.length);
-                    console.log(this.comments[0].id);
-                    console.log(this.comments[1].id);
-                })
-                .catch(error => {
-                    console.error('Error fetching app comments:', error);
-                    console.log("21");
-                });
+                axios.post('http://localhost:5118/api/comment/getappcomment', { ApplicationId: appId })
+                    .then(response => {
+                        this.comments = response.data.$values;
+                        console.log("12 length of comments is " + this.comments.length);
+                        console.log(this.comments[0].id);
+                        console.log(this.comments[1].id);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching app comments:', error);
+                        console.log("21");
+                    });
             },
             fetchUserInfo() {
-                // 获取用户个人信息，便于发布评论
                 var token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/user/userInfo', { token: token })
                     .then(response => {
@@ -210,55 +220,38 @@
                     });
             },
             setScore(score) {
-                // 设置评分
                 this.newComment.score = score;
             },
             submitComment() {
                 const token = Cookies.get('token');
-                /*
-                const newComment = {
-                    user: {
-                        avatar: this.user.avatar,
-                        nickname: this.user.nickname,
-                    },
-                    content: this.newComment.content, // 评论内容
-                    score: this.newComment.score, // 评分(1-5)
-                    publishTime: new Date().toLocaleString() // 发布时间
-                };
-                this.comments.push(newComment);
-                */
-                // Here you should add the logic to send the new comment to the server
                 axios.post('http://localhost:5118/api/comment/postappcomment', {
                     token: token,
                     content: this.newComment.content,
                     rating: this.newComment.score,
                     applicationId: this.app.id
                 })
-                .then(response => {
-                    const parsedData = response.data;
-                    if (parsedData && parsedData.success) {
-                        alert('评论成功！');
-                        // 将新评论添加到评论列表中
-                        this.comments.push({
-                            id: parsedData.commentId, // 服务器返回的新评论ID
-                            content: this.newComment.content,
-                            score: this.newComment.score,
-                            avatar: this.user.avatar,
-                            nickname: this.user.nickname,
-                            publishTime: new Date().toLocaleString() // 注意这是个假的时间
-                        });
-                        // 清空评论表单
-                        this.newComment.content = '';
-                        this.newComment.score = 0;
-                        /*this.isFavourited = true;*/
-                    } else {
-                        alert('评论失败：' + parsedData.msg);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error adding comment:', error);
-                    alert('评论失败：' + error.message);
-                });
+                    .then(response => {
+                        const parsedData = response.data;
+                        if (parsedData && parsedData.success) {
+                            alert('评论成功！');
+                            this.comments.push({
+                                id: parsedData.commentId, // 服务器返回的新评论ID
+                                content: this.newComment.content,
+                                score: this.newComment.score,
+                                avatar: this.user.avatar,
+                                nickname: this.user.nickname,
+                                publishTime: new Date().toLocaleString() // 注意这是个假的时间
+                            });
+                            this.newComment.content = '';
+                            this.newComment.score = 0;
+                        } else {
+                            alert('评论失败：' + parsedData.msg);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding comment:', error);
+                        alert('评论失败：' + error.message);
+                    });
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
@@ -266,9 +259,46 @@
                 }
                 return '../../public/default.png'; // 默认头像路径
             },
+            openReportModal() {
+                console.log('Report modal opened'); // 这行用于调试
+                this.showReportModal = true;
+            },
+            closeReportModal() {
+                this.showReportModal = false;
+                this.reportContent = ''; // 清空举报内容
+            },
+            submitReport() {
+                const token = Cookies.get('token');
+
+                // 获取当前时间并加上 8 小时
+                const now = new Date();
+                const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
+
+                axios.post('http://localhost:5118/api/report/publishreport', {
+                    token: token,
+                    content: this.reportContent,
+                    reportTime: reportTime, // 传递调整后的时间
+                    applicationId: this.app.id
+                })
+                    .then(response => {
+                        this.reportContent= '';
+                        this.notificationTitle = '成功';
+                        this.notificationMessage = `成功举报 ${this.app.name}`;
+                        this.showNotification = true;
+                        this.showReportModal = false;
+                    })
+                    .catch(error => {
+                        this.reportContent = '';
+                        this.notificationTitle = '失败';
+                        this.notificationMessage = '提交报告时发生错误。';
+                        this.showNotification = true;
+                        console.error('Error submitting report:', error);
+                    });
+            }
         }
-    };
+    }
 </script>
+
 
 <style scoped>
     @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
@@ -477,9 +507,9 @@
         color: #ccc;
     }
 
-    .star.filled {
-        color: #f5a623;
-    }
+        .star.filled {
+            color: #f5a623;
+        }
 
     .content {
         margin-top: 5px;
@@ -498,6 +528,7 @@
         gap: 15px; /* 增加按钮间距 */
         margin-top: 10px; /* 调整与其他元素的间距 */
     }
+
     .publishTime {
         color: #888;
         font-size: 12px;
@@ -507,16 +538,78 @@
         margin-top: 20px;
     }
 
-    .comment-editor textarea {
+        .comment-editor textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+        }
+
+        .comment-editor .score {
+            margin-bottom: 10px;
+        }
+
+    /* 举报弹窗样式 */
+    .report-modal {
+        position: fixed; /* 固定在页面 */
+        top: 0;
+        left: 0;
         width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #e5e5e5;
-        border-radius: 4px;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* 确保弹窗位于最上层 */
     }
 
-    .comment-editor .score {
+    .modal-content {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+    .report-modal h3 {
+        margin-top: 0;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        padding: 10px;
         margin-bottom: 10px;
+        margin-top:10px;
+    }
+
+    .rbutton {
+        margin-left: 90px;
+        background-color: #fbb1a2;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight:bolder;
+        font-size:15px;
+        font-family: 'Pacifico', cursive; /* Cute font */
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+        .rbutton:hover {
+            background-color: #e99a8f;
+            transform: scale(1.05);
+        }
+
+    .report-button {
+        background-color: #fbb1a2;
+        border-color: #fbb1a2;
     }
 
 </style>
