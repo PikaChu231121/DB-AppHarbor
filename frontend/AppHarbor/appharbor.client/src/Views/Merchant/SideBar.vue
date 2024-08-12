@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar">
         <div class="sidebar-header">
-            <div class="icon">
+            <div class="avatar-container">
                 <img :src="getAvatarUrl(merchant.avatar)" class="avatar" 
                 @click = "togglePopup"/>
             </div>
@@ -12,15 +12,19 @@
         <div class="sidebar-menu">
             <ul>
                 <li @click="selectMenuItem('manageApp')">
+                    <img class="icon" src="../../../public/edit.png" />
                     <span>应用管理</span>
                 </li>
                 <li @click="selectMenuItem('releaseApp')">
+                    <img class="icon" src="../../../public/add.png" />
                     <span>发布应用</span>
                 </li>
                 <li @click="selectMenuItem('records')">
+                    <img class="icon" src="../../../public/transaction.png" />
                     <span>交易记录</span>
                 </li>
                 <li @click="selectMenuItem('wallet')">
+                    <img class="icon" src="../../../public/wallet.png" />
                     <span>钱包管理</span>
                 </li>
             </ul>
@@ -111,6 +115,13 @@ export default {
 }
 
 .icon {
+    margin-right: 16px;
+    width: 28px;
+    height: 28px;
+    transition: box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.avatar-container {
     margin-right: 16px;
 }
 
