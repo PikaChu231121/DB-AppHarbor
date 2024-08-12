@@ -1,7 +1,6 @@
 <template>
     <BanAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
     <div class="main-layout">
-        <Sidebar v-if="section==='Announcement'" />
         <div class="sidebar">
             <div @click="toggleSection('appManagement')" class="menu-item section-header">
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10M10.5 5.5l7 11m-4-11l-7 11m7-2.5h-7m11 0H16" /></svg>
@@ -70,7 +69,12 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '发布公告' }"
-                         @click="Announcement();changeselectedStatus('发布公告'),changeSection('Announcement')">发布通知</div>
+                         @click="changeselectedStatus('发布公告'),changeSection('Announcement')">发布通知</div>
+                </div>
+                <div class="menu">
+                    <div class="menu-item"
+                         :class="{ active: selectedStatus === '查看公告' }"
+                         @click="changeselectedStatus('查看公告'),changeSection('SearchAnnouncement')">查看通知</div>
                 </div>
             </div>
         </div>
@@ -172,6 +176,7 @@
 
             <!--发布公告-->
             <Announce v-if="section==='Announcement'" />
+            <SearchAnnouncement v-if="section==='SearchAnnouncement'" />
 
             <!-- 封禁成功弹窗 -->
             <div v-if="showBanSuccessPopup" class="popup-overlay" @click="closeBanSuccessPopup">
@@ -300,12 +305,14 @@
     import Cookies from 'js-cookie';
     import BanAlert from './BanAlert.vue';
     import Announce from './Announce.vue';
+    import SearchAnnouncement from './SearchAnnouncement.vue';
 
     export default {
         name: "MainLayout",
         components: {
             BanAlert,
             Announce,
+            SearchAnnouncement,
         },
         data() {
             return {
@@ -602,9 +609,6 @@
                     .finally(() => {
                         this.appToShelve = null; // 清除应用信息
                     });
-            },
-            Announcement() {
-
             },
             cancelShelve() {
                 this.showConfirmPopup = false; // 取消上架操作，隐藏确认弹窗
