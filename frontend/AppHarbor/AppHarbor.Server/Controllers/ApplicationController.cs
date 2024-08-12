@@ -221,55 +221,71 @@ namespace AppHarbor.Server.Controllers
 
             return Ok(app.Package);
         }
+
         [HttpPost("selectseleased")]
-        public IActionResult Selectseleased()
+        public IActionResult Selectseleased(int pageNumber = 1, int pageSize = 100)
         {
+            var query = _dbContext.Applications
+                       .AsNoTracking()
+                       .Join(
+                           _dbContext.Merchants.AsNoTracking(),
+                           app => app.MerchantId,
+                           merchant => merchant.Id,
+                           (app, merchant) => new
+                           {
+                               Id = app.Id,
+                               Version = app.Version,
+                               MerchantNickname = merchant.Nickname,
+                               Name = app.Name,
+                               Category = app.Category,
+                               Description = app.Description,
+                               ReleaseState = app.ReleaseState,
+                               Image = app.Image,
+                               DownloadCount = app.DownloadCount,
+                               Price = app.Price,
+                               Package = app.Package,
+                           }
+                       )
+                       .Where(app => app.ReleaseState == "released")
+                       .Skip((pageNumber - 1) * pageSize)
+                       .Take(pageSize)
+                       .ToList();
 
-            var query = from app in _dbContext.Applications
-                        where app.ReleaseState == "released"
-                        select new
-                        {
-                            Id = app.Id,
-                            Version = app.Version,
-                            MerchantId = app.MerchantId,
-                            Name = app.Name,
-                            Category = app.Category,
-                            Description = app.Description,
-                            ReleaseState = app.ReleaseState,
-                            Image = app.Image,
-                            DownloadCount = app.DownloadCount,
-                            Price = app.Price,
-                            Package = app.Package,
-                        };
-
-            var result = query.ToList();
-            return Ok(result);
+            return Ok(query);
         }
 
         [HttpPost("selectseleasing")]
-        public IActionResult Selectseleasing()
+        public IActionResult Selectseleasing(int pageNumber = 1, int pageSize = 100)
         {
-            var query = from app in _dbContext.Applications
-                        where app.ReleaseState != "released"
-                        select new
-                        {
-                            Id = app.Id,
-                            Version = app.Version,
-                            MerchantId = 0,
-                            Name = app.Name,
-                            Category = app.Category,
-                            Description = app.Description,
-                            ReleaseState = app.ReleaseState,
-                            Image = app.Image,
-                            DownloadCount = app.DownloadCount,
-                            Price = app.Price,
-                            Package = app.Package,
-                        };
+            var query = _dbContext.Applications
+                        .AsNoTracking()
+                        .Join(
+                            _dbContext.Merchants.AsNoTracking(),
+                            app => app.MerchantId,
+                            merchant => merchant.Id,
+                            (app, merchant) => new
+                            {
+                                Id = app.Id,
+                                Version = app.Version,
+                                MerchantNickname = merchant.Nickname,
+                                Name = app.Name,
+                                Category = app.Category,
+                                Description = app.Description,
+                                ReleaseState = app.ReleaseState,
+                                Image = app.Image,
+                                DownloadCount = app.DownloadCount,
+                                Price = app.Price,
+                                Package = app.Package,
+                            }
+                        )
+                        .Where(app => app.ReleaseState != "released")
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
 
-            var result = query.ToList();
-            return Ok(result);
+            return Ok(query);
         }
-        
+
         [HttpPost("confirmrelease")]
         public IActionResult Confirmrelease([FromForm] decimal Id,[FromForm] string token)
         {
