@@ -70,6 +70,7 @@
                     { label: 'Favourites', icon: '../src/assets/collection.svg', activeIcon: '../src/assets/collectionActive.svg' },
                     { label: 'Wallet', icon: '../src/assets/purse.svg', activeIcon: '../src/assets/purseActive.svg' },
                     { label: 'Friends', icon: '../src/assets/friends.svg', activeIcon: '../src/assets/friendsActive.svg' },
+                    { label: 'Annoucement', icon: '../src/assets/annoucement.svg', activeIcon: '../src/assets/announcementActive.svg' },
                 ],
             }
         },
