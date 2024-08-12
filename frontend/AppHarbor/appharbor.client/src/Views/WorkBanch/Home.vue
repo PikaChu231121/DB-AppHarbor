@@ -51,6 +51,7 @@
                     应用名称：{{ selectedApp.name }}
                 </p>
                 <p>版本：{{ selectedApp.version }}</p>
+                <p>发行商：{{selectedApp.merchantName}}</p>
                 <p>应用分类：{{ selectedApp.category }}</p>
                 <p>介绍：{{ selectedApp.description }}</p>
             </div>
