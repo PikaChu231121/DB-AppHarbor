@@ -1,15 +1,19 @@
 <template>
     <div class="favourite-list">
-        <alert-box :message="notification"></alert-box>
-        <h1>个人收藏夹</h1>
+        <alert-box :msg="alert"></alert-box>
+        <confirm-box :msg="confirm"></confirm-box>
+        <h1>我的收藏夹</h1>
 
         <!-- 应用种类筛选选择框 -->
         <label for="categoryFilter">选择应用种类：</label>
         <select id="categoryFilter" @change="filterByCategory" v-model="selectedCategory">
             <option value="all">全部</option>
-            <option value="Office">办公</option>
-            <option value="Social">社交</option>
-            <option value="Program">Program</option>
+            <option value="娱乐">娱乐</option>
+            <option value="社交">社交</option>
+            <option value="购物">购物</option>
+            <option value="健康养生">健康养生</option>
+            <option value="办公">办公</option>
+            <option value="教育">教育</option>
         </select>
 
         <div class="user-info">
@@ -45,20 +49,23 @@
     import axios from 'axios';
     import Cookies from 'js-cookie';
     import AlertBox from './AlertBox.vue';
+    import ConfirmBox from './ConfirmBox.vue';
 
     export default {
         name: 'FavouriteList',
         components: {
-            AlertBox
+            AlertBox,
+            ConfirmBox
         },
         data() {
             return {
                 favourites: [],
                 message: '加载中...',
-                notification: '',
                 isBulkDeleting: false,
                 selectedFavourites: [],
-                selectedCategory: 'all'
+                selectedCategory: 'all',
+                alert: '',
+                confirm:''
             };
         },
         created() {
@@ -93,7 +100,7 @@
                         }
                     })
                     .catch(error => {
-                        this.message = '加载收藏夹失败，请稍后再试';
+                        this.message = '加载收藏夹失败，请稍后重试！';
                         console.error('Error fetching favourites:', error);
                     });
             },
@@ -109,9 +116,10 @@
                         if (parsedData.success) {
                             this.favourites = this.favourites.filter(fav => fav.id !== id);
                             console.log("Delete successful:", parsedData);
-                            this.showNotification('删除应用成功');
+                            this.confirmNotification('删除应用收藏成功！');
                             this.fetchFavourites(); // 重新拉取收藏夹内容
                         } else {
+                            this.alertNotification('删除应用收藏失败，请稍后重试！');
                             console.error('Delete failed:', parsedData);
                         }
                     })
@@ -132,9 +140,10 @@
                             this.selectedFavourites = []; // 清空选中项
                             this.isBulkDeleting = false; // 重置批量删除状态
                             console.log("Bulk delete successful:", parsedData);
-                            this.showNotification('批量删除应用成功');
+                            this.confirmNotification('批量删除应用成功');
                             this.fetchFavourites(); // 重新拉取收藏夹内容
                         } else {
+                            this.alertNotification('批量删除应用收藏失败，请稍后重试！');
                             console.error('Bulk delete failed:', parsedData);
                         }
                     })
@@ -142,11 +151,11 @@
                         console.error('Error bulk deleting favourites:', error);
                     });
             },
-            showNotification(message) {
-                this.notification = message;
-                setTimeout(() => {
-                    this.notification = '';
-                }, 2000);
+            alertNotification(message) {
+                this.alert = message;
+            },
+            confirmNotification(message) {
+                this.confirm = message;
             },
             filterByCategory() {
                 console.log("Selected category:", this.selectedCategory); // 调试信息，确认选中的种类是否正确
@@ -260,10 +269,13 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        margin-left: 30px;
     }
 
     .bulk-delete-checkbox {
         width: 20px;
         height: 20px;
+        margin-top:10px;
+        margin-left: 60px;
     }
 </style>

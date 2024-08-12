@@ -1,5 +1,7 @@
 <template>
     <div class="card">
+        <alert-box :msg="alert"></alert-box>
+        <confirm-box :msg="confirm"></confirm-box>
         <NotificationModal :visible="showNotification"
                            :title="notificationTitle"
                            :message="notificationMessage"
@@ -80,9 +82,15 @@
     import axios from 'axios';
     import Cookies from 'js-cookie';
     import NotificationModal from './NotificationModal.vue';
+    import AlertBox from '../AlertBox.vue';
+    import ConfirmBox from '../ConfirmBox.vue';
 
     export default {
-        components: { NotificationModal },
+        components: { 
+            NotificationModal,
+            AlertBox,
+            ConfirmBox
+        },
         data() {
             return {
                 app: null,
@@ -93,6 +101,8 @@
                     score: 0
                 },
                 isFavourited: false,
+                alert: '',
+                confirm:'',
                 showReportModal: false, // 是否显示举报弹窗
                 reportContent: '', // 举报内容
                 showNotification: false,
@@ -135,10 +145,10 @@
                     .then(response => {
                         const parsedData = response.data;
                         if (parsedData.success) {
-                            alert('收藏成功');
+                            this.confirmNotification('收藏成功！');
                             this.isFavourited = true;
                         } else {
-                            alert('收藏失败：' + parsedData.msg);
+                            this.alertNotification('收藏失败，请稍后重试！');
                         }
                     })
                     .catch(error => {
@@ -154,10 +164,10 @@
                     .then(response => {
                         const parsedData = response.data;
                         if (parsedData.success) {
-                            alert('取消收藏成功');
+                            this.confirmNotification('取消收藏成功！');
                             this.isFavourited = false;
                         } else {
-                            alert('取消收藏失败：' + parsedData.msg);
+                            this.alertNotification('取消收藏失败，请稍后重试！');
                         }
                     })
                     .catch(error => {
@@ -184,6 +194,12 @@
                 } else {
                     this.addFavourite();
                 }
+            },
+            alertNotification(message) {
+                this.alert = message;
+            },
+            confirmNotification(message) {
+                this.confirm = message;
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);

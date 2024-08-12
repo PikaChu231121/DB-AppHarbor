@@ -1,6 +1,6 @@
 <template>
     <div :class="alertClass">
-            {{ msg }}
+        {{ msg }}
     </div>
 </template>
 
@@ -39,15 +39,16 @@
         bottom: 10px;
         left: 50%;
         transform: translateX(-50%);
-        background: #e32636;
+        background: #40bb45;
         color: #ffffff;
         padding: 10px 20px;
         border: 1px solid #f5c6cb;
         border-radius: 5px;
         z-index: 1;
         opacity: 0;
-        transition: opacity 0.5s ease-in-out; /* 娣″叆娣″嚭鏁堟灉 */
+        transition: opacity 0.5s ease-in-out; /* 淡入淡出效果 */
     }
+
         .alert-box.visible {
             opacity: 1;
         }
