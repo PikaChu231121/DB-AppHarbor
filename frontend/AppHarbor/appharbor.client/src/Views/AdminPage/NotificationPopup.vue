@@ -1,6 +1,6 @@
 <template>
     <transition name="popup">
-        <div v-if="show" class="notification-popup">
+        <div v-if="show" class="notification-popup" :class="type">
             <div class="popup-content">
                 <p>{{ message }}</p>
             </div>
@@ -12,7 +12,11 @@
     export default {
         props: {
             show: Boolean,
-            message: String
+            message: String,
+            type: {
+                type: String,
+                default: 'success'
+            }
         },
         watch: {
             show(newVal) {
@@ -46,7 +50,8 @@
     .notification-popup {
         position: fixed;
         top: 20px;
-        right: 100px;
+        left: 50%;
+        transform: translateX(-50%);
         background-color: rgba(0, 0, 0, 0.8);
         color: #fff;
         border-radius: 8px;
@@ -59,6 +64,14 @@
         flex-direction: column;
         align-items: center;
     }
+
+        .notification-popup.success {
+            background-color: rgba(50, 50, 50, 0.8); /* Gray-black for success */
+        }
+
+        .notification-popup.error {
+            background-color: rgba(255, 0, 0, 0.8); /* Red for error */
+        }
 
     .popup-content {
         display: flex;
