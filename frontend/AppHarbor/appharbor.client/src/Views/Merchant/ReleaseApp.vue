@@ -17,7 +17,15 @@
                 </div>
                 <div class="form-group">
                     <label for="appCategory">应用类别</label>
-                    <input type="text" id="appCategory" v-model="appCategory" required />
+                    <select id="appCategory" v-model="appCategory" required>
+                        <option value="" disabled selected>请选择类别</option>
+                        <option value="娱乐">娱乐</option>
+                        <option value="社交">社交</option>
+                        <option value="购物">购物</option>
+                        <option value="健康养生">健康养生</option>
+                        <option value="办公">办公</option>
+                        <option value="学习">学习</option>
+                    </select>
                 </div>
             </div>
             <div class="form-column">
@@ -261,5 +269,41 @@ button:hover:enabled {
     /* 更改悬停时背景色为深蓝色 */
     transform: scale(1.02);
     transition: background-color 0.3s, transform 0.3s, color 0.3s;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ffffff;
+    font-family: 'Baloo 2', cursive;
+    font-size: 16px;
+    appearance: none;
+    /* 去除默认的下拉箭头 */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%231976d2"><path d="M5.5 8l4.5 4 4.5-4H5.5z"/></svg>');
+    /* 添加自定义箭头 */
+    background-repeat: no-repeat;
+    /* 不重复箭头 */
+    background-position: right 10px center;
+    /* 箭头位置 */
+    background-size: 16px 16px;
+    /* 箭头大小 */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* 添加过渡效果 */
+}
+
+.form-group select:focus {
+    border-color: #1976d2;
+    /* 聚焦时边框颜色 */
+    box-shadow: 0 0 5px rgba(25, 118, 210, 0.5);
+    /* 聚焦时的阴影效果 */
+    outline: none;
+    /* 去除轮廓 */
+}
+
+.form-group select:hover {
+    border-color: #42a5f5;
+    /* 悬停时边框颜色 */
 }
 </style>
