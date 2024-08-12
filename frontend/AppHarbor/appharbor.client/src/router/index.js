@@ -4,7 +4,7 @@ const routes = [
     {
         path: "/",
         component: () => import("@/Views/UserLogin.vue")
-        // component: () => import("@/Views/Merchant/MerchantLogin.vue")
+        //component: () => import("@/Views/WorkBanch/UserAnnouncement.vue")
     },
     {
         path: "/RegisterAccount",
