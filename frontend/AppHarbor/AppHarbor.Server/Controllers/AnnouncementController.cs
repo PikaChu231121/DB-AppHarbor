@@ -27,25 +27,34 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("getannouncementlist")]
         public IActionResult GetAnnouncementList()
         {
-            // 从数据库中获取所有公告
-            var announcementList = _dbContext.Announcements
-                .OrderBy(a => a.PublishTime) // 根据发布时间排序
-                .ToList();
+            // 从数据库中获取所有公告并与管理员表连接
+            var announcementList = (from announcement in _dbContext.Announcements
+                                    join admin in _dbContext.Admins on announcement.AdminId equals admin.Id
+                                    orderby announcement.PublishTime // 根据发布时间排序
+                                    select new
+                                    {
+                                        announcement.Id,
+                                        announcement.Title,
+                                        announcement.Content,
+                                        announcement.PublishTime,
+                                        AdminId = admin.Id,
+                                        AdminNickname = admin.Nickname // 添加管理员的昵称
+                                    }).ToList();
 
             // 返回公告列表
             return Ok(announcementList);
         }
 
+
         [HttpPost("publishannouncement")]
-        public IActionResult PublishAnnouncement([FromBody] PublishAnnouncementModel model)
+        public IActionResult PublishAnnouncement([FromForm] string token, [FromForm] string title, [FromForm] string content)
         {
             //验证管理员 Token 并找到管理员 ID
-            var adminToken = model.Token;
-            var admin = (from token in _dbContext.TokenIds
-                         where token.Token == adminToken
+            var admin = (from mytoken in _dbContext.TokenIds
+                         where mytoken.Token == token
                          select new
                          {
-                             token.Id
+                             mytoken.Id
                          }).FirstOrDefault();
 
             if (admin == null)
@@ -65,10 +74,10 @@ namespace AppHarbor.Server.Controllers
             var newAnnouncement = new Announcement
             {
                 Id = newAnnouncementId,
-                Title = model.Title,
-                Content = model.Content,
+                Title = title,
+                Content = content,
                 AdminId = adminId,
-                PublishTime = model.PublishTime
+                PublishTime = DateTime.Now,
             };
 
             _dbContext.Announcements.Add(newAnnouncement);
