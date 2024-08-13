@@ -27,6 +27,10 @@
                     <img class="icon" src="../../../public/wallet.png" />
                     <span>钱包管理</span>
                 </li>
+                <li @click="selectMenuItem('announcement')">
+                    <img class="icon" src="../../../public/bell.png" />
+                    <span>通知公告</span>
+                </li>
             </ul>
         </div>
         <transition name="popup">

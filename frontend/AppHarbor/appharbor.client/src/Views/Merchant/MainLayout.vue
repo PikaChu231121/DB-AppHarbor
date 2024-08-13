@@ -10,13 +10,15 @@
                 <div v-if="selectedMenu === 'releaseApp'">
                     <ReleaseApp />
                 </div>
-                <div v-if="selectedMenu === 'trash'">原神，启动！</div>
                 <div v-if="selectedMenu === 'records'">
                     <TransactionRecords />
                 </div>
                 <div v-if="selectedMenu === 'wallet'" class="main-content">
                     <!-- 为了让 main-content样式作用于wallet-->
                     <MerchantWallet />
+                </div>
+                <div v-if="selectedMenu === 'announcement'">
+                    <MerchantAnnouncement />
                 </div>
             </div>
         </div>
@@ -29,6 +31,7 @@ import ReleaseApp from './ReleaseApp.vue'
 import TransactionRecords from './TransactionRecords.vue';
 import ManageApp from './ManageApp.vue';
 import MerchantWallet from './MerchantWallet.vue'
+import MerchantAnnouncement from './MerchantAnnouncement.vue';
 export default {
     name: 'MainLayout',
     components: {
@@ -36,7 +39,8 @@ export default {
         ReleaseApp,
         TransactionRecords,
         ManageApp,
-        MerchantWallet
+        MerchantWallet,
+        MerchantAnnouncement
     },
     data() {
         return {
