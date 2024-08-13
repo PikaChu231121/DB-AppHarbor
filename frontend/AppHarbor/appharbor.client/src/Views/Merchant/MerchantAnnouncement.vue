@@ -59,7 +59,7 @@
                    @input="updatePageInput"  
                    min="1"  
                    :max="totalPages"  
-                   placeholder="跳转" />  
+                   placeholder="跳转到页" />  
             <button @click="jumpToPage">跳转</button>  
             <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">下一页</button>  
         </div>  
