@@ -2,10 +2,8 @@
     <div class="card">
         <alert-box :msg="alert"></alert-box>
         <confirm-box :msg="confirm"></confirm-box>
-        <NotificationModal :visible="showNotification"
-                           :title="notificationTitle"
-                           :message="notificationMessage"
-                           @close="showNotification = false" />
+        <NotificationModal :visible="showNotification" :title="notificationTitle" :message="notificationMessage"
+            @close="showNotification = false" />
         <div class="button-container">
             <button class="back-button" @click="goBack">Back to Shop</button>
         </div>
@@ -17,7 +15,7 @@
         <div class="app-details">
             <h2 class="text-heading">{{ app.name }}</h2>
             <div class="tag">{{ app.category }}</div>
-            <div class="price">￥{{ app.price }}</div>
+            <div class="price" v-html="formattedPrice"></div>
 
             <div class="button-container">
                 <button class="button" @click="goToPurchase(app.id)">购买</button>
@@ -51,7 +49,8 @@
             <div class="info">
                 <span class="nickname">{{ comment.nickname }}</span>
                 <div class="score">
-                    <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= comment.score }">&#9733;</span>
+                    <span v-for="star in 5" :key="star" class="star"
+                        :class="{ filled: star <= comment.score }">&#9733;</span>
                 </div>
                 <p class="content">{{ comment.content }}</p>
                 <span class="publishTime">{{ comment.publishTime }}</span>
@@ -60,7 +59,8 @@
         <div class="comment-editor">
             <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
             <div class="score">
-                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }" @click="setScore(star)">&#9733;</span>
+                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }"
+                    @click="setScore(star)">&#9733;</span>
             </div>
             <button class="button" @click="submitComment">发布评论</button>
         </div>
@@ -70,7 +70,7 @@
     <div v-if="showReportModal" class="report-modal">
         <div class="modal-content">
             <h3 style="font-size:30px;font-weight:bold">举报应用&nbsp;{{ app.name }}</h3>
-            <p  style="font-size:15px;font-family:'Times New Roman', Times, serif">你确定要举报{{ app.name }}吗?请在下方填写举报内容</p>
+            <p style="font-size:15px;font-family:'Times New Roman', Times, serif">你确定要举报{{ app.name }}吗?请在下方填写举报内容</p>
             <textarea v-model="reportContent" placeholder="请输入举报内容"></textarea>
             <button class="rbutton" @click="submitReport">提交举报</button>
             <button class="rbutton" @click="closeReportModal">取消</button>
@@ -85,234 +85,259 @@
     import AlertBox from '../AlertBox.vue';
     import ConfirmBox from '../ConfirmBox.vue';
 
-    export default {
-        components: { 
-            NotificationModal,
-            AlertBox,
-            ConfirmBox
+export default {
+    components: {
+        NotificationModal,
+        AlertBox,
+        ConfirmBox
+    },
+    data() {
+        return {
+            app: null,
+            isFAQOpen: true,
+            comments: [],
+            newComment: {
+                content: '',
+                score: 0
+            },
+            isFavourited: false,
+            alert: '',
+            confirm: '',
+            showReportModal: false, // 是否显示举报弹窗
+            reportContent: '', // 举报内容
+            showNotification: false,
+            notificationTitle: '',
+            notificationMessage: ''
+        };
+    },
+    created() {
+        const appId = this.$route.params.id;
+        this.fetchAppDetails(appId);
+        this.checkIfFavourite(appId);
+        this.fetchAllComments(appId);
+        this.fetchUserInfo();
+    },
+    methods: {
+        toggleFAQ() {
+            this.isFAQOpen = !this.isFAQOpen;
         },
-        data() {
-            return {
-                app: null,
-                isFAQOpen: true,
-                comments: [],
-                newComment: {
-                    content: '',
-                    score: 0
-                },
-                isFavourited: false,
-                alert: '',
-                confirm:'',
-                showReportModal: false, // 是否显示举报弹窗
-                reportContent: '', // 举报内容
-                showNotification: false,
-                notificationTitle: '',
-                notificationMessage: ''
-            };
+        fetchAppDetails(appId) {
+            axios.post('http://localhost:5118/api/application/getappdetail', { Id: appId })
+                .then(response => {
+                    this.app = response.data;
+                })
+                .catch(error => {
+                    console.error("Error fetching apps:", error);
+                });
         },
-        created() {
-            const appId = this.$route.params.id;
-            this.fetchAppDetails(appId);
-            this.checkIfFavourite(appId);
-            this.fetchAllComments(appId);
-            this.fetchUserInfo();
+        goBack() {
+            this.$router.push('/WorkBanchPage');
         },
-        methods: {
-            toggleFAQ() {
-                this.isFAQOpen = !this.isFAQOpen;
-            },
-            fetchAppDetails(appId) {
-                axios.post('http://localhost:5118/api/application/getappdetail', { Id: appId })
-                    .then(response => {
-                        this.app = response.data;
-                    })
-                    .catch(error => {
-                        console.error("Error fetching apps:", error);
-                    });
-            },
-            goBack() {
-                this.$router.push('/WorkBanchPage');
-            },
-            goToPurchase(appId) {
-                this.$router.push(`/Purchase/${appId}`);
-            },
-            addFavourite() {
-                const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/addFavourite', {
-                    token: token,
-                    id: this.app.id
+        goToPurchase(appId) {
+            this.$router.push(`/Purchase/${appId}`);
+        },
+        addFavourite() {
+            const token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/favourite/addFavourite', {
+                token: token,
+                id: this.app.id
+            })
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        this.confirmNotification('收藏成功！');
+                        this.isFavourited = true;
+                    } else {
+                        this.alertNotification('收藏失败，请稍后重试！');
+                    }
                 })
-                    .then(response => {
-                        const parsedData = response.data;
-                        if (parsedData.success) {
-                            this.confirmNotification('收藏成功！');
-                            this.isFavourited = true;
-                        } else {
-                            this.alertNotification('收藏失败，请稍后重试！');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error adding favourite:', error);
-                    });
-            },
-            removeFavourite() {
-                const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
-                    token: token,
-                    id: this.app.id
+                .catch(error => {
+                    console.error('Error adding favourite:', error);
+                });
+        },
+        removeFavourite() {
+            const token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                token: token,
+                id: this.app.id
+            })
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        this.confirmNotification('取消收藏成功！');
+                        this.isFavourited = false;
+                    } else {
+                        this.alertNotification('取消收藏失败，请稍后重试！');
+                    }
                 })
-                    .then(response => {
-                        const parsedData = response.data;
-                        if (parsedData.success) {
-                            this.confirmNotification('取消收藏成功！');
-                            this.isFavourited = false;
-                        } else {
-                            this.alertNotification('取消收藏失败，请稍后重试！');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error removing favourite:', error);
-                    });
-            },
-            checkIfFavourite(appId) {
-                const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/checkIfFavourite', {
-                    token: token,
-                    appId: appId
+                .catch(error => {
+                    console.error('Error removing favourite:', error);
+                });
+        },
+        checkIfFavourite(appId) {
+            const token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/favourite/checkIfFavourite', {
+                token: token,
+                appId: appId
+            })
+                .then(response => {
+                    const parsedData = response.data;
+                    this.isFavourited = parsedData.isFavourited;
                 })
-                    .then(response => {
-                        const parsedData = response.data;
-                        this.isFavourited = parsedData.isFavourited;
-                    })
-                    .catch(error => {
-                        console.error('Error checking if favourite:', error);
-                    });
-            },
-            toggleFavourite() {
-                if (this.isFavourited) {
-                    this.removeFavourite();
-                } else {
-                    this.addFavourite();
-                }
-            },
-            alertNotification(message) {
-                this.alert = message;
-            },
-            confirmNotification(message) {
-                this.confirm = message;
-            },
-            installapp() {
-                console.log('downloading: ' + this.app.id);
-                axios.post('http://localhost:5118/api/application/installapp', { Id: this.app.id })
-                    .then(response => {
-                        window.location.href = `http://localhost:5118${response.data}`;
-                        console.log('downloaded: ' + this.app.id);
-                    })
-                    .catch(error => {
-                        console.error("Error install:", error);
-                    });
-            },
-            fetchAllComments(appId) {
-                axios.post('http://localhost:5118/api/comment/getappcomment', { ApplicationId: appId })
-                    .then(response => {
-                        this.comments = response.data.$values;
-                        console.log("12 length of comments is " + this.comments.length);
-                        console.log(this.comments[0].id);
-                        console.log(this.comments[1].id);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching app comments:', error);
-                        console.log("21");
-                    });
-            },
-            fetchUserInfo() {
-                var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-                    .then(response => {
-                        this.user = response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user data:', error);
-                    });
-            },
-            setScore(score) {
-                this.newComment.score = score;
-            },
-            submitComment() {
-                const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/comment/postappcomment', {
-                    token: token,
-                    content: this.newComment.content,
-                    rating: this.newComment.score,
-                    applicationId: this.app.id
-                })
-                    .then(response => {
-                        const parsedData = response.data;
-                        if (parsedData && parsedData.success) {
-                            alert('评论成功！');
-                            this.comments.push({
-                                id: parsedData.commentId, // 服务器返回的新评论ID
-                                content: this.newComment.content,
-                                score: this.newComment.score,
-                                avatar: this.user.avatar,
-                                nickname: this.user.nickname,
-                                publishTime: new Date().toLocaleString() // 注意这是个假的时间
-                            });
-                            this.newComment.content = '';
-                            this.newComment.score = 0;
-                        } else {
-                            alert('评论失败：' + parsedData.msg);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error adding comment:', error);
-                        alert('评论失败：' + error.message);
-                    });
-            },
-            getAvatarUrl(avatarPath) {
-                if (avatarPath) {
-                    return `http://localhost:5118${avatarPath}`;
-                }
-                return '../../public/default.png'; // 默认头像路径
-            },
-            openReportModal() {
-                console.log('Report modal opened'); // 这行用于调试
-                this.showReportModal = true;
-            },
-            closeReportModal() {
-                this.showReportModal = false;
-                this.reportContent = ''; // 清空举报内容
-            },
-            submitReport() {
-                const token = Cookies.get('token');
-
-                // 获取当前时间并加上 8 小时
-                const now = new Date();
-                const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
-
-                axios.post('http://localhost:5118/api/report/publishreport', {
-                    token: token,
-                    content: this.reportContent,
-                    reportTime: reportTime, // 传递调整后的时间
-                    applicationId: this.app.id
-                })
-                    .then(response => {
-                        this.reportContent= '';
-                        this.notificationTitle = '成功';
-                        this.notificationMessage = `成功举报 ${this.app.name}`;
-                        this.showNotification = true;
-                        this.showReportModal = false;
-                    })
-                    .catch(error => {
-                        this.reportContent = '';
-                        this.notificationTitle = '失败';
-                        this.notificationMessage = '提交报告时发生错误。';
-                        this.showNotification = true;
-                        console.error('Error submitting report:', error);
-                    });
+                .catch(error => {
+                    console.error('Error checking if favourite:', error);
+                });
+        },
+        toggleFavourite() {
+            if (this.isFavourited) {
+                this.removeFavourite();
+            } else {
+                this.addFavourite();
             }
+        },
+        alertNotification(message) {
+            this.alert = message;
+        },
+        confirmNotification(message) {
+            this.confirm = message;
+        },
+        installapp() {
+            console.log('downloading: ' + this.app.id);
+            axios.post('http://localhost:5118/api/application/installapp', { Id: this.app.id })
+                .then(response => {
+                    window.location.href = `http://localhost:5118${response.data}`;
+                    console.log('downloaded: ' + this.app.id);
+                })
+                .catch(error => {
+                    console.error("Error install:", error);
+                });
+        },
+        fetchAllComments(appId) {
+            axios.post('http://localhost:5118/api/comment/getappcomment', { ApplicationId: appId })
+                .then(response => {
+                    this.comments = response.data.$values;
+                    console.log("12 length of comments is " + this.comments.length);
+                    console.log(this.comments[0].id);
+                    console.log(this.comments[1].id);
+                })
+                .catch(error => {
+                    console.error('Error fetching app comments:', error);
+                    console.log("21");
+                });
+        },
+        fetchUserInfo() {
+            var token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                .then(response => {
+                    this.user = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                });
+        },
+        setScore(score) {
+            this.newComment.score = score;
+        },
+        submitComment() {
+            const token = Cookies.get('token');
+            axios.post('http://localhost:5118/api/comment/postappcomment', {
+                token: token,
+                content: this.newComment.content,
+                rating: this.newComment.score,
+                applicationId: this.app.id
+            })
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData && parsedData.success) {
+                        alert('评论成功！');
+                        this.comments.push({
+                            id: parsedData.commentId, // 服务器返回的新评论ID
+                            content: this.newComment.content,
+                            score: this.newComment.score,
+                            avatar: this.user.avatar,
+                            nickname: this.user.nickname,
+                            publishTime: new Date().toLocaleString() // 注意这是个假的时间
+                        });
+                        this.newComment.content = '';
+                        this.newComment.score = 0;
+                    } else {
+                        alert('评论失败：' + parsedData.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                    alert('评论失败：' + error.message);
+                });
+        },
+        getAvatarUrl(avatarPath) {
+            if (avatarPath) {
+                return `http://localhost:5118${avatarPath}`;
+            }
+            return '../../public/default.png'; // 默认头像路径
+        },
+        openReportModal() {
+            console.log('Report modal opened'); // 这行用于调试
+            this.showReportModal = true;
+        },
+        closeReportModal() {
+            this.showReportModal = false;
+            this.reportContent = ''; // 清空举报内容
+        },
+        submitReport() {
+            const token = Cookies.get('token');
+
+            // 获取当前时间并加上 8 小时
+            const now = new Date();
+            const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
+
+            axios.post('http://localhost:5118/api/report/publishreport', {
+                token: token,
+                content: this.reportContent,
+                reportTime: reportTime, // 传递调整后的时间
+                applicationId: this.app.id
+            })
+                .then(response => {
+                    this.reportContent = '';
+                    this.notificationTitle = '成功';
+                    this.notificationMessage = `成功举报 ${this.app.name}`;
+                    this.showNotification = true;
+                    this.showReportModal = false;
+                })
+                .catch(error => {
+                    this.reportContent = '';
+                    this.notificationTitle = '失败';
+                    this.notificationMessage = '提交报告时发生错误。';
+                    this.showNotification = true;
+                    console.error('Error submitting report:', error);
+                });
         }
+    },
+    computed: {
+        formattedPrice() {
+            if (this.app.price === 0) {
+                return `<span>Free! 免费</span>`;
+            }
+
+            const originalPrice = this.app.price.toFixed(2).split('.');
+            const originalIntegerPart = originalPrice[0];
+            const originalDecimalPart = originalPrice[1];
+
+            const discountedPrice = (this.app.price * this.app.discount).toFixed(2).split('.');
+            const discountedIntegerPart = discountedPrice[0];
+            const discountedDecimalPart = discountedPrice[1];
+
+            return `
+                    <span style="font-size: 1.2em; font-weight: bold;">
+                        ￥ <span class="integer-part">${discountedIntegerPart}</span>.<span class="decimal-part">${discountedDecimalPart}</span>
+                    </span>
+                    <span style="text-decoration: line-through; font-size: 0.6em; color:gray;">
+                        原价：<span class="integer-part">${originalIntegerPart}</span>.<span class="decimal-part">${originalDecimalPart}</span>
+                    </span>
+                `;
+        }
+
     }
+}
 </script>
 
 

@@ -167,7 +167,9 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("PACKAGE");
-
+            entity.Property(e => e.Discount)
+                .HasColumnType("NUMBER")
+                .HasColumnName("DISCOUNT");
             entity.HasOne(d => d.Merchant).WithMany(p => p.Applications)
                 .HasForeignKey(d => d.MerchantId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
