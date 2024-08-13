@@ -27,70 +27,62 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("getreportlist")]
         public IActionResult GetReportList()
         {
-            try
-            {
-                // 从数据库中获取所有举报
-                var reportList = _dbContext.Reports
-                    .OrderBy(r => r.Time) // 根据举报时间排序
-                    .ToList();
-
-                // 返回举报列表
-                return Ok(reportList);
-            }
-            catch (Exception ex)
-            {
-                // 返回错误响应
-                return StatusCode(500, "服务器内部错误");
-            }
+            var reportList = _dbContext.Reports
+                .OrderBy(r => r.Time)
+                .ToList();
+            return Ok(reportList);
         }
 
         [HttpPost("publishreport")]
-        public IActionResult PublishReport([FromBody] PublishReportModel model)
+        public IActionResult PublishReport([FromForm] string token, [FromForm] string Content, [FromForm] decimal ApplicationId)
         {
-            try
+            //找到举报人的id
+            var user = (from mytoken in _dbContext.TokenIds
+                        where mytoken.Token == token
+                        select new
+                        {
+                            mytoken.Id
+                        }).FirstOrDefault();
+
+            if (user == null)
             {
-                // 验证用户 Token 并找到用户 ID
-                var userToken = model.Token;
-                var user = (from token in _dbContext.TokenIds
-                            where token.Token == userToken
-                            select new
-                            {
-                                token.Id
-                            }).FirstOrDefault();
-
-                if (user == null)
-                {
-                    return Unauthorized("Invalid token.");
-                }
-
-                decimal userId = user.Id;
-
-                // 生成新的举报 ID: 找到表中最大的举报 Id 再加 1
-                decimal newReportId = _dbContext.Reports
-                    .OrderByDescending(r => r.Id)
-                    .Select(r => r.Id)
-                    .FirstOrDefault() + 1;
-
-                // 插入举报记录到数据库中
-                var newReport = new Report
-                {
-                    Id = newReportId,
-                    Content = model.Content,
-                    ApplicationId = model.ApplicationId,
-                    UserId = userId,
-                    Time = model.ReportTime
-                };
-
-                _dbContext.Reports.Add(newReport);
-                _dbContext.SaveChanges();
-
-                return Ok("Report published successfully.");
+                return Unauthorized("Invalid token.");
             }
-            catch (Exception ex)
+
+            decimal userId = user.Id;
+            //判断举报应用是否存在且已经发布
+            var targerapp = (from app in _dbContext.Applications
+                        where app.Id == ApplicationId&&app.ReleaseState== "released"
+                             select new
+                        {
+                                 app.Id
+                             }).FirstOrDefault();
+
+            if (targerapp == null)
             {
-                // 返回错误响应
-                return StatusCode(500, "服务器内部错误");
+                return Unauthorized("Invalid targetapp.");
             }
+
+            // 生成新的举报 ID: 找到表中最大的举报 Id 再加 1
+            decimal newReportId = _dbContext.Reports
+                .OrderByDescending(r => r.Id)
+                .Select(r => r.Id)
+                .FirstOrDefault() + 1;
+
+            // 插入举报记录到数据库中
+            var newReport = new Report
+            {
+                Id = newReportId,
+                Content = Content,
+                ApplicationId = ApplicationId,
+                UserId = userId,
+                Time = DateTime.Now
+            };
+
+            _dbContext.Reports.Add(newReport);
+            _dbContext.SaveChanges();
+
+            return Ok("Report published successfully.");
         }
 
 
