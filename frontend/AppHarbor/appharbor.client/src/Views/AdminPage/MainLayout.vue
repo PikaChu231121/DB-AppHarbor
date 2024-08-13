@@ -565,7 +565,29 @@
                 this.showCommentBanConfirmPopup = true;
             },
             confirmCommentBan() {
+                const token = Cookies.get('token');
+                if (!token) {
+                    alert('未提供 token');
+                    return;
+                }
 
+                const formData = new FormData();
+                formData.append('mytoken', token);
+                formData.append('comment_id', this.commentToBan.id);
+                formData.append('reason', this.banReason);
+
+                axios.post('http://localhost:5118/bancomment', formData)
+                    .then(response => {
+                        this.showCommentBanConfirmPopup = false;
+                        this.banReason = '';
+                        this.commentToBan = null;
+                        this.showBanSuccessPopup = true;
+                        this.searchComments();
+                    })
+                    .catch(error => {
+                        console.error('封禁失败:', error);
+                        alert('请输入封禁理由');
+                    });
             },
             cancelCommentBan() {
                 this.showCommentBanConfirmPopup = false;

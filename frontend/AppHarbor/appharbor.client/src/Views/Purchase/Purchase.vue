@@ -129,10 +129,13 @@
                 formData.append('APPID', this.app.id);
                 axios.post('http://localhost:5118/api/order/createneworder', formData)
                     .then(response => {
+                        alert('购买成功！');
                         this.updateCredit();
                     })
                     .catch(error => {
+                        const parsedData = error.response.data;
                         console.error('Error purchase app:', error);
+                        alert('购买失败：' + parsedData.msg);
                     });
 
                 console.log('App has been puechased!');
