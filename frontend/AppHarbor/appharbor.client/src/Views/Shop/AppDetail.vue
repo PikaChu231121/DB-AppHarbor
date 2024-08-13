@@ -246,28 +246,32 @@
                     rating: this.newComment.score,
                     applicationId: this.app.id
                 })
-                    .then(response => {
-                        const parsedData = response.data;
-                        if (parsedData && parsedData.success) {
-                            alert('评论成功！');
-                            this.comments.push({
-                                id: parsedData.commentId, // 服务器返回的新评论ID
-                                content: this.newComment.content,
-                                score: this.newComment.score,
-                                avatar: this.user.avatar,
-                                nickname: this.user.nickname,
-                                publishTime: new Date().toLocaleString() // 注意这是个假的时间
-                            });
-                            this.newComment.content = '';
-                            this.newComment.score = 0;
-                        } else {
-                            alert('评论失败：' + parsedData.msg);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error adding comment:', error);
-                        alert('评论失败：' + error.message);
-                    });
+                .then(response => {
+                    const parsedData = response.data;
+                    if (parsedData && parsedData.success) {
+                        alert('评论成功！');
+                        // 将新评论添加到评论列表中
+                        //this.comments.push({
+                        //    id: parsedData.commentId, // 服务器返回的新评论ID
+                        //    content: this.newComment.content,
+                        //    score: this.newComment.score,
+                        //    avatar: this.user.avatar,
+                        //    nickname: this.user.nickname,
+                        //    publishTime: new Date().toLocaleString() // 注意这是个假的时间
+                        //});
+                        this.fetchAllComments(this.app.Id);
+                        // 清空评论表单
+                        this.newComment.content = '';
+                        this.newComment.score = 0;
+                        /*this.isFavourited = true;*/
+                    } else {
+                        alert('评论失败：' + parsedData.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                    alert('评论失败：' + error.message);
+                });
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
