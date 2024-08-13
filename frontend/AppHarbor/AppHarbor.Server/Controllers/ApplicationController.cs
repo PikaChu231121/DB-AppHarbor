@@ -65,6 +65,7 @@ namespace AppHarbor.Server.Controllers
         {
 
             var resultlist = _dbContext.Applications.Where(a =>
+            a.ReleaseState == "released" &&
             getapplistModel.Category == "All" ? true : a.Category == getapplistModel.Category).ToList();
 
             resultlist = resultlist.OrderBy(a => a.DownloadCount).ToList();
@@ -99,6 +100,7 @@ namespace AppHarbor.Server.Controllers
                 var resultlist = _dbContext.Applications.Where(a =>
                 a.Price >= searchapplistModel.Price_min &&
                 a.Price <= searchapplistModel.Price_max &&
+                a.ReleaseState == "released" &&
                 a.Name.Contains(searchapplistModel.Content)).ToList();
                 resultlist = resultlist.OrderBy(a => a.DownloadCount).ToList();
                 return Ok(resultlist);
@@ -108,6 +110,7 @@ namespace AppHarbor.Server.Controllers
                 var resultlist = _dbContext.Applications.Where(a =>
                 a.Price >= searchapplistModel.Price_min &&
                 a.Price <= searchapplistModel.Price_max &&
+                a.ReleaseState == "released" &&
                 a.Name.Contains(searchapplistModel.Content) &&
                 a.Category == searchapplistModel.Category).ToList();
                 resultlist = resultlist.OrderBy(a => a.DownloadCount).ToList();
