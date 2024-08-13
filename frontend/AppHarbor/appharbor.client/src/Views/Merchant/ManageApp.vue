@@ -67,6 +67,7 @@
             <div class="pagination">
                 <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
                 <span>第 {{ currentPage }} 页</span>
+                <span>/ 共 {{ totalPages }} 页</span> <!-- 添加总页数提示 -->  
                 <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 1">下一页</button>
             </div>
 

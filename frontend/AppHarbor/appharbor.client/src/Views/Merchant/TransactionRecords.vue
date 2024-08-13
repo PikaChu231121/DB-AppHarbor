@@ -2,19 +2,27 @@
   <div class="transaction-records">
     <h1>交易记录</h1>
     <div class="search-bar">
-      <input v-model="searchQuery" placeholder="全局搜索..." class="global-search" />
+      <input v-model="searchQuery" placeholder="全局搜索..." class="global-search" @keyup.enter="initiateSearch"/>
       <button @click="toggleAdvancedSearch" class="advanced-search-toggle">
         {{ showAdvancedSearch ? '隐藏高级检索' : '高级检索' }}
       </button>
       <div v-if="showAdvancedSearch" class="advanced-search">
-        <input v-model="applicationId" placeholder="应用ID搜索..." />
-        <input v-model="buyerId" placeholder="买家ID搜索..." />
-        <input v-model="receiverId" placeholder="接收者ID搜索..." />
-        <input v-model="applicationName" placeholder="应用名称搜索..." />
-        <input v-model="buyerName" placeholder="买家昵称搜索..." />
-        <input v-model="receiverName" placeholder="接收者昵称搜索..." />
-        <input type="date" v-model="startDate" placeholder="开始日期..." />
-        <input type="date" v-model="endDate" placeholder="结束日期..." />
+        <input v-model="applicationId" placeholder="应用ID搜索..." 
+        @keyup.enter="initiateSearch"/>
+        <input v-model="applicationName" placeholder="应用名称搜索..." 
+        @keyup.enter="initiateSearch"/>
+        <input v-model="buyerId" placeholder="买家ID搜索..." 
+        @keyup.enter="initiateSearch"/>
+        <input v-model="buyerName" placeholder="买家昵称搜索..." 
+        @keyup.enter="initiateSearch"/>
+        <input v-model="receiverId" placeholder="接收者ID搜索..." 
+        @keyup.enter="initiateSearch"/>
+        <input v-model="receiverName" placeholder="接收者昵称搜索..." 
+        @keyup.enter="initiateSearch"/>
+        <input type="date" v-model="startDate" placeholder="开始日期..." 
+        @keyup.enter="initiateSearch"/>
+        <input type="date" v-model="endDate" placeholder="结束日期..." 
+        @keyup.enter="initiateSearch"/>
       </div>
       <button @click="initiateSearch" class="search-button">搜索</button>
     </div>
@@ -64,13 +72,13 @@
     <div class="pagination">
       <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
       <span>第 {{ currentPage }} 页</span>
+      <span>/ 共 {{ totalPages }} 页</span> <!-- 添加总页数提示 -->  
       <button @click="nextPage" :disabled="currentPage === totalPages">下一页</button>
     </div>
   </div>
 </template>
 
 <script>
-// 保持现有的 JavaScript 代码  
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
@@ -223,16 +231,15 @@ h1 {
   /* 更改悬停时背景色为深蓝色 */
 }
 
-.advanced-search {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 5px;
-}
+.advanced-search {  
+  display: grid;  
+  grid-template-columns: repeat(4, 1fr); /* 每行四个搜索框 */  
+  gap: 5px;  
+  margin-top: 5px;  
+}  
 
-.advanced-search input {
-  flex: 1 1 150px;
+.advanced-search input {  
+  width: 100%; /* 确保输入框充满父容器 */  
 }
 
 .table-container {
