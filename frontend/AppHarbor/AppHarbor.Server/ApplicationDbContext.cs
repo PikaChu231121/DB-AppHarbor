@@ -27,6 +27,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<BanUser> BanUsers { get; set; }
 
+    public virtual DbSet<BanComment> BanComments { get; set; }
+
     public virtual DbSet<Comment> Comments { get; set; }
 
     public virtual DbSet<Favourite> Favourites { get; set; }
@@ -264,6 +266,36 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("SYS_C008538");
         });
 
+        modelBuilder.Entity<BanComment>(entity =>
+        {
+            entity.HasKey(e => new { e.AdminId, e.CommentId }).HasName("SYS_C008574");
+
+            entity.ToTable("ban_comment");
+
+            entity.Property(e => e.AdminId)
+                .HasColumnType("NUMBER")
+                .HasColumnName("ADMIN_ID");
+            entity.Property(e => e.CommentId)
+                .HasColumnType("NUMBER")
+                .HasColumnName("COMMENT_ID");
+            entity.Property(e => e.Reason)
+                .IsUnicode(false)
+                .HasColumnName("REASON");
+            entity.Property(e => e.Time)
+                .HasColumnType("DATE")
+                .HasColumnName("TIME");
+
+            entity.HasOne(d => d.Admin).WithMany(p => p.BanComments)
+                .HasForeignKey(d => d.AdminId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("SYS_C008575");
+
+            entity.HasOne(d => d.Comment).WithMany(p => p.BanComments)
+                .HasForeignKey(d => d.CommentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("SYS_C008576");
+        });
+
         modelBuilder.Entity<Comment>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("SYS_C008501");
@@ -289,6 +321,10 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.UserId)
                 .HasColumnType("NUMBER")
                 .HasColumnName("USER_ID");
+            entity.Property(e => e.State)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("STATE");
 
             entity.HasOne(d => d.Application).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.ApplicationId)

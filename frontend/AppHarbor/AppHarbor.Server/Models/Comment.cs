@@ -33,7 +33,11 @@ public partial class Comment
 
     public DateTime PublishTime { get; set; }
 
+    public string State { get; set; } = null!;
+
     public virtual Application Application { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
+
+    public virtual ICollection<BanComment> BanComments { get; set; } = new List<BanComment>();
 }
