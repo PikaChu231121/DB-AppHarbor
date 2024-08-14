@@ -38,14 +38,17 @@
                                 版本
                                 <span class="sort-icons">
                                     <span v-if="sortBy === 'version' && sortOrder === 'asc'" class="arrow-up">▲</span>
-                                    <span v-if="sortBy === 'version' && sortOrder === 'desc'" class="arrow-down">▼</span>
+                                    <span v-if="sortBy === 'version' && sortOrder === 'desc'"
+                                        class="arrow-down">▼</span>
                                 </span>
                             </th>
                             <th @click="changeSort('releaseState')" class="sortable">
                                 状态
                                 <span class="sort-icons">
-                                    <span v-if="sortBy === 'releaseState' && sortOrder === 'asc'" class="arrow-up">▲</span>
-                                    <span v-if="sortBy === 'releaseState' && sortOrder === 'desc'" class="arrow-down">▼</span>
+                                    <span v-if="sortBy === 'releaseState' && sortOrder === 'asc'"
+                                        class="arrow-up">▲</span>
+                                    <span v-if="sortBy === 'releaseState' && sortOrder === 'desc'"
+                                        class="arrow-down">▼</span>
                                 </span>
                             </th>
                             <th>操作</th>
@@ -67,7 +70,7 @@
             <div class="pagination">
                 <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
                 <span>第 {{ currentPage }} 页</span>
-                <span>/ 共 {{ totalPages }} 页</span> <!-- 添加总页数提示 -->  
+                <span>/ 共 {{ totalPages }} 页</span> <!-- 添加总页数提示 -->
                 <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 1">下一页</button>
             </div>
 
@@ -96,15 +99,35 @@
                     </div>
                     <div>
                         <label style="vertical-align: top;">描述:</label>
-                        <textarea v-model="selectedApp.description" rows="4" style="resize: none; width: 80%;"></textarea>
-                    </div>               <div>
+                        <textarea v-model="selectedApp.description" rows="4"
+                            style="resize: none; width: 80%;"></textarea>
+                    </div>
+                    <div>
                         <label>图标:</label>
                         <input v-model="selectedApp.image" />
-                    </div>                <div>
-                        <label>价格:</label>
-                        <input v-model="selectedApp.price" />
                     </div>
-
+                    <div>
+                        <label>原价:</label>
+                        <input v-model="selectedApp.price"
+                            @input="selectedApp.price == 0 ? selectedApp.discount = '1.00' : null" />
+                    </div>
+                    <div>
+                        <label>折扣:</label>
+                        <select v-model="selectedApp.discount" :disabled="selectedApp.price == 0"
+                            :title="selectedApp.price == 0 ? '免费应用不能设置折扣' : ''">
+                            <option value="1.00">无折扣</option>
+                            <option value="0.90">9折</option>
+                            <option value="0.80">8折</option>
+                            <option value="0.75">75折</option>
+                            <option value="0.70">7折</option>
+                            <option value="0.60">6折</option>
+                            <option value="0.50">5折</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span v-if="selectedApp.discount !== '1.00'" style="margin-left: 10px;">折后价: ￥{{ discountedPrice
+                            }}</span>
+                    </div>
                     <div>
                         <button @click="saveAppChanges" class="save-button">保存</button>
                         <button @click="confirmDelete" class="delete-button">删除应用</button>
@@ -155,6 +178,12 @@
                 notificationMessage: '',
             };
         },
+        computed: {
+            discountedPrice() {
+                return (this.selectedApp.price * this.selectedApp.discount).toFixed(2);
+                // 折后价格规约到两位小数
+            }
+        },
         methods: {
             fetchApps(page = 1) {
                 const token = Cookies.get('token');
@@ -171,7 +200,11 @@
 
                 axios.post('http://localhost:5118/api/merchant/getApps', formData)
                     .then(response => {
-                        this.apps = response.data.apps.$values;
+                        this.apps = response.data.apps.$values.map(app => {
+                            // 格式化 discount 值为带有两位小数的形式
+                            app.discount = parseFloat(app.discount).toFixed(2);
+                            return app;
+                        });
                         this.totalPages = response.data.totalPages;
                         this.currentPage = page;
                         this.merchantId = response.data.merchantId;
@@ -203,7 +236,7 @@
                 formData.append('state', this.selectedApp.releaseState);
                 formData.append('description', this.selectedApp.description);
                 formData.append('price', this.selectedApp.price);
-
+                formData.append('discount', this.selectedApp.discount);
                 axios.post('http://localhost:5118/api/merchant/updateApp', formData)
                     .then(() => {
                         this.notificationMessage = "应用信息修改成功";

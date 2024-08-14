@@ -480,6 +480,7 @@ namespace AppHarbor.Server.Controllers
                     a.DownloadCount,
                     a.Price,
                     a.Package,
+                    a.Discount
                 })
                 .ToListAsync();
 
