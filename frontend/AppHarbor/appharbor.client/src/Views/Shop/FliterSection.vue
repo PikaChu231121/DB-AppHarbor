@@ -4,11 +4,11 @@
             <!-- 标签筛选部分 -->
             <div class="tag-filter">
                 <h2>关键词</h2>
-                <div class="tag" v-for="tag in selectedTags" :key="tag">
+                <div class="tag" v-for="tag in Tags" :key="tag" @click="selectTag(tag)">
                     <span>{{ tag }}</span>
-                    <button class="close-btn" @click="removeTag(tag)">×</button>
+                    <!--<button class="close-btn" @click="removeTag(tag)">×</button>-->
                 </div>
-                <input v-model="newTag" @keyup.enter="addTag" placeholder="请添加关键词" />
+                <!--<input v-model="newTag" @keyup.enter="addTag" placeholder="请添加关键词" />-->
             </div>
 
             <!-- 价格筛选部分 -->
@@ -39,42 +39,29 @@
         data() {
             return {
                 newTag: '',
-                selectedTags: ['game', 'life', 'social', 'love', 'sport'], // 默认选中的标签
+                Tags: ['全部', '娱乐', '社交', '购物', '健康养生', '办公', '学习'], 
+                selectedTag: '全部',
                 priceRange: [0, 1000], // 价格范围初始值
                 minPrice: 0,
                 maxPrice: 1000,
-                //apps: [
-                //    { id: 1, name: '应用A', tags: ['社交'], price: 0 },
-                //    { id: 2, name: '应用B', tags: ['工具'], price: 50 },
-                //    { id: 3, name: '应用C', tags: ['生活'], price: 30 },
-                //    // 其他应用数据
-                //],
-                /*filteredApps: [],*/
             };
         },
         methods: {
-            addTag() {
-                if (this.newTag && !this.selectedTags.includes(this.newTag)) {
-                    this.selectedTags.push(this.newTag);
-                    this.newTag = '';
-                    /*this.applyFilters();*/
-                    this.emitTags(); /*向父组件传递标签信息*/
-                }
-            },
-            removeTag(tag) {
-                this.selectedTags = this.selectedTags.filter(t => t !== tag);
-                /*this.applyFilters();*/
+            //addTag() {
+            //    if (this.newTag && !this.selectedTags.includes(this.newTag)) {
+            //        this.selectedTags.push(this.newTag);
+            //        this.newTag = '';
+            //        /*this.applyFilters();*/
+            //        this.emitTags(); /*向父组件传递标签信息*/
+            //    }
+            //},
+            selectTag(tag) {
+                /*this.selectedTags = this.selectedTags.filter(t => t !== tag);*/
+                this.selectedTag = tag;
                 this.emitTags(); /*向父组件传递标签信息*/
             },
-            //applyFilters() {
-            //    this.filteredApps = this.apps.filter(app => {
-            //        const matchesTags = this.selectedTags.length === 0 || this.selectedTags.some(tag => app.tags.includes(tag));
-            //        const matchesPrice = app.price >= this.priceRange[0] && app.price <= this.priceRange[1];
-            //        return matchesTags && matchesPrice;
-            //    });
-            //},
             emitTags() {
-                this.$emit('tags-changed', this.selectedTags);
+                this.$emit('tag-changed', this.selectedTag);
             },
 
             updatePriceRange() {
@@ -116,7 +103,7 @@
     .tag-filter {
         display: flex;
         flex-direction: column;
-        gap: 20px; /* 增大标签部分的间隔 */
+        gap: 10px; /* 增大标签部分的间隔 */
     }
 
     .tag {
