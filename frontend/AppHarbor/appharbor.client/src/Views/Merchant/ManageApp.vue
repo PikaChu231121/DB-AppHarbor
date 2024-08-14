@@ -9,7 +9,7 @@
             <button @click="toggleAdvancedSearch" class="advanced-search-toggle">
                 {{ showAdvancedSearch ? '隐藏高级检索' : '高级检索' }}
             </button>
-            <button @click="refreshPage" class="refresh-button">刷新</button>
+            <button @click="refreshPage" class="refresh-button">全部应用</button>
             <div v-if="showAdvancedSearch" class="advanced-search">
                 <input v-model="searchName" placeholder="应用名称搜索..." />
                 <input v-model="searchCategory" placeholder="应用种类搜索..." />
@@ -589,6 +589,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         width: 300px;
         position: relative;
+        text-align: center;
     }
 
     /* 关闭按钮 */
@@ -608,7 +609,7 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        margin-right: 50px;
+        margin-right: 25px;
         margin-top: 20px;
         margin-left: 20px;
     }
@@ -642,7 +643,9 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        margin-right: 10px;
+        margin-top: 10px;
+        margin-left: 5px;
+        margin-right: 55px;
     }
 
         .confirm-button:hover {
