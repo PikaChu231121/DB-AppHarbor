@@ -152,10 +152,16 @@
                     });
             },
             alertNotification(message) {
-                this.alert = message;
+                this.alert = '';
+                this.$nextTick(() => {
+                    this.alert = message;
+                });
             },
             confirmNotification(message) {
-                this.confirm = message;
+                this.confirm = '';
+                this.$nextTick(() => {
+                    this.confirm = message;
+                });
             },
             filterByCategory() {
                 console.log("Selected category:", this.selectedCategory); // 调试信息，确认选中的种类是否正确
@@ -210,6 +216,12 @@
         border: 1px solid #F3C7BA;
         border-radius: 8px;
         box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* 过渡效果 */
+    }
+
+    .favourite-item:hover {
+        transform: translateY(-5px); /* 向上浮动 */
+        box-shadow: 0 15px 20px rgba(0, 0, 0, 0.2); /* 更大的阴影效果 */
     }
 
     h3 {
@@ -236,16 +248,16 @@
         transition: all 0.3s ease; /* 过渡效果 */
     }
 
-        button:hover:enabled {
-            background-color: #ffe5e5;
-            transform: scale(1.05);
-            color: #F8887D;
-        }
+    button:hover:enabled {
+        background-color: #ffe5e5;
+        transform: scale(1.05);
+        color: #F8887D;
+    }
 
-        button:disabled {
-            cursor: not-allowed;
-            opacity: 0.7; /* 减少透明度表示不可用状态 */
-        }
+    button:disabled {
+        cursor: not-allowed;
+        opacity: 0.7; /* 减少透明度表示不可用状态 */
+    }
 
     .notification {
         margin-top: 20px;

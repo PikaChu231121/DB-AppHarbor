@@ -1,5 +1,7 @@
 <template>
     <div class="manage-app">
+        <alert-box :msg="alert"></alert-box>
+        <confirm-box :msg="confirm"></confirm-box>
         <h1>应用管理</h1>
         <div class="search-bar">
             <input v-model="searchQuery" placeholder="输入您的应用的任何相关内容..." class="global-search" />
@@ -39,16 +41,16 @@
                                 <span class="sort-icons">
                                     <span v-if="sortBy === 'version' && sortOrder === 'asc'" class="arrow-up">▲</span>
                                     <span v-if="sortBy === 'version' && sortOrder === 'desc'"
-                                        class="arrow-down">▼</span>
+                                          class="arrow-down">▼</span>
                                 </span>
                             </th>
                             <th @click="changeSort('releaseState')" class="sortable">
                                 状态
                                 <span class="sort-icons">
                                     <span v-if="sortBy === 'releaseState' && sortOrder === 'asc'"
-                                        class="arrow-up">▲</span>
+                                          class="arrow-up">▲</span>
                                     <span v-if="sortBy === 'releaseState' && sortOrder === 'desc'"
-                                        class="arrow-down">▼</span>
+                                          class="arrow-down">▼</span>
                                 </span>
                             </th>
                             <th>操作</th>
@@ -100,7 +102,7 @@
                     <div>
                         <label style="vertical-align: top;">描述:</label>
                         <textarea v-model="selectedApp.description" rows="4"
-                            style="resize: none; width: 80%;"></textarea>
+                                  style="resize: none; width: 80%;"></textarea>
                     </div>
                     <div>
                         <label>图标:</label>
@@ -109,12 +111,12 @@
                     <div>
                         <label>原价:</label>
                         <input v-model="selectedApp.price"
-                            @input="selectedApp.price == 0 ? selectedApp.discount = '1.00' : null" />
+                               @input="selectedApp.price == 0 ? selectedApp.discount = '1.00' : null" />
                     </div>
                     <div>
                         <label>折扣:</label>
                         <select v-model="selectedApp.discount" :disabled="selectedApp.price == 0"
-                            :title="selectedApp.price == 0 ? '免费应用不能设置折扣' : ''">
+                                :title="selectedApp.price == 0 ? '免费应用不能设置折扣' : ''">
                             <option value="1.00">无折扣</option>
                             <option value="0.90">9折</option>
                             <option value="0.80">8折</option>
@@ -125,8 +127,9 @@
                         </select>
                     </div>
                     <div>
-                        <span v-if="selectedApp.discount !== '1.00'" style="margin-left: 10px;">折后价: ￥{{ discountedPrice
-                            }}</span>
+                        <span v-if="selectedApp.discount !== '1.00'" style="margin-left: 10px;">
+                            折后价: ￥{{ discountedPrice}}
+                        </span>
                     </div>
                     <div>
                         <button @click="saveAppChanges" class="save-button">保存</button>
@@ -143,20 +146,20 @@
                 </div>
             </div>
         </div>
-        <div v-if="showNotification" class="notification-modal">
-            <div class="notification-content">
-                <span class="close" @click="closeNotification">&times;</span>
-                <p>{{ notificationMessage }}</p>
-            </div>
-        </div>
     </div>
 </template>
 
 <script>
     import Cookies from 'js-cookie';
     import axios from 'axios';
+    import AlertBox from '../AlertBox.vue';
+    import ConfirmBox from '../ConfirmBox.vue';
 
     export default {
+        components: {
+            AlertBox,
+            ConfirmBox
+        },
         data() {
             return {
                 merchantId: '',
@@ -174,8 +177,8 @@
                 showEditModal: false, 
                 showConfirmDelete: false,
                 selectedApp: null,
-                showNotification: false, 
-                notificationMessage: '',
+                alert: '',
+                confirm: '',
             };
         },
         computed: {
@@ -211,7 +214,7 @@
                     })
                     .catch(error => {
                         console.error('Error fetching apps:', error);
-                        alert('Error fetching apps:', error);
+                        this.alertNotification('获取应用失败，请稍后重试！');
                     });
             },
             async saveAppChanges() {
@@ -220,12 +223,13 @@
                     this.fetchApps(this.currentPage); // 刷新应用列表
                 } catch (error) {
                     console.error('Error saving app changes:', error);
+                    this.alertNotification('保存失败，请稍后重试！');
                 }
                 this.closeEditModal(); // 关闭编辑模态框
             },
             async updateApp(app) {
                 if (!app.name || !app.version) {
-                    alert("应用名称和版本号不能为空！");
+                    this.alertNotification('应用名称和版本号不能为空！');
                     return;
                 }
 
@@ -239,18 +243,12 @@
                 formData.append('discount', this.selectedApp.discount);
                 axios.post('http://localhost:5118/api/merchant/updateApp', formData)
                     .then(() => {
-                        this.notificationMessage = "应用信息修改成功";
-                        this.showNotification = true;
-                        this.closeEditModal(); // 关闭编辑模态框
+                        this.confirmNotification('应用信息修改成功！');
                         this.fetchApps(this.currentPage); // 刷新应用列表
                     })
                     .catch(error => {
                         console.error('Error updating app:', error);
-                        if (error.response && error.response.status === 400) {
-                            alert(error.response.data); 
-                        } else {
-                            alert("更新应用时出错，请稍后再试。");
-                        }
+                        this.alertNotification('更新应用失败，请稍后重试！');
                         return;
                     });
             },
@@ -261,13 +259,12 @@
 
                 axios.post('http://localhost:5118/api/merchant/deleteApp', formData)
                     .then(() => {
-                        this.notificationMessage = "应用删除成功";
-                        this.showNotification = true;
-                        this.closeConfirmDelete(); // 关闭确认删除模态框
+                        this.confirmNotification('应用删除成功！');
                         this.fetchApps(this.currentPage); // 刷新应用列表
                     })
                     .catch(error => {
                         console.error('Error deleting app:', error);
+                        this.alertNotification('删除应用失败，请稍后重试！');
                         return;
                     });
             },
@@ -282,7 +279,7 @@
                 this.currentPage = 1;
                 this.initiateSearch();
             },
-            updateAppImage(app, event) {
+/*            updateAppImage(app, event) {
                 const file = event.target.files[0];
                 if (file && !file.type.startsWith('image/')) {
                     alert('请选择有效的图片文件！');
@@ -327,7 +324,7 @@
                         console.error('Error updating app package:', error);
                         alert('Error updating app package:');
                     });
-            },
+            },*/
             initiateSearch() {
                 this.currentPage = 1;
                 this.fetchApps();
@@ -356,9 +353,6 @@
             closeConfirmDelete() {
                 this.showConfirmDelete = false;
             },
-            closeNotification() {
-                this.showNotification = false;
-            },
             openEditModal(app) {
                 this.selectedApp = { ...app }; // 复制应用数据
                 this.showEditModal = true; // 显示模态框
@@ -375,7 +369,19 @@
                 this.searchVersion = '';
                 this.showAdvancedSearch = false; 
                 this.fetchApps(); 
-            }
+            },
+            alertNotification(message) {
+                this.alert = '';
+                this.$nextTick(() => {
+                    this.alert = message;
+                });
+            },
+            confirmNotification(message) {
+                this.confirm = '';
+                this.$nextTick(() => {
+                    this.confirm = message;
+                });
+            },
         },
         mounted() {
             this.fetchApps();
@@ -655,34 +661,6 @@
 
         .cancel-button:hover {
             background-color: #5a6268;
-        }
-
-    .notification-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .notification-content {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        position: relative;
-    }
-
-        .notification-content .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
         }
 
 </style>

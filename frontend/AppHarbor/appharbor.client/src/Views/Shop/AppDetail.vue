@@ -196,10 +196,16 @@
                 }
             },
             alertNotification(message) {
-                this.alert = message;
+                this.alert = '';
+                this.$nextTick(() => {
+                    this.alert = message;
+                });
             },
             confirmNotification(message) {
-                this.confirm = message;
+                this.confirm = '';
+                this.$nextTick(() => {
+                    this.confirm = message;
+                });
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);
