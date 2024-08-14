@@ -75,7 +75,7 @@ public partial class Application
 
     public string? Package { get; set; }
 
-    public decimal Discount { get; set; }
+    public decimal? Discount { get; set; }
 
     public virtual ICollection<ApplicationReview> ApplicationReviews { get; set; } = new List<ApplicationReview>();
 
