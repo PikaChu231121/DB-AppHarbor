@@ -1,13 +1,15 @@
 <template>
     <div class="app-grid">
         <div v-for="app in apps" :key="app.id" class="app-item" @click="goToDetail(app.id)">
-            <img :src="app.image" :alt="app.name" class="app-image" />
+            <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
             <div class="app-details">
                 <h3 class="app-name">{{ app.name }}</h3>
                 <p class="app-price">Price: {{ app.price }}</p>
                 <p class="app-category">Category: {{ app.category }}</p>
             </div>
         </div>
+        <!-- 使用空白的占位符，确保页面上的应用保持两行五列布局 -->
+        <div v-for="n in emptySlots" :key="`empty-${n}`" class="app-item empty-slot"></div>
     </div>
 </template>
 
@@ -24,6 +26,12 @@
         methods: {
             goToDetail(appId) {
                 this.$router.push(`/app/${appId}`);
+            },
+            getAppImgUrl(imgPath) {
+                if (imgPath) {
+                    return `http://localhost:5118${imgPath}`;
+                }
+                return '../../public/default.png'; // 默认图片路径
             }
         }
     }
@@ -34,22 +42,27 @@
     @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap');
 
     .app-grid {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(2, 1fr);
         gap: 20px;
         padding: 20px;
+        justify-content: center;
+        align-content: center;
     }
 
     .app-item {
-        flex: 1 0 calc(20% - 20px);
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: space-between;
         background-color: #fff;
         border-radius: 10px;
         padding: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s, box-shadow 0.3s;
+        width: 180px;
+        height: 220px;
     }
 
         .app-item:hover {
@@ -92,5 +105,10 @@
         font-size: 14px;
         color: #666;
         font-family: 'Poppins', sans-serif; /* Friendly font */
+    }
+
+    /* 空白占位符样式 */
+    .empty-slot {
+        visibility: hidden;
     }
 </style>
