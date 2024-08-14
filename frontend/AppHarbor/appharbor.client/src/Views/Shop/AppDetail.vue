@@ -9,7 +9,7 @@
         </div>
         <!-- 图片信息 -->
         <div class="image-placeholder">
-            <img :src="app.image" :alt="app.name" class="app-image" />
+            <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
         </div>
         <!-- 应用详情 -->
         <div class="app-details">
@@ -129,6 +129,12 @@
                     .catch(error => {
                         console.error("Error fetching apps:", error);
                     });
+            },
+            getAppImgUrl(imgPath) {
+                if (imgPath) {
+                    return `http://localhost:5118${imgPath}`;
+                }
+                return '../../public/default.png'; // 默认图片路径
             },
             goBack() {
                 this.$router.push('/WorkBanchPage');
@@ -398,6 +404,8 @@
         justify-content: center;
         align-items: center;
         background-color: #ffffff;
+        margin-top: auto;
+        margin-bottom: auto;
     }
 
     .app-image {

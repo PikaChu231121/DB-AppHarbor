@@ -1,13 +1,16 @@
 <template>
     <div class="app-search">
         <aside class="filter-section">
-            <FilterSection @tags-changed="handleTagsChange" @price-range-updated="handlePriceChange" />
+            <FilterSection @tag-changed="handleTagChange" @price-range-updated="handlePriceChange" />
         </aside>
         <main class="search-section">
             <div class="title-container">
                 <h1 class="title">应用商店</h1>
             </div>
-            <SearchBar @search="handleSearch" />
+            <SearchBar 
+                       @search="handleSearch"
+                       @sort-method-changed="handleSortMethodChange"
+            />
             <AppGrid :apps="appsShown" />
             <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
@@ -33,13 +36,14 @@
             return {
                 apps: [], // 后端返回的应用列表
                 appsShown: [], // 当前页显示应用
-                selectedTags: [], // 选中的标签
+                selectedTag: '全部', // 选中的标签
                 Category: "All", // 检索属性
                 priceRange: [0, 1000],
                 searchQuery: "",
                 currentPage: 1, // 当前页码，初始为1
                 totalPages: 1, // 总页数，初始为1
-                appsPerPage: 10 // 每页显示的应用数量
+                appsPerPage: 10, // 每页显示的应用数量
+                sortMethod: 'Rating', // 添加排序方式
             }
         },
         methods: {
@@ -59,11 +63,6 @@
                     });
             },
             searchApps() {
-                console.log(this.searchQuery);
-                console.log(this.Category);
-                console.log(this.priceRange[0]);
-                console.log(this.priceRange[1]);
-
                 axios.post('http://localhost:5118/api/application/searchapplist', {
                     Category: this.Category,
                     Price_min: this.priceRange[0],
@@ -74,6 +73,7 @@
                         this.apps = response.data.$values;
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
                         this.currentPage = 1; // 重置到第一页
+                        this.sortApps();
                         this.paginatedApps();
                     })
                     .catch(error => {
@@ -96,10 +96,16 @@
             },
 
             // 判断标签数组是否为空
-            TagsIsEmpty() {
-                return this.selectedTags.length === 0;
+            //TagsIsEmpty() {
+            //    return this.selectedTags.length === 0;
+            //},
+            sortApps() {
+                if (this.sortMethod === 'Price descending') {
+                    this.apps.sort((a, b) => b.price - a.price);
+                } else if (this.sortMethod === 'Rating') {
+                    this.apps.sort((a, b) => b.downloadCount - a.downloadCount);
+                }
             },
-
             // 处理搜索操作
             handleSearch(searchTerm) {
                 this.searchQuery = searchTerm;
@@ -113,25 +119,22 @@
             },
 
             // 处理当前标签的变化
-            handleTagsChange(newTags) {
-
+            handleTagChange(newTag) {
                 /*测试：先取selectedTags的第一个作为筛选*/
-                this.selectedTags = newTags;
-                if (this.TagsIsEmpty()) {
-                    this.Category = 'All';
-                } else {
-                    this.Category = this.selectedTags[0];
-                }
-                console.log("changed");
+                this.selectedTag = newTag;
+                this.Category = (newTag ===  '全部' ? 'All' : this.selectedTag);
                 this.searchApps();
-                console.log("TEST");
             },
 
             // 处理价格变化
             handlePriceChange(newRange) {
                 this.priceRange = newRange;
-                console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' + this.priceRange[1]);
                 this.searchApps();
+            },
+            handleSortMethodChange(newSortMethod) {
+                this.sortMethod = newSortMethod;
+                this.sortApps();
+                this.paginatedApps(); // 重新计算显示的应用
             }
         },
         created() {
