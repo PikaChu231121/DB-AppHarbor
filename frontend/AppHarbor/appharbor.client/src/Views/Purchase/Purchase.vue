@@ -89,51 +89,54 @@
     import Cookies from 'js-cookie';
     import global from "@/global.js";
 
-export default {
-    data() {
-        return {
-            user: null,
-            app: null,
-            user_credit: 0,
-            receiver: {
-                id: 1,
-                nickname: 'Bob',
-                avatar: 'https://randomuser.me/api/portraits/men/2.jpg'
-            },
-            /*receiver: null,*/
-            /*                friend: null,*/
-            friends: [],
-            showDropdown: false,
-            user: {
-                id: 10,
-                name: 'Jerry',
-                avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
-            },
-            pricelist: [
-                { id: 1 },
-                { id: 2 },
-                { id: 3 },
-                { id: 4 },
-            ]
-        };
-    },
-    methods: {
-        handlePurchase() {
-            // 购买的后端
-            console.log(this.user.id);
-            console.log(this.receiver.id);
-            console.log(this.app.id);
-            let formData = new FormData();
-            formData.append('BuyerID', this.user.id);
-            formData.append('ReceiverID', this.receiver.id);
-            formData.append('APPID', this.app.id);
-            axios.post('http://localhost:5118/api/order/createneworder', formData)
-                .then(response => {
-                    this.updateCredit();
-                })
-                .catch(error => {
-                    console.error('Error purchase app:', error);
-                });
+    export default {
+        data() {
+            return {
+                user: null,
+                app: null,
+                user_credit: 0,
+                receiver: {
+                    id: 1,
+                    nickname: 'Bob',
+                    avatar:'https://randomuser.me/api/portraits/men/2.jpg'
+                },
+                /*receiver: null,*/
+/*                friend: null,*/
+                friends: [],
+                showDropdown: false,
+                user :{
+                    id: 10 ,
+                    name: 'Jerry',
+                    avatar:'https://randomuser.me/api/portraits/women/2.jpg'
+                },
+                pricelist: [
+                    { id: 1 },
+                    { id: 2 },
+                    { id: 3 },
+                    { id: 4 },
+                ]
+            };
+        },
+        methods: {
+            handlePurchase() {
+                // 购买的后端
+                console.log(this.user.id);
+                console.log(this.receiver.id);
+                console.log(this.app.id);
+                let formData = new FormData();
+                formData.append('BuyerID', this.user.id);
+                formData.append('ReceiverID', this.receiver.id);
+                formData.append('APPID', this.app.id);
+                axios.post('http://localhost:5118/api/order/createneworder', formData)
+                    .then(response => {
+                        alert('购买成功！');
+                        this.updateCredit();
+                    })
+                    .catch(error => {
+                        const parsedData = error.response.data;
+                        console.error('Error purchase app:', error);
+                        alert('购买失败：' + parsedData.msg);
+                    });
 
             console.log('App has been puechased!');
         },

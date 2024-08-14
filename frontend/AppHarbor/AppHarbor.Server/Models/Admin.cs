@@ -33,6 +33,8 @@ public partial class Admin
 
     public virtual ICollection<BanUser> BanUsers { get; set; } = new List<BanUser>();
 
+    public virtual ICollection<BanComment> BanComments { get; set; } = new List<BanComment>();
+
     public virtual ICollection<Operation> Operations { get; set; } = new List<Operation>();
 
     public virtual ICollection<ReportReview> ReportReviews { get; set; } = new List<ReportReview>();
