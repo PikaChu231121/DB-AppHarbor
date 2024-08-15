@@ -59,14 +59,15 @@ namespace AppHarbor.Server.Controllers
 
 
         [HttpPost("publishreport")]
-        public IActionResult PublishReport([FromForm] string token, [FromForm] string Content, [FromForm] decimal ApplicationId)
+        public IActionResult PublishReport([FromBody] PublishReportModel model)
         {
-            //找到举报人的id
-            var user = (from mytoken in _dbContext.TokenIds
-                        where mytoken.Token == token
+            // 验证用户 Token 并找到用户 ID
+            var userToken = model.Token;
+            var user = (from token in _dbContext.TokenIds
+                        where token.Token == userToken
                         select new
                         {
-                            mytoken.Id
+                            token.Id
                         }).FirstOrDefault();
 
             if (user == null)
@@ -75,18 +76,6 @@ namespace AppHarbor.Server.Controllers
             }
 
             decimal userId = user.Id;
-            //判断举报应用是否存在且已经发布
-            var targerapp = (from app in _dbContext.Applications
-                        where app.Id == ApplicationId&&app.ReleaseState== "released"
-                             select new
-                        {
-                                 app.Id
-                             }).FirstOrDefault();
-
-            if (targerapp == null)
-            {
-                return Unauthorized("Invalid targetapp.");
-            }
 
             // 生成新的举报 ID: 找到表中最大的举报 Id 再加 1
             decimal newReportId = _dbContext.Reports
@@ -98,10 +87,11 @@ namespace AppHarbor.Server.Controllers
             var newReport = new Report
             {
                 Id = newReportId,
-                Content = Content,
-                ApplicationId = ApplicationId,
+                Content = model.Content,
+                ApplicationId = model.ApplicationId,
                 UserId = userId,
-                Time = DateTime.Now
+                Time = model.ReportTime,
+                State = "reviewing" // 设置 State 为 "reviewing"
             };
 
             _dbContext.Reports.Add(newReport);
@@ -110,8 +100,5 @@ namespace AppHarbor.Server.Controllers
             return Ok("Report published successfully.");
         }
 
-
     }
 }
-
-
