@@ -221,115 +221,110 @@
             confirmNotification(message) {
                 this.confirm = message;
             },
-        },
-            console.log('App has been puechased!');
-        },
-        updateCredit() {
-            console.log('credit change!');
-            var token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-                .then(response => {
-                    this.user_credit = response.data.credit;
-                })
-                .catch(error => {
-                    console.error('Error fetching user data:', error);
-                });
-        },
-        toggleDropdown() {
-            // 好有菜单选项
-            this.showDropdown = !this.showDropdown;
-        },
-        fetchFriends() {
-            // 获取好友列表信息
-            let formData = new FormData();
-            var token = Cookies.get('token');
-            formData.append('token', token);
-            axios.post('http://localhost:5118/api/relationship/findall', formData)
-                .then(response => {
-                    this.friends = response.data.data.$values;
-                })
-                .catch(error => {
-                    console.error('Error fetching friends data:', error);
-                });
-        },
-        changeReceiver(newReceiver) {
-            // 更改当前friend的属性
-            //this.receiver.nickname = newReceiver.nickname;
-            //this.receiver.id = newReceiver.id;
-            //this.receiver.avatar = newReceiver.avatar;
-            this.receiver = newReceiver;
+            updateCredit() {
+                console.log('credit change!');
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user_credit = response.data.credit;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
+            toggleDropdown() {
+                // 好有菜单选项
+                this.showDropdown = !this.showDropdown;
+            },
+            fetchFriends() {
+                // 获取好友列表信息
+                let formData = new FormData();
+                var token = Cookies.get('token');
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/relationship/findall', formData)
+                    .then(response => {
+                        this.friends = response.data.data.$values;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching friends data:', error);
+                    });
+            },
+            changeReceiver(newReceiver) {
+                // 更改当前friend的属性
+                //this.receiver.nickname = newReceiver.nickname;
+                //this.receiver.id = newReceiver.id;
+                //this.receiver.avatar = newReceiver.avatar;
+                this.receiver = newReceiver;
 
-            this.showDropdown = false; // 关闭下拉菜单
-        },
-        fetchAppDetails(appId) {
-            // 从API或其他地方获取应用详细信息
-            axios.post('http://localhost:5118/api/application/getappdetail', {
-                Id: appId
-                /*Page: this.currentPage */
-            })
-                .then(response => {
-                    this.app = response.data;
-                    //console.log(this.app.price);
+                this.showDropdown = false; // 关闭下拉菜单
+            },
+            fetchAppDetails(appId) {
+                // 从API或其他地方获取应用详细信息
+                axios.post('http://localhost:5118/api/application/getappdetail', {
+                    Id: appId
+                    /*Page: this.currentPage */
                 })
-                .catch(error => {
-                    console.error("Error fetching apps:", error);
-                });
-        },
-        fetchUserInfo() {
-            // 获取用户个人信息
-            var token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-                .then(response => {
-                    this.user = response.data;
-                    // 默认接受者为自己
-                    this.receiver = response.data;
-                    this.friends.push(response.data);
-                    this.user_credit = response.data.credit;
-                })
-                .catch(error => {
-                    console.error('Error fetching user data:', error);
-                });
-        },
-        receiverInit() {
-            console.log("receiver init!");
-            this.receiver.nickname = this.user.nickname;
-            this.receiver.id = this.user.id;
-            this.receiver.avatar = this.user.avatar;
-        },
-        getAvatarUrl(avatarPath) {
-            if (avatarPath) {
-                return `http://localhost:5118${avatarPath}`;
+                    .then(response => {
+                        this.app = response.data;
+                        //console.log(this.app.price);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching apps:", error);
+                    });
+            },
+            fetchUserInfo() {
+                // 获取用户个人信息
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                        // 默认接受者为自己
+                        this.receiver = response.data;
+                        this.friends.push(response.data);
+                        this.user_credit = response.data.credit;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
+            receiverInit() {
+                console.log("receiver init!");
+                this.receiver.nickname = this.user.nickname;
+                this.receiver.id = this.user.id;
+                this.receiver.avatar = this.user.avatar;
+            },
+            getAvatarUrl(avatarPath) {
+                if (avatarPath) {
+                    return `http://localhost:5118${avatarPath}`;
+                }
+                return '../../public/default.png'; // 默认头像路径
             }
-            return '../../public/default.png'; // 默认头像路径
-        }
-    },
-    computed: {
-        formattedPrice() {
-            if (this.app.price === 0) {
-                return `<span>Free! 免费</span>`;
+        },
+        computed: {
+            formattedPrice() {
+                if (this.app.price === 0) {
+                    return `<span>Free! 免费</span>`;
+                }
+
+                const originalPrice = this.app.price.toFixed(2).split('.');
+                const originalIntegerPart = originalPrice[0];
+                const originalDecimalPart = originalPrice[1];
+
+                const discountedPrice = (this.app.price * this.app.discount).toFixed(2).split('.');
+                const discountedIntegerPart = discountedPrice[0];
+                const discountedDecimalPart = discountedPrice[1];
+
+                return `
+                        <span >
+                            ￥ <span class="integer-part">${discountedIntegerPart}</span>.<span class="decimal-part">${discountedDecimalPart}</span>
+                        </span>
+                        <span style="text-decoration: line-through; font-size: 0.6em; color:gray;">
+                            原价：<span class="integer-part">${originalIntegerPart}</span>.<span class="decimal-part">${originalDecimalPart}</span>
+                        </span>
+                    `;
             }
 
-            const originalPrice = this.app.price.toFixed(2).split('.');
-            const originalIntegerPart = originalPrice[0];
-            const originalDecimalPart = originalPrice[1];
-
-            const discountedPrice = (this.app.price * this.app.discount).toFixed(2).split('.');
-            const discountedIntegerPart = discountedPrice[0];
-            const discountedDecimalPart = discountedPrice[1];
-
-            return `
-                    <span >
-                        ￥ <span class="integer-part">${discountedIntegerPart}</span>.<span class="decimal-part">${discountedDecimalPart}</span>
-                    </span>
-                    <span style="text-decoration: line-through; font-size: 0.6em; color:gray;">
-                        原价：<span class="integer-part">${originalIntegerPart}</span>.<span class="decimal-part">${originalDecimalPart}</span>
-                    </span>
-                `;
-        }
-
-    },
-
-
+        },
 
         created() {
             // 获取应用信息部分
