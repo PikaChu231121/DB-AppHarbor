@@ -103,6 +103,7 @@
                         </h3>
                         <span class="app-actions">
                             <button v-if="selectedStatus === '待审核应用'" @click="handleShelve(item)" class="action-button">上架应用</button>
+                            <button v-if="selectedStatus === '已审核应用'" @click="handleUnShelve(item)" class="action-button">下架应用</button>
                             <button @click="showDetails(item)" class="action-button">查看应用</button>
                         </span>
                     </div>
@@ -233,8 +234,10 @@
     <!-- 弹窗 -->
     <div v-if="showPopup" class="popup-overlay" @click="closePopup">
         <div class="popup-content" @click.stop>
-            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256"><path fill="currentColor" d="m64.34 196.07l-9.45 16a8 8 0 1 1-13.78-8.14l9.46-16a8 8 0 1 1 13.77 8.14M232 152h-47.8l-30.73-52a8 8 0 1 0-13.77 8.14l61.41 103.93a8 8 0 0 0 13.78-8.14L193.66 168H232a8 8 0 0 0 0-16m-89.53 0H90.38l68.51-115.93a8 8 0 0 0-13.78-8.14L128 56.89l-17.11-29a8 8 0 1 0-13.78 8.14l21.6 36.55L71.8 152H24a8 8 0 0 0 0 16h118.47a8 8 0 1 0 0-16" /></svg>
-            &nbsp;&nbsp;&nbsp;{{ selectedApp.name }}</h3>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256"><path fill="currentColor" d="m64.34 196.07l-9.45 16a8 8 0 1 1-13.78-8.14l9.46-16a8 8 0 1 1 13.77 8.14M232 152h-47.8l-30.73-52a8 8 0 1 0-13.77 8.14l61.41 103.93a8 8 0 0 0 13.78-8.14L193.66 168H232a8 8 0 0 0 0-16m-89.53 0H90.38l68.51-115.93a8 8 0 0 0-13.78-8.14L128 56.89l-17.11-29a8 8 0 1 0-13.78 8.14l21.6 36.55L71.8 152H24a8 8 0 0 0 0 16h118.47a8 8 0 1 0 0-16" /></svg>
+                &nbsp;&nbsp;&nbsp;{{ selectedApp.name }}
+            </h3>
             <p>&nbsp;&nbsp;应用版本: &nbsp;&nbsp;&nbsp;{{ selectedApp.version }}</p>
             <p>&nbsp;&nbsp;应用发行商: &nbsp;&nbsp;&nbsp;{{ selectedApp.merchantNickname }}</p>
             <p>&nbsp;&nbsp;应用类型:&nbsp;&nbsp;&nbsp; {{ selectedApp.category }}</p>
@@ -249,8 +252,10 @@
     <!-- 确认弹窗 -->
     <div v-if="showConfirmPopup" class="popup-overlay" @click="cancelShelve">
         <div class="popup-content confirm-popup" @click.stop>
-            <h3> <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
-            确认上架</h3>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+                确认上架
+            </h3>
             <p>您确定要上架 {{ appToShelve ? appToShelve.name : '' }} 应用吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmShelve" class="popup-confirm-button">确定</button>
@@ -259,15 +264,40 @@
         </div>
     </div>
 
+    <!-- 确认下架弹窗 -->
+    <div v-if="showConfirmUnPopup" class="popup-overlay" @click="cancelShelve">
+        <div class="popup-content confirm-popup" @click.stop>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+                确认下架
+            </h3>
+            <p>您确定要下架 {{ appToUnShelve ? appToUnShelve.name : '' }} 应用吗？</p>
+            <div class="confirm-buttons">
+                <button @click="confirmUnShelve" class="popup-confirm-button">确定</button>
+                <button @click="cancelUnShelve" class="popup-cancel-button">取消</button>
+            </div>
+        </div>
+    </div>
     <div v-if="showSuccessPopup" class="popup-overlay" @click="closeSuccessPopup">
         <div class="popup-content success-popup" @click.stop>
-            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36"><path fill="currentColor" d="M18 2a16 16 0 1 0 16 16A16 16 0 0 0 18 2m0 30a14 14 0 1 1 14-14a14 14 0 0 1-14 14" class="clr-i-outline clr-i-outline-path-1" /><path fill="currentColor" d="M28 12.1a1 1 0 0 0-1.41 0l-11.1 11.05l-6-6A1 1 0 0 0 8 18.53L15.49 26L28 13.52a1 1 0 0 0 0-1.42" class="clr-i-outline clr-i-outline-path-2" /><path fill="none" d="M0 0h36v36H0z" /></svg>
-            管理员审核成功</h3>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36"><path fill="currentColor" d="M18 2a16 16 0 1 0 16 16A16 16 0 0 0 18 2m0 30a14 14 0 1 1 14-14a14 14 0 0 1-14 14" class="clr-i-outline clr-i-outline-path-1" /><path fill="currentColor" d="M28 12.1a1 1 0 0 0-1.41 0l-11.1 11.05l-6-6A1 1 0 0 0 8 18.53L15.49 26L28 13.52a1 1 0 0 0 0-1.42" class="clr-i-outline clr-i-outline-path-2" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+                管理员审核成功
+            </h3>
             <p>该应用已成功上架！</p>
             <button @click="closeSuccessPopup" class="popup-close-button">关闭</button>
         </div>
     </div>
-
+    <div v-if="showSuccessUnPopup" class="popup-overlay" @click="closeSuccessUnPopup">
+        <div class="popup-content success-popup" @click.stop>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36"><path fill="currentColor" d="M18 2a16 16 0 1 0 16 16A16 16 0 0 0 18 2m0 30a14 14 0 1 1 14-14a14 14 0 0 1-14 14" class="clr-i-outline clr-i-outline-path-1" /><path fill="currentColor" d="M28 12.1a1 1 0 0 0-1.41 0l-11.1 11.05l-6-6A1 1 0 0 0 8 18.53L15.49 26L28 13.52a1 1 0 0 0 0-1.42" class="clr-i-outline clr-i-outline-path-2" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+                管理员下架成功
+            </h3>
+            <p>该应用已成功下架！</p>
+            <button @click="closeSuccessUnPopup" class="popup-close-button">关闭</button>
+        </div>
+    </div>
     <!-- 封禁确认弹窗 -->
     <div v-if="showBanConfirmPopup" class="popup-overlay" @click="cancelBan">
         <div class="popup-content ban-confirm-popup" @click.stop>
@@ -287,8 +317,10 @@
     <!-- 封禁解除确认弹窗 -->
     <div v-if="showUnbanConfirmPopup" class="popup-overlay" @click="cancelUnban">
         <div class="popup-content unban-confirm-popup" @click.stop>
-            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
-            确认解除封禁&nbsp;{{ userToUnban ? userToUnban.nickname : '' }}</h3>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+                确认解除封禁&nbsp;{{ userToUnban ? userToUnban.nickname : '' }}
+            </h3>
             <p>您确定要解除用户 {{ userToUnban ? userToUnban.nickname : '' }} 的封禁吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmUnban" class="popup-confirm-button">确定</button>
@@ -316,8 +348,10 @@
     <!-- 封禁解除确认弹窗 -->
     <div v-if="showMerUnbanConfirmPopup" class="popup-overlay" @click="cancelMerUnban">
         <div class="popup-content unban-confirm-popup" @click.stop>
-            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
-            确认解除封禁&nbsp;{{ merToUnban ? merToUnban.merchantNickname : '' }}</h3>
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" /><path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6" /><circle cx="1" cy="1" r="1" fill="currentColor" transform="matrix(1 0 0 -1 11 9)" /></g></svg>
+                确认解除封禁&nbsp;{{ merToUnban ? merToUnban.merchantNickname : '' }}
+            </h3>
             <p>您确定要解除商家 {{ merToUnban ? merToUnban.merchantNickname : '' }} 的封禁吗？</p>
             <div class="confirm-buttons">
                 <button @click="confirmMerUnban" class="popup-confirm-button">确定</button>
@@ -377,13 +411,16 @@
                 },
                 showPopup: false,
                 showConfirmPopup: false,
+                showConfirmUnPopup: false,
                 showSuccessPopup: false,
+                showSuccessUnPopup: false,
                 showBanConfirmPopup: false,
                 showBanSuccessPopup: false,
                 showUnbanConfirmPopup: false,
                 showMerBanConfirmPopup: false,
                 selectedApp: null,
                 appToShelve: null,
+                appToUnShelve: null,
                 selectedUser: null,
                 merToBan: null,
                 merBanReason: '',
@@ -677,7 +714,10 @@
                 this.appToShelve = item; // 保存要上架的应用信息
                 this.showConfirmPopup = true; // 显示确认弹窗
             },
-
+            handleUnShelve(item) {
+                this.appToUnShelve = item; // 保存要上架的应用信息
+                this.showConfirmUnPopup = true; // 显示确认弹窗
+            },
             confirmShelve() {
                 const token = Cookies.get('token');
                 if (!token) {
@@ -702,11 +742,38 @@
                         this.appToShelve = null; // 清除应用信息
                     });
             },
-            cancelShelve() {
-                this.showConfirmPopup = false; // 取消上架操作，隐藏确认弹窗
-                this.appToShelve = null; // 清除应用信息
-            },
+            confirmUnShelve() {
+    const token = Cookies.get('token');
+    if (!token) {
+        alert('未提供 token');
+        return;
+    }
 
+    const formData = new FormData();
+    formData.append('Id', this.appToUnShelve.id);
+    formData.append('token', token);
+    axios.post('http://localhost:5118/api/application/confirmdown', formData)
+        .then(response => {
+            this.showConfirmUnPopup = false; // 隐藏确认弹窗
+            this.showSuccessUnPopup = true; // 显示成功弹窗
+            this.fetchData('http://localhost:5118/api/application/selectseleased');
+        })
+        .catch(error => {
+            console.error('下架失败:', error);
+            alert('下架失败，请重试');
+        })
+        .finally(() => {
+            this.appToUnShelve = null; // 清除应用信息
+        });
+},
+            cancelShelve() {
+                this.showConfirmUnPopup = false; // 取消上架操作，隐藏确认弹窗
+                this.appToUnShelve = null; // 清除应用信息
+            },
+            cancelUnShelve() {
+                this.showConfirmUnPopup = false; // 取消上架操作，隐藏确认弹窗
+                this.appToUnShelve = null; // 清除应用信息
+            },
             showDetails(item) {
                 this.selectedApp = item;
                 this.showPopup = true;
@@ -718,6 +785,10 @@
             closeSuccessPopup() {
                 this.showSuccessPopup = false;
                 this.appToShelve = null;
+            },
+            closeSuccessUnPopup() {
+                this.showSuccessUnPopup = false;
+                this.appToUnShelve = null;
             },
             changeselectedStatus(state) {
                 this.selectedStatus = state;
