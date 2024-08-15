@@ -75,6 +75,9 @@
                         this.user.merchantId = data.id;
                         this.user.merchantNickname = data.nickName;
                         this.user.merchantAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '@/../public/default.png';
+                        if (this.user.merchantAvatar=='http://localhost:5118default.png') {
+                            this.user.merchantAvatar = '@/../public/default.png';
+                        }
                         this.user.registerTime = data.registerTime;
                     })
                     .catch(error => {

@@ -25,6 +25,7 @@
     //import FriendsView from './FriendsView.vue'; // Example component
     import PersonalInformation from '../PersonalInformation.vue'; // Example component
     import Annoucement from './UserAnnouncement.vue'
+    import Report from './UserReport.vue'
 
     export default {
         components: {
@@ -37,7 +38,8 @@
             YourFriends,
             AddFriends,
             PersonalInformation,
-            Annoucement
+            Annoucement,
+            Report
         },
         data() {
             return {
@@ -70,6 +72,9 @@
                         break;
                     case 'Annoucement':
                         this.currentView = 'Annoucement';
+                        break;
+                    case 'Report':
+                        this.currentView = 'Report';
                         break;
                     default:
                         this.currentView = 'Shop';

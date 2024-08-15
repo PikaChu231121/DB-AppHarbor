@@ -18,7 +18,7 @@
                     this.visible = true;
                     setTimeout(() => {
                         this.visible = false;
-                    }, 1000);
+                    }, 2000);
                 }
             }
         },
@@ -44,7 +44,7 @@
         padding: 10px 20px;
         border: 1px solid #f5c6cb;
         border-radius: 5px;
-        z-index: 1;
+        z-index: 9999;
         opacity: 0;
         transition: opacity 0.5s ease-in-out; /* 淡入淡出效果 */
     }

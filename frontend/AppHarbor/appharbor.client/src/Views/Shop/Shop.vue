@@ -5,7 +5,9 @@
         </aside>
         <main class="search-section">
             <div class="title-container">
-                <h1 class="title">应用商店</h1>
+                <h1 class="title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.4 9.6v4.2H7.2V9.6zm0 9.6V15H7.2v4.2zm5.4-9.6v4.2h-4.2V9.6zm0 9.6V15h-4.2v4.2zM7.2 5.4V2.7c0-1.16.94-2.1 2.1-2.1h5.4c1.16 0 2.1.94 2.1 2.1v2.7h6.3a.9.9 0 0 1 .9.9v13.8a3.3 3.3 0 0 1-3.3 3.3H3.3A3.3 3.3 0 0 1 0 20.1V6.3a.9.9 0 0 1 .9-.9zM9 2.7v2.7h6V2.7a.3.3 0 0 0-.3-.3H9.3a.3.3 0 0 0-.3.3M1.8 20.1a1.5 1.5 0 0 0 1.5 1.5h17.4a1.5 1.5 0 0 0 1.5-1.5V7.2H1.8z" /></svg>
+                应用商店</h1>
             </div>
             <SearchBar 
                        @search="handleSearch"
@@ -149,10 +151,11 @@
         border-radius: 20px;
         background-color: #faebd7; /* Background color for the entire search area */
         display: flex;
+        height: 80%;
         justify-content: center;
         padding: 20px; /* Adjust padding for better spacing */
-        height: 100%;
-        width: 100%;
+        height: 110%;
+        width: 110%;
     }
 
     .filter-section {
