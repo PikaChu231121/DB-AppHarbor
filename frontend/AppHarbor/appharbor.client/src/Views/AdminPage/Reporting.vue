@@ -29,15 +29,25 @@
         <!-- Popup for report details -->
         <div v-if="selectedReport" class="popup">
             <div class="popup-content">
-                <button class="close-button" @click="closePopup">关闭</button>
                 <h3>举报内容详情</h3>
                 <p><strong style="font-weight:bold">举报内容:&nbsp;&nbsp;&nbsp;</strong> {{ selectedReport.content }}<br><br></p>
-                <p style="font-size:15px"><strong style="font-weight:bold">举报用户:</strong> {{ selectedReport.userNickname }}&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight:bold">该用户ID:</strong> {{ selectedReport.userId }}</p>
-                <p style="font-size:15px"><strong style="font-weight:bold">被举报应用:</strong> {{ selectedReport.applicationName }}&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight:bold">该应用ID:</strong> {{ selectedReport.applicationId }}</p>
-                <p style="font-size:15px"><strong style="font-weight:bold">被举报应用商家:</strong> {{ selectedReport.merchantNickname }}&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight:bold">该商家ID:</strong> {{ selectedReport.merchantId }}</p>
-                <p style="font-size:15px"><strong style="font-weight:bold">举报时间:</strong> {{ selectedReport.time }}&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight:bold">该举报ID:</strong> {{ selectedReport.reportId }}</p>
+                <p style="font-size:15px"><strong style="font-weight:bold">举报用户:</strong> {{ selectedReport.userNickname }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight: bold; text-align: right;">该用户ID:</strong> {{ selectedReport.userId }}</p>
+                <p style="font-size:15px"><strong style="font-weight:bold">被举报应用:</strong> {{ selectedReport.applicationName }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight: bold; text-align: right;">该应用ID:</strong> {{ selectedReport.applicationId }}</p>
+                <p style="font-size:15px"><strong style="font-weight:bold">被举报应用商家:</strong> {{ selectedReport.merchantNickname }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight: bold; text-align: right;">该商家ID:</strong> {{ selectedReport.merchantId }}</p>
+                <p style="font-size:15px"><strong style="font-weight:bold">举报时间:</strong> {{ selectedReport.time }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="font-weight: bold; text-align: right;">该举报ID:</strong> {{ selectedReport.reportId }}</p>
+
+                <!-- New input and buttons -->
+                <div class="form-group">
+                    <label for="response-content" style="font-weight:bold">请填写受理内容:</label>
+                    <textarea id="response-content" v-model="responseContent" rows="4" placeholder="请输入处理结果"></textarea>
+                </div>
+                <div class="button-group">
+                    <button class="submit-button" @click="submitResponse">提交受理结果</button>
+                    <button class="cancel-button" @click="closePopup">取消</button>
+                </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -174,6 +184,9 @@
         transition: transform 0.3s ease;
         transform: scale(0.9);
         overflow: auto; /* Add this line to handle overflow */
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #fff;
     }
 
         .popup-content p {
@@ -192,6 +205,63 @@
             color: #6a1b9a; /* Purple color */
             text-align: center; /* Centered */
             font-family: 'SimSun', serif; /* SimSun font */
+        }
+
+    .form-group {
+        margin-top: 20px;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-weight:bold;
+        font-family: 'SimSun', serif; /* Set font to SimSun */
+    }
+
+    .button-group {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .submit-button, .cancel-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .submit-button {
+        background-color: #4caf50;
+        color: white;
+    }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+    .cancel-button {
+        background-color: #f44336;
+        color: white;
+    }
+
+        .cancel-button:hover {
+            background-color: #e53935;
+        }
+
+    .close-button {
+        /* Existing styles */
+        background-color: #d9534f;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+        .close-button:hover {
+            background-color: #c9302c;
         }
 
     .close-button {
