@@ -68,7 +68,7 @@ export default {
             if (avatarPath) {
                 return 'http://localhost:5118' + avatarPath;
             } else {
-                return '../../public/default.png';
+                return '@/../public/default.png';
             }
         },
         togglePopup(event) {
@@ -89,6 +89,9 @@ export default {
                 this.merchant.id = response.data.id;
                 this.merchant.nickname = response.data.nickName;
                 this.merchant.avatar = response.data.avatar;
+                if (this.merchant.avatar == 'default.png') {
+                    this.merchant.avatar = null;
+                }
             })
             .catch(error => {
                 console.error(error);
