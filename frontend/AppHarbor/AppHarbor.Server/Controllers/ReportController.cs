@@ -28,10 +28,35 @@ namespace AppHarbor.Server.Controllers
         public IActionResult GetReportList()
         {
             var reportList = _dbContext.Reports
-                .OrderBy(r => r.Time)
+                .Join(_dbContext.Users,
+                      report => report.UserId,
+                      user => user.Id,
+                      (report, user) => new { report, user })
+                .Join(_dbContext.Applications,
+                      temp => temp.report.ApplicationId,
+                      app => app.Id,
+                      (temp, app) => new { temp.report, temp.user, app })
+                .Join(_dbContext.Merchants,
+                      temp => temp.app.MerchantId,
+                      merchant => merchant.Id,
+                      (temp, merchant) => new
+                      {
+                          reportId = temp.report.Id,
+                          content = temp.report.Content,
+                          applicationId = temp.report.ApplicationId,
+                          MerchantId = merchant.Id,
+                          userId = temp.report.UserId,
+                          time = temp.report.Time,
+                          userNickname = temp.user.Nickname,
+                          applicationName = temp.app.Name,
+                          merchantNickname = merchant.Nickname
+                      })
+                .OrderBy(result => result.time)
                 .ToList();
+
             return Ok(reportList);
         }
+
 
         [HttpPost("publishreport")]
         public IActionResult PublishReport([FromForm] string token, [FromForm] string Content, [FromForm] decimal ApplicationId)
