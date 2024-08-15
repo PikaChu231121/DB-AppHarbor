@@ -545,6 +545,10 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.UserId)
                 .HasColumnType("NUMBER")
                 .HasColumnName("USER_ID");
+            entity.Property(e => e.State)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("STATE");
 
             entity.HasOne(d => d.Application).WithMany(p => p.Reports)
                 .HasForeignKey(d => d.ApplicationId)

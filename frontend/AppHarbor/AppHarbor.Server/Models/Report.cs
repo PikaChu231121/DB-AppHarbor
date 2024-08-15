@@ -15,6 +15,8 @@ public partial class Report
 
     public decimal ApplicationId { get; set; }
 
+    public string State { get; set; } = null!;
+
     public virtual Application Application { get; set; } = null!;
 
     public virtual ReportReview? ReportReview { get; set; }
