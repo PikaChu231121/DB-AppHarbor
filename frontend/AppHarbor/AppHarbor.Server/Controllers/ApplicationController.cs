@@ -281,7 +281,7 @@ namespace AppHarbor.Server.Controllers
                                 Package = app.Package,
                             }
                         )
-                        .Where(app => app.ReleaseState != "released")
+                        .Where(app => app.ReleaseState == "test")
                         .Skip((pageNumber - 1) * pageSize)
                         .Take(pageSize)
                         .ToList();
@@ -296,7 +296,7 @@ namespace AppHarbor.Server.Controllers
             {
                 return Unauthorized("No token provided.");
             }
-            // 找到给定token对应的用户ID
+            // 找到给定token对应的管理员ID
             var adminId = _dbContext.TokenIds
                 .Where(t => t.Token == token)
                 .Select(t => t.Id)
@@ -320,6 +320,43 @@ namespace AppHarbor.Server.Controllers
             _dbContext.SaveChanges();
             return Ok("Application status updated successfully.");
         }
+
+        [HttpPost("confirmdown")]
+        public IActionResult Confirmdown([FromForm] decimal Id, [FromForm] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            // 找到给定token对应的管理员ID
+            var adminId = _dbContext.TokenIds
+                .Where(t => t.Token == token)
+                .Select(t => t.Id)
+                .FirstOrDefault();
+
+            if (adminId == 0)
+            {
+                return NotFound("User not found.");
+            }
+
+            var application = _dbContext.Applications
+                .Where(app => app.Id == Id)
+                .FirstOrDefault();
+
+            if (application == null)
+            {
+                return NotFound("Application not found.");
+            }
+
+            // 更新应用的状态
+            application.ReleaseState = "withdrawn"; // 下架应用状态改为withdrawn
+            _dbContext.Applications.Update(application);
+            _dbContext.SaveChanges();
+
+            return Ok("Application status updated successfully.");
+        }
+
     }
 }
 
