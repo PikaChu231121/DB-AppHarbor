@@ -56,6 +56,7 @@
                         this.apps = response.data.$values;
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
                         this.currentPage = 1; // 重置到第一页
+                        this.sortApps();
                         this.paginatedApps();
                     })
                     .catch(error => {

@@ -372,7 +372,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #ffffff;
+        background-color: #faebd7;
         margin-top: auto;
         margin-bottom: auto;
     }

@@ -1,5 +1,7 @@
 <template>
     <div class="background">
+        <alert-box :msg="alert"></alert-box>
+        <confirm-box :msg="confirm"></confirm-box>
         <div class="order-container">
             <div class="left-container">
                 <!--送给谁显示-->
@@ -53,7 +55,7 @@
 
             <!--应用详情显示-->
             <div class="app-container">
-                <img loading="lazy" :src="app.image" :alt="app.name" class="app-image" />
+                <img loading="lazy" :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
                 <div class="app-details">
                     <h2 class="app-name">{{ app.name }}</h2>
                     <div class="app-price">￥{{ app.price }}</div>
@@ -88,27 +90,24 @@
     import axios from 'axios';
     import Cookies from 'js-cookie';
     import global from "@/global.js";
+    import AlertBox from '../AlertBox.vue';
+    import ConfirmBox from '../ConfirmBox.vue';
 
     export default {
+        components: {
+            AlertBox,
+            ConfirmBox
+        },
         data() {
             return {
                 user: null,
                 app: null,
                 user_credit: 0,
-                receiver: {
-                    id: 1,
-                    nickname: 'Bob',
-                    avatar:'https://randomuser.me/api/portraits/men/2.jpg'
-                },
-                /*receiver: null,*/
-/*                friend: null,*/
+                receiver: null,
                 friends: [],
                 showDropdown: false,
-                user :{
-                    id: 10 ,
-                    name: 'Jerry',
-                    avatar:'https://randomuser.me/api/portraits/women/2.jpg'
-                },
+                alert: '',
+                confirm: '',
                 pricelist: [
                     { id: 1 },
                     { id: 2 },
@@ -120,22 +119,19 @@
         methods: {
             handlePurchase() {
                 // 购买的后端
-                console.log(this.user.id);
-                console.log(this.receiver.id);
-                console.log(this.app.id);
                 let formData = new FormData();
                 formData.append('BuyerID', this.user.id);
                 formData.append('ReceiverID', this.receiver.id);
                 formData.append('APPID', this.app.id);
                 axios.post('http://localhost:5118/api/order/createneworder', formData)
                     .then(response => {
-                        alert('购买成功！');
+                        this.confirmNotification('购买成功！');
                         this.updateCredit();
                     })
                     .catch(error => {
                         const parsedData = error.response.data;
                         console.error('Error purchase app:', error);
-                        alert('购买失败：' + parsedData.msg);
+                        this.alertNotification('购买失败：' + parsedData.msg);
                     });
 
                 console.log('App has been puechased!');
@@ -169,12 +165,7 @@
                     });
             },
             changeReceiver(newReceiver) {
-                // 更改当前friend的属性
-                //this.receiver.nickname = newReceiver.nickname;
-                //this.receiver.id = newReceiver.id;
-                //this.receiver.avatar = newReceiver.avatar;
                 this.receiver = newReceiver;
-
                 this.showDropdown = false; // 关闭下拉菜单
             },
             fetchAppDetails(appId) {
@@ -217,7 +208,19 @@
                     return `http://localhost:5118${avatarPath}`;
                 }
                 return '../../public/default.png'; // 默认头像路径
-            }
+            },
+            getAppImgUrl(imgPath) {
+                if (imgPath) {
+                    return `http://localhost:5118${imgPath}`;
+                }
+                return '../../public/default.png'; // 默认图片路径
+            },
+            alertNotification(message) {
+                this.alert = message;
+            },
+            confirmNotification(message) {
+                this.confirm = message;
+            },
         },
         created() {
             // 获取应用信息部分
