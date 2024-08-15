@@ -77,7 +77,7 @@
         },
         methods: {
             selectItem(index) {
-                if (['Wallet', 'Home', 'Shop', 'Favourites'].includes(this.menuItems[index].label)) {
+                if (['Wallet', 'Home', 'Shop', 'Favourites','Annoucement','Report'].includes(this.menuItems[index].label)) {
                     this.isLoading = true;
                     setTimeout(() => {
                         this.isLoading = false;
