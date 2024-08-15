@@ -35,7 +35,7 @@
 
         <div class="auto-wrapper">
             <div class="info-box" v-for="app in filteredApplications" :key="app.id">
-                <img :src="app.Image ? `http://localhost:5118${app.Image}` : '../../public/default-app.png'" class="app-image" />
+                <img :src="getAppImgUrl(app.Image)" class="app-image" />
                 <p class="app-name">{{ app.name }}</p>
                 <button class="purchase-button" @click="downloadApp(app.package)">下载</button>
                 <button class="view-button" @click="openAppDetail(app)">查看应用</button>
@@ -134,7 +134,13 @@
             },
             closeAppDetail() {
                 this.selectedApp = null;
-            }
+            },
+            getAppImgUrl(imgPath) {
+                if (imgPath) {
+                    return `http://localhost:5118${imgPath}`;
+                }
+                return '../../public/default.png'; // 默认图片路径
+            },
         },
         mounted() {
             this.fetchUser();
