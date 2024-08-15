@@ -1,13 +1,18 @@
 <template>
     <div class="app-search">
         <aside class="filter-section">
-            <FilterSection @tags-changed="handleTagsChange" @price-range-updated="handlePriceChange" />
+            <FilterSection @tag-changed="handleTagChange" @price-range-updated="handlePriceChange" />
         </aside>
         <main class="search-section">
             <div class="title-container">
-                <h1 class="title">应用商店</h1>
+                <h1 class="title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M11.4 9.6v4.2H7.2V9.6zm0 9.6V15H7.2v4.2zm5.4-9.6v4.2h-4.2V9.6zm0 9.6V15h-4.2v4.2zM7.2 5.4V2.7c0-1.16.94-2.1 2.1-2.1h5.4c1.16 0 2.1.94 2.1 2.1v2.7h6.3a.9.9 0 0 1 .9.9v13.8a3.3 3.3 0 0 1-3.3 3.3H3.3A3.3 3.3 0 0 1 0 20.1V6.3a.9.9 0 0 1 .9-.9zM9 2.7v2.7h6V2.7a.3.3 0 0 0-.3-.3H9.3a.3.3 0 0 0-.3.3M1.8 20.1a1.5 1.5 0 0 0 1.5 1.5h17.4a1.5 1.5 0 0 0 1.5-1.5V7.2H1.8z" /></svg>
+                应用商店</h1>
             </div>
-            <SearchBar @search="handleSearch" />
+            <SearchBar 
+                       @search="handleSearch"
+                       @sort-method-changed="handleSortMethodChange"
+            />
             <AppGrid :apps="appsShown" />
             <Pagination :total-pages="totalPages" v-model:current-page="currentPage" @page-changed="handlePageChange" />
         </main>
@@ -33,13 +38,14 @@
             return {
                 apps: [], // 后端返回的应用列表
                 appsShown: [], // 当前页显示应用
-                selectedTags: [], // 选中的标签
+                selectedTag: '全部', // 选中的标签
                 Category: "All", // 检索属性
                 priceRange: [0, 1000],
                 searchQuery: "",
                 currentPage: 1, // 当前页码，初始为1
                 totalPages: 1, // 总页数，初始为1
-                appsPerPage: 10 // 每页显示的应用数量
+                appsPerPage: 10, // 每页显示的应用数量
+                sortMethod: 'Rating', // 添加排序方式
             }
         },
         methods: {
@@ -52,6 +58,7 @@
                         this.apps = response.data.$values;
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
                         this.currentPage = 1; // 重置到第一页
+                        this.sortApps();
                         this.paginatedApps();
                     })
                     .catch(error => {
@@ -59,11 +66,6 @@
                     });
             },
             searchApps() {
-                console.log(this.searchQuery);
-                console.log(this.Category);
-                console.log(this.priceRange[0]);
-                console.log(this.priceRange[1]);
-
                 axios.post('http://localhost:5118/api/application/searchapplist', {
                     Category: this.Category,
                     Price_min: this.priceRange[0],
@@ -74,6 +76,7 @@
                         this.apps = response.data.$values;
                         this.totalPages = Math.ceil(this.apps.length / this.appsPerPage);
                         this.currentPage = 1; // 重置到第一页
+                        this.sortApps();
                         this.paginatedApps();
                     })
                     .catch(error => {
@@ -96,10 +99,16 @@
             },
 
             // 判断标签数组是否为空
-            TagsIsEmpty() {
-                return this.selectedTags.length === 0;
+            //TagsIsEmpty() {
+            //    return this.selectedTags.length === 0;
+            //},
+            sortApps() {
+                if (this.sortMethod === 'Price descending') {
+                    this.apps.sort((a, b) => b.price - a.price);
+                } else if (this.sortMethod === 'Rating') {
+                    this.apps.sort((a, b) => b.downloadCount - a.downloadCount);
+                }
             },
-
             // 处理搜索操作
             handleSearch(searchTerm) {
                 this.searchQuery = searchTerm;
@@ -113,25 +122,22 @@
             },
 
             // 处理当前标签的变化
-            handleTagsChange(newTags) {
-
+            handleTagChange(newTag) {
                 /*测试：先取selectedTags的第一个作为筛选*/
-                this.selectedTags = newTags;
-                if (this.TagsIsEmpty()) {
-                    this.Category = 'All';
-                } else {
-                    this.Category = this.selectedTags[0];
-                }
-                console.log("changed");
+                this.selectedTag = newTag;
+                this.Category = (newTag ===  '全部' ? 'All' : this.selectedTag);
                 this.searchApps();
-                console.log("TEST");
             },
 
             // 处理价格变化
             handlePriceChange(newRange) {
                 this.priceRange = newRange;
-                console.log('priceRange has changed: ' + this.priceRange[0] + ' to ' + this.priceRange[1]);
                 this.searchApps();
+            },
+            handleSortMethodChange(newSortMethod) {
+                this.sortMethod = newSortMethod;
+                this.sortApps();
+                this.paginatedApps(); // 重新计算显示的应用
             }
         },
         created() {
@@ -145,10 +151,11 @@
         border-radius: 20px;
         background-color: #faebd7; /* Background color for the entire search area */
         display: flex;
+        height: 80%;
         justify-content: center;
         padding: 20px; /* Adjust padding for better spacing */
-        height: 100%;
-        width: 100%;
+        height: 110%;
+        width: 110%;
     }
 
     .filter-section {

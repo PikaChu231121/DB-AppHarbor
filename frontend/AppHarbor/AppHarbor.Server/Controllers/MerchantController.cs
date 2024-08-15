@@ -480,6 +480,7 @@ namespace AppHarbor.Server.Controllers
                     a.DownloadCount,
                     a.Price,
                     a.Package,
+                    a.Discount
                 })
                 .ToListAsync();
 
@@ -565,7 +566,8 @@ namespace AppHarbor.Server.Controllers
     [FromForm] string version,
     [FromForm] string? state,
     [FromForm] string description,
-    [FromForm] decimal? price)
+    [FromForm] decimal? price,
+    [FromForm] decimal discount)
         {
 
             var app = _dbContext.Applications.FirstOrDefault(a => a.Id == appId && a.MerchantId == merchantId);
@@ -574,16 +576,18 @@ namespace AppHarbor.Server.Controllers
                 return NotFound("Application not found.");
             }
 
-            var versionPattern = @"^(?!0)\d+\.(?!0)\d+$";
+            var versionPattern = @"^(?!0)\d+\.\d+$";
             if (!Regex.IsMatch(version, versionPattern))
             {
                 return BadRequest("版本号格式不正确，请重试！");
             }
 
+
             app.Version = version;
             app.ReleaseState = "test";
             app.Price = price;
             app.Description = description;
+            app.Discount = discount;
 
             await _dbContext.SaveChangesAsync();
 

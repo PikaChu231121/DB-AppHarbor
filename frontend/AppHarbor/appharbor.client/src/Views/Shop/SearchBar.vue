@@ -12,8 +12,12 @@
             </button>
         </form>
         <div class="filter-tags">
-            <span class="filter-tag active">Price descending</span>
-            <span class="filter-tag">Rating</span>
+            <span v-for="(filter, index) in filters"
+                  :key="index"
+                  :class="['filter-tag', { active: activeFilter === filter }]"
+                  @click="setActiveFilter(filter)">
+                {{ filter }}
+            </span>
         </div>
     </div>
 </template>
@@ -23,7 +27,9 @@
         name: 'SearchBar',
         data() {
             return {
-                searchQuery: ''
+                searchQuery: '',
+                filters: ['Price descending', 'Rating'],
+                activeFilter: 'Rating' // 默认激活的过滤器
             }
         },
         methods: {
@@ -31,6 +37,12 @@
                 // Implement search functionality
                 console.log('Searching for:', this.searchQuery);
                 this.$emit('search', this.searchQuery);
+            },
+            setActiveFilter(filter) {
+                this.activeFilter = filter;
+                console.log('Filter set to:', filter);
+                // 这里可以根据选择的过滤器触发相应的排序或过滤功能
+                this.$emit('sort-method-changed', filter);
             }
         }
     }
@@ -47,9 +59,7 @@
         height: 50px;
         width: 100%;
         border-radius: 25px; /* Rounded corners */
-        background-color: #f4f4f9; /* Light, soft background color */
         padding: 10px 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .search-form {
