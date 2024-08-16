@@ -61,7 +61,8 @@ namespace AppHarbor.Server.Controllers
                     c.Content,
                     c.PublishTime,
                     Avatar = c.User.Avatar,
-                    Nickname = c.User.Nickname
+                    Nickname = c.User.Nickname,
+                    UserId = c.User.Id
                 })
                 .OrderByDescending(c => c.PublishTime)
                 .ToList();
@@ -154,6 +155,28 @@ namespace AppHarbor.Server.Controllers
             {
                 return Ok(comments);
             }
+        }
+
+        // 定义请求模型以接收 commentId
+        public class DeleteCommentRequest
+        {
+            public int CommentId { get; set; }
+        }
+
+        [HttpPost("deleteappcomment")]
+        public IActionResult DeleteAppComment([FromBody] DeleteCommentRequest request)
+        {
+            var comment = _dbContext.Comments.FirstOrDefault(c => c.Id == request.CommentId);
+
+            if (comment == null)
+            {
+                return NotFound(new { success = false, msg = "Comment not found!" });
+            }
+
+            comment.State = "banned";
+            _dbContext.SaveChanges();
+
+            return Ok(new { success = true, msg = "Comment banned successfully!" });
         }
     }
 }

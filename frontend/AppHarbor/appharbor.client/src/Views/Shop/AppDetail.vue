@@ -50,10 +50,17 @@
                 <span class="nickname">{{ comment.nickname }}</span>
                 <div class="score">
                     <span v-for="star in 5" :key="star" class="star"
-                        :class="{ filled: star <= comment.score }">&#9733;</span>
+                          :class="{ filled: star <= comment.score }">&#9733;</span>
                 </div>
                 <p class="content">{{ comment.content }}</p>
                 <span class="publishTime">{{ comment.publishTime }}</span>
+            </div>
+            <div class="delete-button-container">
+                <button v-if="comment.userId === user.id"
+                        @click="deleteComment(comment.id)"
+                        class="button delete-button">
+                    删除
+                </button>
             </div>
         </div>
         <div class="comment-editor">
@@ -94,6 +101,7 @@
         data() {
             return {
                 app: null,
+                user: null,
                 isFAQOpen: true,
                 comments: [],
                 newComment: {
@@ -261,7 +269,7 @@
                 .then(response => {
                     const parsedData = response.data;
                     if (parsedData && parsedData.success) {
-                        alert('评论成功！');
+                        this.confirmNotification('评论成功！');
                         const appId = this.$route.params.id;
                         this.fetchAllComments(appId);
                         // 清空评论表单
@@ -274,8 +282,27 @@
                 })
                 .catch(error => {
                     console.error('Error adding comment:', error);
-                    alert('评论失败：' + error.message);
+                    this.alertNotification('评论失败：' + error.message);
                 });
+            },
+            deleteComment(commentId) {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/comment/deleteappcomment', {
+                    commentId: commentId
+                })
+                    .then(response => {
+                        const parsedData = response.data;
+                        if (parsedData && parsedData.success) {
+                            this.confirmNotification('删除评论成功！');
+                            this.fetchAllComments(this.app.id); // 重新获取评论列表以更新页面
+                        } else {
+                            this.alertNotification('删除评论失败：' + parsedData.msg);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting comment:', error);
+                        this.alertNotification('删除评论失败：' + error.message);
+                    });
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
@@ -530,6 +557,9 @@
     }
 
     .comment-item {
+        border-bottom: 1px solid #e0e0e0; /* 下边框作为分隔线 */
+        padding: 10px 0; /* 为内容留出内边距 */
+        margin-bottom: 10px; /* 每条评论之间留出一些空隙 */
         display: flex;
         margin-bottom: 20px;
     }
@@ -661,6 +691,18 @@
     .report-button {
         background-color: #fbb1a2;
         border-color: #fbb1a2;
+    }
+
+    .delete-button {
+        background-color: #fbb1a2;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 15px;
+        margin-left: 10px;
+        margin-right: auto;
     }
 
 </style>
