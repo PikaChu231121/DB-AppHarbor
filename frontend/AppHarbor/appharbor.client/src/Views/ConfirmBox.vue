@@ -44,7 +44,7 @@
         padding: 10px 20px;
         border: 1px solid #f5c6cb;
         border-radius: 5px;
-        z-index: 9999;
+        z-index: 9998;
         opacity: 0;
         transition: opacity 0.5s ease-in-out; /* 淡入淡出效果 */
     }

@@ -106,21 +106,16 @@
                         <textarea v-model="selectedApp.description" rows="4"
                                   style="resize: none; width: 80%;"></textarea>
                     </div>
-                    <!-- 预览现有图标 -->
                     <div>
                         <label>当前图标:<br /></label>
                         <div style="display: flex; justify-content: center;">
                             <img :src="getFullImageUrl(selectedApp.image)" alt="应用图标" style="width: 100px; height: 100px;" />
                         </div>
                     </div>
-
-                    <!-- 上传新图标 -->
                     <div>
                         <label>更新图标:</label>
                         <input type="file" @change="handleNewImageUpload" />
                     </div>
-
-                    <!-- 上传新应用包 -->
                     <div>
                         <label>更新应用包:</label>
                         <input type="file" @change="handleNewFileUpload" />
@@ -149,7 +144,7 @@
                         </span>
                     </div>
                     <div>
-                        <button @click="saveAppChanges" class="save-button">保存</button>
+                        <button @click="saveAppChanges" class="save-button" :disabled="!isModified">保存</button>
                         <button @click="confirmDelete" class="delete-button">删除应用</button>
                     </div>
 
@@ -194,10 +189,11 @@
                 showEditModal: false, 
                 showConfirmDelete: false,
                 selectedApp: null,
+                originalAppData: null, // 用于保存原始数据的副本
                 alert: '',
                 confirm: '',
-                selectedImageFile: null, // 用于存储新上传的图标
-                selectedAppFile: null // 用于存储新上传的应用包
+                selectedImageFile: null,
+                selectedAppFile: null
             };
         },
         computed: {
@@ -249,8 +245,8 @@
                     }
 
                     await this.updateApp(this.selectedApp); // 更新应用信息
-                    this.fetchApps(this.currentPage); // 刷新应用列表
-                    this.closeEditModal(); // 关闭编辑模态框
+                    this.fetchApps(this.currentPage);
+                    this.closeEditModal();
                 } catch (error) {
                     console.error('Error saving app changes:', error);
                     this.alertNotification('保存失败，请稍后重试！');
@@ -371,11 +367,12 @@
                 this.showConfirmDelete = false;
             },
             openEditModal(app) {
-                this.selectedApp = { ...app }; // 复制应用数据
-                this.showEditModal = true; // 显示模态框
+                this.selectedApp = { ...app }; // 复制应用数据以便修改
+                this.originalAppData = { ...app }; // 保存原始数据的副本
+                this.showEditModal = true;
             },
             closeEditModal() {
-                this.showEditModal = false; // 关闭模态框
+                this.showEditModal = false;
             },
             refreshPage() {
                 this.currentPage = 1; 
@@ -428,6 +425,11 @@
         },
         mounted() {
             this.fetchApps();
+        },
+        computed: {
+            isModified() {
+                return JSON.stringify(this.selectedApp) !== JSON.stringify(this.originalAppData);
+            }
         }
     };
 </script>
@@ -660,7 +662,10 @@
             background-color: #4cae4c;
 /*            #218838;*/
         }
-
+        .save-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed; 
+        }
     .delete-button {
         background-color: #dc3545;
         color: #fff;
