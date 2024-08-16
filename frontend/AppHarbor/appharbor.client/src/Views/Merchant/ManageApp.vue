@@ -106,9 +106,24 @@
                         <textarea v-model="selectedApp.description" rows="4"
                                   style="resize: none; width: 80%;"></textarea>
                     </div>
+                    <!-- 预览现有图标 -->
                     <div>
-                        <label>图标:</label>
-                        <input v-model="selectedApp.image" />
+                        <label>当前图标:<br /></label>
+                        <div style="display: flex; justify-content: center;">
+                            <img :src="getFullImageUrl(selectedApp.image)" alt="应用图标" style="width: 100px; height: 100px;" />
+                        </div>
+                    </div>
+
+                    <!-- 上传新图标 -->
+                    <div>
+                        <label>更新图标:</label>
+                        <input type="file" @change="handleNewImageUpload" />
+                    </div>
+
+                    <!-- 上传新应用包 -->
+                    <div>
+                        <label>更新应用包:</label>
+                        <input type="file" @change="handleNewFileUpload" />
                     </div>
                     <div>
                         <label>原价:</label>
@@ -181,6 +196,8 @@
                 selectedApp: null,
                 alert: '',
                 confirm: '',
+                selectedImageFile: null, // 用于存储新上传的图标
+                selectedAppFile: null // 用于存储新上传的应用包
             };
         },
         computed: {
@@ -221,13 +238,23 @@
             },
             async saveAppChanges() {
                 try {
+                    // 如果上传了新图标，上传新图标
+                    if (this.selectedImageFile) {
+                        await this.uploadNewImage();
+                    }
+
+                    // 如果上传了新应用包，上传新应用包
+                    if (this.selectedAppFile) {
+                        await this.uploadNewAppFile();
+                    }
+
                     await this.updateApp(this.selectedApp); // 更新应用信息
                     this.fetchApps(this.currentPage); // 刷新应用列表
+                    this.closeEditModal(); // 关闭编辑模态框
                 } catch (error) {
                     console.error('Error saving app changes:', error);
                     this.alertNotification('保存失败，请稍后重试！');
                 }
-                this.closeEditModal(); // 关闭编辑模态框
             },
             async updateApp(app) {
                 if (!app.name || !app.version) {
@@ -283,52 +310,38 @@
                 this.currentPage = 1;
                 this.initiateSearch();
             },
-/*            updateAppImage(app, event) {
-                const file = event.target.files[0];
-                if (file && !file.type.startsWith('image/')) {
-                    alert('请选择有效的图片文件！');
-                    return;
-                }
-                const token = Cookies.get('token');
-                let formData = new FormData();
-                formData.append('token', token);
-                formData.append('appId', app.id);
-                formData.append('image', file);
+            async uploadNewImage() {
+                let formDataImg = new FormData();
+                formDataImg.append('file', this.selectedImageFile);
+                formDataImg.append('id', this.selectedApp.id);
 
-                axios.post('http://localhost:5118/api/merchant/updateAppImage', formData)
-                    .then(response => {
-                        app.image = response.data.image; // 更新前端显示的图标
-                        console.log('App image updated:', response.data);
-                    })
-                    .catch(error => {
-                        console.error('Error updating app image:', error);
-                        alert('图片更新失败，请稍后再试。');
-                    });
-            },
-            selectPackage(app, event) {
-                app.packageFile = event.target.files[0];
-            },
-            updateAppPackage(app) {
-                if (!app.packageFile) {
-                    alert('请先选择一个应用包文件！');
-                    return;
+                try {
+                    await axios.post('http://localhost:5118/api/Image/upload-app-img', formDataImg);
+                    this.confirmNotification('图标上传成功！');
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    this.alertNotification('图标上传失败，请稍后重试！');
                 }
-                const token = Cookies.get('token');
-                let formData = new FormData();
-                formData.append('token', token);
-                formData.append('appId', app.id);
-                formData.append('version', app.version);
-                formData.append('package', app.packageFile); // 添加文件到请求
+            },
+            async uploadNewAppFile() {
+                let formDataAppFile = new FormData();
+                formDataAppFile.append('file', this.selectedAppFile);
+                formDataAppFile.append('id', this.selectedApp.id);
 
-                axios.post('http://localhost:5118/api/merchant/updateAppPackage', formData)
-                    .then(response => {
-                        console.log('App package updated:', response.data);
-                    })
-                    .catch(error => {
-                        console.error('Error updating app package:', error);
-                        alert('Error updating app package:');
-                    });
-            },*/
+                try {
+                    await axios.post('http://localhost:5118/api/application/uploadapp', formDataAppFile);
+                    this.confirmNotification('应用包上传成功！');
+                } catch (error) {
+                    console.error('Error uploading app file:', error);
+                    this.alertNotification('应用包上传失败，请稍后重试！');
+                }
+            },
+            handleNewImageUpload(event) {
+                this.selectedImageFile = event.target.files[0]; // 获取上传的图标文件
+            },
+            handleNewFileUpload(event) {
+                this.selectedAppFile = event.target.files[0]; // 获取上传的应用包文件
+            },
             initiateSearch() {
                 this.currentPage = 1;
                 this.fetchApps();
@@ -405,8 +418,12 @@
                     case 'test':
                         return '待审核';
                     default:
-                        return releaseState; // 默认返回英文
+                        return releaseState;
                 }
+            },
+            getFullImageUrl(imagePath) {
+                const baseUrl = 'http://localhost:5118';
+                return imagePath ? `${baseUrl}${imagePath}` : '';
             },
         },
         mounted() {
@@ -615,7 +632,6 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         width: 300px;
         position: relative;
-        text-align: center;
     }
 
     /* 关闭按钮 */

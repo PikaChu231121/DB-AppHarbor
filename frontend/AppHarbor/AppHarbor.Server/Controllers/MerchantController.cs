@@ -232,14 +232,14 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("MerchantInfo")]
         public IActionResult MerchantInfo([FromBody] TokenRequest request)
         {
-            if(string.IsNullOrEmpty(request.Token))
+            if (string.IsNullOrEmpty(request.Token))
             {
                 return Unauthorized("No token provided.");
             }
 
             var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
 
-            if(tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
             {
                 return Unauthorized("Invalid or expired token.");
             }
@@ -438,10 +438,10 @@ namespace AppHarbor.Server.Controllers
             {
                 string lowerSearch = search.ToLower();
                 query = query.Where(a =>
-                    a.Id.ToString().Contains(lowerSearch) || 
-                    a.Name.ToLower().Contains(lowerSearch) || 
-                    a.Version.ToLower().Contains(lowerSearch) || 
-                    a.ReleaseState.ToLower().Contains(lowerSearch)); 
+                    a.Id.ToString().Contains(lowerSearch) ||
+                    a.Name.ToLower().Contains(lowerSearch) ||
+                    a.Version.ToLower().Contains(lowerSearch) ||
+                    a.ReleaseState.ToLower().Contains(lowerSearch));
             }
 
             if (!string.IsNullOrEmpty(name))
@@ -490,7 +490,7 @@ namespace AppHarbor.Server.Controllers
                 appsQuery = sortOrder == "asc"
                     ? appsQuery.OrderBy(a => a.Version,
                     Comparer<string>.Create((v1, v2) => CompareVersions(v1, v2))).ToList()
-                    : appsQuery.OrderByDescending(a => a.Version, 
+                    : appsQuery.OrderByDescending(a => a.Version,
                     Comparer<string>.Create((v1, v2) => CompareVersions(v1, v2))).ToList();
             }
             else if (sortBy == "appId")
@@ -550,7 +550,8 @@ namespace AppHarbor.Server.Controllers
     [FromForm] string? state,
     [FromForm] string description,
     [FromForm] decimal? price,
-    [FromForm] decimal discount)
+    [FromForm] decimal discount,
+    [FromForm] string? image)
         {
 
             var app = _dbContext.Applications.FirstOrDefault(a => a.Id == appId && a.MerchantId == merchantId);
@@ -594,110 +595,5 @@ namespace AppHarbor.Server.Controllers
 
             return Ok(new { message = "Application deleted successfully." });
         }
-
-        [HttpPost("updateAppImage")]
-        public async Task<IActionResult> UpdateAppImage(
-    [FromForm] string token,
-    [FromForm] int appId,
-    [FromForm] IFormFile image)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("No token provided.");
-            }
-
-            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
-
-            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
-            {
-                return Unauthorized("Invalid or expired token.");
-            }
-
-            var merchant = _dbContext.Merchants.Find(tokenEntry.Id);
-            if (merchant == null)
-            {
-                return Unauthorized("Merchant not found.");
-            }
-
-            var app = _dbContext.Applications.FirstOrDefault(a => a.Id == appId && a.MerchantId == merchant.Id);
-            if (app == null)
-            {
-                return NotFound("Application not found.");
-            }
-
-            // Assume you have a method to save the image and return its path
-            var imagePath = await SaveImageAsync(image);
-            app.Image = imagePath;
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok(app);
-        }
-
-        private async Task<string> SaveImageAsync(IFormFile image)
-        {
-            // Implement your logic to save the image file and return the path
-            // For example:
-            var filePath = Path.Combine("images", Guid.NewGuid().ToString() + Path.GetExtension(image.FileName));
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await image.CopyToAsync(stream);
-            }
-            return filePath;
-        }
-
-        [HttpPost("updateAppPackage")]
-        public async Task<IActionResult> UpdateAppPackage(
-    [FromForm] string token,
-    [FromForm] int appId,
-    [FromForm] string version,
-    [FromForm] IFormFile package)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("No token provided.");
-            }
-
-            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == token);
-
-            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
-            {
-                return Unauthorized("Invalid or expired token.");
-            }
-
-            var merchant = _dbContext.Merchants.Find(tokenEntry.Id);
-            if (merchant == null)
-            {
-                return Unauthorized("Merchant not found.");
-            }
-
-            var app = _dbContext.Applications.FirstOrDefault(a => a.Id == appId && a.MerchantId == merchant.Id);
-            if (app == null)
-            {
-                return NotFound("Application not found.");
-            }
-
-            // Assume you have a method to save the package and return its path
-            var packagePath = await SavePackageAsync(package);
-            app.Package = packagePath;
-            app.Version = version;
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok(app);
-        }
-
-        private async Task<string> SavePackageAsync(IFormFile package)
-        {
-            // Implement your logic to save the package file and return the path
-            var filePath = Path.Combine("packages", Guid.NewGuid().ToString() + Path.GetExtension(package.FileName));
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await package.CopyToAsync(stream);
-            }
-            return filePath;
-        }
-
-     
     }
 }
