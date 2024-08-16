@@ -41,19 +41,28 @@ namespace AppHarbor.Server.Controllers
             var reportList = (from reportreview in _dbContext.ReportReviews
                               join report in _dbContext.Reports on reportreview.ReportId equals report.Id
                               join app in _dbContext.Applications on report.ApplicationId equals app.Id
+                              join merchant in _dbContext.Merchants on app.MerchantId equals merchant.Id
+                              join user in _dbContext.Users on report.UserId equals user.Id
                               where report.State != "reviewing"
                               orderby report.Time
                               select new
                               {
                                   applicationId = report.ApplicationId,
-                                  merchantId=reportreview.AdminId,
-                                  state= report.State,
-                                  result=reportreview.Result,
-                                  time=reportreview.ReviewTime,
+                                  applicationName = app.Name, // 添加应用名称
+                                  merchantId = merchant.Id,
+                                  merchantName = merchant.Nickname, // 添加商家名称
+                                  userId = report.UserId,
+                                  userName = user.Nickname, // 添加用户名称
+                                  state = report.State,
+                                  result = reportreview.Result,
+                                  time = reportreview.ReviewTime,
+                                  reportId = reportreview.ReportId,
+                                  adminId = reportreview.AdminId,
                               }).ToList();
 
             return Ok(reportList);
         }
+
 
         [HttpPost("acceptreports")]
         public IActionResult Acceptreports([FromForm] decimal id, [FromForm] string token,[FromForm] string result)

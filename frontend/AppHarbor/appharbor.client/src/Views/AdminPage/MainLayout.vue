@@ -48,10 +48,15 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '封禁商家' }"
-                         @click="searchbanmerchant();changeSection('MerManagement')">封禁商家</div>
+                         @click="searchbanmerchant();changeSection('MerManagement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.997 10.494v4.503c0 2.83 0 4.245.879 5.124c.878.88 2.293.88 5.121.88h3.5m8.5-10.507v2.502m-14 3.994h4m5-.992l3 3.002m0 0l3 3.001m-3-3.001l-3 3.001m3-3.001l3-3.002M17.795 2.001L6.149 2.03c-1.738-.085-2.184 1.187-2.184 1.81c0 .556-.075 1.367-1.14 2.891c-1.066 1.524-.986 1.977-.385 3.032c.498.876 1.766 1.218 2.428 1.276A2.983 2.983 0 0 0 7.99 8.147c1.042 3.045 4.005 3.045 5.325 2.697c1.323-.349 2.456-1.598 2.723-2.697c.156 1.366.63 2.163 2.027 2.711c1.448.568 2.694-.3 3.319-.856s1.026-1.79-.088-3.146c-.768-.936-1.089-1.817-1.194-2.73c-.06-.53-.114-1.099-.506-1.46c-.572-.53-1.393-.69-1.801-.665" color="currentColor" /></svg>
+                    &nbsp;&nbsp;封禁商家</div>
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '活跃商家' }"
-                         @click="searchunbanMerchant();changeSection('MerManagement')">活跃商家</div>
+                         @click="searchunbanMerchant();changeSection('MerManagement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor"><path d="M14.971 7.5s.5 0 1 1c0 0 1.589-2.5 3-3m.025 9.542l.028 4.55A2.503 2.503 0 0 1 16.52 22H5.393a2.503 2.503 0 0 1-2.507-2.499l.086-6.466m6.01-7.022l-3.834-.064a2.005 2.005 0 0 0-1.959 1.389l-1.097 3.416c-.13.404-.139.845.077 1.211c.785 1.334 2.895 3.154 6.248 1.198m-.971-1.83c.39 1.268 1.92 3.493 5.04 2.204" /><path d="M22 7.016a5.01 5.01 0 0 1-5.007 5.016a5.01 5.01 0 0 1-5.007-5.016A5.01 5.01 0 0 1 16.993 2A5.01 5.01 0 0 1 22 7.016" /></g></svg>
+                        &nbsp;&nbsp;活跃商家
+                    </div>
                 </div>
             </div>
 
@@ -64,7 +69,10 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '审核评论' }"
-                         @click="searchComments();changeSection('commentManagement')">已发布评论</div>
+                         @click="searchComments();changeSection('commentManagement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 13.5h8m-8-5h4M6.099 19q-1.949-.192-2.927-1.172C2 16.657 2 14.771 2 11v-.5c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h4c3.771 0 5.657 0 6.828 1.172S22 6.729 22 10.5v.5c0 3.771 0 5.657-1.172 6.828S17.771 19 14 19c-.56.012-1.007.055-1.445.155c-1.199.276-2.309.89-3.405 1.424c-1.563.762-2.344 1.143-2.834.786c-.938-.698-.021-2.863.184-3.865" color="currentColor" /></svg>
+                        &nbsp;&nbsp;已发布评论
+                    </div>
                 </div>
             </div>
 
@@ -77,29 +85,41 @@
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '发布公告' }"
-                         @click="changeselectedStatus('发布公告'),changeSection('Announcement')">发布通知</div>
+                         @click="changeselectedStatus('发布公告'),changeSection('Announcement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M11 15c3 0 8 4 8 4V3s-5 4-8 4zm-6 0l3 8h4l-3-8m10-1a3 3 0 1 0 0-6m-8 11c1 0 3-1 3-3M2 11c0-3.111 1.791-4 4-4h5v8H6c-2.209 0-4-.889-4-4Z" /></svg>
+                        &nbsp;&nbsp;发布通知
+                    </div>
                 </div>
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '查看公告' }"
-                         @click="changeselectedStatus('查看公告'),changeSection('SearchAnnouncement')">查看通知</div>
+                         @click="changeselectedStatus('查看公告'),changeSection('SearchAnnouncement')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4"><rect width="40" height="26" x="4" y="15" rx="2" /><path stroke-linecap="round" d="m24 7l-8 8h16zM12 24h18m-18 8h8" /></g></svg>
+                        &nbsp;&nbsp;查看通知
+                    </div>
                 </div>
             </div>
 
             <div @click="toggleSection('report')" class="menu-item section-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20"><path fill="currentColor" d="M6 8v7h8V8a4 4 0 1 0-8 0m2.03-5.67a2 2 0 1 1 3.95 0A6 6 0 0 1 16 8v6l3 2v1H1v-1l3-2V8a6 6 0 0 1 4.03-5.67M12 18a2 2 0 1 1-4 0z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5.697M18 14v4h4m-4-7V7a2 2 0 0 0-2-2h-2" /><path d="M8 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2m6 13a4 4 0 1 0 8 0a4 4 0 1 0-8 0m-6-7h4m-4 4h3" /></g></svg>
                 &nbsp;&nbsp;&nbsp;举报受理
             </div>
             <div v-show="sections.report" class="section-content">
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '已受理' }"
-                         @click="changeselectedStatus('已受理'),changeSection('Reported')">已受理</div>
+                         @click="changeselectedStatus('已受理'),changeSection('Reported')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C7.589 2 4 5.589 4 9.995c-.029 6.445 7.116 11.604 7.42 11.819a.998.998 0 0 0 1.16 0C12.884 21.599 20.029 16.44 20 10c0-4.411-3.589-8-8-8m0 17.735C10.389 18.427 5.979 14.441 6 10c0-3.309 2.691-6 6-6s6 2.691 6 6.005c.021 4.437-4.388 8.423-6 9.73" /><path fill="currentColor" d="M11 11.586L8.707 9.293l-1.414 1.414L11 14.414l5.707-5.707l-1.414-1.414z" /></svg>
+                        &nbsp;&nbsp;已受理
+                    </div>
                 </div>
                 <div class="menu">
                     <div class="menu-item"
                          :class="{ active: selectedStatus === '未受理' }"
-                         @click="changeselectedStatus('未受理'),changeSection('Reporting')">未受理</div>
+                         @click="changeselectedStatus('未受理'),changeSection('Reporting')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M13 17a4 4 0 1 0 8 0a4 4 0 1 0-8 0" /><path d="M17 13v4h4M12 3v4a1 1 0 0 0 1 1h4" /><path d="M11.5 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v2m0 3v4" /></g></svg>
+                        &nbsp;&nbsp; 未受理
+                    </div>
                 </div>
             </div>
         </div>
