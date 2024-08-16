@@ -211,6 +211,7 @@ export default {
     align-items: center;
     width: 100%;
     height: 100%;
+    color:#42a5f5;
 }
 .auto-wrapper {
     display: flex;
@@ -226,8 +227,8 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #fff9f9;
-    border: 3px solid #ffd7d2;
+    background: #f0f9ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 2% 5% 2% 5%;
     width: calc(50% - 8px);
     height: 100%;
@@ -239,10 +240,10 @@ export default {
     margin-bottom: 10px;
     padding: 5px;
     font-size: 16px;
-    border: 2px solid #FADAD6;
+    border: 2px solid #1976d2;
     border-radius: 5px;
-    background-color: #fff9f9;
-    color: #F8887D;
+    background-color: #42a5f5;
+    color: #f0f9ff;
 }
 
 .merchant-credit {
@@ -262,14 +263,15 @@ export default {
     padding: 10px;
     font-size: 16px;
     margin-right: 10px;
-    border: 2px solid #FADAD6;
+    margin-left: 25px;
+    border: 2px solid #1e99e5;
     border-radius: 5px;
 }
 
 .text {
     font-family: Inika;
     font-size: 2rem;
-    color: #000000;
+    color: #1976d2;
     line-height: normal;
     text-align: left;
     vertical-align: top;
@@ -287,10 +289,10 @@ export default {
 
 button {
     padding: 10px 20px;
-    background-color: #fbeaea;
+    background: linear-gradient(to right, #1976d2, #115293);
     font-size: 18px;
-    color: #F8887D;
-    border: 3px solid #FADAD6;
+    color: #fff;
+    border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s, color 0.3s;
@@ -301,9 +303,10 @@ button:disabled {
 }
 
 button:hover:enabled {
-    background-color: #ffe5e5;
+    background: linear-gradient(to right, #115293, #1976d2);  
     transform: scale(1.05);
-    color: #F8887D;
+    color: #fff;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); 
     transition: background-color 0.3s, transform 0.3s, color 0.3s;
 }
 </style>
