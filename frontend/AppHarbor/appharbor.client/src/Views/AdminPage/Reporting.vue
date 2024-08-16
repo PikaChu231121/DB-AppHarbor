@@ -42,7 +42,8 @@
                     <textarea id="response-content" v-model="responseContent" rows="4" placeholder="请输入处理结果"></textarea>
                 </div>
                 <div class="button-group">
-                    <button class="submit-button" @click="submitResponse">提交受理结果</button>
+                    <button class="submit-button" @click="acceptreports">通过</button>
+                    <button class="submit-button" @click="refusereports">不通过</button>
                     <button class="cancel-button" @click="closePopup">取消</button>
                 </div>
             </div>
@@ -52,6 +53,7 @@
 </template>
 
 <script>
+    import Cookies from 'js-cookie';
     import axios from 'axios';
 
     export default {
@@ -79,7 +81,38 @@
             },
             closePopup() {
                 this.selectedReport = null;
+            },
+            acceptreports() {
+                var token = Cookies.get('token');
+                let formData = new FormData();
+                formData.append('id', this.selectedReport.reportId);
+                formData.append('token', token);
+                formData.append('result', this.responseContent);
+                axios.post('http://localhost:5118/api/reportreview/acceptreports', formData)
+                    .then(response => {
+                        console.error(response.data);
+                    })
+                    .catch(error => {
+                        console.error('受理应用举报失败:', error);
+                    });
+                this.closePopup();
+            },
+            refusereports() {
+                var token = Cookies.get('token');
+                let formData = new FormData();
+                formData.append('id', this.selectedReport.reportId);
+                formData.append('token', token);
+                formData.append('result', this.responseContent);
+                axios.post('http://localhost:5118/api/reportreview/refusereports', formData)
+                    .then(response => {
+                        console.error(response.data);
+                    })
+                    .catch(error => {
+                        console.error('受理应用举报失败:', error);
+                    });
+                this.closePopup();
             }
+
         }
     };
 </script>
@@ -200,7 +233,7 @@
 
         .popup-content h3 {
             margin: 0;
-            font-weight:bold;
+            font-weight: bold;
             font-size: 1.8em; /* Larger size */
             color: #6a1b9a; /* Purple color */
             text-align: center; /* Centered */
@@ -216,7 +249,7 @@
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 5px;
-        font-weight:bold;
+        font-weight: bold;
         font-family: 'SimSun', serif; /* Set font to SimSun */
     }
 
@@ -288,5 +321,4 @@
             transform: scale(1.05);
             color: white; /* Even lighter purple when clicked */
         }
-
 </style>

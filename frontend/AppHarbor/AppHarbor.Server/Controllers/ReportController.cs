@@ -27,32 +27,24 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("getreportlist")]
         public IActionResult GetReportList()
         {
-            var reportList = _dbContext.Reports
-                .Join(_dbContext.Users,
-                      report => report.UserId,
-                      user => user.Id,
-                      (report, user) => new { report, user })
-                .Join(_dbContext.Applications,
-                      temp => temp.report.ApplicationId,
-                      app => app.Id,
-                      (temp, app) => new { temp.report, temp.user, app })
-                .Join(_dbContext.Merchants,
-                      temp => temp.app.MerchantId,
-                      merchant => merchant.Id,
-                      (temp, merchant) => new
-                      {
-                          reportId = temp.report.Id,
-                          content = temp.report.Content,
-                          applicationId = temp.report.ApplicationId,
-                          MerchantId = merchant.Id,
-                          userId = temp.report.UserId,
-                          time = temp.report.Time,
-                          userNickname = temp.user.Nickname,
-                          applicationName = temp.app.Name,
-                          merchantNickname = merchant.Nickname
-                      })
-                .OrderBy(result => result.time)
-                .ToList();
+            var reportList = (from report in _dbContext.Reports
+                              join user in _dbContext.Users on report.UserId equals user.Id
+                              join app in _dbContext.Applications on report.ApplicationId equals app.Id
+                              join merchant in _dbContext.Merchants on app.MerchantId equals merchant.Id
+                              where report.State== "reviewing"
+                              orderby report.Time
+                              select new
+                              {
+                                  reportId = report.Id,
+                                  content = report.Content,
+                                  applicationId = report.ApplicationId,
+                                  MerchantId = merchant.Id,
+                                  userId = report.UserId,
+                                  time = report.Time,
+                                  userNickname = user.Nickname,
+                                  applicationName = app.Name,
+                                  merchantNickname = merchant.Nickname
+                              }).ToList();
 
             return Ok(reportList);
         }
