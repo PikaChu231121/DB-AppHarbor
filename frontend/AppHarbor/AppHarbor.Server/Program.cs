@@ -1,67 +1,75 @@
-using System.Text.Json.Serialization;
-using AppHarbor.Server;
-using AppHarbor.Server.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Net.NetworkInformation;
-using Microsoft.Extensions.FileProviders;
+using System.Text.Json.Serialization;  
+using AppHarbor.Server;  
+using AppHarbor.Server.Models;  
+using Microsoft.EntityFrameworkCore;  
+using Microsoft.Extensions.FileProviders;  
+using Microsoft.AspNetCore.Http.Features;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);  
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
+// 配置数据库上下文  
+builder.Services.AddDbContext<ApplicationDbContext>(options =>  
+    options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));  
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; // 添加 JSON 序列化配置以处理循环引用，能够同时查询两张表
-    });
+// 配置控制器和 JSON 序列化选项  
+builder.Services.AddControllers()  
+    .AddJsonOptions(options =>  
+    {  
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; // 处理循环引用  
+    });  
 
-builder.Services.AddEndpointsApiExplorer();
-// 注释掉Swagger的相关服务注册
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();  
 
-// 配置CORS策略
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder =>
-        {
-            builder.WithOrigins("https://localhost:5173")
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
-        });
-});
+// 注释掉Swagger的相关服务注册（根据需求调整）  
+builder.Services.AddSwaggerGen();  
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    });
+// 配置CORS策略  
+builder.Services.AddCors(options =>  
+{  
+    options.AddPolicy("AllowSpecificOrigin",  
+        builder =>  
+        {  
+            builder.WithOrigins("https://localhost:5173")  
+                   .AllowAnyHeader()  
+                   .AllowAnyMethod();  
+        });  
+});  
 
-var app = builder.Build();
+// 配置大文件上传限制  
+builder.WebHost.ConfigureKestrel(serverOptions =>  
+{  
+    serverOptions.Limits.MaxRequestBodySize = 1048576000; // 设置大小限制为1GB  
+});  
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    // 注释掉Swagger的中间件
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+builder.Services.Configure<FormOptions>(options =>  
+{  
+    options.MultipartBodyLengthLimit = 1048576000; // 设置大小限制为1GB
+});  
 
-// �ϴ��ļ�����
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Uploads")),
-    RequestPath = "/uploads"
-});
+var app = builder.Build();  
 
-app.UseHttpsRedirection();
-app.UseRouting();
+if (app.Environment.IsDevelopment())  
+{  
+    app.UseDeveloperExceptionPage();  
+    // 注释掉Swagger的中间件（根据需求调整）  
+    app.UseSwagger();  
+    app.UseSwaggerUI();  
+}  
 
-app.UseCors("AllowSpecificOrigin"); // 启用CORS策略
+// 配置上传文件的静态文件中间件  
+app.UseStaticFiles(new StaticFileOptions  
+{  
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Uploads")),  
+    RequestPath = "/uploads"  
+});  
 
-app.UseAuthorization();
+app.UseHttpsRedirection();  
+app.UseRouting();  
 
-app.MapControllers();
+app.UseCors("AllowSpecificOrigin"); // 启用CORS策略  
+
+app.UseAuthorization();  
+
+app.MapControllers();  
 
 app.Run();

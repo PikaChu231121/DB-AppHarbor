@@ -4,23 +4,45 @@
         <table>
             <thead>
                 <tr>
-                    <th>应用ID</th>
-                    <th>受理管理员ID</th>
+                    <th>举报编号</th>
+                    <th>被举报应用</th>
+                    <th>被举报应用商家</th>
                     <th>受理结果</th>
-                    <th>受理原因</th>
                     <th>受理时间</th>
+                    <th>操作</th> <!-- 添加操作列 -->
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="reportreview in reportreviews" :key="reportreview.id">
-                    <td>{{ reportreview.applicationId }}</td>
-                    <td>{{ reportreview.merchantId }}</td>
+                    <td>{{ reportreview.reportId }}</td>
+                    <td>{{ reportreview.applicationName }}</td>
+                    <td>{{ reportreview.merchantName }}</td>
                     <td>{{ reportreview.state }}</td>
-                    <td>{{ reportreview.result }}</td>
                     <td>{{ reportreview.time }}</td>
+                    <td>
+                        <button @click="showDetails(reportreview)">查看详情</button> <!-- 查看详情按钮 -->
+                    </td>
                 </tr>
             </tbody>
         </table>
+
+        <!-- 弹窗内容 -->
+        <div v-if="showPopup" class="popup">
+            <div class="popup-content">
+                <button class="close-button" @click="closePopup">X</button>
+                <h3>举报受理详情</h3>
+                <p>举报编号: {{ selectedReport.reportId }}</p>
+                <p>受理意见: {{ selectedReport.result }}</p>
+                <p>受理结果: {{ selectedReport.state }}</p>
+                <br>
+                <p style="font-size:15px">举报用户: {{ selectedReport.userName }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该用户ID:{{ selectedReport.userId }}</p>
+                <p style="font-size:15px">被举报下架应用: {{ selectedReport.applicationName }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该应用ID:{{ selectedReport.applicationId }}</p>
+                <p style="font-size:15px">被举报商家: {{ selectedReport.merchantName }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该商家ID:{{ selectedReport.merchantId }}</p>
+                <p style="font-size:15px">受理时间: {{ selectedReport.time }}</p>
+                <p style="font-size:15px">受理该举报管理员编号: {{ selectedReport.adminId }}</p>
+                <!-- 添加更多详细内容 -->
+            </div>
+        </div>
     </div>
 </template>
 
@@ -32,6 +54,8 @@
         data() {
             return {
                 reportreviews: [],
+                showPopup: false, // 控制弹窗显示的状态
+                selectedReport: {}, // 存储当前选中的报告详情
             };
         },
         mounted() {
@@ -47,7 +71,14 @@
                         console.error('查看举报列表失败:', error);
                     });
             },
-
+            showDetails(report) {
+                this.selectedReport = report; // 设置选中的报告详情
+                this.showPopup = true; // 显示弹窗
+            },
+            closePopup() {
+                this.showPopup = false; // 关闭弹窗
+                this.selectedReport = {}; // 清空选中的报告详情
+            },
         }
     };
 </script>
@@ -151,7 +182,7 @@
         width: 100%;
         transition: transform 0.3s ease;
         transform: scale(0.9);
-        overflow: auto; /* Add this line to handle overflow */
+        overflow: auto;
         padding: 20px;
         border-radius: 10px;
         background-color: #fff;
@@ -159,20 +190,19 @@
 
         .popup-content p {
             margin: 10px 0;
-            font-size: 1.2em; /* Larger font size */
-            color: #333; /* Adjust color if needed */
-            word-wrap: break-word; /* Ensure long words wrap */
-            white-space: pre-wrap; /* Preserve spaces and line breaks */
+            font-size: 1.2em;
+            color: #333;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
-
 
         .popup-content h3 {
             margin: 0;
             font-weight: bold;
-            font-size: 1.8em; /* Larger size */
-            color: #6a1b9a; /* Purple color */
-            text-align: center; /* Centered */
-            font-family: 'SimSun', serif; /* SimSun font */
+            font-size: 1.8em;
+            color: #6a1b9a;
+            text-align: center;
+            font-family: 'SimSun', serif;
         }
 
     .form-group {
@@ -185,7 +215,7 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         font-weight: bold;
-        font-family: 'SimSun', serif; /* Set font to SimSun */
+        font-family: 'SimSun', serif;
     }
 
     .button-group {
@@ -221,7 +251,6 @@
         }
 
     .close-button {
-        /* Existing styles */
         background-color: #d9534f;
         color: white;
         border: none;
@@ -238,8 +267,8 @@
         right: 10px;
         background: transparent;
         border: none;
-        font-size: 1.2em; /* Smaller size */
-        color: white; /* Purple color */
+        font-size: 1.2em;
+        color: white;
         cursor: pointer;
         background-color: #6a1b9a;
         transition: background-color 0.3s ease, transform 0.2s ease;
@@ -248,12 +277,12 @@
         .close-button:hover {
             background-color: #ca95f7;
             transform: scale(1.05);
-            color: white; /* Lighter purple on hover */
+            color: white;
         }
 
         .close-button:active {
             background-color: #ca95f7;
             transform: scale(1.05);
-            color: white; /* Even lighter purple when clicked */
+            color: white;
         }
 </style>
