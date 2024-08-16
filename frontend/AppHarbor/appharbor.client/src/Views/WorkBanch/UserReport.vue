@@ -2,7 +2,8 @@
     <div class="report-list">
         <h2 style="font-weight: bolder; font-size: 30px">
             <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24"><g fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5.697M18 14v4h4m-4-7V7a2 2 0 0 0-2-2h-2" /><path d="M8 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2m6 13a4 4 0 1 0 8 0a4 4 0 1 0-8 0m-6-7h4m-4 4h3" /></g></svg>
-        我的举报信息</h2>
+            我的举报信息
+        </h2>
         <table>
             <thead>
                 <tr>
@@ -16,7 +17,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="report in reports" :key="report.reportId">
+                <tr v-if="reports.length === 0">
+                    <td colspan="7" style="text-align: center; font-size: 18px; padding: 20px;">
+                        你还没有举报
+                    </td>
+                </tr>
+                <tr v-else v-for="report in reports" :key="report.reportId">
                     <td style="font-size: 16px;">{{ report.reportId }}</td>
                     <td style="font-size: 16px;">{{ report.applicationName }}</td>
                     <td style="font-size: 16px;">{{ report.merchantName }}</td>
@@ -54,6 +60,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
     import axios from 'axios';
@@ -207,6 +214,7 @@
         height: 300px; /* Fixed height */
         overflow: auto; /* Allow scrolling if content overflows */
     }
+
         .content-popup h3,
         .detail-popup h3 {
             color: #ebbfb8;
