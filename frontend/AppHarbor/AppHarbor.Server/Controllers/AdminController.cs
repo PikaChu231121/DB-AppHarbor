@@ -65,7 +65,7 @@ namespace AppHarbor.Server.Controllers
             var user = _dbContext.Admins.Find(id);
             if (user == null)
             {
-                return NotFound("user not found");
+                return NotFound("管理员未找到！");
             }
             if (user.Password == password)
             {

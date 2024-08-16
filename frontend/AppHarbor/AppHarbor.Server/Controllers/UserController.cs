@@ -60,7 +60,11 @@ namespace AppHarbor.Server.Controllers
             var user = _dbContext.Users.Find(id);
             if (user == null)
             {
-                return NotFound("user not found");
+                return NotFound("用户未找到！");
+            }
+            if (_dbContext.BanUsers.FirstOrDefault(i => user.Id == i.UserId) != null)
+            {
+                return BadRequest("用户已被封禁！");
             }
             if (user.Password == password)
             {

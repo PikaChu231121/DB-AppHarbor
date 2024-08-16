@@ -83,7 +83,11 @@ namespace AppHarbor.Server.Controllers
             var merchant = _dbContext.Merchants.Find(merchant_id);
             if (merchant == null)
             {
-                return NotFound("merchant not found");
+                return NotFound("商家未找到！");
+            }
+            if (_dbContext.BanMerchants.FirstOrDefault(i => merchant.Id == i.MerchantId) != null)
+            {
+                return BadRequest("商家已被封禁！");
             }
             if (merchant.Password == password)
             {
