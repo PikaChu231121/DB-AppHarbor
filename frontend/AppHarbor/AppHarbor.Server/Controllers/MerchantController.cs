@@ -542,23 +542,6 @@ namespace AppHarbor.Server.Controllers
             return 0;
         }
 
-        [HttpPost("deleteApp")]
-        public async Task<IActionResult> DeleteApp(
-        [FromForm] int appId,
-        [FromForm] int merchantId)
-        {
-            var app = await _dbContext.Applications.FirstOrDefaultAsync(a => a.Id == appId && a.MerchantId == merchantId);
-            if (app == null)
-            {
-                return NotFound("Application not found.");
-            }
-
-            _dbContext.Applications.Remove(app);
-            await _dbContext.SaveChangesAsync();
-
-            return Ok(new { message = "Application deleted successfully." });
-        }
-
         [HttpPost("updateApp")]
         public async Task<IActionResult> UpdateApp(
     [FromForm] int appId,
@@ -592,6 +575,24 @@ namespace AppHarbor.Server.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok(new { message = "Application updated successfully.", app });
+        }
+
+        [HttpPost("deleteApp")]
+        public async Task<IActionResult> DeleteApp(
+    [FromForm] int appId,
+    [FromForm] int merchantId)
+        {
+            var app = await _dbContext.Applications.FirstOrDefaultAsync(a => a.Id == appId && a.MerchantId == merchantId);
+            if (app == null)
+            {
+                return NotFound("Application not found.");
+            }
+
+            app.ReleaseState = "banned";
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Application deleted successfully." });
         }
 
         [HttpPost("updateAppImage")]

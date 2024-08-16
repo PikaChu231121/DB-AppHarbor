@@ -61,9 +61,11 @@
                             <td>{{ app.id }}</td>
                             <td>{{ app.name }}</td>
                             <td>{{ app.version }}</td>
-                            <td>{{ app.releaseState }}</td>
+                            <td :class="getStateClass(app.releaseState)">
+                                {{ getStateInChinese(app.releaseState) }}
+                            </td>
                             <td>
-                                <button @click="openEditModal(app)" class="advanced-search-toggle">编辑</button>
+                                <button v-if="app.releaseState !== 'banned'" @click="openEditModal(app)" class="advanced-search-toggle">编辑</button>
                             </td>
                         </tr>
                     </tbody>
@@ -260,7 +262,9 @@
                 axios.post('http://localhost:5118/api/merchant/deleteApp', formData)
                     .then(() => {
                         this.confirmNotification('应用删除成功！');
-                        this.fetchApps(this.currentPage); // 刷新应用列表
+                        this.closeConfirmDelete();
+                        this.closeEditModal();
+                        this.fetchApps(this.currentPage);
                     })
                     .catch(error => {
                         console.error('Error deleting app:', error);
@@ -381,6 +385,28 @@
                 this.$nextTick(() => {
                     this.confirm = message;
                 });
+            },
+            getStateClass(releaseState) {
+                if (releaseState === 'banned') {
+                    return 'status-banned';
+                } else if (releaseState === 'released') {
+                    return 'status-released';
+                } else if (releaseState === 'test') {
+                    return 'status-test';
+                }
+                return '';
+            },
+            getStateInChinese(releaseState) {
+                switch (releaseState) {
+                    case 'banned':
+                        return '已删除';
+                    case 'released':
+                        return '已发布';
+                    case 'test':
+                        return '待审核';
+                    default:
+                        return releaseState; // 默认返回英文
+                }
             },
         },
         mounted() {
@@ -666,4 +692,18 @@
             background-color: #5a6268;
         }
 
+    .status-banned {
+        color: #e32636;
+        font-weight:bold;
+    }
+
+    .status-released {
+        color: #40bb45;
+        font-weight: bold
+    }
+
+    .status-test {
+        color: #ffa500;
+        font-weight: bold
+    }
 </style>

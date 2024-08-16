@@ -36,7 +36,7 @@
 <style>
     .alert-box {
         position: fixed;
-        bottom: 10px;
+        bottom: 50px;
         left: 50%;
         transform: translateX(-50%);
         background: #e32636;
