@@ -293,6 +293,58 @@ namespace AppHarbor.Server.Controllers
             return Ok(resultList);
         }
 
+        [HttpPost("getmyreport")]
+        public IActionResult GetMyReport([FromBody] TokenRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return Unauthorized("No token provided.");
+            }
+
+            var tokenEntry = _dbContext.TokenIds.FirstOrDefault(t => t.Token == request.Token);
+
+            if (tokenEntry == null || tokenEntry.ExpireDate <= DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired token.");
+            }
+
+            var user = _dbContext.Users.Find(tokenEntry.Id);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            var reports = (from report in _dbContext.Reports
+                           join app in _dbContext.Applications on report.ApplicationId equals app.Id
+                           join merchant in _dbContext.Merchants on app.MerchantId equals merchant.Id
+                           where report.UserId == user.Id
+                           select new
+                           {
+                               Nickname = user.Nickname,
+                               ReportId = report.Id,
+                               ReportTime = report.Time,
+                               ReportState = report.State,
+                               ApplicationId = report.ApplicationId,
+                               ReportContent = report.Content,
+                               ApplicationName = app.Name,
+                               MerchantName = merchant.Nickname,
+                               ReviewInfo = report.State != "reviewing" ?
+                                            (from review in _dbContext.ReportReviews
+                                             where review.ReportId == report.Id
+                                             select new
+                                             {
+                                                 ReviewTime = review.ReviewTime,
+                                                 ReviewResult = review.Result,
+                                                 AdminId = review.AdminId
+                                             }).FirstOrDefault() : null
+                           }).ToList();
+
+            return Ok(reports);
+        }
+
+
+
+
     }
 }
 
