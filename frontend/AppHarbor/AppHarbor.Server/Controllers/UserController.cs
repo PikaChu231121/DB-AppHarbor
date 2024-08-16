@@ -87,6 +87,21 @@ namespace AppHarbor.Server.Controllers
             }
         }
 
+        [HttpPost("logout")]
+        public IActionResult Logout([FromForm] string token)
+        {
+            if (_dbContext.TokenIds.FirstOrDefault(t => t.Token == token) != null)
+            {
+                // 删除该token
+                _dbContext.TokenIds.Where(u => u.Token == token).ExecuteDelete();
+                return Ok("Logout successfully");
+            }
+            else
+            {
+                return BadRequest("Invalid token");
+            }
+        }
+
         [HttpPost("recharge")]
         public IActionResult Recharge([FromBody] UserRechargeModel info)
         {

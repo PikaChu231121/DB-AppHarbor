@@ -77,6 +77,7 @@
                             global.id = this.id;
                             setTimeout(() => {
                                 this.$router.push('/AdminPage');
+                                this.isLoading = false; // Hide loading animation on login
                             }, 3000);
                         })
                         .catch(error => {
@@ -96,7 +97,7 @@
                             global.id = this.id;
                             setTimeout(() => {
                                 this.$router.push('/MerchantWorkBanchPage');//#################################跳转到需要的地方（跳转到商家页面）
-
+                                this.isLoading = false; // Hide loading animation on login
                             }, 3000);
 
                         })
@@ -118,7 +119,7 @@
                             global.id = this.id;
                             setTimeout(() => {
                                 this.$router.push('/WorkBanchPage');
-
+                                this.isLoading = false; // Hide loading animation on login
                             }, 3000); // Redirect after 2 seconds
 
                         })
@@ -136,7 +137,7 @@
             },
             goToForgotPassword() {
                 this.$router.push('/ChangePassword');
-            }
+            },
         }
     };
 </script>
