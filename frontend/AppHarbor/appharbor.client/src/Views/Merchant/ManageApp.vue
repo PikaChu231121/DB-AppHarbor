@@ -77,86 +77,96 @@
                 <span>/ 共 {{ totalPages }} 页</span> <!-- 添加总页数提示 -->
                 <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 1">下一页</button>
             </div>
-
             <div v-if="showEditModal" class="modal">
                 <div class="modal-content">
                     <span class="close" @click="closeEditModal">&times;</span>
                     <h2>编辑应用</h2>
-                    <div>
-                        <label>应用ID: {{ selectedApp.id }}</label>
-                    </div>
-                    <div>
-                        <label>名称: {{ selectedApp.name }}</label>
-                    </div>
-                    <div>
-                        <label>分类: {{ selectedApp.category }}</label>
-                    </div>
-                    <div>
-                        <label>下载量: {{ selectedApp.downloadCount }}</label>
-                    </div>
-                    <div>
-                        <label>状态: {{ selectedApp.releaseState }}</label>
-                    </div>
-                    <div>
-                        <label>版本:</label>
-                        <input v-model="selectedApp.version" />
-                    </div>
-                    <div>
-                        <label style="vertical-align: top;">描述:</label>
-                        <textarea v-model="selectedApp.description" rows="4"
-                                  style="resize: none; width: 80%;"></textarea>
-                    </div>
-                    <div>
-                        <label>当前图标:<br /></label>
-                        <div style="display: flex; justify-content: center;">
-                            <img :src="getFullImageUrl(selectedApp.image)" alt="应用图标" style="width: 100px; height: 100px;" />
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label>应用ID:</label>
+                            <p>{{ selectedApp.id }}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>名称:</label>
+                            <p>{{ selectedApp.name }}</p>
                         </div>
                     </div>
-                    <div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label>分类:</label>
+                            <p>{{ selectedApp.category }}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>下载量:</label>
+                            <p>{{ selectedApp.downloadCount }}</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label>状态:</label>
+                            <p>{{ selectedApp.releaseState }}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>版本:</label>
+                            <input v-model="selectedApp.version" placeholder="版本号" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>描述:</label>
+                        <textarea v-model="selectedApp.description" rows="4" placeholder="应用描述"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>当前图标:</label>
+                        <div class="image-preview">
+                            <img :src="getFullImageUrl(originalAppData.image)" alt="应用图标" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label>更新图标:</label>
                         <input type="file" @change="handleNewImageUpload" />
                     </div>
-                    <div>
+
+                    <div class="form-group">
                         <label>更新应用包:</label>
                         <input type="file" @change="handleNewFileUpload" />
                     </div>
-                    <div>
-                        <label>原价:</label>
-                        <input v-model="selectedApp.price"
-                               @input="selectedApp.price == 0 ? selectedApp.discount = '1.00' : null" />
-                    </div>
-                    <div>
-                        <label>折扣:</label>
-                        <select v-model="selectedApp.discount" :disabled="selectedApp.price == 0"
-                                :title="selectedApp.price == 0 ? '免费应用不能设置折扣' : ''">
-                            <option value="1.00">无折扣</option>
-                            <option value="0.90">9折</option>
-                            <option value="0.80">8折</option>
-                            <option value="0.75">75折</option>
-                            <option value="0.70">7折</option>
-                            <option value="0.60">6折</option>
-                            <option value="0.50">5折</option>
-                        </select>
-                    </div>
-                    <div>
-                        <span v-if="selectedApp.discount !== '1.00'" style="margin-left: 10px;">
-                            折后价: ￥{{ discountedPrice}}
-                        </span>
-                    </div>
-                    <div>
-                        <button @click="saveAppChanges" class="save-button" :disabled="!isModified">保存</button>
-                        <button @click="confirmDelete" class="delete-button">删除应用</button>
-                    </div>
 
-                    <div v-if="showConfirmDelete" class="modal">
-                        <div class="modal-content">
-                            <p>确定要删除这个应用吗？</p>
-                            <button @click="deleteApp()" class="confirm-button">是</button>
-                            <button @click="closeConfirmDelete" class="cancel-button">否</button>
+                    <div class="form-group-row">
+
+                        <div class="form-group">
+                            <label>原价:</label>
+                            <input v-model="selectedApp.price" placeholder="原价" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>折扣:</label>
+                            <select v-model="selectedApp.discount" :disabled="selectedApp.price == 0" :title="selectedApp.price == 0 ? '免费应用不能设置折扣' : ''">
+                                <option value="1.00">无折扣</option>
+                                <option value="0.90">9折</option>
+                                <option value="0.80">8折</option>
+                                <option value="0.75">75折</option>
+                                <option value="0.70">7折</option>
+                                <option value="0.60">6折</option>
+                                <option value="0.50">5折</option>
+                            </select>
+                        </div>
+                    </div>
+                        <div v-if="selectedApp.discount !== '1.00'" class="form-group">
+                            <span style="display: block; text-align: center;">折后价: ￥{{ discountedPrice }}</span>
+                        </div>
+
+                        <div class="button-group">
+                            <button @click="saveAppChanges" class="save-button" :disabled="!isModified">保存</button>
+                            <button @click="confirmDelete" class="delete-button">下架应用</button>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </template>
@@ -186,7 +196,7 @@
                 showAdvancedSearch: false,
                 sortBy: 'appId', // 默认按应用ID排序
                 sortOrder: 'asc', // 默认升序
-                showEditModal: false, 
+                showEditModal: false,
                 showConfirmDelete: false,
                 selectedApp: null,
                 originalAppData: null, // 用于保存原始数据的副本
@@ -200,6 +210,9 @@
             discountedPrice() {
                 return (this.selectedApp.price * this.selectedApp.discount).toFixed(2);
                 // 折后价格规约到两位小数
+            },
+            isModified() {
+                return JSON.stringify(this.selectedApp) !== JSON.stringify(this.originalAppData);
             }
         },
         methods: {
@@ -259,7 +272,7 @@
                 }
 
                 let formData = new FormData();
-                formData.append('merchantId', this.merchantId); 
+                formData.append('merchantId', this.merchantId);
                 formData.append('appId', this.selectedApp.id);
                 formData.append('version', this.selectedApp.version);
                 formData.append('state', this.selectedApp.releaseState);
@@ -272,8 +285,14 @@
                         this.fetchApps(this.currentPage); // 刷新应用列表
                     })
                     .catch(error => {
-                        console.error('Error updating app:', error);
-                        this.alertNotification('更新应用失败，请稍后重试！');
+                        if (error.response && error.response.status === 400) {
+                            // 如果状态码是400，显示后端返回的错误信息
+                            this.alertNotification(error.response.data);
+                        }
+                        else {
+                            console.error('Error updating app:', error);
+                            this.alertNotification('保存失败，请稍后重试！');
+                        }
                         return;
                     });
             },
@@ -284,14 +303,14 @@
 
                 axios.post('http://localhost:5118/api/merchant/deleteApp', formData)
                     .then(() => {
-                        this.confirmNotification('应用删除成功！');
+                        this.confirmNotification('应用下架成功！');
                         this.closeConfirmDelete();
                         this.closeEditModal();
                         this.fetchApps(this.currentPage);
                     })
                     .catch(error => {
                         console.error('Error deleting app:', error);
-                        this.alertNotification('删除应用失败，请稍后重试！');
+                        this.alertNotification('下架应用失败，请稍后重试！');
                         return;
                     });
             },
@@ -312,8 +331,8 @@
                 formDataImg.append('id', this.selectedApp.id);
 
                 try {
-                    await axios.post('http://localhost:5118/api/Image/upload-app-img', formDataImg);
-                    this.confirmNotification('图标上传成功！');
+                    await axios.post('http://localhost:5118/api/merchant/upload-app-img', formDataImg);
+                    /*this.confirmNotification('图标上传成功！');*/
                 } catch (error) {
                     console.error('Error uploading image:', error);
                     this.alertNotification('图标上传失败，请稍后重试！');
@@ -325,8 +344,8 @@
                 formDataAppFile.append('id', this.selectedApp.id);
 
                 try {
-                    await axios.post('http://localhost:5118/api/application/uploadapp', formDataAppFile);
-                    this.confirmNotification('应用包上传成功！');
+                    await axios.post('http://localhost:5118/api/merchant/uploadapp', formDataAppFile);
+                    /*this.confirmNotification('应用包上传成功！');*/
                 } catch (error) {
                     console.error('Error uploading app file:', error);
                     this.alertNotification('应用包上传失败，请稍后重试！');
@@ -334,9 +353,11 @@
             },
             handleNewImageUpload(event) {
                 this.selectedImageFile = event.target.files[0]; // 获取上传的图标文件
+                this.selectedApp.image = this.selectedImageFile.name;
             },
             handleNewFileUpload(event) {
                 this.selectedAppFile = event.target.files[0]; // 获取上传的应用包文件
+                this.selectedApp.appFile = this.selectedAppFile.name;
             },
             initiateSearch() {
                 this.currentPage = 1;
@@ -361,7 +382,7 @@
                 this.showAdvancedSearch = !this.showAdvancedSearch;
             },
             confirmDelete() {
-                this.showConfirmDelete = true; 
+                this.showConfirmDelete = true;
             },
             closeConfirmDelete() {
                 this.showConfirmDelete = false;
@@ -375,14 +396,14 @@
                 this.showEditModal = false;
             },
             refreshPage() {
-                this.currentPage = 1; 
+                this.currentPage = 1;
                 this.searchQuery = '';
                 this.searchName = '';
                 this.searchCategory = '';
                 this.searchState = '';
                 this.searchVersion = '';
-                this.showAdvancedSearch = false; 
-                this.fetchApps(); 
+                this.showAdvancedSearch = false;
+                this.fetchApps();
             },
             alertNotification(message) {
                 this.alert = '';
@@ -409,7 +430,7 @@
             getStateInChinese(releaseState) {
                 switch (releaseState) {
                     case 'banned':
-                        return '已删除';
+                        return '已下架';
                     case 'released':
                         return '已发布';
                     case 'test':
@@ -426,11 +447,6 @@
         mounted() {
             this.fetchApps();
         },
-        computed: {
-            isModified() {
-                return JSON.stringify(this.selectedApp) !== JSON.stringify(this.originalAppData);
-            }
-        }
     };
 </script>
 
@@ -481,7 +497,7 @@
 
         .advanced-search-toggle:hover,
         .search-button:hover,
-        .refresh-button:hover{
+        .refresh-button:hover {
             background-color: #1565c0;
         }
 
@@ -514,6 +530,7 @@
         max-height: 65vh;
         overflow-y: scroll;
     }
+
     .app-list table {
         width: 100%;
         border-collapse: collapse;
@@ -522,6 +539,7 @@
         max-height: 100%;
         background-color: #fff;
     }
+
     th {
         padding: 8px;
         text-align: center;
@@ -540,17 +558,17 @@
         color: #000; /* 表格内容字体颜色为黑色 */
     }
 
-    td .app-image {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        margin-bottom: 5px;
-    }
+        td .app-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-bottom: 5px;
+        }
 
-    td input[type="file"] {
-        display: block;
-        margin-top: 5px;
-    }
+        td input[type="file"] {
+            display: block;
+            margin-top: 5px;
+        }
 
     .sortable {
         cursor: pointer;
@@ -599,20 +617,6 @@
             align-items: center;
         }
 
-    @media (max-width: 768px) {
-
-        .advanced-search-toggle,
-        .search-button,
-        .global-search {
-            width: 100%;
-        }
-
-        .pagination {
-            flex-wrap: wrap;
-        }
-    }
-
-    /* 模态框背景 */
     .modal {
         display: flex;
         justify-content: center;
@@ -626,17 +630,77 @@
         z-index: 1000;
     }
 
-    /* 模态框内容 */
     .modal-content {
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        width: 300px;
+        width: 600px; /* 增加宽度 */
+        max-height: 80vh; /* 限制高度 */
+        overflow-y: auto; /* 内容过多时启用滚动条 */
         position: relative;
     }
 
-    /* 关闭按钮 */
+    h2 {
+        color: #1976d2;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        }
+
+        .form-group textarea {
+            resize: none;
+        }
+
+    .form-group-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+        .form-group-row .form-group {
+            flex: 0 0 48%;
+        }
+
+    .image-preview {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+        .image-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
     .close {
         position: absolute;
         top: 10px;
@@ -646,26 +710,27 @@
     }
 
     .save-button {
-        background-color: #5cb85c; /*#28a745*/
+        background-color: #5cb85c;
         color: #fff;
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        margin-right: 25px;
-        margin-top: 20px;
-        margin-left: 20px;
+        flex: 1;
+        margin-right: 10px;
+        text-align: center;
     }
 
         .save-button:hover {
             background-color: #4cae4c;
-/*            #218838;*/
         }
+
         .save-button:disabled {
             background-color: #cccccc;
-            cursor: not-allowed; 
+            cursor: not-allowed;
         }
+
     .delete-button {
         background-color: #dc3545;
         color: #fff;
@@ -674,8 +739,9 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        flex: 1;
         margin-left: 10px;
-        margin-right: 20px; /* 不靠近右边界 */
+        text-align: center;
     }
 
         .delete-button:hover {
@@ -715,7 +781,7 @@
 
     .status-banned {
         color: #e32636;
-        font-weight:bold;
+        font-weight: bold;
     }
 
     .status-released {
@@ -726,5 +792,19 @@
     .status-test {
         color: #ffa500;
         font-weight: bold
+    }
+
+    @media (max-width: 500px) {
+        .modal-content {
+            width: 90%; /* 适应小屏幕 */
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .save-button, .delete-button {
+            margin: 5px 0;
+        }
     }
 </style>

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using AppHarbor.Server.Models;
 using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AppHarbor.Server.Controllers
 {
@@ -595,5 +596,135 @@ namespace AppHarbor.Server.Controllers
 
             return Ok(new { message = "Application deleted successfully." });
         }
+
+        [HttpPost("uploadapp")]
+        public IActionResult UploadApp(IFormFile file, [FromForm] int id, [FromServices] IWebHostEnvironment env)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            var application = _dbContext.Applications.FirstOrDefault(a => a.Id == id);
+            if (application == null)
+            {
+                return NotFound("Application not found.");
+            }
+
+            var checkResult = CheckUpload(file);
+            if (checkResult is BadRequestObjectResult)
+            {
+                return checkResult;
+            }
+
+            string guid = Guid.NewGuid().ToString("N");
+            string relativePath = getPath(file, env, guid);
+
+            // 更新应用的Package字段为新上传的文件路径
+            application.Package = relativePath;
+            application.ReleaseState = "test";
+
+            _dbContext.Applications.Update(application);
+            _dbContext.SaveChanges();
+
+            return Ok(new { ApplicationId = application.Id, message = "Application package uploaded and updated successfully." });
+        }
+        private IActionResult CheckUpload(IFormFile file)
+        {
+            if (file.Length == 0)
+            {
+                return BadRequest(new { Code = 1001, Msg = "File not uploaded" });
+            }
+            return Ok();
+        }
+
+        private string getPath(IFormFile file,
+                                 [FromServices] IWebHostEnvironment env,
+                                 string guid)
+        {
+            // 拼接文件路径
+            string fileExt = Path.GetExtension(file.FileName);
+            string fileName = guid + fileExt;
+            string relativePath = Path.Combine(@"\uploads", fileName);
+            string fullPath = Path.Combine(env.ContentRootPath, "Uploads", fileName);
+
+            // 创建文件
+            using (FileStream fs = new FileStream(fullPath, FileMode.Create))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+            }
+
+            return relativePath.Replace("\\", "/");
+        }
+        [HttpPost("upload-app-img")]
+        public IActionResult UploadAppImage(IFormFile file, [FromForm] decimal id, [FromServices] IWebHostEnvironment env)
+        {
+            // 上传应用图片
+            var checkResult = CheckImage(file);
+            if (checkResult is BadRequestObjectResult)
+            {
+                return checkResult;
+            }
+
+            // 查找数据库中对应App的项目
+            var app = _dbContext.Applications.Find(id);
+            if (app == null)
+            {
+                return BadRequest(new { Code = 1003, Msg = "Application Not Found" });
+            };
+
+            // 保存图片并保存数据
+            string guid = Guid.NewGuid().ToString("N");
+            string relativePath = SaveImage(file, env, guid);
+            app.Image = relativePath;
+            app.ReleaseState = "test";
+            _dbContext.Applications.Update(app);
+            _dbContext.SaveChanges();
+
+            return Ok(new { Data = relativePath, Code = 2001, Msg = "Succeeded" });
+        }
+        private IActionResult CheckImage(IFormFile file)
+        {
+            if (file.Length == 0)
+            {
+                return BadRequest(new { Code = 1001, Msg = "File not uploaded" });
+            }
+
+            // 检查图片类型
+            var mimeType = file.ContentType;
+            var imageMimeTypes = new List<string>
+            {
+                "image/jpeg",
+                "image/png"
+            };
+            if (!imageMimeTypes.Contains(mimeType))
+            {
+                return BadRequest(new { Code = 1002, Msg = "File is not supported image" });
+            }
+
+            return Ok();
+        }
+        private string SaveImage(IFormFile file,
+                          [FromServices] IWebHostEnvironment env,
+                          string guid)
+        {
+            // 拼接文件路径
+            string fileExt = Path.GetExtension(file.FileName);
+            string fileName = guid + fileExt;
+            string relativePath = Path.Combine(@"\uploads", fileName);
+            string fullPath = Path.Combine(env.ContentRootPath, "Uploads", fileName);
+
+            // 创建文件
+            using (FileStream fs = new FileStream(fullPath, FileMode.Create))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+            }
+
+            return relativePath.Replace("\\", "/");
+        }
     }
+
+
 }
