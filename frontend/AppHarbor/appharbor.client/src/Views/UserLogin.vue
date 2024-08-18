@@ -73,10 +73,11 @@
                         .then(response => {
                             Cookies.set("token", response.data);
                             this.isLoading = true; // Show loading animation on login attempt
-                            this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 管理员, 欢迎来到 AppHarbor!`;
+                            this.alertMessage = `您好! 尊敬的${this.id.substring(1) }号管理员, 欢迎来到 AppHarbor!`;
                             global.id = this.id;
                             setTimeout(() => {
                                 this.$router.push('/AdminPage');
+                                this.isLoading = false; // Hide loading animation on login
                             }, 3000);
                         })
                         .catch(error => {
@@ -92,11 +93,11 @@
                         .then(response => {
                             Cookies.set("token", response.data);
                             this.isLoading = true; // Show loading animation on login attempt
-                            this.alertMessage = `您好! 尊敬的 ${this.id.substring(1) } 商家, 欢迎来到 AppHarbor!`;
+                            this.alertMessage = `您好! 尊敬的${this.id.substring(1) }号商家, 欢迎来到 AppHarbor!`;
                             global.id = this.id;
                             setTimeout(() => {
                                 this.$router.push('/MerchantWorkBanchPage');//#################################跳转到需要的地方（跳转到商家页面）
-
+                                this.isLoading = false; // Hide loading animation on login
                             }, 3000);
 
                         })
@@ -114,11 +115,11 @@
                         .then(response => {
                             Cookies.set("token", response.data);
                             this.isLoading = true; // Show loading animation on login attempt
-                            this.alertMessage = `您好! 尊敬的 ${this.id} 用户, 欢迎来到 AppHarbor!`;
+                            this.alertMessage = `您好! 尊敬的${this.id}号用户, 欢迎来到 AppHarbor!`;
                             global.id = this.id;
                             setTimeout(() => {
                                 this.$router.push('/WorkBanchPage');
-
+                                this.isLoading = false; // Hide loading animation on login
                             }, 3000); // Redirect after 2 seconds
 
                         })
@@ -136,7 +137,7 @@
             },
             goToForgotPassword() {
                 this.$router.push('/ChangePassword');
-            }
+            },
         }
     };
 </script>

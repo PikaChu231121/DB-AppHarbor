@@ -60,7 +60,11 @@ namespace AppHarbor.Server.Controllers
             var user = _dbContext.Users.Find(id);
             if (user == null)
             {
-                return NotFound("user not found");
+                return NotFound("用户未找到！");
+            }
+            if (_dbContext.BanUsers.FirstOrDefault(i => user.Id == i.UserId) != null)
+            {
+                return BadRequest("用户已被封禁！");
             }
             if (user.Password == password)
             {
@@ -84,6 +88,21 @@ namespace AppHarbor.Server.Controllers
             else
             {
                 return BadRequest("Invalid password");
+            }
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout([FromForm] string token)
+        {
+            if (_dbContext.TokenIds.FirstOrDefault(t => t.Token == token) != null)
+            {
+                // 删除该token
+                _dbContext.TokenIds.Where(u => u.Token == token).ExecuteDelete();
+                return Ok("Logout successfully");
+            }
+            else
+            {
+                return BadRequest("Invalid token");
             }
         }
 

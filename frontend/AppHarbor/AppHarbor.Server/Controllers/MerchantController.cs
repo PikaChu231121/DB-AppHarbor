@@ -46,6 +46,21 @@ namespace AppHarbor.Server.Controllers
 
         }
 
+        [HttpPost("logout")]
+        public IActionResult Logout([FromForm] string token)
+        {
+            if (_dbContext.TokenIds.FirstOrDefault(t => t.Token == token) != null)
+            {
+                // 删除该token
+                _dbContext.TokenIds.Where(u => u.Token == token).ExecuteDelete();
+                return Ok("Logout successfully");
+            }
+            else
+            {
+                return BadRequest("Invalid token");
+            }
+        }
+
         [HttpPost("searchunbanmerchant")]
         public IActionResult SearchunbanMerchant()
         {
@@ -69,7 +84,11 @@ namespace AppHarbor.Server.Controllers
             var merchant = _dbContext.Merchants.Find(merchant_id);
             if (merchant == null)
             {
-                return NotFound("merchant not found");
+                return NotFound("商家未找到！");
+            }
+            if (_dbContext.BanMerchants.FirstOrDefault(i => merchant.Id == i.MerchantId) != null)
+            {
+                return BadRequest("商家已被封禁！");
             }
             if (merchant.Password == password)
             {

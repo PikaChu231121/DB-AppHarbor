@@ -31,6 +31,10 @@
                 <label>注册时间</label>
                 <p>{{ formattedRegisterTime }}</p>
             </div>
+            <!-- 登出按钮 -->
+            <div class="form-group">
+                <button class="logout-button" @click="logout">登出</button>
+            </div>
         </div>
     </div>
 </template>
@@ -58,19 +62,18 @@
                 },
                 isSaveEnabled: false,
                 alert: '',
-                comfirm: ''
+                confirm: ''
             }
         },
         mounted() {
-            // 读取 localStorage 中的 id
             const storedId = localStorage.getItem('globalId');
             this.isEditing = false;
             if (global.id == '') {
                 this.user.id = storedId;
-                global.id = storedId; // 更新 global.js 中的 id
+                global.id = storedId;
             } else {
                 this.user.id = global.id;
-                localStorage.setItem('globalId', global.id); // 将 global.id 保存到 localStorage
+                localStorage.setItem('globalId', global.id);
             }
             this.fetchUserInfo();
         },
@@ -97,13 +100,9 @@
                     let formData = new FormData();
                     formData.append('file', file);
                     formData.append('id', this.user.id);
-                    for (let pair of formData.entries()) {
-                        console.log(`${pair[0]}: ${pair[1]}`);
-                    }
                     axios.post('http://localhost:5118/api/Image/upload-personal-image', formData)
                         .then(response => {
                             this.user.avatar = response.data.data;
-                            //console.log(this.user.avatar);
                             this.confirmNotification('头像上传成功');
                         })
                         .catch(error => {
@@ -129,6 +128,26 @@
                     .catch(error => {
                         console.error('Error updating user nickname:', error);
                     });
+            },
+            logout() {
+                var token = Cookies.get('token');
+                var formData = new FormData();
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/user/logout', formData)
+                    .then(response => {
+                        // 显示登出成功提示
+                        alert("您已成功登出");
+                        Cookies.remove('token');
+                        this.$router.push('/').then(() => {
+                          // 刷新登录页面
+                          window.location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error when logout:', error);
+                    });
+
+                
             },
             alertNotification(message) {
                 this.alert = message;
@@ -183,11 +202,11 @@
     .form-group {
         display: flex;
         flex-direction: column;
-        color:black;
+        color: black;
     }
 
     .avatar-group {
-        text-align:center;
+        text-align: center;
         max-width: 240px;
         padding: 15px;
         border: 1px solid #F3C7BA;
@@ -264,16 +283,32 @@
         align-items: center;
     }
 
-    .edit-icon img {
-        width: 24px; /* 调整图标大小 */
-        height: 24px; /* 调整图标大小 */
-        transition: box-shadow 0.3s ease, filter 0.3s ease;
+        .edit-icon img {
+            width: 24px; /* 调整图标大小 */
+            height: 24px; /* 调整图标大小 */
+            transition: box-shadow 0.3s ease, filter 0.3s ease;
+        }
+
+        .edit-icon:hover img {
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+            filter: brightness(1.1);
+        }
+
+    /* 登出按钮样式 */
+    .logout-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #F3C7BA;
+        font-size: 16px;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
 
-    .edit-icon:hover img {
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-        filter: brightness(1.1);
-    }
-
+        .logout-button:hover {
+            background-color: #fbb1a2;
+        }
 </style>
-

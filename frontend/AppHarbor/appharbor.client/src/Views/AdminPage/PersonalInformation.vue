@@ -29,6 +29,10 @@
                 <label>管理员注册时间</label>
                 <p class="admin">{{ formattedRegisterTime }}</p>
             </div>
+            <!-- 登出按钮 -->
+            <div class="form-group">
+                <button class="logout-button" @click="logout">登出</button>
+            </div>
         </div>
     </div>
     <div>
@@ -66,6 +70,24 @@
             this.clearPopupStatus();
         },
         methods: {
+            logout() {
+                var token = Cookies.get('token');
+                var formData = new FormData();
+                formData.append('token', token);
+                axios.post('http://localhost:5118/api/admin/logout', formData)
+                    .then(response => {
+                        // 显示登出成功提示
+                        alert("您已成功登出");
+                        Cookies.remove('token');
+                        this.$router.push('/').then(() => {
+                          // 刷新登录页面
+                          window.location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error when logout:', error);
+                    });
+            },
             fetchUserInfo() {
                 const token = Cookies.get('token');
                 let formData = new FormData();
@@ -295,4 +317,21 @@
     .admin-id {
         color: black;
     }
+    /* 登出按钮样式 */
+    .logout-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #d7a6f6;
+        font-size: 16px;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
+    }
+
+        .logout-button:hover {
+            background-color: #fbb1a2;
+        }
 </style>

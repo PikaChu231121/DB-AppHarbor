@@ -43,7 +43,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 builder.Services.Configure<FormOptions>(options =>  
 {  
-    options.MultipartBodyLengthLimit = 1048576000; // 设置大小限制为GB
+    options.MultipartBodyLengthLimit = 1048576000; // 设置大小限制为1GB
 });  
 
 var app = builder.Build();  
