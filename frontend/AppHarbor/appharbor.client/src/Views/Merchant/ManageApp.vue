@@ -107,7 +107,7 @@
                     <div class="form-group-row">
                         <div class="form-group">
                             <label>状态:</label>
-                            <p>{{ selectedApp.releaseState }}</p>
+                            <p>{{ translatedState  }}</p>
                         </div>
                         <div class="form-group">
                             <label>版本:</label>
@@ -224,6 +224,16 @@
             },
             isModified() {
                 return JSON.stringify(this.selectedApp) !== JSON.stringify(this.originalAppData);
+            },
+            translatedState() {
+                // 状态映射
+                const stateMapping = {
+                    'banned': '已下架',
+                    'released': '已发布',
+                    'test': '待审核'
+                };
+                // 根据 selectedApp.releaseState 映射对应的中文状态
+                return stateMapping[this.selectedApp.releaseState] || this.selectedApp.releaseState;
             }
         },
         methods: {
@@ -231,10 +241,30 @@
                 const token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
-                formData.append('search', this.searchQuery);
+
+                if (this.searchQuery === '已下架') {
+                    formData.append('search', 'banned');
+                } else if (this.searchQuery === '已发布') {
+                    formData.append('search', 'released');
+                } else if (this.searchQuery === '待审核') {
+                    formData.append('search', 'test');
+                } else {
+                    formData.append('search', this.searchQuery);
+                }
+
                 formData.append('name', this.searchName);
                 formData.append('category', this.searchCategory);
-                formData.append('state', this.searchState);
+
+                if (this.searchState === '已下架') {
+                    formData.append('state', 'banned');
+                } else if (this.searchState === '已发布') {
+                    formData.append('state', 'released');
+                } else if (this.searchState === '待审核') {
+                    formData.append('state', 'test');
+                } else {
+                    formData.append('state', this.searchState);
+                }
+
                 formData.append('version', this.searchVersion);
                 formData.append('page', page);
                 formData.append('sortBy', this.sortBy);
@@ -581,8 +611,8 @@
         padding: 8px;
         text-align: center;
         border: 1px solid #ddd;
-        background-color: #1e88e5; /* 表头背景颜色为蓝色 */
-        color: #fff; /* 表头字体颜色为白色 */
+        background-color: #1e88e5;
+        color: #fff;
         position: sticky;
         top: 0;
     }
@@ -591,8 +621,8 @@
         padding: 8px;
         text-align: center;
         border: 1px solid #ddd;
-        background-color: #fff; /* 表格内容背景颜色为白色 */
-        color: #000; /* 表格内容字体颜色为黑色 */
+        background-color: #fff;
+        color: #000;
     }
 
         td .app-image {
@@ -702,7 +732,7 @@
 
     .price-input {
         width: 100%;
-        padding: 12px 8px; /* 确保继承通用样式 */
+        padding: 12px 8px;
         padding-left: 30px; /* 额外留出空间以避免与“￥”符号重叠 */
         border: 1px solid #1e88e5;
         border-radius: 5px;
@@ -746,7 +776,7 @@
         }
 
         .form-group .price-input {
-            padding-left: 30px; /* 专门为 price-input 设置的左侧 padding */
+            padding-left: 30px;
         }
 
     .form-group-row {
