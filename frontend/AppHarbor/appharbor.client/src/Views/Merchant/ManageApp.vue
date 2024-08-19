@@ -111,7 +111,7 @@
                         </div>
                         <div class="form-group">
                             <label>版本:</label>
-                            <input v-model="selectedApp.version" placeholder="版本号" />
+                            <input v-model="selectedApp.version" placeholder="版本号" type="text" />
                         </div>
                     </div>
 
@@ -132,6 +132,13 @@
                         <input type="file" @change="handleNewImageUpload" />
                     </div>
 
+                    <!-- 显示上传后的新图标 -->
+                    <div class="form-group" v-if="selectedImageFile">
+                        <div class="image-preview">
+                            <img :src="newImageUrl" alt="新应用图标预览" />
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>更新应用包:</label>
                         <input type="file" @change="handleNewFileUpload" />
@@ -141,7 +148,10 @@
 
                         <div class="form-group">
                             <label>原价:</label>
-                            <input v-model="selectedApp.price" placeholder="原价" />
+                            <div class="input-container">
+                                <span class="currency-symbol">￥</span>
+                                <input v-model="selectedApp.price" placeholder="原价" class="price-input" />
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -157,15 +167,15 @@
                             </select>
                         </div>
                     </div>
-                        <div v-if="selectedApp.discount !== '1.00'" class="form-group">
-                            <span style="display: block; text-align: center;">折后价: ￥{{ discountedPrice }}</span>
-                        </div>
-
-                        <div class="button-group">
-                            <button @click="saveAppChanges" class="save-button" :disabled="!isModified">保存</button>
-                            <button @click="confirmDelete" class="delete-button">下架应用</button>
-                        </div>
+                    <div v-if="selectedApp.discount !== '1.00'" class="form-group">
+                        <span style="display: block; text-align: center;">折后价: ￥{{ discountedPrice }}</span>
                     </div>
+
+                    <div class="button-group">
+                        <button @click="saveAppChanges" class="save-button" :disabled="!isModified">保存</button>
+                        <button @click="confirmDelete" class="delete-button">下架应用</button>
+                    </div>
+                </div>
                 </div>
         </div>
     </div>
@@ -203,7 +213,8 @@
                 alert: '',
                 confirm: '',
                 selectedImageFile: null,
-                selectedAppFile: null
+                selectedAppFile: null,
+                newImageUrl: null
             };
         },
         computed: {
@@ -352,12 +363,33 @@
                 }
             },
             handleNewImageUpload(event) {
-                this.selectedImageFile = event.target.files[0]; // 获取上传的图标文件
-                this.selectedApp.image = this.selectedImageFile.name;
+                const file = event.target.files[0]; // 获取上传的图片文件
+                const validTypes = ['image/png', 'image/jpeg']; // 定义允许的文件类型
+
+                if (file && !validTypes.includes(file.type)) {
+                    this.alertNotification('文件类型不为.png/.jpg，请稍后重试！');
+                    this.selectedImageFile = null; // 清空选中的文件
+                    event.target.value = ''; // 清空输入框
+                    return;
+                }
+
+                this.selectedImageFile = file;
+                if (this.selectedImageFile) {
+                    this.newImageUrl = URL.createObjectURL(this.selectedImageFile); // 生成新图片的预览 URL
+                }
             },
             handleNewFileUpload(event) {
-                this.selectedAppFile = event.target.files[0]; // 获取上传的应用包文件
-                this.selectedApp.appFile = this.selectedAppFile.name;
+                const file = event.target.files[0]; // 获取上传的应用包文件
+
+                // 判断文件是否为 .exe 类型
+                if (file && file.name.split('.').pop().toLowerCase() !== 'exe') {
+                    this.alertNotification('文件类型不为.exe，请稍后重试！');
+                    event.target.value = ''; // 清空文件输入框，允许重新选择
+                    return;
+                }
+
+                this.selectedAppFile = file;
+                this.selectedApp.appFile = file.name;
             },
             initiateSearch() {
                 this.currentPage = 1;
@@ -390,6 +422,11 @@
             openEditModal(app) {
                 this.selectedApp = { ...app }; // 复制应用数据以便修改
                 this.originalAppData = { ...app }; // 保存原始数据的副本
+
+                // 清空之前上传但未保存的图片数据
+                this.newImageUrl = null;
+                this.selectedImageFile = null;
+
                 this.showEditModal = true;
             },
             closeEditModal() {
@@ -631,14 +668,16 @@
     }
 
     .modal-content {
-        background-color: #fff;
-        padding: 20px;
+        background-color: #f0f9ff;
+        padding: 20px 20px 20px 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        width: 600px; /* 增加宽度 */
-        max-height: 80vh; /* 限制高度 */
-        overflow-y: auto; /* 内容过多时启用滚动条 */
+        width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
         position: relative;
+        font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        color: #333;
     }
 
     h2 {
@@ -647,29 +686,67 @@
         margin-bottom: 20px;
     }
 
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .currency-symbol {
+        position: absolute;
+        left: 10px;
+        color: #000;
+        font-size: 14px;
+        pointer-events: none;
+    }
+
+    .price-input {
+        width: 100%;
+        padding: 12px 8px; /* 确保继承通用样式 */
+        padding-left: 30px; /* 额外留出空间以避免与“￥”符号重叠 */
+        border: 1px solid #1e88e5;
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        width: 100%;
+    }
+
+        .price-input:focus {
+            border-color: #1565c0;
+            box-shadow: 0 0 5px rgba(21, 101, 192, 0.5);
+        }
+
     .form-group {
         margin-bottom: 10px;
+        position: relative;
     }
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: #333;
+            color: #1976d2;
             font-weight: bold;
         }
 
         .form-group input[type="text"],
+        .form-group input[type="number"],
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
+            padding: 12px 8px;
+            border: 1px solid #1e88e5;
             border-radius: 5px;
             font-size: 14px;
             font-family: 'Baloo 2', cursive, Arial, sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .form-group textarea {
             resize: none;
+        }
+
+        .form-group .price-input {
+            padding-left: 30px; /* 专门为 price-input 设置的左侧 padding */
         }
 
     .form-group-row {
@@ -695,6 +772,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
+
     .button-group {
         display: flex;
         justify-content: space-between;
@@ -702,12 +780,26 @@
     }
 
     .close {
-        position: absolute;
+        position: sticky;
         top: 10px;
-        right: 10px;
+        left: 530px;
         font-size: 20px;
         cursor: pointer;
+        color: #1976d2;
+        z-index: 1001;
+        margin: 10px;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.2s ease-in-out;
     }
+
+        .close:hover {
+            transform: rotate(180deg); 
+        }
 
     .save-button {
         background-color: #5cb85c;
@@ -720,6 +812,8 @@
         flex: 1;
         margin-right: 10px;
         text-align: center;
+        font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        font-size: 14px;
     }
 
         .save-button:hover {
@@ -742,6 +836,8 @@
         flex: 1;
         margin-left: 10px;
         text-align: center;
+        font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        font-size: 14px;
     }
 
         .delete-button:hover {
