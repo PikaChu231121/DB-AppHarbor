@@ -350,7 +350,7 @@ namespace AppHarbor.Server.Controllers
             }
 
             // 更新应用的状态
-            application.ReleaseState = "withdrawn"; // 下架应用状态改为withdrawn
+            application.ReleaseState = "banned"; // 下架应用状态改为banned
             _dbContext.Applications.Update(application);
             _dbContext.SaveChanges();
 

@@ -22,13 +22,13 @@
                 <button @click="bulkDelete" :disabled="!isBulkDeleting || selectedFavourites.length === 0">删除选中应用</button>
             </div>
             <div v-if="favourites.length" class="favourite-grid">
-                <div v-for="favourite in favourites" :key="favourite.id" class="favourite-item">
+                <div v-for="(favourite,index) in favourites" :key="favourite.id" class="favourite-item">
                     <h3>
                         <router-link :to="{ name: 'AppDetail', params: { id: favourite.applicationId } }">
                             {{ favourite.applicationName }}
                         </router-link>
                     </h3>
-                    <p>收藏时间: {{ favourite.createTime }}</p>
+                    <p>收藏时间: {{formattedCreateTime[index] }}</p>
                     <p>分类: {{ favourite.applicationCategory  }}</p>
                     <p>id: {{ favourite.applicationId }}</p>
                     <div class="action-buttons">
@@ -69,6 +69,27 @@
         },
         created() {
             this.fetchFavourites();
+        },
+        computed: {
+            formattedCreateTime() {
+                return this.favourites.map(favourite => {
+                    let dateTime = favourite.createTime;
+                    // 替换"T"为空格
+                    dateTime = dateTime.replace('T', ' ');
+                    // 转换为 Date 对象
+                    let date = new Date(dateTime);
+                    // 增加8小时
+                    date.setHours(date.getHours() + 8);
+                    // 格式化为 YYYY-MM-DD HH:mm:ss
+                    let year = date.getFullYear();
+                    let month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    let day = ('0' + date.getDate()).slice(-2);
+                    let hours = ('0' + date.getHours()).slice(-2);
+                    let minutes = ('0' + date.getMinutes()).slice(-2);
+                    let seconds = ('0' + date.getSeconds()).slice(-2);
+                    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                });
+            }  
         },
         methods: {
             fetchFavourites() {

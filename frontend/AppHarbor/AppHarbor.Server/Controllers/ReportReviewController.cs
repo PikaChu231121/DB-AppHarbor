@@ -119,7 +119,7 @@ namespace AppHarbor.Server.Controllers
             var targetapp = _dbContext.Applications.FirstOrDefault(r => r.Id == reportdetail.ApplicationId);
             if (targetapp != null)
             {
-                targetapp.ReleaseState = "withdrawn";
+                targetapp.ReleaseState = "banned";
                 _dbContext.SaveChanges();
 
             }
