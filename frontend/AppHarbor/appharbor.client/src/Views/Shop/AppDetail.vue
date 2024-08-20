@@ -361,14 +361,21 @@
             const discountedIntegerPart = discountedPrice[0];
             const discountedDecimalPart = discountedPrice[1];
 
-            return `
-                    <span style="font-size: 1.2em; font-weight: bold;">
+            let result = `
+                    <span>
                         ￥ <span class="integer-part">${discountedIntegerPart}</span>.<span class="decimal-part">${discountedDecimalPart}</span>
                     </span>
+                `;
+
+            if (this.app.discount < 1.0) {
+                result += `
                     <span style="text-decoration: line-through; font-size: 0.6em; color:gray;">
                         原价：<span class="integer-part">${originalIntegerPart}</span>.<span class="decimal-part">${originalDecimalPart}</span>
                     </span>
                 `;
+            }
+
+            return result;
         }
 
     }
