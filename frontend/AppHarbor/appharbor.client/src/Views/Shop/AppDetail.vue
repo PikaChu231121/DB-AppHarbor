@@ -53,7 +53,7 @@
                           :class="{ filled: star <= comment.score }">&#9733;</span>
                 </div>
                 <p class="content">{{ comment.content }}</p>
-                <span class="publishTime">{{ comment.publishTime }}</span>
+                <span class="publishTime">发布于 {{ formatDate(comment.publishTime) }}</span>
             </div>
             <div class="delete-button-container">
                 <button v-if="comment.userId === user.id"
@@ -321,31 +321,43 @@
             submitReport() {
                 const token = Cookies.get('token');
 
-            // 获取当前时间并加上 8 小时
-            const now = new Date();
-            const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
+                // 获取当前时间并加上 8 小时
+                const now = new Date();
+                const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
 
-            axios.post('http://localhost:5118/api/report/publishreport', {
-                token: token,
-                content: this.reportContent,
-                reportTime: reportTime, // 传递调整后的时间
-                applicationId: this.app.id
-            })
-                .then(response => {
-                    this.reportContent = '';
-                    this.notificationTitle = '成功';
-                    this.notificationMessage = `成功举报 ${this.app.name}`;
-                    this.showNotification = true;
-                    this.showReportModal = false;
+                axios.post('http://localhost:5118/api/report/publishreport', {
+                    token: token,
+                    content: this.reportContent,
+                    reportTime: reportTime, // 传递调整后的时间
+                    applicationId: this.app.id
                 })
-                .catch(error => {
-                    this.reportContent = '';
-                    this.notificationTitle = '失败';
-                    this.notificationMessage = '提交报告时发生错误。';
-                    this.showNotification = true;
-                    console.error('Error submitting report:', error);
-                });
-        }
+                    .then(response => {
+                        this.reportContent = '';
+                        this.notificationTitle = '成功';
+                        this.notificationMessage = `成功举报 ${this.app.name}`;
+                        this.showNotification = true;
+                        this.showReportModal = false;
+                    })
+                    .catch(error => {
+                        this.reportContent = '';
+                        this.notificationTitle = '失败';
+                        this.notificationMessage = '提交报告时发生错误。';
+                        this.showNotification = true;
+                        console.error('Error submitting report:', error);
+                    });
+            },
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).replace(/\//g, '-'); // 将斜杠替换为短横线
+            },
     },
     computed: {
         formattedPrice() {
