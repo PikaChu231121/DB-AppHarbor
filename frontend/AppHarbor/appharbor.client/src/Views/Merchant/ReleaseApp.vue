@@ -1,5 +1,7 @@
 <template>
     <div class="release-app">
+        <alert-box :msg="alert"></alert-box>
+        <confirm-box :msg="confirm"></confirm-box>
         <h1>发布应用</h1>
         <div class="form-container">
             <div class="form-column">
@@ -56,8 +58,14 @@
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import AlertBox from '../AlertBox.vue';
+import ConfirmBox from '../ConfirmBox.vue';
 export default {
     name: 'ReleaseApp',
+    components: {
+        AlertBox,
+        ConfirmBox
+    },
     data() {
         return {
             appName: '',
@@ -68,7 +76,9 @@ export default {
             appDescription: '',
             appPrice: 0,
             appCategory: '',
-            appId: ''
+            appId: '',
+            alert: '',
+            confirm: ''
         }
     },
     methods: {
@@ -112,15 +122,21 @@ export default {
                         })
                         .catch(error => {
                             console.error('Error uploading avatar:', error);
-                            alert('图片上传失败');
+                            this.alertNotification('图片上传失败');
                         });
-                    alert('应用发布成功');
+                    this.confirmNotification('应用发布成功');
                 })
                 .catch(error => {
                     console.log(error);
-                    alert('应用发布失败');
+                    this.alertNotification('应用发布失败');
                 });
-        }
+        },
+        alertNotification(message) {
+            this.alert = message;
+        },
+        confirmNotification(message) {
+            this.confirm = message;
+        },
     },
     computed: {
         isFormValid() {

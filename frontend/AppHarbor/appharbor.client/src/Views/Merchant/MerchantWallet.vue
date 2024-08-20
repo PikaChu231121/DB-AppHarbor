@@ -1,5 +1,7 @@
 <template>
     <div class="Wallet">
+        <alert-box :msg="alert"></alert-box>
+        <confirm-box :msg="confirm"></confirm-box>
         <div class="auto-wrapper">
             <div class="info-box">
                 <p class="text">钱包余额</p>
@@ -33,15 +35,23 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, PieController, CategoryScale } from 'chart.js';
+import AlertBox from '../AlertBox.vue';
+import ConfirmBox from '../ConfirmBox.vue';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, PieController, CategoryScale);
 
 export default {
+    components: {
+        AlertBox,
+        ConfirmBox
+    },
     data() {
         return {
             credit: -1,
             withdrawAmount: 0,
             selectedPeriod: 'month',  // 默认选择最近一月
+            alert: '',
+            confirm: '',
             chartData: {
                 labels: [],
                 datasets: [
@@ -105,22 +115,22 @@ export default {
 
         withdraw() {
             if (this.withdrawAmount <= 0) {
-                alert('请输入有效的提现金额');
+                this.alertNotification('请输入有效的提现金额');
                 return;
             }
             if (!/^\d+(\.\d{1,2})?$/.test(this.withdrawAmount)) {
-                alert('请输入最多两位小数的有效金额');
+                this.alertNotification('请输入最多两位小数的有效金额');
                 return;
             }
             const token = Cookies.get('token');
             axios.post('http://localhost:5118/api/merchant/withdrawCredit', { token, amount: this.withdrawAmount })
                 .then(response => {
                     this.credit = response.data.newCredit;
-                    alert('提现成功');
+                    this.confirmNotification('提现成功');
                 })
                 .catch(error => {
                     console.error('Error withdrawing:', error);
-                    alert('提现失败，请联系管理员');
+                    this.alertNotification('提现失败，请联系管理员');
                 });
         },
 
@@ -181,7 +191,13 @@ export default {
                 .catch(error => {
                     console.error('Error fetching income statistics:', error);
                 });
-        }
+        },
+        alertNotification(message) {
+            this.alert = message;
+        },
+        confirmNotification(message) {
+            this.confirm = message;
+        },
     },
     mounted() {
         this.fetchCredit();
@@ -211,8 +227,9 @@ export default {
     align-items: center;
     width: 100%;
     height: 100%;
-    color:#42a5f5;
+    color: #42a5f5;
 }
+
 .auto-wrapper {
     display: flex;
     flex-direction: row;
@@ -303,10 +320,10 @@ button:disabled {
 }
 
 button:hover:enabled {
-    background: linear-gradient(to right, #115293, #1976d2);  
+    background: linear-gradient(to right, #115293, #1976d2);
     transform: scale(1.05);
     color: #fff;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); 
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
     transition: background-color 0.3s, transform 0.3s, color 0.3s;
 }
 </style>
