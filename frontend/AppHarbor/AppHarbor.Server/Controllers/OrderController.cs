@@ -61,7 +61,7 @@ namespace AppHarbor.Server.Controllers
                         });
                     }
 
-                    var APPAmount = App.Price;
+                    var APPAmount = App.Price * App.Discount;
                     var User = _dbContext.Users.Find(BuyerID);
                     if (User == null)
                     {
