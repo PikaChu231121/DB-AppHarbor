@@ -1,14 +1,14 @@
-<template>
+ï»¿<template>
     <div class="app-grid">
         <div v-for="app in apps" :key="app.id" class="app-item" @click="goToDetail(app.id)">
             <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
             <div class="app-details">
                 <h3 class="app-name">{{ app.name }}</h3>
-                <p class="app-price">Price: {{ app.price }}</p>
-                <p class="app-category">Category: {{ app.category }}</p>
+                <p class="app-price">ä»·æ ¼: {{ app.price }}</p>
+                <p class="app-category">åˆ†ç±»: {{ app.category }}</p>
             </div>
         </div>
-        <!-- Ê¹ÓÃ¿Õ°×µÄÕ¼Î»·û£¬È·±£Ò³ÃæÉÏµÄÓ¦ÓÃ±£³ÖÁ½ĞĞÎåÁĞ²¼¾Ö -->
+        <!-- ä½¿ç”¨ç©ºç™½çš„å ä½ç¬¦ï¼Œç¡®ä¿é¡µé¢ä¸Šçš„åº”ç”¨ä¿æŒä¸¤è¡Œäº”åˆ—å¸ƒå±€ -->
         <div v-for="n in emptySlots" :key="`empty-${n}`" class="app-item empty-slot"></div>
     </div>
 </template>
@@ -31,7 +31,7 @@
                 if (imgPath) {
                     return `http://localhost:5118${imgPath}`;
                 }
-                return '../../public/default.png'; // Ä¬ÈÏÍ¼Æ¬Â·¾¶
+                return '../../public/default.png'; // é»˜è®¤å›¾ç‰‡è·¯å¾„
             }
         }
     }
@@ -104,10 +104,10 @@
     .app-category {
         font-size: 14px;
         color: #666;
-        font-family: 'Poppins', sans-serif; /* Friendly font */
+        font-family: 'Pacifico', cursive; /* åå¤‡å­—ä½“ */
     }
 
-    /* ¿Õ°×Õ¼Î»·ûÑùÊ½ */
+    /* ç©ºç™½å ä½ç¬¦æ ·å¼ */
     .empty-slot {
         visibility: hidden;
     }

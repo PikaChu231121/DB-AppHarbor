@@ -32,7 +32,7 @@
             </div>
             <!-- 登出按钮 -->
             <div class="form-group">
-                <button class="logout-button" @click="logout">登出</button>
+                <button class="logout-button" @click="logout">退出登录</button>
             </div>
         </div>
     </div>

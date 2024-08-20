@@ -29,7 +29,6 @@
                         </router-link>
                     </h3>
                     <p>收藏时间: {{ favourite.createTime }}</p>
-                    <p>可见性: {{ favourite.visibility }}</p>
                     <p>分类: {{ favourite.applicationCategory  }}</p>
                     <p>id: {{ favourite.applicationId }}</p>
                     <div class="action-buttons">

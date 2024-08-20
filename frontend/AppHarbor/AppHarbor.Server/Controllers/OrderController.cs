@@ -37,7 +37,7 @@ namespace AppHarbor.Server.Controllers
                     {
                         return BadRequest(new
                         {
-                            Msg = "Not Found App..."
+                            Msg = "未找到应用..."
                         });
                     }
 
@@ -46,7 +46,7 @@ namespace AppHarbor.Server.Controllers
                     {
                         return BadRequest(new
                         {
-                            Msg = "Not Found Receiver..."
+                            Msg = "未找到接收者..."
                         });
                     }
 
@@ -57,7 +57,7 @@ namespace AppHarbor.Server.Controllers
                     {
                         return BadRequest(new
                         {
-                            Msg = "Receiver already owns the app."
+                            Msg = "接收者已拥有该应用"
                         });
                     }
 
@@ -67,7 +67,7 @@ namespace AppHarbor.Server.Controllers
                     {
                         return BadRequest(new
                         {
-                            Msg = "Not Found Buyer..."
+                            Msg = "未找到购买者..."
                         });
                     }
 
@@ -97,7 +97,7 @@ namespace AppHarbor.Server.Controllers
                     {
                         return BadRequest(new
                         {
-                            Msg = "Not enough money"
+                            Msg = "余额不足"
                         });
                     }
                 }
@@ -107,7 +107,7 @@ namespace AppHarbor.Server.Controllers
                     transaction.Rollback();
                     return StatusCode(500, new
                     {
-                        Msg = "An error occurred while processing your request.",
+                        Msg = "在处理请求时发生错误",
                         Error = ex.Message
                     });
                 }

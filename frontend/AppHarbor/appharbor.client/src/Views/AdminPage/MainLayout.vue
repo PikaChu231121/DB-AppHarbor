@@ -445,7 +445,7 @@
                 userstate: 0,
                 merstate: 0,
                 section: null,
-                selectedStatus: '请在右侧选择你要查看的应用状态',
+                selectedStatus: '请在左侧选择你要执行的管理权限',
                 sections: {
                     appManagement: false,
                     userManagement: false,
