@@ -144,6 +144,7 @@ export default {
 }
 
     .avatar:hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* 添加过渡效果 */
         transform: scale(1.1); /* 鼠标悬浮时放大头像 */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 鼠标悬浮时增加阴影 */
     }

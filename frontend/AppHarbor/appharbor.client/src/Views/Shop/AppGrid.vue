@@ -1,11 +1,11 @@
-<template>
+﻿<template>
     <div class="app-grid">
         <div v-for="app in apps" :key="app.id" class="app-item" @click="goToDetail(app.id)">
             <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
             <div class="app-details">
                 <h3 class="app-name">{{ app.name }}</h3>
                 <p class="app-price" v-html="formattedPrice(app.price,app.discount)"></p>
-                <p class="app-category">Category: {{ app.category }}</p>
+                <p class="app-category">分类: {{ app.category }}</p>
             </div>
         </div>
         <!-- 使用空白的占位符，确保页面上的应用保持两行五列布局 -->
@@ -137,7 +137,7 @@
     .app-category {
         font-size: 14px;
         color: #666;
-        font-family: 'Poppins', sans-serif; /* Friendly font */
+        font-family: 'Pacifico', cursive; /* 后备字体 */
     }
 
     /* 空白占位符样式 */

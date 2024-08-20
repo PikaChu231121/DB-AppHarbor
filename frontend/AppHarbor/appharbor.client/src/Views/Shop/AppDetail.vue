@@ -277,7 +277,7 @@
                         this.newComment.score = 0;
                         /*this.isFavourited = true;*/
                     } else {
-                        alert('评论失败：' + parsedData.msg);
+                        this.alertNotification('评论失败：' + parsedData.msg);
                     }
                 })
                 .catch(error => {
