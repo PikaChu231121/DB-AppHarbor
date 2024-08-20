@@ -4,11 +4,14 @@
             <!-- 标签筛选部分 -->
             <div class="tag-filter">
                 <h2>关键词</h2>
-                <div class="tag" v-for="tag in Tags" :key="tag" @click="selectTag(tag)">
+                <div class="tag"
+                     v-for="tag in Tags"
+                     :key="tag"
+                     :class="{ selected: selectedTag === tag }"
+                     @click="selectTag(tag)">
+                    <span class="checkbox"></span>
                     <span>{{ tag }}</span>
-                    <!--<button class="close-btn" @click="removeTag(tag)">×</button>-->
                 </div>
-                <!--<input v-model="newTag" @keyup.enter="addTag" placeholder="请添加关键词" />-->
             </div>
 
             <!-- 价格筛选部分 -->
@@ -47,16 +50,7 @@
             };
         },
         methods: {
-            //addTag() {
-            //    if (this.newTag && !this.selectedTags.includes(this.newTag)) {
-            //        this.selectedTags.push(this.newTag);
-            //        this.newTag = '';
-            //        /*this.applyFilters();*/
-            //        this.emitTags(); /*向父组件传递标签信息*/
-            //    }
-            //},
             selectTag(tag) {
-                /*this.selectedTags = this.selectedTags.filter(t => t !== tag);*/
                 this.selectedTag = tag;
                 this.emitTags(); /*向父组件传递标签信息*/
             },
@@ -69,9 +63,6 @@
                 this.$emit('price-range-updated', this.priceRange);
             }
         },
-        //mounted() {
-        //    this.filteredApps = this.apps; // 初始化显示所有应用
-        //},
     };
 </script>
 
@@ -127,23 +118,34 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-    .close-btn {
-        position: absolute;
-        top: 4px;
-        right: 6px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 18px;
-        color: #fff;
-        padding: 0;
-        line-height: 1;
-        transition: color 0.3s ease;
+    .tag .checkbox {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #fbb1a2;
+        margin-right: 10px;
+        position: relative;
+        display: inline-block;
+        transition: background 0.3s ease;
     }
 
-        .close-btn:hover {
-            color: #ddd;
+        .tag.selected .checkbox {
+            background: #fff; /* 选中时的填充颜色 */
+            border-color: #f99c8e; /* 选中时边框颜色 */
         }
+
+            .tag.selected .checkbox::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #007bff; /* 选中时复选框的内部圆点颜色 */
+                transform: translate(-50%, -50%); /* 使圆点居中 */
+            }
 
     .price-filter {
         display: flex;

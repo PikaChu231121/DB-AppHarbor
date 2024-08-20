@@ -3,13 +3,15 @@
         <alert-box :msg="alert"></alert-box>
         <confirm-box :msg="confirm"></confirm-box>
         <NotificationModal :visible="showNotification" :title="notificationTitle" :message="notificationMessage"
-            @close="showNotification = false" />
+                           @close="showNotification = false" />
         <div class="button-container">
             <button class="back-button" @click="goBack">Back to Shop</button>
         </div>
         <!-- 图片信息 -->
         <div class="image-placeholder">
-            <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
+            <div class="image-frame">
+                <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
+            </div>
         </div>
         <!-- 应用详情 -->
         <div class="app-details">
@@ -447,13 +449,23 @@
         margin-bottom: auto;
     }
 
+    .image-frame {
+        width: 300px; /* 固定宽度 */
+        height: 300px; /* 固定高度 */
+        border: 4px solid #ddd; /* 边框颜色 */
+        border-radius: 12px; /* 圆角 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+        overflow: hidden; /* 确保图片不会溢出边框 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff; /* 背景颜色与图片对比 */
+    }
+
     .app-image {
-        width: auto;
-        height: auto;
-        max-width: 95%;
-        max-height: 95%;
-        object-fit: cover;
-        display: block;
+        width: 100%; /* 自适应宽度 */
+        height: 100%; /* 自适应高度 */
+        object-fit: cover; /* 确保图片不会变形 */
     }
 
     .app-details {
