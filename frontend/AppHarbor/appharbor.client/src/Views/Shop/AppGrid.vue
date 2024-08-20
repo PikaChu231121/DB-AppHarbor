@@ -4,11 +4,11 @@
             <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
             <div class="app-details">
                 <h3 class="app-name">{{ app.name }}</h3>
-                <p class="app-price">Price: {{ app.price }}</p>
+                <p class="app-price" v-html="formattedPrice(app.price,app.discount)"></p>
                 <p class="app-category">Category: {{ app.category }}</p>
             </div>
         </div>
-        <!-- ʹ�ÿհ׵�ռλ����ȷ��ҳ���ϵ�Ӧ�ñ����������в��� -->
+        <!-- 使用空白的占位符，确保页面上的应用保持两行五列布局 -->
         <div v-for="n in emptySlots" :key="`empty-${n}`" class="app-item empty-slot"></div>
     </div>
 </template>
@@ -31,8 +31,41 @@
                 if (imgPath) {
                     return `http://localhost:5118${imgPath}`;
                 }
-                return '../../public/default.png'; // Ĭ��ͼƬ·��
+                return '../../public/default.png'; // 默认图片路径
+            },
+            formattedPrice(price, discount) {
+                console.log("Received price:", price);
+                console.log("Received discount:", discount);
+                if (price === 0) {
+                    return `<span>免费!</span>`;
+                }
+                console.log(price, discount);
+                const originalPrice = price.toFixed(2).split('.');
+                const originalIntegerPart = originalPrice[0];
+                const originalDecimalPart = originalPrice[1];
+
+                const effectiveDiscount = discount || 1; // 处理可能为 null 的情况
+                const discountedPrice = (price * effectiveDiscount).toFixed(2).split('.');
+                const discountedIntegerPart = discountedPrice[0];
+                const discountedDecimalPart = discountedPrice[1];
+
+                let result = `
+                    <span>
+                        ￥<span class="integer-part">${discountedIntegerPart}</span>.<span class="decimal-part">${discountedDecimalPart}</span>
+                    </span>
+                `;
+
+                if (effectiveDiscount < 1.0) {
+                    result += `
+                        <span style="text-decoration: line-through; font-size: 0.6em; color:gray;">
+                            原价：<span class="integer-part">${originalIntegerPart}</span>.<span class="decimal-part">${originalDecimalPart}</span>
+                        </span>
+                    `;
+                }
+
+                return result;
             }
+
         }
     }
 </script>
@@ -107,7 +140,7 @@
         font-family: 'Poppins', sans-serif; /* Friendly font */
     }
 
-    /* �հ�ռλ����ʽ */
+    /* 空白占位符样式 */
     .empty-slot {
         visibility: hidden;
     }
