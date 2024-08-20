@@ -13,8 +13,8 @@
             <div v-if="showAdvancedSearch" class="advanced-search">
                 <input v-model="searchName" placeholder="应用名称搜索..." />
                 <input v-model="searchCategory" placeholder="应用种类搜索..." />
-                <input v-model="searchVersion" placeholder="版本搜索..." />
-                <input v-model="searchState" placeholder="状态搜索..." />
+                <input v-model="searchVersion" placeholder="应用版本搜索..." />
+                <input v-model="searchState" placeholder="应用状态搜索..." />
             </div>
         </div>
         <div class="app-list-container">
@@ -111,13 +111,13 @@
                         </div>
                         <div class="form-group">
                             <label>版本:</label>
-                            <input v-model="selectedApp.version" placeholder="版本号" type="text" />
+                            <input v-model="selectedApp.version" placeholder="请输入新的版本号..." type="text" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>描述:</label>
-                        <textarea v-model="selectedApp.description" rows="4" placeholder="应用描述"></textarea>
+                        <textarea v-model="selectedApp.description" rows="4" placeholder="请输入应用描述..."></textarea>
                     </div>
 
                     <div class="form-group">
@@ -150,7 +150,7 @@
                             <label>原价:</label>
                             <div class="input-container">
                                 <span class="currency-symbol">￥</span>
-                                <input v-model="selectedApp.price" placeholder="原价" class="price-input" />
+                                <input v-model="selectedApp.price" placeholder="请输入原价..." class="price-input" />
                             </div>
                         </div>
 
@@ -174,6 +174,18 @@
                     <div class="button-group">
                         <button @click="saveAppChanges" class="save-button" :disabled="!isModified">保存</button>
                         <button @click="confirmDelete" class="delete-button">下架应用</button>
+                    </div>
+
+                    <div v-if="showConfirmDelete" class="modal">
+                        <div class="modal-content" style="text-align: center;">
+                            <span class="close" @click="closeConfirmDelete">&times;</span>
+                            <h2>确认下架</h2>
+                            <p class="confirmation-text" style="margin: 15px 0;">您确定要下架此应用吗？此操作无法撤销。</p>
+                            <div class="button-group" style="justify-content: center; gap: 20px;">
+                                <button @click="deleteApp" class="confirm-yes-button">是</button>
+                                <button @click="closeConfirmDelete" class="confirm-no-button">否</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 </div>
@@ -874,34 +886,35 @@
             background-color: #c82333;
         }
 
-    .confirm-button {
+    .confirm-yes-button {
         background-color: #dc3545;
         color: #fff;
-        padding: 8px 16px;
+        padding: 12px 24px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        margin-top: 10px;
-        margin-left: 5px;
-        margin-right: 55px;
+        font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        font-size: 16px;
     }
 
-        .confirm-button:hover {
+        .confirm-yes-button:hover {
             background-color: #c82333;
         }
 
-    .cancel-button {
+    .confirm-no-button {
         background-color: #6c757d;
         color: #fff;
-        padding: 8px 16px;
+        padding: 12px 24px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        font-family: 'Baloo 2', cursive, Arial, sans-serif;
+        font-size: 16px;
     }
 
-        .cancel-button:hover {
+        .confirm-no-button:hover {
             background-color: #5a6268;
         }
 
