@@ -18,7 +18,7 @@
                     <td>{{ report.applicationName }}</td>
                     <td>{{ report.merchantNickname }}</td>
                     <td>{{ report.userNickname }}</td>
-                    <td>{{ report.time }}</td>
+                    <td>{{ report.time.replace(' ', '-') }}</td>
                     <td>
                         <button @click="viewReport(report)">受理</button>
                     </td>
@@ -34,7 +34,7 @@
                 <p style="font-size:15px"><strong>举报用户:</strong> {{ selectedReport.userNickname }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>该用户ID:</strong> {{ selectedReport.userId }}</p>
                 <p style="font-size:15px"><strong>被举报应用:</strong> {{ selectedReport.applicationName }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>该应用ID:</strong> {{ selectedReport.applicationId }}</p>
                 <p style="font-size:15px"><strong>被举报应用商家:</strong> {{ selectedReport.merchantNickname }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>该商家ID:</strong> {{ selectedReport.merchantId }}</p>
-                <p style="font-size:15px"><strong>举报时间:</strong> {{ selectedReport.time }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>该举报ID:</strong> {{ selectedReport.reportId }}</p>
+                <p style="font-size:15px"><strong>举报时间:</strong> {{ selectedReport.time.replace(' ', '-') }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>该举报ID:</strong> {{ selectedReport.reportId }}</p>
 
                 <!-- New input and buttons -->
                 <div class="form-group">

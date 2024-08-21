@@ -18,7 +18,7 @@
                     <td>{{ reportreview.applicationName }}</td>
                     <td>{{ reportreview.merchantName }}</td>
                     <td>{{ translatedState(reportreview.state) }}</td>
-                    <td>{{ reportreview.time }}</td>
+                    <td>{{ reportreview.time.replace(' ', '-') }}</td>
                     <td>
                         <button @click="showDetails(reportreview)">查看详情</button> <!-- 查看详情按钮 -->
                     </td>
@@ -44,7 +44,7 @@
                 <p style="font-size:15px">被举报商家: {{ selectedReport.merchantName
                     }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该商家ID:{{
                     selectedReport.merchantId }}</p>
-                <p style="font-size:15px">受理时间: {{ selectedReport.time }}</p>
+                <p style="font-size:15px">受理时间: {{ selectedReport.time.replace(' ', '-') }}</p>
                 <p style="font-size:15px">受理该举报管理员编号: {{ selectedReport.adminId }}</p>
                 <!-- 添加更多详细内容 -->
             </div>
