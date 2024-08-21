@@ -21,10 +21,10 @@
 
         <!-- Announcement List -->
         <ul class="announcement-list" v-if="!noResults">
-            <li v-for="announce in paginatedAnnounces" :key="announce.id" class="announcement-item">
+            <li v-for="(announce, index) in paginatedAnnounces" :key="announce.id" class="announcement-item">
                 <h2 class="announcement-title">第{{ announce.id }}号公告：{{ announce.title }}</h2>
                 <p class="announcement-details">
-                    发布时间: <span class="detail-value">{{ announce.publishTime }}</span>
+                    发布时间: <span class="detail-value">{{ formattedCreateTime[index] }}</span>
                 </p>
                 <button class="view-detail-button" @click="openDetail(announce)">查看详细</button>
             </li>
@@ -100,7 +100,26 @@
                 const start = (this.currentPage - 1) * this.pageSize;
                 const end = start + this.pageSize;
                 return this.filteredAnnounces.slice(start, end);
-            }
+            },
+            formattedCreateTime() {
+                return this.paginatedAnnounces.map(announce => {
+                    let dateTime = announce.publishTime;
+                    // 替换"T"为空格
+                    dateTime = dateTime.replace('T', ' ');
+                    // 转换为 Date 对象
+                    let date = new Date(dateTime);
+                    // 增加8小时
+                    date.setHours(date.getHours() + 8);
+                    // 格式化为 YYYY-MM-DD HH:mm:ss
+                    let year = date.getFullYear();
+                    let month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    let day = ('0' + date.getDate()).slice(-2);
+                    let hours = ('0' + date.getHours()).slice(-2);
+                    let minutes = ('0' + date.getMinutes()).slice(-2);
+                    let seconds = ('0' + date.getSeconds()).slice(-2);
+                    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                });
+            }  
         },
         mounted() {
             this.searchAnnouncement(); // Initialize with default announcements
