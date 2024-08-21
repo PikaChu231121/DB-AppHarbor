@@ -90,11 +90,30 @@
             getReportList() {
                 axios.post('http://localhost:5118/api/report/getreportlist')
                     .then(response => {
-                        this.reports = response.data.$values;
+                        this.reports = response.data.$values.map(report => {
+                            report.time = this.formatTime(report.time);
+                            return report;
+                        });
                     })
                     .catch(error => {
                         console.error('查看举报列表失败:', error);
                     });
+            },
+            formatTime(dateTime) {
+                // Replace "T" with a space
+                dateTime = dateTime.replace('T', ' ');
+                // Convert to Date object
+                let date = new Date(dateTime);
+                // Add 8 hours
+                date.setHours(date.getHours() + 8);
+                // Format as YYYY-MM-DD HH:mm:ss
+                let year = date.getFullYear();
+                let month = ('0' + (date.getMonth() + 1)).slice(-2);
+                let day = ('0' + date.getDate()).slice(-2);
+                let hours = ('0' + date.getHours()).slice(-2);
+                let minutes = ('0' + date.getMinutes()).slice(-2);
+                let seconds = ('0' + date.getSeconds()).slice(-2);
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
             },
             viewReport(report) {
                 this.selectedReport = report;
