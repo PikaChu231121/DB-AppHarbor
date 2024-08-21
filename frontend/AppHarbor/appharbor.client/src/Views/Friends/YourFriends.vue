@@ -21,7 +21,6 @@
             </div>
         </div>
 
-
         <div class="main">
             <div class="header">
                 <div class="header-title">{{ selectedGroupName }}</div>
@@ -37,24 +36,28 @@
                         <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
                         <div class="friend-info">
                             <div class="friend-title">{{ friend.nickname }}</div>
-                            <div class="friend-description">{{ friend.state }}</div>
+                            <div class="friend-description" :class="translateState(friend.state).class">
+                                {{ translateState(friend.state).text }}
+                            </div>
                         </div>
                     </div>
                 </div>
-                    <div class="friend-item2" v-else>
-                        <div class="friend-item" v-for="friend in friends" :key="friend.id">
-                            <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
-                            <div class="friend-info">
-                                <div class="friend-title">{{ friend.nickname }}</div>
-                                <div class="friend-description">{{ friend.state }}</div>
+                <div class="friend-item2" v-else>
+                    <div class="friend-item" v-for="friend in friends" :key="friend.id">
+                        <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
+                        <div class="friend-info">
+                            <div class="friend-title">{{ friend.nickname }}</div>
+                            <div class="friend-description" :class="translateState(friend.state).class">
+                                {{ translateState(friend.state).text }}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 </template>
-s
+
 <script>
     import Cookies from 'js-cookie';
     import axios from 'axios';
@@ -63,11 +66,13 @@ s
             return {
                 searchQuery: '',
                 selectedGroup: null,
-                groups: [{ name: 'Family', friends: [], Chinese: '家人' },
-                        { name: 'Friend', friends: [], Chinese: '朋友' },
-                        { name: 'Classmate', friends: [], Chinese: '同学' },],
+                groups: [
+                    { name: 'Family', friends: [], Chinese: '家人' },
+                    { name: 'Friend', friends: [], Chinese: '朋友' },
+                    { name: 'Classmate', friends: [], Chinese: '同学' },
+                ],
                 friends: [],
-                map: { 'Family':'家人' }
+                map: { 'Family': '家人' }
             };
         },
         computed: {
@@ -89,7 +94,7 @@ s
                 if (!this.selectedGroup.name) {
                     return [];
                 }
-                const group = this.groups.find(group => group.name == this.selectedGroup.name);
+                const group = this.groups.find(group => group.name === this.selectedGroup.name);
                 return group ? group.friends : [];
             },
         },
@@ -104,7 +109,7 @@ s
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Family') {
-                                group.friends=response.data.data.$values;
+                                group.friends = response.data.data.$values;
                             }
                         });
                     })
@@ -119,7 +124,7 @@ s
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Friend') {
-                                group.friends=response.data.data.$values;
+                                group.friends = response.data.data.$values;
                             }
                         });
                     })
@@ -155,7 +160,6 @@ s
                     });
 
                 console.log(this.friends);
-            
             },
 
             toggleGroupSelection(group) {
@@ -170,8 +174,20 @@ s
                 if (avatarPath) {
                     return `http://localhost:5118${avatarPath}`;
                 }
-                return '../../../public/default.png'; // Ĭ  ͷ  ·  
+                return '../../../public/default.png'; // 默认头像路径
+            },
+
+            translateState(state) {
+                switch (state) {
+                    case 'active':
+                        return { text: '正常', class: 'status-active' };
+                    case 'banned':
+                        return { text: '被封禁', class: 'status-banned' };
+                    default:
+                        return { text: state, class: '' };
+                }
             }
+
         },
         mounted() {
             this.getfriend();
@@ -342,11 +358,13 @@ s
         width: 200px;
         border: 2px solid #d3d3d3;
     }
+
     .friend-item1, .friend-item2 {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
     }
+
     .avatar {
         width: 50px;
         height: 50px;
@@ -367,4 +385,15 @@ s
     .friend-description {
         color: var(--md-sys-color-on-surface-variant);
     }
+
+    .status-active {
+        color: green;
+        font-weight: bold;
+    }
+
+    .status-banned {
+        color: red;
+        font-weight: bold;
+    }
+
 </style>
