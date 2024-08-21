@@ -73,7 +73,7 @@ namespace AppHarbor.Server.Controllers
                     id = f.Id,
                     applicationId = f.ApplicationId,
                     createTime = f.CreateTime,
-                    visibility = f.Visibility,
+                    // visibility = f.Visibility,
                     userId = f.UserId,
                     applicationName = f.Application.Name,
                     applicationCategory = f.Application.Category,
@@ -237,7 +237,7 @@ namespace AppHarbor.Server.Controllers
             {
                 ApplicationId = request.Id,
                 UserId = tokenEntry.Id,
-                Visibility = "public",
+                // Visibility = "public",
                 CreateTime = DateTime.UtcNow
             };
             _dbContext.Favourites.Add(newFavourite);

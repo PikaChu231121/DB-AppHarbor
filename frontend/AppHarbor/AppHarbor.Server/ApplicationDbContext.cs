@@ -362,10 +362,10 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.UserId)
                 .HasColumnType("NUMBER")
                 .HasColumnName("USER_ID");
-            entity.Property(e => e.Visibility)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("VISIBILITY");
+            // entity.Property(e => e.Visibility)
+            //     .HasMaxLength(255)
+            //     .IsUnicode(false)
+            //     .HasColumnName("VISIBILITY");
 
             entity.HasOne(d => d.Application).WithMany(p => p.Favourites)
                 .HasForeignKey(d => d.ApplicationId)

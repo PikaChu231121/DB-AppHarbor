@@ -39,7 +39,7 @@ public partial class Favourite
 
     public DateTime? CreateTime { get; set; }
 
-    public string? Visibility { get; set; }
+    // public string? Visibility { get; set; }
 
     public decimal UserId { get; set; }
 
