@@ -568,7 +568,7 @@
 
     .faq-content {
         height: 100px;
-        overflow: hidden;
+        overflow: auto;
         transition: visibility 0.3s, opacity 0.3s;
     }
 

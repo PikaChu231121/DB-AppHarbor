@@ -48,6 +48,7 @@
 
             <!-- 中间的应用详情部分 -->
             <div class="app-container">
+                <button class="circle-button" @click="backToDetails(app.id)">返回</button> <!-- 新增的圆形按钮 -->
                 <div class="app-image-wrapper">
                     <img loading="lazy" :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
                 </div>
@@ -60,11 +61,13 @@
 
             <!-- 右侧部分 -->
             <div class="right-container">
-                <div class="pricelist-container">
-                    <div class="text-pricelist">Price List</div>
-                    <div class="price-list-wrapper">
-                        <div v-for="item in pricelist" :key="item.id" class="price-item">
-                            <p class="price-text">List item</p>
+                <div class="tips-container">
+                    <div class="text-tips">AppHarbor</div>
+                    <div class="tips-wrapper">
+                        <div class="tips-item">
+                            <p class="tips-text">
+                            快为你的小伙伴购买心仪的应用吧！获取应用后即可前往"我的库存"中查看并下载。
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -109,12 +112,6 @@
                 confirm: '',
                 showModal: false,
                 purchaseMessage: '',
-                pricelist: [
-                    { id: 1 },
-                    { id: 2 },
-                    { id: 3 },
-                    { id: 4 },
-                ]
             };
         },
         methods: {
@@ -143,6 +140,9 @@
             },
             closeModal() {
                 this.showModal = false;
+            },
+            backToDetails(appId){
+                this.$router.push(`/app/${appId}`);
             },
             updateCredit() {
                 console.log('credit change!');
@@ -259,9 +259,6 @@
             },
             changeReceiver(newReceiver) {
                 // 更改当前friend的属性
-                //this.receiver.nickname = newReceiver.nickname;
-                //this.receiver.id = newReceiver.id;
-                //this.receiver.avatar = newReceiver.avatar;
                 this.receiver = newReceiver;
 
                 this.showDropdown = false; // 关闭下拉菜单
@@ -527,7 +524,31 @@
         margin-right: 20px;
         margin-top: auto;
         margin-bottom: auto;
+        position: relative; /* 使容器成为定位上下文 */
     }
+
+    .circle-button {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 60px;
+        height: 30px;
+        border-radius: 5px;
+        border: none;
+        background-color: #fbb1a2;
+        color: white;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .circle-button:hover {
+            background-color: #e64a19; /* 悬停时的背景颜色 */
+        }
 
     .app-image-wrapper {
         width: 100%;
@@ -577,16 +598,52 @@
         justify-content:space-around;
     }
 
-    .pricelist-container {
+    .tips-container {
         width: 100%;
         height: 200px;
-        background-color: #fff5f5;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #ffebf2;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         margin-bottom: 20px;
-        padding: 10px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        border: 2px /*dashed*/ #ff6f91;
+    }
+
+    .text-tips {
+        font-size: 18px;
+        color: #ff4081;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .tips-wrapper {
+        flex-grow: 1; /* 让tips-wrapper填充剩余空间 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* 垂直居中 */
+        gap: 10px;
         overflow-y: auto;
     }
+
+    .tips-item {
+        background-color: #ffe4e9;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        height: 100px;
+    }
+
+    .tips-text {
+        font-size: 16px;
+        color: #ff4081;
+        text-align: center;
+    }
+
 
     .purchase-container {
         width: 100%;
