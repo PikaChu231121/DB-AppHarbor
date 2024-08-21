@@ -103,9 +103,9 @@
             //    return this.selectedTags.length === 0;
             //},
             sortApps() {
-                if (this.sortMethod === 'Price descending') {
+                if (this.sortMethod === '价格') {
                     this.apps.sort((a, b) => b.price - a.price);
-                } else if (this.sortMethod === 'Rating') {
+                } else if (this.sortMethod === '评分') {
                     this.apps.sort((a, b) => b.downloadCount - a.downloadCount);
                 }
             },

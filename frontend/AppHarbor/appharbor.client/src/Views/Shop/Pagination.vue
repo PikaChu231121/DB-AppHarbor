@@ -4,7 +4,7 @@
             <!-- Previous Page Button -->
             <button class="pagination-button previous" @click="goToPreviousPage" :disabled="isFirstPage">
                 <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/eb00729ac35dd30cdcce73386ced7ed9edb9836a5c738bba749960c794ad5761?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="" class="pagination-icon" />
-                <span>Previous</span>
+                <span>上一页</span>
             </button>
             <!-- Page Numbers -->
             <ul class="pagination-list">
@@ -22,7 +22,7 @@
             </ul>
             <!-- Next Page Button -->
             <button class="pagination-button next" @click="goToNextPage" :disabled="isLastPage">
-                <span>Next</span>
+                <span>下一页</span>
                 <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/b85c02f0b5539596af9cb766334ec851876c21e920ea6e52714e82da9823a8fb?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="" class="pagination-icon" />
             </button>
         </div>

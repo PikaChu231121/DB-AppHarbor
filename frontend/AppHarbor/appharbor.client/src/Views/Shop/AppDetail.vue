@@ -5,7 +5,7 @@
         <NotificationModal :visible="showNotification" :title="notificationTitle" :message="notificationMessage"
                            @close="showNotification = false" />
         <div class="button-container">
-            <button class="back-button" @click="goBack">Back to Shop</button>
+            <button class="back-button" @click="goBack">返回商店</button>
         </div>
         <!-- 图片信息 -->
         <div class="image-placeholder">
@@ -288,7 +288,6 @@
                 });
             },
             deleteComment(commentId) {
-                const token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/comment/deleteappcomment', {
                     commentId: commentId
                 })
@@ -333,7 +332,7 @@
                     reportTime: reportTime, // 传递调整后的时间
                     applicationId: this.app.id
                 })
-                    .then(response => {
+                    .then(() => {
                         this.reportContent = '';
                         this.notificationTitle = '成功';
                         this.notificationMessage = `成功举报 ${this.app.name}`;

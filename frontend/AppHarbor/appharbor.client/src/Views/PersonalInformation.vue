@@ -134,7 +134,7 @@
                 var formData = new FormData();
                 formData.append('token', token);
                 axios.post('http://localhost:5118/api/user/logout', formData)
-                    .then(response => {
+                    .then(() => {
                         // 显示登出成功提示
                         alert("您已成功登出");
                         Cookies.remove('token');
