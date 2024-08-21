@@ -1,5 +1,5 @@
 <template>
-    <img class="background-image" src="@/assets/admin.png">
+    <img class="background-image" src="@/assets/appharbor - admin background.svg">
     <div class="admin-page">
         <Header />
         <MainLayout />
@@ -34,7 +34,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url('@/assets/admin.png');
+       
         background-size: cover;
         background-position: center;
         z-index: -1; /* È·±£±³¾°Í¼Æ¬ÔÚµ×²ã */
