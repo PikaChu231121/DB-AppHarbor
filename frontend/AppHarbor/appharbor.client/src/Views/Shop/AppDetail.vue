@@ -3,13 +3,15 @@
         <alert-box :msg="alert"></alert-box>
         <confirm-box :msg="confirm"></confirm-box>
         <NotificationModal :visible="showNotification" :title="notificationTitle" :message="notificationMessage"
-            @close="showNotification = false" />
+                           @close="showNotification = false" />
         <div class="button-container">
             <button class="back-button" @click="goBack">Back to Shop</button>
         </div>
         <!-- 图片信息 -->
         <div class="image-placeholder">
-            <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
+            <div class="image-frame">
+                <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
+            </div>
         </div>
         <!-- 应用详情 -->
         <div class="app-details">
@@ -53,7 +55,7 @@
                           :class="{ filled: star <= comment.score }">&#9733;</span>
                 </div>
                 <p class="content">{{ comment.content }}</p>
-                <span class="publishTime">{{ comment.publishTime }}</span>
+                <span class="publishTime">发布于 {{ formatDate(comment.publishTime) }}</span>
             </div>
             <div class="delete-button-container">
                 <button v-if="comment.userId === user.id"
@@ -321,31 +323,43 @@
             submitReport() {
                 const token = Cookies.get('token');
 
-            // 获取当前时间并加上 8 小时
-            const now = new Date();
-            const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
+                // 获取当前时间并加上 8 小时
+                const now = new Date();
+                const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
 
-            axios.post('http://localhost:5118/api/report/publishreport', {
-                token: token,
-                content: this.reportContent,
-                reportTime: reportTime, // 传递调整后的时间
-                applicationId: this.app.id
-            })
-                .then(response => {
-                    this.reportContent = '';
-                    this.notificationTitle = '成功';
-                    this.notificationMessage = `成功举报 ${this.app.name}`;
-                    this.showNotification = true;
-                    this.showReportModal = false;
+                axios.post('http://localhost:5118/api/report/publishreport', {
+                    token: token,
+                    content: this.reportContent,
+                    reportTime: reportTime, // 传递调整后的时间
+                    applicationId: this.app.id
                 })
-                .catch(error => {
-                    this.reportContent = '';
-                    this.notificationTitle = '失败';
-                    this.notificationMessage = '提交报告时发生错误。';
-                    this.showNotification = true;
-                    console.error('Error submitting report:', error);
-                });
-        }
+                    .then(response => {
+                        this.reportContent = '';
+                        this.notificationTitle = '成功';
+                        this.notificationMessage = `成功举报 ${this.app.name}`;
+                        this.showNotification = true;
+                        this.showReportModal = false;
+                    })
+                    .catch(error => {
+                        this.reportContent = '';
+                        this.notificationTitle = '失败';
+                        this.notificationMessage = '提交报告时发生错误。';
+                        this.showNotification = true;
+                        console.error('Error submitting report:', error);
+                    });
+            },
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).replace(/\//g, '-'); // 将斜杠替换为短横线
+            },
     },
     computed: {
         formattedPrice() {
@@ -442,13 +456,23 @@
         margin-bottom: auto;
     }
 
+    .image-frame {
+        width: 300px; /* 固定宽度 */
+        height: 300px; /* 固定高度 */
+        border: 4px solid #ddd; /* 边框颜色 */
+        border-radius: 12px; /* 圆角 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+        overflow: hidden; /* 确保图片不会溢出边框 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff; /* 背景颜色与图片对比 */
+    }
+
     .app-image {
-        width: auto;
-        height: auto;
-        max-width: 95%;
-        max-height: 95%;
-        object-fit: cover;
-        display: block;
+        width: 100%; /* 自适应宽度 */
+        height: 100%; /* 自适应高度 */
+        object-fit: cover; /* 确保图片不会变形 */
     }
 
     .app-details {
