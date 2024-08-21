@@ -1,5 +1,5 @@
 <template>
-    <img class="background-image" src="@/assets/merchant.png">
+    <img class="background-image" src="@/assets/merchant.svg">
     <div class="main-layout">
         <SideBar @menuItemSelected="handleMenuSelection" />
         <div class="content">
@@ -87,13 +87,12 @@ export default {
     padding: 16px;
 }
 
-.background-image {
+    .background-image {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url('@/assets/admin.png');
         background-size: cover;
         background-position: center;
         z-index: -1;
