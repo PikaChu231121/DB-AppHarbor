@@ -180,9 +180,9 @@
             translateState(state) {
                 switch (state) {
                     case 'active':
-                        return { text: '正常', class: 'status-active' };
+                        return { text: '• 活跃', class: 'status-active' };
                     case 'banned':
-                        return { text: '被封禁', class: 'status-banned' };
+                        return { text: '• 被封禁', class: 'status-banned' };
                     default:
                         return { text: state, class: '' };
                 }
@@ -387,12 +387,12 @@
     }
 
     .status-active {
-        color: green;
+        color: #3cbfa5;
         font-weight: bold;
     }
 
     .status-banned {
-        color: red;
+        color: #5f480b;
         font-weight: bold;
     }
 
