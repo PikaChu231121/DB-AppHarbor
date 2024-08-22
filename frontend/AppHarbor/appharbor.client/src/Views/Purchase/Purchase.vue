@@ -8,7 +8,7 @@
                 <div class="section_2">
                     <span class="title">应用购买</span>
                     <div class="recipient-section">
-                        <span class="label">接收者 :</span>
+                        <span class="label">接收者:</span>
                         <div class="dropdown">
                             <div class="receiver-item">
                                 <img :src="getAvatarUrl(receiver.avatar)" class="avatar" alt="Receiver Avatar">
@@ -28,7 +28,7 @@
                             </div>
                         </div>
                     </div>
-                    <span class="label">买家 (您):</span>
+                    <span class="label">买家(您):</span>
                     <div class="user-item">
                         <img :src="getAvatarUrl(user.avatar)" class="avatar" alt="User Avatar">
                         <div class="user-details">
