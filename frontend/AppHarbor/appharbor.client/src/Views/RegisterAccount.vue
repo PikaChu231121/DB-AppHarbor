@@ -198,11 +198,13 @@
         background-color: #f3c7ba;
         color: white;
         font-size: 1.2em;
+        transform: scale(1.05);
         cursor: pointer;
         transition: background-color 0.3s, transform 0.3s;
     }
 
         .register-button:hover {
+            transform: scale(1.05);
             background-color: #fbb1a2;
         }
 
@@ -320,7 +322,9 @@
         justify-content: space-between;
         text-align: center;
         cursor: pointer;
+        transform: scale(1.05);
         font-family: 'Hanyi Wenhei 85W', sans-serif;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
 
     .secondary-button {
@@ -335,9 +339,13 @@
         text-align: center;
         cursor: pointer;
         font-family: 'Hanyi Wenhei', sans-serif;
+        transform: scale(1.05);
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
 
         .login-button:hover, .secondary-button:hover {
+            transition: background-color 0.3s, transform 0.3s, color 0.3s;
+            transform: scale(1.05);
             background-color: #fbb1a2;
         }
 

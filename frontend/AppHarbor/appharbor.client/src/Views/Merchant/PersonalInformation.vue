@@ -288,6 +288,7 @@
     }
 
         button:disabled {
+            transform: scale(1.05);
             cursor: not-allowed;
         }
 
