@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0" version="24.7.7">
   <diagram name="Page-1" id="iKj9R7WFu6zMaDtNY0kP">
-    <mxGraphModel dx="1554" dy="855" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
+    <mxGraphModel dx="2072" dy="1140" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -450,35 +450,6 @@
         </mxCell>
         <mxCell id="wdePkJPWk-Q9Up0uXQ0k-108" value="商家状态" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" vertex="1" parent="wdePkJPWk-Q9Up0uXQ0k-101">
           <mxGeometry y="218" width="160" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="wdePkJPWk-Q9Up0uXQ0k-109" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;labelBackgroundColor=default;endArrow=classic;shape=link;" edge="1" parent="1" source="wdePkJPWk-Q9Up0uXQ0k-14" target="wdePkJPWk-Q9Up0uXQ0k-111">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="2290" y="3127" />
-              <mxPoint x="2290" y="3127" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wdePkJPWk-Q9Up0uXQ0k-110" value="" style="group;fontSize=18;" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="2100" y="2992" width="150" height="180" as="geometry" />
-        </mxCell>
-        <mxCell id="wdePkJPWk-Q9Up0uXQ0k-111" value="操作" style="html=1;whiteSpace=wrap;aspect=fixed;shape=isoRectangle;fontSize=18;" vertex="1" parent="wdePkJPWk-Q9Up0uXQ0k-110">
-          <mxGeometry y="90" width="150" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="wdePkJPWk-Q9Up0uXQ0k-112" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;labelBackgroundColor=default;endArrow=classic;" edge="1" parent="1" source="wdePkJPWk-Q9Up0uXQ0k-111" target="wdePkJPWk-Q9Up0uXQ0k-101">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="2510" y="3240" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="2050" y="3127" />
-              <mxPoint x="2050" y="3127" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="wdePkJPWk-Q9Up0uXQ0k-113" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=none;fontSize=18;" edge="1" parent="1" source="wdePkJPWk-Q9Up0uXQ0k-114" target="wdePkJPWk-Q9Up0uXQ0k-111">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="wdePkJPWk-Q9Up0uXQ0k-114" value="操作类型&lt;div style=&quot;font-size: 18px;&quot;&gt;操作时间&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="2115" y="2960" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wdePkJPWk-Q9Up0uXQ0k-115" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;labelBackgroundColor=default;endArrow=none;" edge="1" parent="1" source="wdePkJPWk-Q9Up0uXQ0k-118" target="wdePkJPWk-Q9Up0uXQ0k-101">
           <mxGeometry relative="1" as="geometry">
