@@ -288,6 +288,8 @@
         justify-content: space-between;
         text-align: center;
         cursor: pointer;
+        transform: scale(1.05);
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
         font-family: 'Hanyi Wenhei 85W', sans-serif;
     }
 
@@ -301,11 +303,15 @@
         font-size: 0.9em;
         justify-content: space-between;
         text-align: center;
+        transform: scale(1.05);
         cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
         font-family: 'Hanyi Wenhei', sans-serif;
     }
 
         .login-button:hover, .secondary-button:hover {
+            transform: scale(1.05);
+            transition: background-color 0.3s, transform 0.3s, color 0.3s;
             background-color: #fbb1a2;
         }
 

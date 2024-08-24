@@ -253,6 +253,7 @@
         text-align: center;
         cursor: pointer;
         font-family: 'Hanyi Wenhei 85W', sans-serif;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
 
     .secondary-button {
@@ -267,9 +268,11 @@
         text-align: center;
         cursor: pointer;
         font-family: 'Hanyi Wenhei', sans-serif;
+        transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
 
         .login-button:hover, .secondary-button:hover {
+            transform: scale(1.05);
             background-color: #fbb1a2;
         }
 

@@ -121,7 +121,7 @@
 
                 setTimeout(() => {
                     if (packageUrl) {
-                        window.open(packageUrl, '_blank');
+                        window.open(`http://localhost:5118${packageUrl}`, '_blank');
                     } else {
                         console.error('Package URL is missing');
                     }

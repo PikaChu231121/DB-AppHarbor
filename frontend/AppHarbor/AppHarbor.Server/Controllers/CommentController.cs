@@ -41,16 +41,6 @@ namespace AppHarbor.Server.Controllers
         [HttpPost("getappcomment")]
         public IActionResult GetAppComment([FromBody] GetAppCommentModel getappcommentModel)
         {
-            //var comments = _dbContext.Comments.Where(a => a.ApplicationId == getappcommentModel.ApplicationId).ToList();
-            ////comment_[] resultlist = new comment_[100];
-            //comments.ForEach(a =>
-            //{
-            //    a.User = _dbContext.Users.Find(a.UserId);
-            //});
-            //comments = comments.OrderBy(a => a.PublishTime).ToList();
-
-            ////return Ok(comments);
-            ///
             var comments = _dbContext.Comments
                 .Where(a => a.ApplicationId == getappcommentModel.ApplicationId && a.State != "banned")
                 .Include(c => c.User)
@@ -105,6 +95,29 @@ namespace AppHarbor.Server.Controllers
             if (user == null)
             {
                 return BadRequest(new { success = false, msg = "User not exist!" });
+            }
+
+            // 检查用户是否拥有该应用
+            var existingOrder = _dbContext.Orders
+                        .FirstOrDefault(o => o.ApplicationId == postAppCommentModel.ApplicationId && o.ReceiverId == user.Id);
+
+            if (existingOrder == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    msg = "你必须拥有该应用才能评论"
+                });
+            }
+
+            // 检查评论内容是否为空
+            if (string.IsNullOrWhiteSpace(postAppCommentModel.Content))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    msg = "评论内容不能为空"
+                });
             }
 
             var newComment = new Comment

@@ -157,7 +157,7 @@
                         </h3>
                         <p>用户ID：{{ user.userId }}</p>
                         <p>封禁操作执行管理员ID：{{ user.adminId }}</p>
-                        <p>封禁时间：{{ user.time }}</p>
+                        <p>封禁时间：{{ user.time.replace('T', '-') }}</p>
                         <p>封禁原因：{{ user.reason }}</p>
                     </div>
                     <div class="app-actions">
@@ -176,7 +176,7 @@
                         </h3>
                         <p>用户ID：{{ user.id }}</p>
                         <p>用户昵称：{{ user.nickname }}</p>
-                        <p>账号注册时间：{{ user.registerTime }}</p>
+                        <p>账号注册时间：{{ user.registerTime.replace('T', '-') }}</p>
                     </div>
                     <div class="app-actions">
                         <button @click="handleBan(user)" class="action-button">封禁</button>
@@ -194,7 +194,7 @@
                         </h3>
                         <p>商家ID：{{ mer.userId}}</p>
                         <p>封禁操作执行管理员ID：{{ mer.adminId }}</p>
-                        <p>封禁时间：{{ mer.time }}</p>
+                        <p>封禁时间：{{ mer.time.replace('T', '-') }}</p>
                         <p>封禁原因：{{ mer.reason }}</p>
                     </div>
                     <div class="app-actions">
@@ -212,7 +212,7 @@
                         </h3>
                         <p>商家ID：{{ mer.id }}</p>
                         <p>商家昵称：{{ mer.nickname }}</p>
-                        <p>商家注册时间：{{ mer.registerTime }}</p>
+                        <p>商家注册时间：{{ mer.registerTime.replace('T', '-') }}</p>
                     </div>
                     <div class="app-actions">
                         <button @click="handleMerBan(mer)" class="action-button">封禁</button>
@@ -258,7 +258,7 @@
                         <h3>用户: {{ comment.nickname }}</h3>
                         <p>评论应用: {{ comment.appName }}</p>
                         <p>评分: {{ comment.score }}</p>
-                        <p>评论时间: {{ comment.publishTime }}</p>
+                        <p>评论时间: {{ comment.publishTime.replace('T', '-') }}</p>
                     </div>
                     <div class="comment-content">
                         <p>{{ comment.content }}</p>

@@ -6,9 +6,9 @@
             <!-- 左侧部分 -->
             <div class="left-container">
                 <div class="section_2">
-                    <span class="title">BUY NOW</span>
+                    <span class="title">应用购买</span>
                     <div class="recipient-section">
-                        <span class="label">TO :</span>
+                        <span class="label">接收者:</span>
                         <div class="dropdown">
                             <div class="receiver-item">
                                 <img :src="getAvatarUrl(receiver.avatar)" class="avatar" alt="Receiver Avatar">
@@ -28,7 +28,7 @@
                             </div>
                         </div>
                     </div>
-                    <span class="label">from (you):</span>
+                    <span class="label">买家(您):</span>
                     <div class="user-item">
                         <img :src="getAvatarUrl(user.avatar)" class="avatar" alt="User Avatar">
                         <div class="user-details">
@@ -41,7 +41,7 @@
                     <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/ebfe3a97bf3fbf1744b64e98bf537a292b984f51f5a76525c09758e46a083f17?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" class="wallet-img" />
                     <div class="money">
                         <div class="text-money">￥{{ user_credit }}</div>
-                        <div class="text-left">Left</div>
+                        <div class="text-left">余额</div>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="purchase-container">
-                    <div class="text-total">Total</div>
+                    <div class="text-total">价格</div>
                     <div class="purchase-price" v-html="formattedPrice"></div>
                     <button class="purchase-button" @click="handlePurchase">确认购买</button>
                 </div>

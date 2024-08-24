@@ -37,7 +37,7 @@
                             查看内容
                         </button>
                     </td>
-                    <td style="font-size: 16px;">{{ report.reportTime }}</td>
+                    <td style="font-size: 16px;">{{ report.reportTime.replace('T', '-') }}</td>
                     <td :class="getStatusClass(report.reportState)" style="font-size: 16px;">
                         {{ translatedState(report) }}
                     </td>
@@ -59,9 +59,11 @@
         <!-- 详细信息弹窗 -->
         <div v-if="selectedReport" class="detail-popup">
             <h3 style="font-size: 25px; font-weight: bolder">详细信息</h3>
-            <p style="font-size: 17px;"><strong
-                    style="font-size: 19px; font-weight: bolder">受理时间:&nbsp;&nbsp;&nbsp;</strong> {{
-                        selectedReport.reviewInfo.reviewTime }}</p>
+            <p style="font-size: 17px;">
+                <strong style="font-size: 19px; font-weight: bolder">受理时间:&nbsp;&nbsp;&nbsp;</strong> {{
+                        selectedReport.reviewInfo.reviewTime.replace('T', '-')
+                }}
+            </p>
             <p style="font-size: 17px;"><strong
                     style="font-size: 19px; font-weight: bolder">受理结果:&nbsp;&nbsp;&nbsp;</strong> {{
                         selectedReport.reviewInfo.reviewResult }}</p>

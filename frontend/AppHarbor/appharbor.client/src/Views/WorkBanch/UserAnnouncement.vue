@@ -26,7 +26,7 @@
             <li v-for="(announce, index) in paginatedAnnounces" :key="announce.id" class="announcement-item">
                 <h2 class="announcement-title">第{{ announce.id }}号公告：{{ announce.title }}</h2>
                 <p class="announcement-details">
-                    发布时间: <span class="detail-value">{{ formattedCreateTime[index] }}</span>
+                    发布时间: <span class="detail-value">{{ formattedCreateTime[index].replace(' ', '-') }}</span>
                 </p>
                 <button class="view-detail-button" @click="openDetail(announce)">查看详细</button>
             </li>
@@ -40,7 +40,7 @@
                     发布公告管理员: <span class="detail-value">{{ selectedAnnouncement.adminNickname }}</span>
                 </p>
                 <p class="popup-details">
-                    发布时间: <span class="detail-value">{{ selectedAnnouncement.publishTime }}</span>
+                    发布时间: <span class="detail-value">{{ selectedAnnouncement.publishTime.replace('T', '-') }}</span>
                 </p>
                 <p class="popup-details">
                     公告内容:

@@ -69,7 +69,7 @@
             <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
             <div class="score">
                 <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }"
-                    @click="setScore(star)">&#9733;</span>
+                      @click="setScore(star)">&#9733;</span>
             </div>
             <button class="button" @click="submitComment">发布评论</button>
         </div>
@@ -85,6 +85,15 @@
             <button class="rbutton" @click="closeReportModal">取消</button>
         </div>
     </div>
+
+    <!-- 评论弹窗 -->
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+        <div class="modal-content" @click.stop>
+            <p>{{ commentMessage }}</p>
+            <button @click="closeModal">关闭</button>
+        </div>
+    </div>
+
 </template>
 
 <script>
@@ -117,7 +126,9 @@
                 reportContent: '', // 举报内容
                 showNotification: false,
                 notificationTitle: '',
-                notificationMessage: ''
+                notificationMessage: '',
+                showModal: false, // 是否显示评论弹窗
+                commentMessage: '',
             };
         },
         created() {
@@ -238,13 +249,9 @@
                 axios.post('http://localhost:5118/api/comment/getappcomment', { ApplicationId: appId })
                     .then(response => {
                         this.comments = response.data.$values;
-                        console.log("12 length of comments is " + this.comments.length);
-                        console.log(this.comments[0].id);
-                        console.log(this.comments[1].id);
                     })
                     .catch(error => {
                         console.error('Error fetching app comments:', error);
-                        console.log("21");
                     });
             },
             fetchUserInfo() {
@@ -271,7 +278,10 @@
                 .then(response => {
                     const parsedData = response.data;
                     if (parsedData && parsedData.success) {
-                        this.confirmNotification('评论成功！');
+                        // 评论弹窗
+                        this.commentMessage = '评论成功！';
+                        this.showModal = true;
+                        // 更新评论显示
                         const appId = this.$route.params.id;
                         this.fetchAllComments(appId);
                         // 清空评论表单
@@ -279,12 +289,15 @@
                         this.newComment.score = 0;
                         /*this.isFavourited = true;*/
                     } else {
-                        this.alertNotification('评论失败：' + parsedData.msg);
+                        this.commentMessage = '评论失败：' + parsedData.msg;
+                        this.showModal = true;
                     }
                 })
-                .catch(error => {
+                    .catch(error => {
+                    const parsedData = error.response.data;
                     console.error('Error adding comment:', error);
-                    this.alertNotification('评论失败：' + error.message);
+                    this.commentMessage = '评论失败：' + parsedData.msg;
+                    this.showModal = true;
                 });
             },
             deleteComment(commentId) {
@@ -294,16 +307,22 @@
                     .then(response => {
                         const parsedData = response.data;
                         if (parsedData && parsedData.success) {
-                            this.confirmNotification('删除评论成功！');
+                            this.commentMessage = '删除评论成功！';
+                            this.showModal = true;
                             this.fetchAllComments(this.app.id); // 重新获取评论列表以更新页面
                         } else {
-                            this.alertNotification('删除评论失败：' + parsedData.msg);
+                            this.commentMessage = '删除评论失败：' + parsedData.msg;
+                            this.showModal = true;
                         }
                     })
                     .catch(error => {
                         console.error('Error deleting comment:', error);
-                        this.alertNotification('删除评论失败：' + error.message);
+                        this.commentMessage = '删除评论失败：' + error.message;
+                        this.showModal = true;
                     });
+            },
+            closeModal() {
+                this.showModal = false;
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
@@ -734,5 +753,47 @@
         margin-left: 10px;
         margin-right: auto;
     }
+
+    /* 弹窗遮罩 */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* 半透明暗色 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    /* 弹窗内容 */
+    .modal-content {
+        background-color: #fff;
+        padding: 30px; /* 增加内边距 */
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        z-index: 1001;
+        width: 400px; /* 设置弹窗的宽度 */
+        max-width: 90%; /* 确保在小屏幕上弹窗不会太大 */
+    }
+
+        .modal-content button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #efc2bb;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .modal-content button:hover {
+                background-color: #e89a8d;
+                transform: translateY(-2px);
+            }
+
+
 
 </style>
