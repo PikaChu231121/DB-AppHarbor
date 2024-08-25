@@ -3,7 +3,7 @@
         <div class="filter">
             <!-- 标签筛选部分 -->
             <div class="tag-filter">
-                <h2>关键词</h2>
+                <h2 class="key">关键词</h2>
                 <div class="tag"
                      v-for="tag in Tags"
                      :key="tag"
@@ -16,8 +16,8 @@
 
             <!-- 价格筛选部分 -->
             <div class="price-filter">
-                <h2>价格</h2>
-                <label for="priceRange">价格范围: {{ priceRange[0] }} - {{ priceRange[1] }} 元</label>
+                <h2 class="price">价格</h2>
+                <label for="priceRange">{{ priceRange[0] }} - {{ priceRange[1] }} 元</label>
                 <div class="range-container">
                     <input type="range"
                            id="priceRangeMin"
@@ -68,20 +68,18 @@
 
 <style scoped>
     .FilterSection {
-        height: 100%;
-        width: 90%;
         border-radius: 12px;
-        background-color: #f5d7c4; /* 背景颜色 */
-        text-align: center;
+        background-color: white; /* 背景颜色 */
+        //text-align:left;
         display: flex;
-        flex-direction: column;
-        padding: 20px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        //flex-direction: column;
+        padding: 0px;
         transition: background-color 0.3s ease;
+        border: 2px solid whitesmoke;
     }
 
         .FilterSection:hover {
-            background-color: #efc2bb; /* 悬停时背景颜色 */
+            background-color: #FCF8F8; /* 悬停时背景颜色 */
         }
 
     .filter {
@@ -100,17 +98,14 @@
     .tag {
         display: inline-flex;
         align-items: center;
-        background-color: #fbb1a2;
-        color: #fff;
+        background-color: white;
+        color: #67575a;
         padding: 10px 20px; /* 增加内边距 */
         margin-right: 10px; /* 增加标签之间的间隔 */
         border-radius: 20px;
         position: relative;
-        font-size: 16px;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-        font-weight: 500;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        border: 2px solid #FFE7EA;
     }
 
         .tag:hover {
@@ -143,7 +138,7 @@
                 width: 8px;
                 height: 8px;
                 border-radius: 50%;
-                background: #007bff; /* 选中时复选框的内部圆点颜色 */
+                background: pink; /* 选中时复选框的内部圆点颜色 */
                 transform: translate(-50%, -50%); /* 使圆点居中 */
             }
 
@@ -155,92 +150,39 @@
 
         .price-filter label {
             font-size: 18px;
-            color: #444;
+            color: palevioletred;
+            text-align: center;
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            font-weight: 500;
+            //font-weight: 500;
+            border-radius: 5px;
+            border: 1px solid whitesmoke;
         }
 
     .range-container {
         display: flex;
         flex-direction: column;
-        gap: 16px; /* 增大价格范围部分的间隔 */
+        gap: 16px;
     }
 
     input[type="range"] {
-        -webkit-appearance: none;
+        appearance: none;
         width: 100%;
-        height: 12px;
-        background: #f0a8a2;
+        height: 8px; /* Thickness of the slider track */
+        background: #fbb1a2; /* Track color */
         border-radius: 5px;
         outline: none;
-        margin: 5px 0;
-        transition: background 0.3s ease;
+        opacity: 0.9;
+        transition: opacity 0.2s;
     }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            background: #fbb1a2;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s ease;
-        }
-
-            input[type="range"]::-webkit-slider-thumb:hover {
-                background: #f99c8e;
-            }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            background: #fbb1a2;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s ease;
-        }
-
-            input[type="range"]::-moz-range-thumb:hover {
-                background: #f99c8e;
-            }
-
-        input[type="range"]::-ms-thumb {
-            width: 24px;
-            height: 24px;
-            background: #fbb1a2;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s ease;
-        }
-
-            input[type="range"]::-ms-thumb:hover {
-                background: #f99c8e;
-            }
-
-    input[type="text"] {
-        width: calc(100% - 32px); /* 输入框宽度减去左右内边距 */
-        padding: 16px 20px; /* 增加内边距，使输入框更长 */
-        border: 2px solid #fbb1a2;
-        border-radius: 20px;
-        font-size: 18px; /* 增加字体大小 */
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-        color: #333;
-        background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        outline: none;
+    input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #f99c8e; /* Thumb color */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
-        input[type="text"]::placeholder {
-            color: #aaa;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-        }
-
-        input[type="text"]:focus {
-            border-color: #f99c8e;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
 </style>
