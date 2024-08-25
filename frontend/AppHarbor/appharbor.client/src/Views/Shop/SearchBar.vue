@@ -56,7 +56,7 @@ export default {
     /* Allow height to adjust based on content */
     width: 100%;
     border-radius: 25px;
-    padding: 10px 20px;
+    padding: 10px;
     gap: 10px;
     /* Add this to control the space between the search bar and filter tags */
 }
@@ -69,7 +69,7 @@ export default {
     padding: 8px 12px;
     background-color: #ffffff;
     width: 70%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
 }
 
 .visually-hidden {
