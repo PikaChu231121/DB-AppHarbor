@@ -97,17 +97,17 @@
     .pagination-container {
         border-radius: 15px;
         background-color: #ffffff; /* White background */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        border: 2px solid whitesmoke;
         display: flex;
         max-width: 600px;
         font-size: 14px;
         color: #333;
         justify-content: center;
         padding: 10px;
-        margin-left: auto; /* Center horizontally */
-        margin-right: auto;
-        margin-top: 0px; /* Space above */
         font-family: 'Poppins', sans-serif; /* Cute font */
+        position: absolute;
+        bottom: 60px;
+        left:50%;
     }
 
     .pagination-controls {
