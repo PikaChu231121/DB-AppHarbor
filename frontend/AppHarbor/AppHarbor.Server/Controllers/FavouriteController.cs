@@ -61,7 +61,8 @@ namespace AppHarbor.Server.Controllers
             }
 
             var query = _dbContext.Favourites
-                .Where(f => f.UserId == user.Id);
+                .Where(f => f.UserId == user.Id && f.Application.ReleaseState == "released");
+
             if (!string.IsNullOrEmpty(categoryFilter) && categoryFilter.ToLower() != "all")
             {
                 query = query.Where(f => f.Application.Category == categoryFilter);
@@ -73,7 +74,6 @@ namespace AppHarbor.Server.Controllers
                     id = f.Id,
                     applicationId = f.ApplicationId,
                     createTime = f.CreateTime,
-                    // visibility = f.Visibility,
                     userId = f.UserId,
                     applicationName = f.Application.Name,
                     applicationCategory = f.Application.Category,

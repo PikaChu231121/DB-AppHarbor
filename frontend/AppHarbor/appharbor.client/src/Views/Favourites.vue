@@ -18,8 +18,8 @@
 
         <div class="user-info">
             <div class="delete-button-group">
-                <button @click="toggleBulkDelete">{{ isBulkDeleting ? '取消批量删除' : '批量删除' }}</button>
-                <button @click="bulkDelete" :disabled="!isBulkDeleting || selectedFavourites.length === 0">删除选中应用</button>
+                <button @click="toggleBulkDelete">{{ isBulkDeleting ? '取消批量删除': '批量删除' }}</button>
+                <button @click="bulkDelete" :disabled="!isBulkDeleting || selectedFavourites.length === 0">取消收藏选中应用</button>
             </div>
             <div v-if="favourites.length" class="favourite-grid">
                 <div v-for="(favourite,index) in favourites" :key="favourite.id" class="favourite-item">
@@ -28,11 +28,11 @@
                             {{ favourite.applicationName }}
                         </router-link>
                     </h3>
-                    <p>收藏时间: {{formattedCreateTime[index] }}</p>
+                    <p>收藏时间: {{ formatDate(favourite.createTime)  }}</p>
                     <p>分类: {{ favourite.applicationCategory  }}</p>
                     <p>id: {{ favourite.applicationId }}</p>
                     <div class="action-buttons">
-                        <button @click="deleteFavourite(favourite.applicationId)" :disabled="isBulkDeleting">删除</button>
+                        <button @click="deleteFavourite(favourite.applicationId)" :disabled="isBulkDeleting">取消收藏</button>
                         <input type="checkbox" v-if="isBulkDeleting" v-model="selectedFavourites" :value="favourite.id" class="bulk-delete-checkbox">
                     </div>
                 </div>
@@ -70,121 +70,95 @@
         created() {
             this.fetchFavourites();
         },
-        computed: {
-            formattedCreateTime() {
-                return this.favourites.map(favourite => {
-                    let dateTime = favourite.createTime;
-                    // 替换"T"为空格
-                    dateTime = dateTime.replace('T', ' ');
-                    // 转换为 Date 对象
-                    let date = new Date(dateTime);
-                    // 增加8小时
-                    date.setHours(date.getHours() + 8);
-                    // 格式化为 YYYY-MM-DD HH:mm:ss
-                    let year = date.getFullYear();
-                    let month = ('0' + (date.getMonth() + 1)).slice(-2);
-                    let day = ('0' + date.getDate()).slice(-2);
-                    let hours = ('0' + date.getHours()).slice(-2);
-                    let minutes = ('0' + date.getMinutes()).slice(-2);
-                    let seconds = ('0' + date.getSeconds()).slice(-2);
-                    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-                });
-            }  
-        },
         methods: {
-            fetchFavourites() {
-                const token = Cookies.get('token');
-                const formData = new FormData();
-                formData.append('token', token);
-                formData.append('categoryFilter', this.selectedCategory);
-                axios.post('http://localhost:5118/api/favourite/getfavourites', formData)
-                    .then(response => {
-                        console.log("API response data:", response.data); // 获得 API 响应的数据
-
-                        const parsedData = JSON.parse(response.data);
-
-                        if (parsedData && parsedData.Favourites) {
-                            this.favourites = parsedData.Favourites;
-                            this.message = ''; // 清空消息
-                            console.log("Favourites array:", this.favourites);
-
-                            if (this.favourites.length === 0) {
-                                this.message = this.selectedCategory === 'all'
-                                    ? '您还没有收藏的应用哦，去商店逛逛吧'
-                                    : '当前分类下暂无收藏应用哦，去商店逛逛吧';
-                            }
-                        } else {
-                            this.favourites = [];
-                            this.message = '您还没有收藏的应用哦，去商店逛逛吧';
-                            console.error('Error: Expected Favourites but got:', response.data);
-                        }
-                    })
-                    .catch(error => {
-                        this.message = '加载收藏夹失败，请稍后重试！';
-                        console.error('Error fetching favourites:', error);
-                    });
+            formatDate(dateTime) {
+                dateTime = dateTime.replace('T', ' ');
+                let date = new Date(dateTime);
+                date.setHours(date.getHours() + 8);
+                return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}:${('0' + date.getSeconds()).slice(-2)}`;
             },
-            deleteFavourite(id) {
-                var token = Cookies.get('token');
-                console.log(id);
-                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
-                    token: token,
-                    id: id
-                })
-                    .then(response => {
-                        const parsedData = response.data;
-                        if (parsedData.success) {
-                            this.favourites = this.favourites.filter(fav => fav.id !== id);
-                            console.log("Delete successful:", parsedData);
-                            this.confirmNotification('删除应用收藏成功！');
-                            this.fetchFavourites(); // 重新拉取收藏夹内容
-                        } else {
-                            this.alertNotification('删除应用收藏失败，请稍后重试！');
-                            console.error('Delete failed:', parsedData);
+            async fetchFavourites() {
+                try {
+                    const token = Cookies.get('token');
+                    const formData = new FormData();
+                    formData.append('token', token);
+                    formData.append('categoryFilter', this.selectedCategory);
+                    const response = await axios.post('http://localhost:5118/api/favourite/getfavourites', formData);
+                    const parsedData = JSON.parse(response.data);
+
+                    if (parsedData && parsedData.Favourites) {
+                        this.favourites = parsedData.Favourites;
+                        this.message = '';
+                        if (this.favourites.length === 0) {
+                            this.message = this.selectedCategory === 'all'
+                                ? '您还没有收藏的应用哦，去商店逛逛吧'
+                                : '当前分类下暂无收藏应用哦，去商店逛逛吧';
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error deleting favourite:', error);
-                    });
+                    } else {
+                        this.favourites = [];
+                        this.message = '您还没有收藏的应用哦，去商店逛逛吧';
+                    }
+                } catch (error) {
+                    this.message = '加载收藏夹失败，请稍后重试！';
+                    console.error('Error fetching favourites:', error);
+                }
             },
-            bulkDelete() {
-                var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/bulkDelete', {
-                    token: token,
-                    ids: this.selectedFavourites
-                })
-                    .then(response => {
-                        const parsedData = JSON.parse(response.data);
-                        if (parsedData.success) {
-                            this.favourites = this.favourites.filter(fav => !this.selectedFavourites.includes(fav.id));
-                            this.selectedFavourites = []; // 清空选中项
-                            this.isBulkDeleting = false; // 重置批量删除状态
-                            console.log("Bulk delete successful:", parsedData);
-                            this.confirmNotification('批量删除应用成功');
-                            this.fetchFavourites(); // 重新拉取收藏夹内容
-                        } else {
-                            this.alertNotification('批量删除应用收藏失败，请稍后重试！');
-                            console.error('Bulk delete failed:', parsedData);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error bulk deleting favourites:', error);
+            async deleteFavourite(id) {
+                try {
+                    const token = Cookies.get('token');
+                    const response = await axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                        token: token,
+                        id: id
                     });
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        this.favourites = this.favourites.filter(fav => fav.id !== id);
+                        this.confirmNotification('取消收藏应用收藏成功！');
+                        this.fetchFavourites(); // 重新拉取收藏夹内容
+                    } else {
+                        this.alertNotification('取消收藏应用收藏失败，请稍后重试！');
+                    }
+                } catch (error) {
+                    this.alertNotification('取消收藏应用收藏失败，请稍后重试！');
+                    console.error('Error deleting favourite:', error);
+                }
+            },
+            async bulkDelete() {
+                try {
+                    const token = Cookies.get('token');
+                    const response = await axios.post('http://localhost:5118/api/favourite/bulkDelete', {
+                        token: token,
+                        ids: this.selectedFavourites
+                    });
+                    const parsedData = JSON.parse(response.data);
+                    if (parsedData.success) {
+                        this.favourites = this.favourites.filter(fav => !this.selectedFavourites.includes(fav.id));
+                        this.selectedFavourites = []; // 清空选中项
+                        this.isBulkDeleting = false; // 重置批量删除状态
+                        this.confirmNotification('批量取消收藏应用成功');
+                        this.fetchFavourites(); // 重新拉取收藏夹内容
+                    } else {
+                        this.alertNotification('批量取消收藏应用收藏失败，请稍后重试！');
+                    }
+                } catch (error) {
+                    this.alertNotification('批量取消收藏应用收藏失败，请稍后重试！');
+                    console.error('Error bulk deleting favourites:', error);
+                }
             },
             alertNotification(message) {
-                this.alert = '';
-                this.$nextTick(() => {
-                    this.alert = message;
-                });
+                this.notify('alert', message);
             },
             confirmNotification(message) {
-                this.confirm = '';
+                this.notify('confirm', message);
+            },
+            notify(type, message) {
+                this[type] = '';
                 this.$nextTick(() => {
-                    this.confirm = message;
+                    this[type] = message;
                 });
             },
             filterByCategory() {
-                console.log("Selected category:", this.selectedCategory); // 调试信息，确认选中的种类是否正确
+                console.log("Selected category:", this.selectedCategory); // 确认选中的种类是否正确
                 this.fetchFavourites();
             },
             toggleBulkDelete() {

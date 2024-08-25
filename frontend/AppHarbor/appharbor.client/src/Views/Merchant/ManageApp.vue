@@ -249,54 +249,38 @@
             }
         },
         methods: {
-            fetchApps(page = 1) {
+             async fetchApps(page = 1) {
                 const token = Cookies.get('token');
+                const searchMapping = {
+                    '已下架': 'banned',
+                    '已发布': 'released',
+                    '待审核': 'test'
+                };
+
                 let formData = new FormData();
                 formData.append('token', token);
-
-                if (this.searchQuery === '已下架') {
-                    formData.append('search', 'banned');
-                } else if (this.searchQuery === '已发布') {
-                    formData.append('search', 'released');
-                } else if (this.searchQuery === '待审核') {
-                    formData.append('search', 'test');
-                } else {
-                    formData.append('search', this.searchQuery);
-                }
-
+                formData.append('search', searchMapping[this.searchQuery] || this.searchQuery);
                 formData.append('name', this.searchName);
                 formData.append('category', this.searchCategory);
-
-                if (this.searchState === '已下架') {
-                    formData.append('state', 'banned');
-                } else if (this.searchState === '已发布') {
-                    formData.append('state', 'released');
-                } else if (this.searchState === '待审核') {
-                    formData.append('state', 'test');
-                } else {
-                    formData.append('state', this.searchState);
-                }
-
+                formData.append('state', searchMapping[this.searchState] || this.searchState);
                 formData.append('version', this.searchVersion);
                 formData.append('page', page);
                 formData.append('sortBy', this.sortBy);
                 formData.append('sortOrder', this.sortOrder);
 
-                axios.post('http://localhost:5118/api/merchant/getApps', formData)
-                    .then(response => {
-                        this.apps = response.data.apps.$values.map(app => {
-                            // 格式化 discount 值为带有两位小数的形式
-                            app.discount = parseFloat(app.discount).toFixed(2);
-                            return app;
-                        });
-                        this.totalPages = response.data.totalPages;
-                        this.currentPage = page;
-                        this.merchantId = response.data.merchantId;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching apps:', error);
-                        this.alertNotification('获取应用失败，请稍后重试！');
-                    });
+                try {
+                    const response = await axios.post('http://localhost:5118/api/merchant/getApps', formData);
+                    this.apps = response.data.apps.$values.map(app => ({
+                        ...app,
+                        discount: parseFloat(app.discount).toFixed(2)
+                    }));
+                    this.totalPages = response.data.totalPages;
+                    this.currentPage = page;
+                    this.merchantId = response.data.merchantId;
+                } catch (error) {
+                    console.error('Error fetching apps:', error);
+                    this.alertNotification('获取应用失败，请稍后重试！');
+                }
             },
             async saveAppChanges() {
                 try {
@@ -332,49 +316,39 @@
                 formData.append('description', this.selectedApp.description);
                 formData.append('price', this.selectedApp.price);
                 formData.append('discount', this.selectedApp.discount);
-                axios.post('http://localhost:5118/api/merchant/updateApp', formData)
-                    .then(() => {
-                        this.confirmNotification('应用信息修改成功！');
-                        this.fetchApps(this.currentPage); // 刷新应用列表
-                    })
-                    .catch(error => {
-                        if (error.response && error.response.status === 400) {
-                            // 如果状态码是400，显示后端返回的错误信息
-                            this.alertNotification(error.response.data);
-                        }
-                        else {
-                            console.error('Error updating app:', error);
-                            this.alertNotification('保存失败，请稍后重试！');
-                        }
-                        return;
-                    });
+
+                try {
+                    await axios.post('http://localhost:5118/api/merchant/updateApp', formData);
+                    this.confirmNotification('应用信息修改成功！');
+                    this.fetchApps(this.currentPage);
+                } catch (error) {
+                    if (error.response && error.response.status === 400) {
+                        this.alertNotification(error.response.data);
+                    } else {
+                        console.error('Error updating app:', error);
+                        this.alertNotification('保存失败，请稍后重试！');
+                    }
+                }
             },
-            deleteApp() {
+            async deleteApp() {
                 let formData = new FormData();
                 formData.append('appId', this.selectedApp.id);
                 formData.append('merchantId', this.merchantId);
 
-                axios.post('http://localhost:5118/api/merchant/deleteApp', formData)
-                    .then(() => {
-                        this.confirmNotification('应用下架成功！');
-                        this.closeConfirmDelete();
-                        this.closeEditModal();
-                        this.fetchApps(this.currentPage);
-                    })
-                    .catch(error => {
-                        console.error('Error deleting app:', error);
-                        this.alertNotification('下架应用失败，请稍后重试！');
-                        return;
-                    });
+                try {
+                    await axios.post('http://localhost:5118/api/merchant/deleteApp', formData);
+                    this.confirmNotification('应用下架成功！');
+                    this.closeConfirmDelete();
+                    this.closeEditModal();
+                    this.fetchApps(this.currentPage);
+                } catch (error) {
+                    console.error('Error deleting app:', error);
+                    this.alertNotification('下架应用失败，请稍后重试！');
+                }
             },
             changeSort(column) {
-                if (this.sortBy === column) {
-                    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-                }
-                else {
-                    this.sortBy = column;
-                    this.sortOrder = 'asc'; // 默认升序
-                }
+                this.sortOrder = this.sortBy === column ? (this.sortOrder === 'asc' ? 'desc' : 'asc') : 'asc'; // 默认升序
+                this.sortBy = column;
                 this.currentPage = 1;
                 this.initiateSearch();
             },
@@ -416,9 +390,7 @@
                 }
 
                 this.selectedImageFile = file;
-                if (this.selectedImageFile) {
-                    this.newImageUrl = URL.createObjectURL(this.selectedImageFile); // 生成新图片的预览 URL
-                }
+                this.newImageUrl = URL.createObjectURL(this.selectedImageFile); // 生成新图片的预览 URL
             },
             handleNewFileUpload(event) {
                 const file = event.target.files[0]; // 获取上传的应用包文件
@@ -497,26 +469,20 @@
                 });
             },
             getStateClass(releaseState) {
-                if (releaseState === 'banned') {
-                    return 'status-banned';
-                } else if (releaseState === 'released') {
-                    return 'status-released';
-                } else if (releaseState === 'test') {
-                    return 'status-test';
-                }
-                return '';
+                const classes = {
+                    'banned': 'status-banned',
+                    'released': 'status-released',
+                    'test': 'status-test'
+                };
+                return classes[releaseState] || '';
             },
             getStateInChinese(releaseState) {
-                switch (releaseState) {
-                    case 'banned':
-                        return '已下架';
-                    case 'released':
-                        return '已发布';
-                    case 'test':
-                        return '待审核';
-                    default:
-                        return releaseState;
-                }
+                const stateMapping = {
+                    'banned': '已下架',
+                    'released': '已发布',
+                    'test': '待审核'
+                };
+                return stateMapping[releaseState] || releaseState;
             },
             getFullImageUrl(imagePath) {
                 const baseUrl = 'http://localhost:5118';
