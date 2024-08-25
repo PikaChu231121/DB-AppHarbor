@@ -85,7 +85,7 @@ export default {
             // Convert to Date object
             let date = new Date(dateTime);
             // Add 8 hours
-            date.setHours(date.getHours() + 8);
+            date.setHours(date.getHours() + 0);
             // Format as YYYY-MM-DD HH:mm:ss
             let year = date.getFullYear();
             let month = ('0' + (date.getMonth() + 1)).slice(-2);

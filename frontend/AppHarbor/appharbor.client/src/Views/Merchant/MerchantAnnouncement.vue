@@ -24,7 +24,7 @@
             <li v-for="(announce, index) in paginatedAnnounces" :key="announce.id" class="announcement-item">  
                 <h2 class="announcement-title">第{{ announce.id }}号公告：{{ announce.title }}</h2>  
                 <p class="announcement-details">  
-                    发布时间: <span class="detail-value">{{ formattedCreateTime[index].replace(' ', '-') }}</span>  
+                    发布时间: <span class="detail-value">{{ announce.publishTime.replace('T', '-') }}</span>  
                 </p>  
                 <button class="view-detail-button" @click="openDetail(announce)">查看详细</button>  
             </li>  
