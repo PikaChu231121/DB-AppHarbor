@@ -5,7 +5,7 @@
             <div class="app-details">
                 <h3 class="app-name">{{ app.name }}</h3>
                 <p class="app-price" v-html="formattedPrice(app.price,app.discount)"></p>
-                <p class="app-category">分类: {{ app.category }}</p>
+                <p class="app-category"> {{ app.category }}</p>
             </div>
         </div>
         <!-- 使用空白的占位符，确保页面上的应用保持两行五列布局 -->
@@ -79,9 +79,12 @@
         grid-template-columns: repeat(5, 1fr);
         grid-template-rows: repeat(2, 1fr);
         gap: 20px;
-        padding: 20px;
+        padding: 10px;
         justify-content: center;
         align-content: center;
+        border: 2px solid whitesmoke;
+        background-color:whitesmoke;
+        border-radius: 10px;
     }
 
     .app-item {
@@ -92,15 +95,15 @@
         background-color: #fff;
         border-radius: 10px;
         padding: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
+        border: 1px solid #e2e2e2;
+        transition: background-color 0.3s ease;
         width: 180px;
         height: 220px;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.03);
     }
 
         .app-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            background-color:whitesmoke;
         }
 
     .app-image {
@@ -120,24 +123,29 @@
     }
 
     .app-name {
-        font-size: 16px;
+        font-size: 20px;
         font-weight: 600;
         margin-bottom: 5px;
         color: #333;
-        font-family: 'Baloo 2', cursive; /* Cute font */
+        //font-family: 'Baloo 2', cursive; /* Cute font */
+        
     }
 
     .app-price {
-        font-size: 14px;
+        font-size: 18px;
         color: #e91e63;
         margin-bottom: 5px;
-        font-family: 'Poppins', sans-serif; /* Friendly font */
+        //font-family: 'Poppins', sans-serif; /* Friendly font */
     }
 
     .app-category {
-        font-size: 14px;
-        color: #666;
-        font-family: 'Pacifico', cursive; /* 后备字体 */
+        font-size: 16px;
+        width: 70px;
+        color: lightseagreen;
+        position: center;
+        //font-family: 'Pacifico', cursive; /* 后备字体 */
+        background-color :whitesmoke;
+        border-radius: 10px;
     }
 
     /* 空白占位符样式 */
