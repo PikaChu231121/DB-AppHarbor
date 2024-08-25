@@ -719,7 +719,7 @@
     }
 
     .rbutton {
-        margin-left: 90px;
+        margin-left: 60px;
         background-color: #fbb1a2;
         border: none;
         border-radius: 5px;
