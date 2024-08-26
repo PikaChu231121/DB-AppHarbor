@@ -140,13 +140,16 @@
 
     .app-category {
         font-size: 16px;
-        width: 70px;
         color: lightseagreen;
-        position: center;
-        //font-family: 'Pacifico', cursive; /* 后备字体 */
-        background-color :whitesmoke;
+        background-color: whitesmoke;
         border-radius: 10px;
+        padding: 2px 10px; /* 增加左右内边距，确保文本不贴边 */
+        display: inline-block; /* 让标签宽度自动适应内容 */
+        text-align: center; /* 居中对齐文本 */
+        margin: 0 auto; /* 确保在父容器内居中 */
     }
+
+
 
     /* 空白占位符样式 */
     .empty-slot {
