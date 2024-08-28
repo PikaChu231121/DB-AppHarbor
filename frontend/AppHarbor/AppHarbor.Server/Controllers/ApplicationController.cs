@@ -358,6 +358,30 @@ namespace AppHarbor.Server.Controllers
             return Ok("Application status updated successfully.");
         }
 
+        [HttpPost("incrementDownloadCount")]
+        public IActionResult IncrementDownloadCount([FromBody] IncrementDownloadCountModel model)
+        {
+            if (model == null || model.AppId <= 0)
+            {
+                return BadRequest("Invalid app ID.");
+            }
+
+            // 查找应用
+            var application = _dbContext.Applications.FirstOrDefault(app => app.Id == model.AppId);
+            if (application == null)
+            {
+                return NotFound("Application not found.");
+            }
+
+            // 增加下载次数
+            application.DownloadCount += 1;
+
+            // 保存更改
+            _dbContext.SaveChanges();
+
+            return Ok(new { Message = "Download count incremented successfully." });
+        }
+
     }
 }
 

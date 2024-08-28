@@ -37,7 +37,7 @@
             <div class="info-box" v-for="app in filteredApplications" :key="app.id">
                 <img :src="getAppImgUrl(app.image)" class="app-image" />
                 <p class="app-name">{{ app.name }}</p>
-                <button class="purchase-button" @click="downloadApp(app.package)">下载</button>
+                <button class="purchase-button" @click="downloadApp(app.package,app.id)">下载</button>
                 <button class="view-button" @click="openAppDetail(app)">查看应用</button>
             </div>
         </div>
@@ -116,18 +116,28 @@
                     this.filteredApplications = this.applications.filter(app => app.category === this.selectedCategory);
                 }
             },
-            downloadApp(packageUrl) {
+            downloadApp(packageUrl, appId) {
                 this.isLoading = true;
 
-                setTimeout(() => {
-                    if (packageUrl) {
-                        window.open(`http://localhost:5118${packageUrl}`, '_blank');
-                    } else {
-                        console.error('Package URL is missing');
-                    }
-                    this.isLoading = false; // Hide loading animation
-
-                }, 2000); // Delay for 2 seconds
+                // 发送请求到后端更新下载次数
+                axios.post('http://localhost:5118/api/application/incrementDownloadCount', { appId: appId })
+                    .then(response => {
+                        console.log('Download count incremented successfully:', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error incrementing download count:', error);
+                    })
+                    .finally(() => {
+                        // 处理下载逻辑
+                        setTimeout(() => {
+                            if (packageUrl) {
+                                window.open(`http://localhost:5118${packageUrl}`, '_blank');
+                            } else {
+                                console.error('Package URL is missing');
+                            }
+                            this.isLoading = false; // Hide loading animation
+                        }, 2000); // Delay for 2 seconds
+                    });
             },
             openAppDetail(app) {
                 this.selectedApp = app;

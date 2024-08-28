@@ -50,6 +50,12 @@ public class InstallAppModel
 }
 
 
+public class IncrementDownloadCountModel
+{
+    public decimal AppId { get; set; }
+}
+
+
 
 public partial class Application
 {
