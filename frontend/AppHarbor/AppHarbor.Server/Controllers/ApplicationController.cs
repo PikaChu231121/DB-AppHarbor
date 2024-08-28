@@ -166,6 +166,7 @@ namespace AppHarbor.Server.Controllers
                 DownloadCount = 0,
                 Price = Price,
                 Package = relativePath,
+                Discount = 1,
             };
 
             _dbContext.Applications.Add(application);
