@@ -124,6 +124,7 @@ export default {
                             console.error('Error uploading avatar:', error);
                             this.alertNotification('图片上传失败');
                         });
+                    this.resetForm();
                     this.confirmNotification('应用发布成功');
                 })
                 .catch(error => {
@@ -137,6 +138,18 @@ export default {
         confirmNotification(message) {
             this.confirm = message;
         },
+        resetForm() {
+            this.appName = '';
+            this.appVersion = '';
+            this.appImage = null;
+            this.appImageUrl = '../../../public/logo.png';
+            this.appFile = null;
+            this.appDescription = '';
+            this.appPrice = 0;
+            this.appCategory = '';
+            this.alert = '';
+            this.confirm = '';
+        }
     },
     computed: {
         isFormValid() {
