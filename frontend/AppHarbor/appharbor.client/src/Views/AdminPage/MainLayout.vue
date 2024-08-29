@@ -812,7 +812,7 @@
         });
 },
             cancelShelve() {
-                this.showConfirmUnPopup = false; // 取消上架操作，隐藏确认弹窗
+                this.showConfirmPopup = false; // 取消上架操作，隐藏确认弹窗
                 this.appToUnShelve = null; // 清除应用信息
             },
             cancelUnShelve() {
