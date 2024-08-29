@@ -84,7 +84,7 @@
         methods: {
             fetchUser() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post('/api/user/userInfo', { token: token })
                     .then(response => {
                         const data = response.data;
                         this.user_id = data.id;
@@ -100,7 +100,7 @@
                 var token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/Order/fetchOwnApps', formData)
+                axios.post('/api/Order/fetchOwnApps', formData)
                     .then(response => {
                         this.applications = response.data.$values;
                         this.filterApplications(); // Filter applications based on the selected category
@@ -120,7 +120,7 @@
                 this.isLoading = true;
 
                 // 发送请求到后端更新下载次数
-                axios.post('http://localhost:5118/api/application/incrementDownloadCount', { appId: appId })
+                axios.post('/api/application/incrementDownloadCount', { appId: appId })
                     .then(response => {
                         console.log('Download count incremented successfully:', response.data);
                     })

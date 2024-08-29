@@ -79,7 +79,7 @@ export default {
             let formData = new FormData();
             formData.append('merchant_id', this.id);
             formData.append('password', this.password);
-            axios.post('http://localhost:5118/api/merchant/login', formData)
+            axios.post('/api/merchant/login', formData)
                 .then(response => {
                     Cookies.set("token", response.data);
                     this.isLoading = true; // Show loading animation on login attempt

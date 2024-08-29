@@ -84,7 +84,7 @@ export default {
     },
     created() {
         const token = Cookies.get('token');
-        axios.post('http://localhost:5118/api/merchant/MerchantInfo', { token })
+        axios.post('/api/merchant/MerchantInfo', { token })
             .then(response => {
                 this.merchant.id = response.data.id;
                 this.merchant.nickname = response.data.nickName;

@@ -83,7 +83,7 @@
                     const formData = new FormData();
                     formData.append('token', token);
                     formData.append('categoryFilter', this.selectedCategory);
-                    const response = await axios.post('http://localhost:5118/api/favourite/getfavourites', formData);
+                    const response = await axios.post('/api/favourite/getfavourites', formData);
                     const parsedData = JSON.parse(response.data);
 
                     if (parsedData && parsedData.Favourites) {
@@ -106,7 +106,7 @@
             async deleteFavourite(id) {
                 try {
                     const token = Cookies.get('token');
-                    const response = await axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                    const response = await axios.post('/api/favourite/deleteFavourite', {
                         token: token,
                         id: id
                     });
@@ -126,7 +126,7 @@
             async bulkDelete() {
                 try {
                     const token = Cookies.get('token');
-                    const response = await axios.post('http://localhost:5118/api/favourite/bulkDelete', {
+                    const response = await axios.post('/api/favourite/bulkDelete', {
                         token: token,
                         ids: this.selectedFavourites
                     });

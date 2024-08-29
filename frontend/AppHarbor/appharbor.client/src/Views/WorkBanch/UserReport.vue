@@ -94,7 +94,7 @@ export default {
     methods: {
         fetchReports() {
             const token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/user/getmyreport', { token })
+            axios.post('/api/user/getmyreport', { token })
                 .then(response => {
                     this.reports = response.data.$values;
                 })

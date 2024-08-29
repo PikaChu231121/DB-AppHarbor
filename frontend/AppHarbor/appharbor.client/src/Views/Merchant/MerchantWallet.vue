@@ -104,7 +104,7 @@ export default {
     methods: {
         fetchCredit() {
             const token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/merchant/getCredit', { token })
+            axios.post('/api/merchant/getCredit', { token })
                 .then(response => {
                     this.credit = response.data.credit;
                 })
@@ -123,7 +123,7 @@ export default {
                 return;
             }
             const token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/merchant/withdrawCredit', { token, amount: this.withdrawAmount })
+            axios.post('/api/merchant/withdrawCredit', { token, amount: this.withdrawAmount })
                 .then(response => {
                     this.credit = response.data.newCredit;
                     this.confirmNotification('提现成功');
@@ -138,7 +138,7 @@ export default {
             const token = Cookies.get('token');
             const period = this.selectedPeriod;  // 使用选中的时间范围
 
-            axios.post('http://localhost:5118/api/merchant/incomeStat', { token, period })
+            axios.post('/api/merchant/incomeStat', { token, period })
                 .then(response => {
                     const data = response.data.$values;
 

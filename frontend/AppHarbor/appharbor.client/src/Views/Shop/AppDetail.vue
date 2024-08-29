@@ -143,7 +143,7 @@
                 this.isFAQOpen = !this.isFAQOpen;
             },
             fetchAppDetails(appId) {
-                axios.post('http://localhost:5118/api/application/getappdetail', { Id: appId })
+                axios.post('/api/application/getappdetail', { Id: appId })
                     .then(response => {
                         this.app = response.data;
                     })
@@ -165,7 +165,7 @@
             },
             addFavourite() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/addFavourite', {
+                axios.post('/api/favourite/addFavourite', {
                     token: token,
                     id: this.app.id
                 })
@@ -184,7 +184,7 @@
             },
             removeFavourite() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                axios.post('/api/favourite/deleteFavourite', {
                     token: token,
                     id: this.app.id
                 })
@@ -203,7 +203,7 @@
             },
             checkIfFavourite(appId) {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/checkIfFavourite', {
+                axios.post('/api/favourite/checkIfFavourite', {
                     token: token,
                     appId: appId
                 })
@@ -236,7 +236,7 @@
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);
-                axios.post('http://localhost:5118/api/application/installapp', { Id: this.app.id })
+                axios.post('/api/application/installapp', { Id: this.app.id })
                     .then(response => {
                         window.location.href = `http://localhost:5118${response.data}`;
                         console.log('downloaded: ' + this.app.id);
@@ -246,7 +246,7 @@
                     });
             },
             fetchAllComments(appId) {
-                axios.post('http://localhost:5118/api/comment/getappcomment', { ApplicationId: appId })
+                axios.post('/api/comment/getappcomment', { ApplicationId: appId })
                     .then(response => {
                         this.comments = response.data.$values;
                     })
@@ -256,7 +256,7 @@
             },
             fetchUserInfo() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post('/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user = response.data;
                     })
@@ -269,7 +269,7 @@
             },
             submitComment() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/comment/postappcomment', {
+                axios.post('/api/comment/postappcomment', {
                     token: token,
                     content: this.newComment.content,
                     rating: this.newComment.score,
@@ -301,7 +301,7 @@
                 });
             },
             deleteComment(commentId) {
-                axios.post('http://localhost:5118/api/comment/deleteappcomment', {
+                axios.post('/api/comment/deleteappcomment', {
                     commentId: commentId
                 })
                     .then(response => {
@@ -345,7 +345,7 @@
                 const now = new Date();
                 const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
 
-                axios.post('http://localhost:5118/api/report/publishreport', {
+                axios.post('/api/report/publishreport', {
                     token: token,
                     content: this.reportContent,
                     reportTime: reportTime, // 传递调整后的时间

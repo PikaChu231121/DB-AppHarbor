@@ -120,7 +120,7 @@ export default {
       formData.append('sortBy', this.sortBy);
       formData.append('sortOrder', this.sortOrder);
 
-      axios.post('http://localhost:5118/api/merchant/getTransactions', formData)
+      axios.post('/api/merchant/getTransactions', formData)
         .then(response => {
           this.transactions = response.data.transactions.$values;
           this.totalPages = response.data.totalPages;

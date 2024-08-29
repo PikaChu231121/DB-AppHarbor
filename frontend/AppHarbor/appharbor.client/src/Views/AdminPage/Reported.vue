@@ -68,7 +68,7 @@ export default {
     },
     methods: {
         getReportList() {
-            axios.post('http://localhost:5118/api/reportreview/gethandlelist')
+            axios.post('/api/reportreview/gethandlelist')
                 .then(response => {
                     this.reportreviews = response.data.$values.map(reportreview => {
                         reportreview.time = this.formatTime(reportreview.time);

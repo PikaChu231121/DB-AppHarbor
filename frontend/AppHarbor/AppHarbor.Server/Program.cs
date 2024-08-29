@@ -26,14 +26,19 @@ builder.Services.AddSwaggerGen();
 // 配置CORS策略  
 builder.Services.AddCors(options =>  
 {  
-    options.AddPolicy("AllowSpecificOrigin",  
-        builder =>  
-        {  
-            builder.WithOrigins("https://localhost:5173")  
-                   .AllowAnyHeader()  
-                   .AllowAnyMethod();  
-        });  
-});  
+    options.AddPolicy("AllowAll",  
+        builder => builder  
+            .AllowAnyOrigin()  
+            .AllowAnyMethod()  
+            .AllowAnyHeader());
+});
+
+builder.WebHost.ConfigureKestrel(serverOptions =>  
+{  
+    // 设置请求头超时和请求体读取超时  
+    serverOptions.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);  
+    serverOptions.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);  
+});
 
 // 配置大文件上传限制  
 builder.WebHost.ConfigureKestrel(serverOptions =>  

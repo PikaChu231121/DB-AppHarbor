@@ -88,7 +88,7 @@
         },
         methods: {
             getReportList() {
-                axios.post('http://localhost:5118/api/report/getreportlist')
+                axios.post('/api/report/getreportlist')
                     .then(response => {
                         this.reports = response.data.$values.map(report => {
                             report.time = this.formatTime(report.time);
@@ -127,7 +127,7 @@
                 formData.append('id', this.selectedReport.reportId);
                 formData.append('token', token);
                 formData.append('result', this.responseContent);
-                axios.post('http://localhost:5118/api/reportreview/acceptreports', formData)
+                axios.post('/api/reportreview/acceptreports', formData)
                     .then(response => {
                         console.log(response.data);
                         this.successMessage = true;
@@ -150,7 +150,7 @@
                 formData.append('id', this.selectedReport.reportId);
                 formData.append('token', token);
                 formData.append('result', this.responseContent);
-                axios.post('http://localhost:5118/api/reportreview/refusereports', formData)
+                axios.post('/api/reportreview/refusereports', formData)
                     .then(response => {
                         console.log(response.data);
                         this.RefuseMessage = true;

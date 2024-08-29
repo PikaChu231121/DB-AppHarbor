@@ -495,7 +495,7 @@
                 formData.append('mytoken', token);
                 formData.append('merchant_id', this.merToUnban.userId);
 
-                axios.post('http://localhost:5118/api/BanMerchant/unbanmerchant', formData)
+                axios.post('/api/BanMerchant/unbanmerchant', formData)
                     .then(response => {
                         this.showMerUnbanConfirmPopup = false;
                         this.merToUnban = null;
@@ -527,7 +527,7 @@
                 formData.append('merchant_id', this.merToBan.id);
                 formData.append('reason', this.merBanReason);
 
-                axios.post('http://localhost:5118/api/BanMerchant/banmerchant', formData)
+                axios.post('/api/BanMerchant/banmerchant', formData)
                     .then(response => {
                         this.showMerBanConfirmPopup = false;
                         this.merBanReason = '';
@@ -560,7 +560,7 @@
                 formData.append('mytoken', token);
                 formData.append('user_id', this.userToUnban.userId); // 确保传递正确的用户 ID
 
-                axios.post('http://localhost:5118/api/BanUser/unbanuser', formData)
+                axios.post('/api/BanUser/unbanuser', formData)
                     .then(response => {
                         this.showUnbanConfirmPopup = false;
                         this.userToUnban = null;
@@ -592,7 +592,7 @@
                 formData.append('user_id', this.userToBan.id);
                 formData.append('reason', this.banReason);
 
-                axios.post('http://localhost:5118/api/BanUser/banuser', formData)
+                axios.post('/api/BanUser/banuser', formData)
                     .then(response => {
                         this.showBanConfirmPopup = false;
                         this.banReason = '';
@@ -639,7 +639,7 @@
             searchbanuser() {
                 this.selectedStatus = '封禁用户';
                 this.userstate = 0;
-                axios.post('http://localhost:5118/api/banuser/searchbanuser')
+                axios.post('/api/banuser/searchbanuser')
                     .then(response => {
                         this.users = response.data;
                     })
@@ -653,7 +653,7 @@
             searchunbanuser() {
                 this.selectedStatus = '活跃用户';
                 this.userstate = 1;
-                axios.post('http://localhost:5118/api/user/searchunbanuser')
+                axios.post('/api/user/searchunbanuser')
                     .then(response => {
                         this.users = response.data.$values;
                     })
@@ -667,7 +667,7 @@
             searchbanmerchant() {
                 this.selectedStatus = '封禁商家';
                 this.merstate = 0;
-                axios.post('http://localhost:5118/api/banmerchant/searchbanmerchant')
+                axios.post('/api/banmerchant/searchbanmerchant')
                     .then(response => {
                         this.mers = response.data;
                     })
@@ -681,7 +681,7 @@
             searchunbanMerchant() {
                 this.selectedStatus = '活跃商家';
                 this.merstate = 1;
-                axios.post('http://localhost:5118/api/merchant/searchunbanmerchant')
+                axios.post('/api/merchant/searchunbanmerchant')
                     .then(response => {
                         this.mers = response.data.$values;
                         console.log(this.mers);
@@ -773,7 +773,7 @@
                 const formData = new FormData();
                 formData.append('Id', this.appToShelve.id);
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/application/confirmrelease', formData)
+                axios.post('/api/application/confirmrelease', formData)
                     .then(response => {
                         this.showConfirmPopup = false; // 隐藏确认弹窗
                         this.showSuccessPopup = true; // 显示成功弹窗
@@ -797,7 +797,7 @@
     const formData = new FormData();
     formData.append('Id', this.appToUnShelve.id);
     formData.append('token', token);
-    axios.post('http://localhost:5118/api/application/confirmdown', formData)
+    axios.post('/api/application/confirmdown', formData)
         .then(response => {
             this.showConfirmUnPopup = false; // 隐藏确认弹窗
             this.showSuccessUnPopup = true; // 显示成功弹窗

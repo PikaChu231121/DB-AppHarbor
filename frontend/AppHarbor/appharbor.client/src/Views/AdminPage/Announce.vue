@@ -67,7 +67,7 @@
                 formData.append('title', this.announcementTitle);
                 formData.append('content', this.announcementContent);
 
-                axios.post('http://localhost:5118/api/announcement/publishannouncement', formData)
+                axios.post('/api/announcement/publishannouncement', formData)
                     .then(response => {
                         this.showSuccessPopup = true;
                         this.announcementTitle = '';

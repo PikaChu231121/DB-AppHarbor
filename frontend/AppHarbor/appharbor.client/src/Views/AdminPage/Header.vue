@@ -46,7 +46,7 @@
                 const token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/admin/adminInfo', formData)
+                axios.post('/api/admin/adminInfo', formData)
                     .then(response => {
                         const data = response.data;
                         this.adminId = data.id;

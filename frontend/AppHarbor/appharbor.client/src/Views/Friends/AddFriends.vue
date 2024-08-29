@@ -105,7 +105,7 @@
                 var token = Cookies.get('token');
                 let formData1 = new FormData();
                 formData1.append('token', token);
-                axios.post('http://localhost:5118/api/relationship/findall', formData1)
+                axios.post('/api/relationship/findall', formData1)
                     .then(response => {
                         this.friends = response.data.data.$values;
                     })
@@ -119,7 +119,7 @@
                 let formData = new FormData();
                 let userId = Number(this.searchQuery);
                 formData.append('inputId', userId);
-                axios.post('http://localhost:5118/api/user/searchid', formData)
+                axios.post('/api/user/searchid', formData)
                     .then(response => {
                         setTimeout(() => {
                             this.isLoading = false; // Hide loading animation
@@ -159,7 +159,7 @@
                 formData.append('token', token);
                 formData.append('friendId', userId);
                 formData.append('relationship', relationType);
-                axios.post('http://localhost:5118/api/relationship/addfriend', formData)
+                axios.post('/api/relationship/addfriend', formData)
                     .then(() => {
                         this.isLoading = true;
                         this.fetchFriends();
@@ -205,7 +205,7 @@
                 let formData = new FormData();
                 formData.append('token', token);
                 formData.append('friendid', userId);
-                axios.post('http://localhost:5118/api/relationship/deletefriend', formData)
+                axios.post('/api/relationship/deletefriend', formData)
                     .then(() => {
                         this.isLoading = true;
                         this.friends = this.friends.filter(friend => friend.id !== userId);

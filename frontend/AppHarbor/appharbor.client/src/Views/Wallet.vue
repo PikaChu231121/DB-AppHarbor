@@ -70,7 +70,7 @@ export default {
     methods: {
         fetchUserAndTransactions() {
             var token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+            axios.post('/api/user/userInfo', { token: token })
                 .then(response => {
                     this.user = response.data;
                     console.info(response.data);
@@ -91,7 +91,7 @@ export default {
 
         fetchTransactions() {
             console.info(this.user_id);
-            axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
+            axios.post('/api/user/getTransaction', { id: this.user_id })
                 .then(response => {
                     this.transactions = response.data.$values;
                     console.info(this.transactions);
@@ -117,7 +117,7 @@ export default {
                 return;
             }
 
-            axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
+            axios.post('/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
                 .then(response => {
                     this.fetchUserAndTransactions();
                     alert('充值成功');

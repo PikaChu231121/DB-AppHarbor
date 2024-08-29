@@ -126,7 +126,7 @@
         },  
         methods: {  
             searchAnnouncement() {  
-                axios.post('http://localhost:5118/api/announcement/getannouncementlist')  
+                axios.post('/api/announcement/getannouncementlist')  
                     .then(response => {  
                         this.announces = response.data.$values;  
                         this.pageInput = ''; // Reset input field on data fetch  

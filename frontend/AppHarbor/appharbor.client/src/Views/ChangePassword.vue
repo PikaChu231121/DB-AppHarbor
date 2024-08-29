@@ -69,7 +69,7 @@
         methods: {
             changePassword() {
                 this.isLoading = true;
-                axios.post('http://localhost:5118/api/User/changepassword', {
+                axios.post('/api/User/changepassword', {
                     Id: this.username,
                     OldPassword: this.bpassword,
                     NewPassword: this.apassword,

@@ -105,7 +105,7 @@
                 let formData1 = new FormData();
                 formData1.append('token', token);
                 formData1.append('relationship', "family");
-                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData1)
+                axios.post('/api/relationship/findmysubscriber', formData1)
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Family') {
@@ -120,7 +120,7 @@
                 let formData2 = new FormData();
                 formData2.append('token', token);
                 formData2.append('relationship', 'friend');
-                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData2)
+                axios.post('/api/relationship/findmysubscriber', formData2)
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Friend') {
@@ -135,7 +135,7 @@
                 let formData3 = new FormData();
                 formData3.append('token', token);
                 formData3.append('relationship', 'classmate');
-                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData3)
+                axios.post('/api/relationship/findmysubscriber', formData3)
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Classmate') {
@@ -149,7 +149,7 @@
 
                 let formData4 = new FormData;
                 formData4.append('token', token);
-                axios.post('http://localhost:5118/api/relationship/findall', formData4)
+                axios.post('/api/relationship/findall', formData4)
                     .then(response => {
                         this.groups.forEach(group => {
                             this.friends = response.data.data.$values;

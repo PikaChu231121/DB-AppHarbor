@@ -121,7 +121,7 @@
                 formData.append('BuyerID', this.user.id);
                 formData.append('ReceiverID', this.receiver.id);
                 formData.append('APPID', this.app.id);
-                axios.post('http://localhost:5118/api/order/createneworder', formData)
+                axios.post('/api/order/createneworder', formData)
                     .then(response => {
                         /*this.confirmNotification('购买成功！');*/
                         this.purchaseMessage = '购买成功！';
@@ -147,7 +147,7 @@
             updateCredit() {
                 console.log('credit change!');
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post('/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user_credit = response.data.credit;
                     })
@@ -164,7 +164,7 @@
                 let formData = new FormData();
                 var token = Cookies.get('token');
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/relationship/findall',formData)
+                axios.post('/api/relationship/findall',formData)
                     .then(response => {
                         this.friends = response.data.data.$values;
                     })
@@ -178,7 +178,7 @@
             },
             fetchAppDetails(appId) {
                 // 从API或其他地方获取应用详细信息
-                axios.post('http://localhost:5118/api/application/getappdetail', {
+                axios.post('/api/application/getappdetail', {
                     Id: appId
                     /*Page: this.currentPage */
                 })
@@ -193,7 +193,7 @@
             fetchUserInfo() {
                 // 获取用户个人信息
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post('/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user = response.data;
                         // 默认接受者为自己
@@ -232,7 +232,7 @@
             updateCredit() {
                 console.log('credit change!');
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post('/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user_credit = response.data.credit;
                     })
@@ -249,7 +249,7 @@
                 let formData = new FormData();
                 var token = Cookies.get('token');
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/relationship/findall', formData)
+                axios.post('/api/relationship/findall', formData)
                     .then(response => {
                         this.friends = response.data.data.$values;
                     })
@@ -265,7 +265,7 @@
             },
             fetchAppDetails(appId) {
                 // 从API或其他地方获取应用详细信息
-                axios.post('http://localhost:5118/api/application/getappdetail', {
+                axios.post('/api/application/getappdetail', {
                     Id: appId
                     /*Page: this.currentPage */
                 })
@@ -280,7 +280,7 @@
             fetchUserInfo() {
                 // 获取用户个人信息
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post('/api/user/userInfo', { token: token })
                     .then(response => {
                         this.user = response.data;
                         // 默认接受者为自己
