@@ -82,10 +82,16 @@
         padding: 10px;
         justify-content: center;
         align-content: center;
-        border: 2px solid whitesmoke;
-        background-color:whitesmoke;
+        //border: 2px solid whitesmoke;
+        //background-color: white;
         border-radius: 10px;
+        transition: transform 0.3s;
+        margin-left: 20px;
     }
+
+        .app-grid:hover {
+            transform: scale(1.01);
+        }
 
     .app-item {
         display: flex;
@@ -95,11 +101,11 @@
         background-color: #fff;
         border-radius: 10px;
         padding: 10px;
-        border: 1px solid #e2e2e2;
+        //border: 1px solid #e2e2e2;
         transition: background-color 0.3s ease;
         width: 180px;
         height: 220px;
-        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.03);
+        box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
     }
 
         .app-item:hover {
@@ -125,17 +131,16 @@
     .app-name {
         font-size: 20px;
         font-weight: 600;
-        margin-bottom: 5px;
+        margin-top: 5px;
         color: #333;
-        //font-family: 'Baloo 2', cursive; /* Cute font */
-        
+        font-weight: bold !important; /* 设置粗体 */
     }
 
     .app-price {
         font-size: 18px;
         color: #e91e63;
         margin-bottom: 5px;
-        //font-family: 'Poppins', sans-serif; /* Friendly font */
+        font-weight: bold !important; /* 设置粗体 */
     }
 
     .app-category {
@@ -147,6 +152,7 @@
         display: inline-block; /* 让标签宽度自动适应内容 */
         text-align: center; /* 居中对齐文本 */
         margin: 0 auto; /* 确保在父容器内居中 */
+        font-weight: bold !important; /* 设置粗体 */
     }
 
 

@@ -67,19 +67,25 @@
 </script>
 
 <style scoped>
+
     .FilterSection {
         border-radius: 12px;
-        background-color: white; /* 背景颜色 */
+        background-color: #FCF8F8; /* 背景颜色 */
         //text-align:left;
         display: flex;
         //flex-direction: column;
-        padding: 0px;
+        padding: 5px;
         transition: background-color 0.3s ease;
-        border: 2px solid whitesmoke;
+        transition: transform 0.3s;
+        //transition: box-shadow 0.3s;
+        //border: 2px solid whitesmoke;
+        //box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
     }
 
         .FilterSection:hover {
-            background-color: #FCF8F8; /* 悬停时背景颜色 */
+            background-color: white; /* 悬停时背景颜色 */
+            transform: scale(1.05);
+            box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
         }
 
     .filter {
@@ -107,6 +113,87 @@
         transition: background-color 0.3s ease, box-shadow 0.3s ease;
         border: 2px solid #FFE7EA;
     }
+
+    
+    .FilterSection {
+        border-radius: 12px;
+        background-color: #FCF8F8;
+        display: flex;
+        padding: 5px;
+        transition: background-color 0.3s ease;
+        transition: transform 0.3s;
+    }
+
+    .FilterSection:hover {
+        background-color: white;
+        transform: scale(1.05);
+        box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        margin: auto;
+    }
+
+    .tag-filter {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        background-color: white;
+        color: #67575a;
+        padding: 10px 20px;
+        margin-right: 10px;
+        border-radius: 20px;
+        position: relative;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        border: 2px solid #FFE7EA;
+    }
+
+    .tag:hover {
+        background-color: #f99c8e;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .tag .checkbox {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #fbb1a2;
+        margin-right: 10px;
+        position: relative;
+        display: inline-block;
+        transition: background 0.3s ease;
+    }
+
+    .tag.selected .checkbox {
+        background: #fff;
+        border-color: #f99c8e;
+    }
+
+    .tag.selected .checkbox::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: pink;
+        transform: translate(-50%, -50%);
+    }
+
+        /* 设置tag内span的文字为粗体 */
+        .tag span {
+            font-weight: bold;
+        }
 
         .tag:hover {
             background-color: #f99c8e;
@@ -152,7 +239,8 @@
             font-size: 18px;
             color: palevioletred;
             text-align: center;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans', 'Noto Sans CJK SC', 'Hiragino Sans GB', sans-serif !important;
+            font-weight: bold !important; /* 设置粗体 */
             //font-weight: 500;
             border-radius: 5px;
             border: 1px solid whitesmoke;
@@ -183,6 +271,14 @@
         background: #f99c8e; /* Thumb color */
         cursor: pointer;
         transition: background-color 0.3s ease;
+    }
+
+    .key {
+        font-weight: bold !important; /* 设置粗体 */
+    }
+
+    .price {
+        font-weight: bold !important; /* 设置粗体 */
     }
 
 </style>

@@ -104,10 +104,10 @@
         color: #333;
         justify-content: center;
         padding: 10px;
-        font-family: 'Poppins', sans-serif; /* Cute font */
+        font-weight: bold !important; /* 设置粗体 */
         position: absolute;
         bottom: 60px;
-        left:50%;
+        left: 50%;
     }
 
     .pagination-controls {
@@ -182,6 +182,7 @@
         font-weight: bold;
         padding: 0 8px;
     }
+
 
     @media (max-width: 991px) {
         .pagination-container {

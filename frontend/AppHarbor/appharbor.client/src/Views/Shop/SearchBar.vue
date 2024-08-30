@@ -46,48 +46,52 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-.search-bar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    /* Align items closer together */
-    margin-top: 10px;
-    height: auto;
-    /* Allow height to adjust based on content */
-    width: 100%;
-    border-radius: 25px;
-    padding: 10px;
-    gap: 10px;
-    /* Add this to control the space between the search bar and filter tags */
-}
+    .search-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        /* Align items closer together */
+        margin-top: 10px;
+        height: auto;
+        /* Allow height to adjust based on content */
+        width: 100%;
+        border-radius: 25px;
+        padding: 10px;
+        gap: 10px;
+        /* Add this to control the space between the search bar and filter tags */
+        transition: transform 0.3s;
+    }
+        .search-bar:hover {
+            transform: scale(1.01);
+        }
 
-.search-form {
-    display: flex;
-    align-items: center;
-    border: 1px solid #dcdcdc;
-    border-radius: 25px;
-    padding: 8px 12px;
-    background-color: #ffffff;
-    width: 70%;
-    
-}
+    .search-form {
+        display: flex;
+        align-items: center;
+        border: 0.5px solid #e4e4e4;
+        border-radius: 25px;
+        padding: 8px 12px;
+        background-color: #ffffff;
+        width: 80%;
+        box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+    }
 
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
+    .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        font-weight: bold !important; /* 设置粗体 */
+    }
 
 .search-input {
     flex: 1;
     border: none;
-    font: 400 16px/1.5 'Poppins', sans-serif;
     color: #333;
     background: transparent;
     padding: 8px;
@@ -97,7 +101,7 @@ export default {
 
 .search-input:focus {
     outline: none;
-    background-color: #f0f0f5;
+    //background-color: #f0f0f5;
 }
 
 .search-button {
@@ -123,15 +127,15 @@ export default {
     align-items: center;
 }
 
-.filter-tag {
-    font: 400 14px/1.5 'Poppins', sans-serif;
-    color: #555;
-    background-color: #e0e0e0;
-    border-radius: 20px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
+    .filter-tag {
+        font-weight: bold !important; /* 设置粗体 */
+        color: #555;
+        background-color: #e0e0e0;
+        border-radius: 20px;
+        padding: 6px 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
 .filter-tag.active {
     background-color: #007bff;

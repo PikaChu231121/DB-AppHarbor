@@ -316,8 +316,6 @@
         font-size: medium;
         border: none;
         border-radius: 12px;
-        font-family: 'Baloo 2', cursive;
-        font-weight: bolder;
         color: #F8887D;
         background-color: transparent;
         cursor: pointer;
@@ -332,7 +330,6 @@
         padding: 8px 16px;
         border: none;
         border-radius: 12px;
-        font-family: 'Baloo 2', cursive;
         font-weight: bolder;
         color: #27CCA6;
         background-color: transparent;
@@ -348,8 +345,6 @@
         border: none;
         border-radius: 12px;
         font-size: medium;
-        font-family: 'Baloo 2', cursive;
-        font-weight: bolder;
         color: #B245C0;
         background-color: transparent;
         cursor: pointer;
@@ -384,8 +379,6 @@
         font-size: medium;
         border: none;
         border-radius: 12px;
-        font-family: 'Baloo 2', cursive;
-        font-weight: bolder;
         cursor: pointer;
         transition: background-color 0.3s, transform 0.3s, color 0.3s;
     }
