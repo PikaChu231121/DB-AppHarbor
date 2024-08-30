@@ -73,8 +73,7 @@
         background-color: #FCF8F8; /* 背景颜色 */
         display: flex;
         padding: 5px;
-        transition: background-color 0.3s ease, transform 0.3s;
-        transition: border-right 3s;
+        transition: background-color 1.0s ease, transform 0.3s;
     }
 
         .FilterSection:hover {

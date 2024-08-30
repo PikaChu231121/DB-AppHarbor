@@ -167,13 +167,13 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        height :80px;
+        height :90px;
         padding: 20px;
-        border-bottom: 4px solid darksalmon; 
+        border-bottom: 5px solid darksalmon; 
     }
 
     .title {
-        font-size: 30px;
+        font-size: 50px;
         color: #f97c6c;
         font-weight: bold;
     }
@@ -184,11 +184,11 @@
     }
 
     .avatar-wrapper {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         overflow: hidden;
-        margin-right: 10px;
+        margin-right: 20px;
     }
 
     .avatar-circle {
@@ -203,12 +203,12 @@
     }
 
     .user-nick {
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
     }
 
     .user-id {
-        font-size: 16px;
+        font-size: 20px;
         color: #888;
         font-weight: bold;
     }
@@ -224,7 +224,7 @@
         //transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-        
+
 
     .info-box {
         display: flex;
@@ -239,7 +239,7 @@
         max-height: 280px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 1.0s;
     }
 
         .info-box:hover {
