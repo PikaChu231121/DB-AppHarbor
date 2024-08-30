@@ -1,24 +1,19 @@
 <template>
     <Loading :loading="isLoading" />
-
     <div class="Home">
         <div class="header">
-            <div class="title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32"><path fill="currentColor" d="M16 4.906L3.625 10.063l-.625.28V27h26V10.344l-.625-.281zm0 2.188l11 4.593V25h-2V14H7v11H5V11.687zM9 16h14v9H9z" /></svg>
-                {{ user_nickname }}的应用库
-            </div>
+            <div class="title">{{ user_nickname }}的应用库</div>
             <div class="user-section">
                 <div class="avatar-wrapper">
                     <img :src="avatar_url" class="avatar-circle" />
                 </div>
                 <div class="user-info">
-                    <p class="user-nickname">{{ user_nickname }}</p>
-                    <p class="user-id">用户ID：{{ user_id }}</p>
+                    <p class="user-nick">{{ user_nickname }}</p>
+                    <p class="user-id">ID : {{ user_id }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Add dropdown filter -->
         <div class="category-dropdown">
             <label for="category-select">选择应用种类:</label>
             <select id="category-select" v-model="selectedCategory" @change="filterApplications">
@@ -165,7 +160,6 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        font-family: 'Arial', sans-serif;
     }
 
     .header {
@@ -173,17 +167,15 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
+        height :80px;
         padding: 20px;
-        background-color: #ffd7d2;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
+        border-bottom: 4px solid darksalmon; 
     }
 
     .title {
-        font-size: 24px;
-        color: #000;
+        font-size: 30px;
+        color: #f97c6c;
         font-weight: bold;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
     }
 
     .user-section {
@@ -210,16 +202,15 @@
         flex-direction: column;
     }
 
-    .user-nickname {
+    .user-nick {
         font-size: 16px;
         font-weight: bold;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
     }
 
     .user-id {
-        font-size: 14px;
+        font-size: 16px;
         color: #888;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
     }
 
     .auto-wrapper {
@@ -230,7 +221,10 @@
         height: calc(100% - 150px);
         overflow-y: auto;
         padding: 10px;
+        //transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+        
 
     .info-box {
         display: flex;
@@ -248,6 +242,12 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
+        .info-box:hover {
+            background-color: #ffcece;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
     .app-image {
         width: 100px;
         height: 100px;
@@ -263,7 +263,6 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
     }
 
     .purchase-button {
@@ -275,9 +274,10 @@
         border-radius: 5px;
         cursor: pointer;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        font-family: 'Comic Sans MS', cursive, sans-serif;
         transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
         margin-bottom: 15px;
+        font-family: 'Microsoft YaHei', sans-serif; /* 设置字体为微软雅黑 */
+        font-weight: bold; /* 加粗字体 */
     }
 
         .purchase-button:hover {
@@ -285,7 +285,6 @@
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
-
     .view-button {
         background-color: #e0a9b6;
         color: white;
@@ -296,7 +295,8 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-family: 'Microsoft YaHei', sans-serif; /* 设置字体为微软雅黑 */
+        font-weight: bold; /* 加粗字体 */
     }
 
         .view-button:hover {
@@ -326,7 +326,7 @@
         max-width: 600px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         position: relative;
-        text-align: center; /* Center-align text in the modal */
+        text-align: center; 
     }
 
     .close-button {
@@ -362,7 +362,6 @@
     .app-detail-content p {
         margin: 10px 0;
         font-size: 16px;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
     }
 
         .app-detail-content p:first-of-type {
@@ -372,40 +371,59 @@
         }
 
     .category-dropdown {
-        margin: 20px 0;
+        position: relative; /* 使用相对定位 */
+        margin-top: 20px; /* 距离上一个组件的上边距 */
+        margin-left: auto; /* 自动左边距以推到最右侧 */
+        background-color: #fbb1a2; /* 背景颜色 */
+        padding: 10px 15px; /* 内边距 */
+        border-radius: 8px; /* 边框圆角 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+        z-index: 100; /* 确保在其他元素之上 */
         display: flex;
-        justify-content: center;
         align-items: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+        .category-dropdown:hover {
+            transform: translateY(-5px); /* 悬停时向上移动 */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* 增强阴影效果 */
+        }
 
         .category-dropdown label {
             margin-right: 10px;
-            font-size: 16px;
-            color: #333;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 14px; /* 较小的字体 */
+            color: #fff; /* 标签文字颜色 */
+            font-weight: bold;
         }
 
         .category-dropdown select {
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 8px 10px;
+            border: none; /* 去除边框 */
             border-radius: 5px;
-            background: #fff;
-            font-size: 16px;
-            color: #333;
-            transition: border-color 0.3s ease;
+            background-color: #fff; /* 设置背景颜色 */
+            font-size: 14px; /* 较小的字体 */
+            color: #333; /* 字体颜色 */
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-            .category-dropdown select:focus {
-                border-color: #fbb1a2;
-                outline: none;
+            .category-dropdown select:hover {
+                background-color: #f7e2dc; /* 悬停时的背景颜色 */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加阴影 */
             }
 
+            .category-dropdown select:focus {
+                outline: none; /* 去除聚焦时的默认边框 */
+                box-shadow: 0 0 5px 2px rgba(251, 177, 162, 0.5); /* 聚焦时的阴影 */
+            }
+
+
     .no-applications {
-        font-size: 24px; /* 增大字体 */
-        color: #d54f8c; /* 使用深粉色，或者选择一个可爱的颜色 */
+        font-size: 24px; 
+        color: #d54f8c;
         text-align: center;
         margin-top: 20px;
-        font-family: 'Comic Sans MS', cursive, sans-serif; /* 使用可爱的字体 */
         position: absolute; /* 绝对定位以居中 */
         top: 50%; /* 垂直居中 */
         left: 50%; /* 水平居中 */
