@@ -150,11 +150,6 @@
         border-radius: 20px;
         background-color: white; /* Background color for the entire search area */
         display: flex;
-        //height: 80%;
-        //justify-content: center;
-        //padding: 10px; /* Adjust padding for better spacing */
-        //height: 95%;
-        //width: 110%;
         background-image: url("@/../public/logo-text.png");
         background-repeat: no-repeat;
         background-size: cover;
@@ -186,7 +181,8 @@
         display: flex;
         align-items: center; /* 使图片和文字垂直居中 */
         text-align: end;
-        
+        border-bottom: 4px solid darksalmon; /* 添加一个粗的下划线 */
+        padding-bottom: 10px; /* 添加一点内边距，使下划线与内容有适当的间距 */
     }
 
     .title-container img {

@@ -183,6 +183,10 @@
         padding: 0 8px;
     }
 
+    .pagination-button span {
+        font-family: 'Microsoft YaHei', sans-serif; /* 设置字体为微软雅黑 */
+        font-weight: bold; /* 设置字体加粗 */
+    }
 
     @media (max-width: 991px) {
         .pagination-container {

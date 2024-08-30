@@ -71,22 +71,19 @@
     .FilterSection {
         border-radius: 12px;
         background-color: #FCF8F8; /* 背景颜色 */
-        //text-align:left;
         display: flex;
-        //flex-direction: column;
         padding: 5px;
-        transition: background-color 0.3s ease;
-        transition: transform 0.3s;
-        //transition: box-shadow 0.3s;
-        //border: 2px solid whitesmoke;
-        //box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+        transition: background-color 0.3s ease, transform 0.3s;
+        transition: border-right 3s;
     }
 
         .FilterSection:hover {
             background-color: white; /* 悬停时背景颜色 */
-            transform: scale(1.05);
+            transform: scale(1.01);
             box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+            border-right: 4px solid darksalmon; /* 固定右边边框颜色 */
         }
+
 
     .filter {
         display: flex;
@@ -141,19 +138,6 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-    }
-
-    .tag {
-        display: inline-flex;
-        align-items: center;
-        background-color: white;
-        color: #67575a;
-        padding: 10px 20px;
-        margin-right: 10px;
-        border-radius: 20px;
-        position: relative;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        border: 2px solid #FFE7EA;
     }
 
     .tag:hover {
