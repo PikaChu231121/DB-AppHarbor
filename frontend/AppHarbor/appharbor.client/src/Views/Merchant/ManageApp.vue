@@ -9,7 +9,7 @@
             <button @click="toggleAdvancedSearch" class="advanced-search-toggle">
                 {{ showAdvancedSearch ? '隐藏高级检索' : '高级检索' }}
             </button>
-            <button @click="refreshPage" class="refresh-button">全部应用</button>
+            <button @click="refreshPage" class="refresh-button">刷新全部应用</button>
             <div v-if="showAdvancedSearch" class="advanced-search">
                 <input v-model="searchName" placeholder="应用名称搜索..." />
                 <input v-model="searchCategory" placeholder="应用种类搜索..." />

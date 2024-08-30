@@ -72,10 +72,17 @@
         },
         methods: {
             formatDate(dateTime) {
-                dateTime = dateTime.replace('T', ' ');
-                let date = new Date(dateTime);
+                const date = new Date(dateTime);
                 date.setHours(date.getHours() + 8);
-                return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}:${('0' + date.getSeconds()).slice(-2)}`;
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
             },
             async fetchFavourites() {
                 try {
