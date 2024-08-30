@@ -16,5 +16,8 @@
 </script>
 
 <style>
-    /* 全局样式可以在这里定义 */
+    body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans', 'Noto Sans CJK SC', 'Hiragino Sans GB', sans-serif !important;
+        font-weight: bold ; 
+    }
 </style>
