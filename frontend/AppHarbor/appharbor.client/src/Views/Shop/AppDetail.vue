@@ -503,7 +503,7 @@
 
     .text-heading {
         font-size: 24px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
         color: #333; /* Updated text color */
         margin-bottom: 10px;
     }
@@ -516,7 +516,7 @@
         font-size: 16px;
         border-radius: 8px;
         width: fit-content;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
 
     .price {
@@ -524,12 +524,12 @@
         font-weight: bold;
         color: #ff5722; /* Updated color */
         margin-bottom: 10px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
 
     .description {
         margin-bottom: 20px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
 
     .button, .purchase-button {
@@ -544,7 +544,7 @@
         font-weight: bold;
         transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
 
         .button:hover, .purchase-button:hover {
@@ -576,7 +576,7 @@
 
     .faq-title {
         font-size: 18px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
         margin: 0;
     }
 
@@ -726,9 +726,9 @@
         color: white;
         padding: 10px 20px;
         cursor: pointer;
-        font-weight:bolder;
-        font-size:15px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bolder;
+        font-size: 15px;
+        font-weight: bold;
         transition: background-color 0.3s, transform 0.2s;
     }
 
