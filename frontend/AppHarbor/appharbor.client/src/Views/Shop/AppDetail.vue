@@ -104,7 +104,7 @@
     import ConfirmBox from '../ConfirmBox.vue';
 
     export default {
-        components: { 
+        components: {
             NotificationModal,
             AlertBox,
             ConfirmBox
@@ -121,7 +121,7 @@
                 },
                 isFavourited: false,
                 alert: '',
-                confirm:'',
+                confirm: '',
                 showReportModal: false, // 是否显示举报弹窗
                 reportContent: '', // 举报内容
                 showNotification: false,
@@ -236,269 +236,192 @@
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);
-                axios.post('http://localhost:5118/api/application/installapp', { Id: this.app.id })
+                axios.post('http://localhost:5118/api/application/installApp', { Id: this.app.id })
                     .then(response => {
-                        window.location.href = `http://localhost:5118${response.data}`;
-                        console.log('downloaded: ' + this.app.id);
+                        console.log('downloaded: ' + response.data);
+                        if (response.data !== '') {
+                            alert('购买成功！');
+                        }
                     })
                     .catch(error => {
-                        console.error("Error install:", error);
+                        console.error('Error downloading app:', error);
+                    });
+            },
+            submitComment() {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/comment/submitComment', {
+                    token: token,
+                    appId: this.app.id,
+                    content: this.newComment.content,
+                    score: this.newComment.score
+                })
+                    .then(response => {
+                        const parsedData = response.data;
+                        if (parsedData.success) {
+                            this.comments.push(parsedData.comment);
+                            this.commentMessage = '评论发布成功！';
+                            this.newComment.content = '';
+                            this.newComment.score = 0;
+                        } else {
+                            this.commentMessage = '评论发布失败，请稍后重试！';
+                        }
+                        this.showModal = true;
+                    })
+                    .catch(error => {
+                        console.error('Error submitting comment:', error);
+                        this.commentMessage = '评论发布失败，请稍后重试！';
+                        this.showModal = true;
+                    });
+            },
+            deleteComment(commentId) {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/comment/deleteComment', {
+                    token: token,
+                    commentId: commentId
+                })
+                    .then(response => {
+                        const parsedData = response.data;
+                        if (parsedData.success) {
+                            this.comments = this.comments.filter(comment => comment.id !== commentId);
+                            this.commentMessage = '评论删除成功！';
+                        } else {
+                            this.commentMessage = '评论删除失败，请稍后重试！';
+                        }
+                        this.showModal = true;
+                    })
+                    .catch(error => {
+                        console.error('Error deleting comment:', error);
+                        this.commentMessage = '评论删除失败，请稍后重试！';
+                        this.showModal = true;
                     });
             },
             fetchAllComments(appId) {
-                axios.post('http://localhost:5118/api/comment/getappcomment', { ApplicationId: appId })
+                axios.post('http://localhost:5118/api/comment/getAllComments', { appId: appId })
                     .then(response => {
-                        this.comments = response.data.$values;
+                        this.comments = response.data.comments;
                     })
                     .catch(error => {
-                        console.error('Error fetching app comments:', error);
-                    });
-            },
-            fetchUserInfo() {
-                var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-                    .then(response => {
-                        this.user = response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user data:', error);
+                        console.error("Error fetching comments:", error);
                     });
             },
             setScore(score) {
                 this.newComment.score = score;
             },
-            submitComment() {
-                const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/comment/postappcomment', {
-                    token: token,
-                    content: this.newComment.content,
-                    rating: this.newComment.score,
-                    applicationId: this.app.id
-                })
-                .then(response => {
-                    const parsedData = response.data;
-                    if (parsedData && parsedData.success) {
-                        // 评论弹窗
-                        this.commentMessage = '评论成功！';
-                        this.showModal = true;
-                        // 更新评论显示
-                        const appId = this.$route.params.id;
-                        this.fetchAllComments(appId);
-                        // 清空评论表单
-                        this.newComment.content = '';
-                        this.newComment.score = 0;
-                        /*this.isFavourited = true;*/
-                    } else {
-                        this.commentMessage = '评论失败：' + parsedData.msg;
-                        this.showModal = true;
-                    }
-                })
-                    .catch(error => {
-                    const parsedData = error.response.data;
-                    console.error('Error adding comment:', error);
-                    this.commentMessage = '评论失败：' + parsedData.msg;
-                    this.showModal = true;
-                });
+            closeModal() {
+                this.showModal = false;
             },
-            deleteComment(commentId) {
-                axios.post('http://localhost:5118/api/comment/deleteappcomment', {
-                    commentId: commentId
+            openReportModal() {
+                this.showReportModal = true;
+            },
+            closeReportModal() {
+                this.showReportModal = false;
+            },
+            submitReport() {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/report/submitReport', {
+                    token: token,
+                    appId: this.app.id,
+                    content: this.reportContent
                 })
                     .then(response => {
                         const parsedData = response.data;
-                        if (parsedData && parsedData.success) {
-                            this.commentMessage = '删除评论成功！';
-                            this.showModal = true;
-                            this.fetchAllComments(this.app.id); // 重新获取评论列表以更新页面
+                        if (parsedData.success) {
+                            this.notificationTitle = '举报成功';
+                            this.notificationMessage = '您的举报已提交，我们将尽快处理。';
                         } else {
-                            this.commentMessage = '删除评论失败：' + parsedData.msg;
-                            this.showModal = true;
+                            this.notificationTitle = '举报失败';
+                            this.notificationMessage = '举报提交失败，请稍后重试。';
                         }
+                        this.showReportModal = false;
+                        this.showNotification = true;
                     })
                     .catch(error => {
-                        console.error('Error deleting comment:', error);
-                        this.commentMessage = '删除评论失败：' + error.message;
-                        this.showModal = true;
+                        console.error('Error submitting report:', error);
+                        this.notificationTitle = '举报失败';
+                        this.notificationMessage = '举报提交失败，请稍后重试。';
+                        this.showReportModal = false;
+                        this.showNotification = true;
                     });
-            },
-            closeModal() {
-                this.showModal = false;
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
                     return `http://localhost:5118${avatarPath}`;
                 }
-                return '../../public/default.png'; // 默认头像路径
-            },
-            openReportModal() {
-                console.log('Report modal opened'); // 这行用于调试
-                this.showReportModal = true;
-            },
-            closeReportModal() {
-                this.showReportModal = false;
-                this.reportContent = ''; // 清空举报内容
-            },
-            submitReport() {
-                const token = Cookies.get('token');
-
-                // 获取当前时间并加上 8 小时
-                const now = new Date();
-                const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
-
-                axios.post('http://localhost:5118/api/report/publishreport', {
-                    token: token,
-                    content: this.reportContent,
-                    reportTime: reportTime, // 传递调整后的时间
-                    applicationId: this.app.id
-                })
-                    .then(() => {
-                        this.reportContent = '';
-                        this.notificationTitle = '成功';
-                        this.notificationMessage = `成功举报 ${this.app.name}`;
-                        this.showNotification = true;
-                        this.showReportModal = false;
-                    })
-                    .catch(error => {
-                        this.reportContent = '';
-                        this.notificationTitle = '失败';
-                        this.notificationMessage = '提交报告时发生错误。';
-                        this.showNotification = true;
-                        console.error('Error submitting report:', error);
-                    });
+                return '../../public/default-avatar.png'; // 默认头像图片路径
             },
             formatDate(dateString) {
                 const date = new Date(dateString);
-                return date.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                }).replace(/\//g, '-'); // 将斜杠替换为短横线
+                return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
             },
-    },
-    computed: {
-        formattedPrice() {
-            if (this.app.price === 0) {
-                return `<span>Free! 免费</span>`;
-            }
-
-            const originalPrice = this.app.price.toFixed(2).split('.');
-            const originalIntegerPart = originalPrice[0];
-            const originalDecimalPart = originalPrice[1];
-
-            const discountedPrice = (this.app.price * this.app.discount).toFixed(2).split('.');
-            const discountedIntegerPart = discountedPrice[0];
-            const discountedDecimalPart = discountedPrice[1];
-
-            let result = `
-                    <span>
-                        ￥ <span class="integer-part">${discountedIntegerPart}</span>.<span class="decimal-part">${discountedDecimalPart}</span>
-                    </span>
-                `;
-
-            if (this.app.discount < 1.0) {
-                result += `
-                    <span style="text-decoration: line-through; font-size: 0.6em; color:gray;">
-                        原价：<span class="integer-part">${originalIntegerPart}</span>.<span class="decimal-part">${originalDecimalPart}</span>
-                    </span>
-                `;
-            }
-
-            return result;
-        }
-
-    }
-}
+            fetchUserInfo() {
+                const token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/getUserInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data.user;
+                    })
+                    .catch(error => {
+                        console.error("Error fetching user info:", error);
+                    });
+            },
+        },
+        computed: {
+            formattedPrice() {
+                if (this.app.discountPrice > 0 && this.app.discountPrice < this.app.price) {
+                    return `<span class="price-original">${this.app.price} 元</span> <span class="price-discount">${this.app.discountPrice} 元</span>`;
+                }
+                return `<span class="price-current">${this.app.price} 元</span>`;
+            },
+        },
+    };
 </script>
 
-
 <style scoped>
-    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+    }
 
     .card {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
         display: flex;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px; /* Updated border radius */
-        overflow: hidden;
-        max-width: 800px;
-        background-color: #fff;
-        margin: auto;
-        background-color: #faebd7; /* Updated background color */
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
     }
-
-    .button-container {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-    }
-
-    .back-button {
-        background: linear-gradient(135deg, #fbb1a2, #e89a8d); /* Gradient background */
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 12px; /* Rounded corners */
-        cursor: pointer;
-        font-size: 18px; /* Slightly larger font size */
-        font-weight: bold;
-        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
-    }
-
-        .back-button:hover {
-            background: linear-gradient(135deg, #e89a8d, #e0897c); /* Darker gradient on hover */
-            transform: translateY(-3px); /* Slight lift effect */
-        }
-
-        .back-button:active {
-            background: linear-gradient(135deg, #e0897c, #d5786f); /* Even darker gradient on click */
-            transform: translateY(0);
-        }
-
-        .back-button:focus {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(250, 235, 215, 0.5);
-        }
 
     .image-placeholder {
-        width: 50%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #faebd7;
-        margin-top: auto;
-        margin-bottom: auto;
+        flex: 1;
+        text-align: center;
     }
 
     .image-frame {
-        width: 300px; /* 固定宽度 */
-        height: 300px; /* 固定高度 */
-        border: 4px solid #ddd; /* 边框颜色 */
-        border-radius: 12px; /* 圆角 */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
-        overflow: hidden; /* 确保图片不会溢出边框 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #fff; /* 背景颜色与图片对比 */
+        display: inline-block;
+        padding: 10px;
+        border-radius: 15px;
+        background: linear-gradient(145deg, #e0e0e0, #ffffff);
+        box-shadow: 5px 5px 10px #c6c6c6, -5px -5px 10px #ffffff;
     }
 
     .app-image {
-        width: 100%; /* 自适应宽度 */
-        height: 100%; /* 自适应高度 */
-        object-fit: cover; /* 确保图片不会变形 */
+        width: 100%;
+        height: auto;
+        max-width: 300px;
+        border-radius: 10px;
+        object-fit: contain;
     }
 
     .app-details {
-        width: 50%;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        flex: 2;
+        text-align: left;
+        padding-left: 20px;
     }
 
     .text-heading {
@@ -506,6 +429,15 @@
         font-weight: bold;
         color: #333; /* Updated text color */
         margin-bottom: 10px;
+        font-size: 2em;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .price {
+        font-size: 1.5em;
+        color: #ff5722;
+        margin-bottom: 20px;
     }
 
     .tag {
@@ -519,8 +451,12 @@
         font-weight: bold;
     }
 
-    .price {
-        font-size: 28px;
+    .price-discount {
+        color: #ff5722;
+        margin-left: 10px;
+    }
+
+    .price-current {
         font-weight: bold;
         color: #ff5722; /* Updated color */
         margin-bottom: 10px;
@@ -532,13 +468,13 @@
         font-weight: bold;
     }
 
-    .button, .purchase-button {
-        display: inline-block;
-        background-color: #fbb1a2;
-        color: #fff;
-        padding: 12px 24px;
+    .button {
+        padding: 12px 25px;
         border: none;
-        border-radius: 8px;
+        border-radius: 25px;
+        background-color: #2196f3;
+        color: white;
+        font-size: 1.1em;
         cursor: pointer;
         font-size: 16px;
         font-weight: bold;
@@ -547,122 +483,139 @@
         font-weight: bold;
     }
 
-        .button:hover, .purchase-button:hover {
-            background-color: #e89a8d;
-            transform: translateY(-2px);
+        .button:hover {
+            background-color: #1976d2;
         }
 
-        .button:active, .purchase-button:active {
-            background-color: #e0897c;
-            transform: translateY(0);
-        }
+    .back-button {
+        padding: 10px 20px;
+        font-size: 1em;
+        color: #fff;
+        background-color: #757575;
+        border-radius: 25px;
+        border: none;
+        cursor: pointer;
+    }
 
-        .button:focus, .purchase-button:focus {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(250, 235, 215, 0.5);
+        .back-button:hover {
+            background-color: #616161;
         }
 
     .faq {
-        border-top: 1px solid #e5e5e5;
-        padding-top: 10px;
+        text-align: left;
+        margin-top: 20px;
     }
 
     .faq-header {
+        cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        cursor: pointer;
     }
 
     .faq-title {
         font-size: 18px;
         font-weight: bold;
         margin: 0;
-    }
-
-    .arrow img {
-        width: 38px;
-        height: 38px;
+        font-size: 1.5em;
+        font-weight: bold;
     }
 
     .faq-content {
-        height: 100px;
-        overflow: auto;
-        transition: visibility 0.3s, opacity 0.3s;
+        margin-top: 10px;
     }
 
         .faq-content.hidden {
-            visibility: hidden;
-            opacity: 0;
+            display: none;
+        }
+
+    .report-button-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .report-button {
+        background-color: #e53935;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+        .report-button:hover {
+            background-color: #c62828;
         }
 
     .comments-container {
-        max-width: 800px;
-        margin: 20px auto;
-        background: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px solid #e5e5e5;
+        margin-top: 40px;
     }
 
     .comment-item {
-        border-bottom: 1px solid #e0e0e0; /* 下边框作为分隔线 */
-        padding: 10px 0; /* 为内容留出内边距 */
-        margin-bottom: 10px; /* 每条评论之间留出一些空隙 */
         display: flex;
         margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
     }
 
     .avatar {
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        margin-right: 10px;
+        margin-right: 15px;
     }
 
     .info {
-        flex: 1;
+        flex-grow: 1;
     }
 
     .nickname {
         font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
     }
 
     .score {
-        display: flex;
+        margin-bottom: 5px;
     }
 
     .star {
-        font-size: 20px;
-        color: #ccc;
+        font-size: 1.2em;
+        color: #ffb400;
     }
 
         .star.filled {
-            color: #f5a623;
+            color: #ffb400;
         }
 
     .content {
-        margin-top: 5px;
-    }
-
-    .app-details {
-        width: 50%;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .button-container {
-        display: flex;
-        gap: 15px; /* 增加按钮间距 */
-        margin-top: 10px; /* 调整与其他元素的间距 */
+        margin-bottom: 10px;
+        color: #555;
     }
 
     .publishTime {
-        color: #888;
-        font-size: 12px;
+        font-size: 0.8em;
+        color: #757575;
     }
+
+    .delete-button-container {
+        margin-left: 15px;
+    }
+
+    .delete-button {
+        background-color: #d32f2f;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+    }
+
+        .delete-button:hover {
+            background-color: #c62828;
+        }
 
     .comment-editor {
         margin-top: 20px;
@@ -670,45 +623,29 @@
 
         .comment-editor textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #e5e5e5;
-            border-radius: 4px;
-        }
-
-        .comment-editor .score {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
             margin-bottom: 10px;
         }
 
-    /* 举报弹窗样式 */
-    .report-modal {
-        position: fixed; /* 固定在页面 */
+    .modal-overlay {
+        position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: center;
         justify-content: center;
-        z-index: 1000; /* 确保弹窗位于最上层 */
+        align-items: center;
     }
 
     .modal-content {
-        background-color: #fff;
-        border-radius: 10px;
+        background-color: #ffffff;
         padding: 20px;
-        width: 80%;
+        border-radius: 15px;
         max-width: 500px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        position: relative;
-    }
-
-    .report-modal h3 {
-        margin-top: 0;
-    }
-
-    textarea {
         width: 100%;
         height: 100px;
         border-radius: 5px;
@@ -754,46 +691,63 @@
         margin-right: auto;
     }
 
-    /* 弹窗遮罩 */
-    .modal-overlay {
+    .report-modal {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6); /* 半透明暗色 */
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: center;
         justify-content: center;
-        z-index: 1000;
+        align-items: center;
     }
 
-    /* 弹窗内容 */
     .modal-content {
-        background-color: #fff;
-        padding: 30px; /* 增加内边距 */
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        background-color: white;
+        padding: 20px;
+        border-radius: 15px;
+        max-width: 400px;
+        width: 100%;
         text-align: center;
-        z-index: 1001;
-        width: 400px; /* 设置弹窗的宽度 */
-        max-width: 90%; /* 确保在小屏幕上弹窗不会太大 */
     }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 100px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
 
         .modal-content button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #efc2bb;
+            padding: 12px 25px;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
             cursor: pointer;
+            font-size: 1.1em;
+            background-color: #2196f3;
+            color: white;
+            margin-right: 10px;
         }
 
             .modal-content button:hover {
-                background-color: #e89a8d;
-                transform: translateY(-2px);
+                background-color: #1976d2;
             }
 
+        .modal-content .rbutton {
+            background-color: #e53935;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
 
-
+            .modal-content .rbutton:hover {
+                background-color: #c62828;
+            }
 </style>
+
