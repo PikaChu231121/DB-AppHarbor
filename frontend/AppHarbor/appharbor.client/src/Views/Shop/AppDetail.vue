@@ -416,41 +416,32 @@
 
 
 <style scoped>
-    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
     .card {
-        display: flex;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px; /* Updated border radius */
-        overflow: hidden;
-        max-width: 800px;
-        background-color: #fff;
-        margin: auto;
-        background-color: #faebd7; /* Updated background color */
+
     }
 
     .button-container {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
+
     }
 
     .back-button {
-        background: linear-gradient(135deg, #fbb1a2, #e89a8d); /* Gradient background */
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 12px; /* Rounded corners */
-        cursor: pointer;
-        font-size: 18px; /* Slightly larger font size */
+        background-color: #fbb1a2; /* 背景颜色 */
+        padding: 10px 15px; /* 内边距 */
+        border-radius: 8px; /* 边框圆角 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+        z-index: 100; /* 确保在其他元素之上 */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
         font-weight: bold;
-        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+        font-size: 20px;
+        color:white;
+        border: none;
     }
 
         .back-button:hover {
-            background: linear-gradient(135deg, #e89a8d, #e0897c); /* Darker gradient on hover */
-            transform: translateY(-3px); /* Slight lift effect */
+            background-color :darksalmon;
+            //background: linear-gradient(135deg, #e89a8d, #e0897c); /* Darker gradient on hover */
+            //transform: translateY(-3px); /* Slight lift effect */
         }
 
         .back-button:active {
