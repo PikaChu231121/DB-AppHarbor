@@ -200,7 +200,7 @@
     .title {
         margin-left: 30px;
         font-family: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans', 'Noto Sans CJK SC', 'Hiragino Sans GB', sans-serif !important;
-        font-size: 50px; /* 合适的字体大小 */
+        font-size: 60px; /* 合适的字体大小 */
         color: darksalmon; /* 舒适的深灰色 */
         font-weight: bold !important; /* 设置粗体 */
     }
