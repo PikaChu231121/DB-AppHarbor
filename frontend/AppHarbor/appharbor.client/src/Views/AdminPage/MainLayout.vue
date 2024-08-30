@@ -627,14 +627,14 @@
             },
             selectseleasing() {
                 this.selectedStatus = '待审核应用';
-                this.fetchData('http://localhost:5118/api/application/selectseleasing');
+                this.fetchData('/api/application/selectseleasing');
             },
             selectseleased() {
                 this.selectedStatus = '已审核应用';
                 const token = Cookies.get('token');
                 const formData = new FormData();
                 formData.append('token', token);
-                this.fetchData('http://localhost:5118/api/application/selectseleased', formData);
+                this.fetchData('/api/application/selectseleased', formData);
             },
             searchbanuser() {
                 this.selectedStatus = '封禁用户';

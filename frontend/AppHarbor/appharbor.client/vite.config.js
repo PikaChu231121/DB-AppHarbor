@@ -4,6 +4,7 @@ import plugin from '@vitejs/plugin-vue';
 import fs from 'fs';  
 import path from 'path';  
 import child_process from 'child_process';  
+import axios from 'axios';
 
 const baseFolder =  
     process.env.APPDATA !== undefined && process.env.APPDATA !== ''  
@@ -35,6 +36,8 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }  
 }  
 
+axios.defaults.baseURL = '/api';
+
 // https://vitejs.dev/config/  
 export default defineConfig({  
     plugins: [plugin()],  
@@ -45,11 +48,10 @@ export default defineConfig({
     },  
     server: {  
         proxy: {  
-            '^/api': {  
-                target: 'http://103.40.13.87:31554',  
+            '/api': {  
+                target: 'http://localhost:5118',  
                 changeOrigin: true,  
-                rewrite: (path) => path.replace(/^\/api/, ''),  
-                secure: false,  
+                // rewrite: (path) => path.replace(/^\/api/, ''),
             },  
         },  
         port: 5173,  
