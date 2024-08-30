@@ -35,7 +35,7 @@
     }*/
 
     .logo-text-image {
-        height: 26px; /* Adjust height as needed */
+        height: 40px; /* Adjust height as needed */
     }
 
 
