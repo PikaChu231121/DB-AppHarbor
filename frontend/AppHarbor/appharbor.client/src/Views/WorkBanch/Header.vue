@@ -18,8 +18,9 @@
         justify-content: space-between;
         padding: 12px;
         gap: 20px;
-        background-color: #efc2bb; /* Optional: Add a background color */
-        z-index: 1000; /* Ensure it stays on top of other elements */
+        background-color: #efc2bb;
+        z-index: 1000;
+        
     }
 
     .logo-container {

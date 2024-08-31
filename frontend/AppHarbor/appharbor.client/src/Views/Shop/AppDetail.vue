@@ -4,94 +4,102 @@
         <confirm-box :msg="confirm"></confirm-box>
         <NotificationModal :visible="showNotification" :title="notificationTitle" :message="notificationMessage"
                            @close="showNotification = false" />
-        <div class="button-container">
-            <button class="back-button" @click="goBack">返回商店</button>
+        <div class="appheader">
+            <img loading="lazy" src="@/../public/logo-text.png" class="logo-text-image" alt="AppHabour Logo Text" />
+            <div class="button-container">
+                <button class="back-button" @click="goBack">返回商店</button>
+            </div>
+            <div class="header-title">应用详情 : {{ app.name }}</div>
         </div>
-        <!-- 图片信息 -->
-        <div class="image-placeholder">
-            <div class="image-frame">
+
+
+        <div class="app-details">
+
+            <div class="image-placeholder">
                 <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
             </div>
-        </div>
-        <!-- 应用详情 -->
-        <div class="app-details">
-            <h2 class="text-heading">{{ app.name }}</h2>
-            <div class="tag">{{ app.category }}</div>
-            <div class="price" v-html="formattedPrice"></div>
 
-            <div class="button-container">
-                <button class="button" @click="goToPurchase(app.id)">购买</button>
-                <button class="button" @click="toggleFavourite">{{ isFavourited ? '取消收藏' : '收藏' }}</button>
-            </div>
-
-            <div class="faq">
-                <div class="faq-header" @click="toggleFAQ">
-                    <h3 class="faq-title">介绍</h3>
-                    <span class="arrow">
-                        <img v-if="isFAQOpen" src="@/assets/direction-up.svg" alt="Arrow Up">
-                        <img v-else src="@/assets/direction-down.svg" alt="Arrow Down">
-                    </span>
+            <div class="appd">
+                <h2 class="text-heading">{{ app.name }}</h2>
+                <div class="tag">{{ app.category }}</div>
+                <div class="price" v-html="formattedPrice"></div>
+                <!-- 购买按钮和收藏按钮 -->
+                <div class="buy-button">
+                    <button class="button" @click="goToPurchase(app.id)">购买</button>
+                    <button class="favourite-button" @click="toggleFavourite" :class="{ 'not-favourited': !isFavourited }">
+                        <span class="icon">{{ isFavourited ? '★' : '☆' }}</span>
+                    </button>
                 </div>
-                <div class="faq-content" :class="{ hidden: !isFAQOpen }">
-                    <p>{{ app.description }}</p>
+                <div class="report-button-container">
+                    <button class="report-button" @click="openReportModal">
+                        <span class="icon">⚠️</span>
+                    </button>
                 </div>
             </div>
+        </div>
+        
 
-            <!-- 举报按钮 -->
-            <div class="report-button-container">
-                <button class="button report-button" @click="openReportModal">举报</button>
+        <div class="faq">
+            <div class="faq-header" @click="toggleFAQ">
+                <h3 class="faq-title">介绍</h3>
+                <span class="arrow">
+                    <img v-if="isFAQOpen" src="@/assets/direction-up.svg" alt="Arrow Up">
+                    <img v-else src="@/assets/direction-down.svg" alt="Arrow Down">
+                </span>
+            </div>
+            <div class="faq-content" :class="{ hidden: !isFAQOpen }">
+                <p>{{ app.description }}</p>
             </div>
         </div>
-    </div>
-    <!-- 评论区域 -->
-    <div class="comments-container">
-        <h3>用户评论</h3>
-        <div v-for="comment in comments" :key="comment.id" class="comment-item">
-            <img :src="getAvatarUrl(comment.avatar)" alt="Avatar" class="avatar">
-            <div class="info">
-                <span class="nickname">{{ comment.nickname }}</span>
+
+        <div class="comments-container">
+            <h3>用户评论</h3>
+            <div v-for="comment in comments" :key="comment.id" class="comment-item">
+                <img :src="getAvatarUrl(comment.avatar)" alt="Avatar" class="avatar">
+                <div class="info">
+                    <span class="nickname">{{ comment.nickname }}</span>
+                    <div class="score">
+                        <span v-for="star in 5" :key="star" class="star"
+                              :class="{ filled: star <= comment.score }">&#9733;</span>
+                    </div>
+                    <p class="content">{{ comment.content }}</p>
+                    <span class="publishTime">发布于 {{ formatDate(comment.publishTime) }}</span>
+                </div>
+                <div class="delete-button-container">
+                    <button v-if="comment.userId === user.id"
+                            @click="deleteComment(comment.id)"
+                            class="button delete-button">
+                    </button>
+                </div>
+            </div>
+            <div class="comment-editor">
+                <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
                 <div class="score">
-                    <span v-for="star in 5" :key="star" class="star"
-                          :class="{ filled: star <= comment.score }">&#9733;</span>
+                    <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }"
+                          @click="setScore(star)">&#9733;</span>
                 </div>
-                <p class="content">{{ comment.content }}</p>
-                <span class="publishTime">发布于 {{ formatDate(comment.publishTime) }}</span>
-            </div>
-            <div class="delete-button-container">
-                <button v-if="comment.userId === user.id"
-                        @click="deleteComment(comment.id)"
-                        class="button delete-button">
-                    删除
-                </button>
+                <button class="button" @click="submitComment">发布评论</button>
             </div>
         </div>
-        <div class="comment-editor">
-            <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
-            <div class="score">
-                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }"
-                      @click="setScore(star)">&#9733;</span>
-            </div>
-            <button class="button" @click="submitComment">发布评论</button>
-        </div>
-    </div>
 
-    <!-- 举报弹窗 -->
-    <div v-if="showReportModal" class="report-modal">
-        <div class="modal-content">
-            <h3 style="font-size:30px;font-weight:bold">举报应用&nbsp;{{ app.name }}</h3>
-            <p style="font-size:15px;font-family:'Times New Roman', Times, serif">你确定要举报{{ app.name }}吗?请在下方填写举报内容</p>
-            <textarea v-model="reportContent" placeholder="请输入举报内容"></textarea>
-            <button class="rbutton" @click="submitReport">提交举报</button>
-            <button class="rbutton" @click="closeReportModal">取消</button>
+        <div v-if="showReportModal" class="report-modal">
+            <div class="modal-content">
+                <h3 style="font-size:30px;font-weight:bold">举报应用&nbsp;{{ app.name }}</h3>
+                <p style="font-size:15px;font-family:'Times New Roman', Times, serif">你确定要举报{{ app.name }}吗?请在下方填写举报内容</p>
+                <textarea v-model="reportContent" placeholder="请输入举报内容"></textarea>
+                <button class="rbutton" @click="submitReport">提交举报</button>
+                <button class="rbutton" @click="closeReportModal">取消</button>
+            </div>
         </div>
-    </div>
 
-    <!-- 评论弹窗 -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
-        <div class="modal-content" @click.stop>
-            <p>{{ commentMessage }}</p>
-            <button @click="closeModal">关闭</button>
+        <div v-if="showModal" class="modal-overlay" @click="closeModal">
+            <div class="modal-content" @click.stop>
+                <p>{{ commentMessage }}</p>
+                <button @click="closeModal">关闭</button>
+            </div>
         </div>
+
+
     </div>
 
 </template>
@@ -418,21 +426,63 @@
 <style scoped>
 
     .card {
-
+        width: 100%; 
+        height: 100vh;
+        display: flex; 
+        flex-direction: column; 
+        box-sizing: border-box; 
+        background-color:whitesmoke;
     }
 
-    .button-container {
+    .appheader {
+        display: flex;
+        height: 65px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 12px;
+        gap: 20px;
+        background-color: #efc2bb; /* Optional: Add a background color */
+        z-index: 1000;
+        border-bottom: 4px solid #ffe7d3;
+    }
 
+    .header-title {
+        margin-left: auto;
+        margin-right: 20px;
+        font-weight: bold;
+        font-size: 25px;
+        color: white;
+    }
+
+    
+    .logo-text-image {
+        height: 40px; /* Adjust height as needed */
+    }
+
+
+    .button-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex; 
+        justify-content: center;
+        align-items: center;
     }
 
     .back-button {
         background-color: #fbb1a2; /* 背景颜色 */
-        padding: 10px 15px; /* 内边距 */
+        padding: 10px 20px; /* 内边距 */
         border-radius: 8px; /* 边框圆角 */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+        //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
         z-index: 100; /* 确保在其他元素之上 */
         transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        font-weight: bold;
+        font-weight: bold !important;
+        font-family:'Microsoft YaHei';
         font-size: 20px;
         color:white;
         border: none;
@@ -454,48 +504,103 @@
             box-shadow: 0 0 0 4px rgba(250, 235, 215, 0.5);
         }
 
-    .image-placeholder {
-        width: 50%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #faebd7;
-        margin-top: auto;
-        margin-bottom: auto;
+    .app-details {
+        margin-top :30px;
+        padding: 150px; 
+        box-sizing: border-box; 
+        display:flex;
     }
 
-    .image-frame {
-        width: 300px; /* 固定宽度 */
-        height: 300px; /* 固定高度 */
-        border: 4px solid #ddd; /* 边框颜色 */
-        border-radius: 12px; /* 圆角 */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
-        overflow: hidden; /* 确保图片不会溢出边框 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #fff; /* 背景颜色与图片对比 */
+    .image-placeholder {
+        flex-shrink: 0; 
+        width: 250px; 
+        height: 250px; 
+        background-color: #eaeaea; 
+        border-radius: 10px; /* 添加圆角 */
+        overflow: hidden; 
     }
+
 
     .app-image {
-        width: 100%; /* 自适应宽度 */
-        height: 100%; /* 自适应高度 */
+        width: 100%;
+        height: 100%;
         object-fit: cover; /* 确保图片不会变形 */
     }
 
-    .app-details {
-        width: 50%;
-        padding: 20px;
+
+    .appd {
+        margin-left: 50px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        flex: 1;
     }
+
+
+    .text-heading {
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 10px; /* 添加一些下边距 */
+    }
+
+    /* 分类和价格样式 */
+    .tag, .price {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    /* 调整购买按钮样式 */
+    .buy-button .button {
+        padding: 12px 24px;
+        font-size: 18px;
+        border-radius: 8px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    /* 收藏按钮的样式 */
+    .buy-button .favourite-button {
+        padding: 10px;
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* 收藏按钮的图标 */
+    .favourite-button .icon {
+        font-size: 24px;
+        color: #ffd700; /* 收藏时为黄色 */
+    }
+
+    .favourite-button.not-favourited .icon {
+        color: #ccc; /* 未收藏时为灰色 */
+    }
+
+    /* 举报按钮样式 */
+    .report-button-container .report-button {
+        padding: 10px;
+        font-size: 18px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #ff6b6b; /* 红色代表举报 */
+    }
+
+        .report-button-container .report-button .icon {
+            font-size: 24px;
+            color: inherit;
+        }
+
+
 
     .text-heading {
         font-size: 24px;
         font-weight: bold;
-        color: #333; /* Updated text color */
+        color: #333; 
         margin-bottom: 10px;
     }
 
@@ -636,15 +741,7 @@
         margin-top: 5px;
     }
 
-    .app-details {
-        width: 50%;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .button-container {
+    .buy-button {
         display: flex;
         gap: 15px; /* 增加按钮间距 */
         margin-top: 10px; /* 调整与其他元素的间距 */
