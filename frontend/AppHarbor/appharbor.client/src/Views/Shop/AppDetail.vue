@@ -13,31 +13,31 @@
         </div>
 
 
-        <div class="app-details">
-
+        <div class="app-details" :style="{ backgroundImage: `url(${getAppImgUrl(app.image)})` }">
+            <div class="acrylic"></div>
             <div class="image-placeholder">
                 <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
             </div>
 
             <div class="appd">
-                <h2 class="text-heading">{{ app.name }}</h2>
+                <h2 class="app-name">{{ app.name }}</h2>
                 <div class="tag">{{ app.category }}</div>
                 <div class="price" v-html="formattedPrice"></div>
-                <!-- 购买按钮和收藏按钮 -->
-                <div class="buy-button">
-                    <button class="button" @click="goToPurchase(app.id)">购买</button>
-                    <button class="favourite-button" @click="toggleFavourite" :class="{ 'not-favourited': !isFavourited }">
-                        <span class="icon">{{ isFavourited ? '★' : '☆' }}</span>
-                    </button>
-                </div>
+                <button class="button" @click="goToPurchase(app.id)">购买</button>
+            </div>
+            <div class="favandrep">
+                <button class="favourite-button" @click="toggleFavourite" :class="{ 'not-favourited': !isFavourited }">
+                    <span class="icon">{{ isFavourited ? '😍' : '☆' }}</span>
+                </button>
                 <div class="report-button-container">
                     <button class="report-button" @click="openReportModal">
-                        <span class="icon">⚠️</span>
+                        <span class="icon">😵</span>
                     </button>
                 </div>
             </div>
         </div>
-        
+
+
 
         <div class="faq">
             <div class="faq-header" @click="toggleFAQ">
@@ -427,7 +427,7 @@
 
     .card {
         width: 100%; 
-        height: 100vh;
+        //height: 100vh;
         display: flex; 
         flex-direction: column; 
         box-sizing: border-box; 
@@ -505,19 +505,37 @@
         }
 
     .app-details {
-        margin-top :30px;
-        padding: 150px; 
-        box-sizing: border-box; 
-        display:flex;
+        margin-top: 30px;
+        padding: 150px;
+        box-sizing: border-box;
+        display: flex;
+        position: relative;
+        //overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
+        .app-details .acrylic {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px) brightness(0.8);
+            //background-color: whitesmoke;
+            background-color: #ffffffef;
+            z-index: 1;
+        }
+
+
     .image-placeholder {
-        flex-shrink: 0; 
         width: 250px; 
         height: 250px; 
-        background-color: #eaeaea; 
-        border-radius: 10px; /* 添加圆角 */
+        //background-color: #eaeaea; 
+        border-radius: 60px; /* 添加圆角 */
         overflow: hidden; 
+        z-index:2;
     }
 
 
@@ -530,78 +548,30 @@
 
     .appd {
         margin-left: 50px;
+        margin-right: 100px;
+        width: auto;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         flex: 1;
+        position: relative;
+        z-index: 2;
     }
 
 
-    .text-heading {
-        font-size: 30px;
+    .app-name {
+        font-size: 45px;
         font-weight: bold;
-        margin-bottom: 10px; /* 添加一些下边距 */
+        //margin-bottom: 10px; /* 添加一些下边距 */
     }
 
     /* 分类和价格样式 */
-    .tag, .price {
+    .tag  {
         font-size: 18px;
-        margin-bottom: 10px;
+        margin-top: 10px;
     }
-
-    /* 调整购买按钮样式 */
-    .buy-button .button {
-        padding: 12px 24px;
-        font-size: 18px;
-        border-radius: 8px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    /* 收藏按钮的样式 */
-    .buy-button .favourite-button {
-        padding: 10px;
-        font-size: 24px;
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-
-    /* 收藏按钮的图标 */
-    .favourite-button .icon {
-        font-size: 24px;
-        color: #ffd700; /* 收藏时为黄色 */
-    }
-
-    .favourite-button.not-favourited .icon {
-        color: #ccc; /* 未收藏时为灰色 */
-    }
-
-    /* 举报按钮样式 */
-    .report-button-container .report-button {
-        padding: 10px;
-        font-size: 18px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #ff6b6b; /* 红色代表举报 */
-    }
-
-        .report-button-container .report-button .icon {
-            font-size: 24px;
-            color: inherit;
-        }
-
-
-
-    .text-heading {
-        font-size: 24px;
-        font-weight: bold;
-        color: #333; 
-        margin-bottom: 10px;
+    .price {
+        font-size: 15px;
     }
 
     .tag {
@@ -622,6 +592,123 @@
         margin-bottom: 10px;
         font-weight: bold;
     }
+
+    .favandrep {
+        right: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* 调整购买按钮样式 */
+    .button {
+        max-width: 360px;
+        padding: 10px 10px;
+        font-size: 25px;
+        font-family: 'Microsoft YaHei';
+        border-radius: 8px;
+        background-color: #fbb1a2;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .favourite-button {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        background-color: white;
+        border-radius: 20px;
+        border: 0;
+        box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+
+        .favourite-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .favourite-button .icon {
+            font-size: 30px;
+            color: #ffd700; /* 收藏时为黄色 */
+        }
+
+        .favourite-button.not-favourited .icon {
+            color: #ccc; /* 未收藏时为灰色 */
+        }
+
+        .favourite-button::after {
+            content: '收藏';
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .favourite-button:hover::after {
+            opacity: 1;
+        }
+
+    /* 举报按钮样式 */
+    .report-button-container .report-button {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+        background-color: white;
+        border-radius: 20px;
+        border: 0;
+        box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+
+        .report-button-container .report-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 举报按钮的图标 */
+        .report-button-container .report-button .icon {
+            font-size: 30px;
+            color: inherit;
+        }
+
+        /* 举报按钮的气泡文字 */
+        .report-button-container .report-button::after {
+            content: '举报';
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .report-button-container .report-button:hover::after {
+            opacity: 1;
+        }
+
 
     .description {
         margin-bottom: 20px;
@@ -659,8 +746,14 @@
         }
 
     .faq {
-        border-top: 1px solid #e5e5e5;
-        padding-top: 10px;
+        //border-top: 1px solid #e5e5e5;
+        margin-top: 30px;
+        margin-left: 150px;
+        margin-right: 150px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 30px;
     }
 
     .faq-header {
@@ -693,12 +786,14 @@
         }
 
     .comments-container {
-        max-width: 800px;
-        margin: 20px auto;
-        background: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px solid #e5e5e5;
+        margin-top: 30px;
+        margin-left: 150px;
+        margin-right: 150px;
+        margin-bottom: 50px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 30px;
     }
 
     .comment-item {
