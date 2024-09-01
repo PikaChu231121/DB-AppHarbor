@@ -1,5 +1,5 @@
 <template>
-    <div class="container light">
+    <div class="container">
         <div class="sidebar">
             <div class="group"
                  v-for="group in groups"
@@ -31,7 +31,7 @@
             </div>
 
             <div class="friends-list">
-                <div class="friend-item1" v-if="selectedGroup !== null">
+                <div class="friend-item-container" v-if="selectedGroup !== null">
                     <div class="friend-item" v-for="friend in filtered2Friends" :key="friend.id">
                         <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
                         <div class="friend-info">
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="friend-item2" v-else>
+                <div class="friend-item-container" v-else>
                     <div class="friend-item" v-for="friend in friends" :key="friend.id">
                         <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
                         <div class="friend-info">
@@ -61,6 +61,7 @@
 <script>
     import Cookies from 'js-cookie';
     import axios from 'axios';
+
     export default {
         data() {
             return {
@@ -72,7 +73,6 @@
                     { name: 'Classmate', friends: [], Chinese: '同学' },
                 ],
                 friends: [],
-                map: { 'Family': '家人' }
             };
         },
         computed: {
@@ -90,7 +90,6 @@
                 return this.selectedGroup ? this.selectedGroup.Chinese : '全部好友';
             },
             filtered2Friends() {
-                console.log(this.selectedGroup.name);
                 if (!this.selectedGroup.name) {
                     return [];
                 }
@@ -147,7 +146,7 @@
                         this.alertMessage = error.response.data;
                     });
 
-                let formData4 = new FormData;
+                let formData4 = new FormData();
                 formData4.append('token', token);
                 axios.post('http://localhost:5118/api/relationship/findall', formData4)
                     .then(response => {
@@ -158,8 +157,6 @@
                     .catch(error => {
                         console.log(error);
                     });
-
-                console.log(this.friends);
             },
 
             toggleGroupSelection(group) {
@@ -174,7 +171,7 @@
                 if (avatarPath) {
                     return `http://localhost:5118${avatarPath}`;
                 }
-                return '../../../public/default.png'; // 默认头像路径
+                return '../../../public/default.png'; // Default avatar path
             },
 
             translateState(state) {
@@ -195,97 +192,55 @@
     };
 </script>
 
-
 <style scoped>
-    .light {
-        --md-sys-color-primary: rgb(144, 74, 64);
-        --md-sys-color-surface-tint: rgb(144, 74, 64);
-        --md-sys-color-on-primary: rgb(255, 255, 255);
-        --md-sys-color-primary-container: rgb(255, 218, 212);
-        --md-sys-color-on-primary-container: rgb(59, 9, 5);
-        --md-sys-color-secondary: rgb(143, 76, 51);
-        --md-sys-color-on-secondary: rgb(255, 255, 255);
-        --md-sys-color-secondary-container: rgb(255, 219, 207);
-        --md-sys-color-on-secondary-container: rgb(56, 13, 0);
-        --md-sys-color-tertiary: rgb(112, 92, 46);
-        --md-sys-color-on-tertiary: rgb(255, 255, 255);
-        --md-sys-color-tertiary-container: rgb(251, 223, 166);
-        --md-sys-color-on-tertiary-container: rgb(37, 26, 0);
-        --md-sys-color-error: rgb(186, 26, 26);
-        --md-sys-color-on-error: rgb(255, 255, 255);
-        --md-sys-color-error-container: rgb(255, 218, 214);
-        --md-sys-color-on-error-container: rgb(65, 0, 2);
-        --md-sys-color-background: rgb(255, 248, 246);
-        --md-sys-color-on-background: rgb(35, 25, 24);
-        --md-sys-color-surface: rgb(255, 248, 247);
-        --md-sys-color-on-surface: rgb(34, 25, 26);
-        --md-sys-color-surface-variant: rgb(245, 221, 217);
-        --md-sys-color-on-surface-variant: rgb(83, 67, 64);
-        --md-sys-color-outline: rgb(133, 115, 111);
-        --md-sys-color-outline-variant: rgb(216, 194, 189);
-        --md-sys-color-shadow: rgb(0, 0, 0);
-        --md-sys-color-scrim: rgb(0, 0, 0);
-        --md-sys-color-inverse-surface: rgb(56, 46, 46);
-        --md-sys-color-inverse-on-surface: rgb(255, 237, 236);
-        --md-sys-color-inverse-primary: rgb(255, 180, 168);
-        --md-sys-color-primary-fixed: rgb(255, 218, 212);
-        --md-sys-color-on-primary-fixed: rgb(59, 9, 5);
-        --md-sys-color-primary-fixed-dim: rgb(255, 180, 168);
-        --md-sys-color-on-primary-fixed-variant: rgb(115, 52, 43);
-        --md-sys-color-secondary-fixed: rgb(255, 219, 207);
-        --md-sys-color-on-secondary-fixed: rgb(56, 13, 0);
-        --md-sys-color-secondary-fixed-dim: rgb(255, 181, 154);
-        --md-sys-color-on-secondary-fixed-variant: rgb(113, 54, 30);
-        --md-sys-color-tertiary-fixed: rgb(251, 223, 166);
-        --md-sys-color-on-tertiary-fixed: rgb(37, 26, 0);
-        --md-sys-color-tertiary-fixed-dim: rgb(222, 195, 140);
-        --md-sys-color-on-tertiary-fixed-variant: rgb(86, 68, 25);
-        --md-sys-color-surface-dim: rgb(231, 214, 214);
-        --md-sys-color-surface-bright: rgb(255, 248, 247);
-        --md-sys-color-surface-container-lowest: rgb(255, 255, 255);
-        --md-sys-color-surface-container-low: rgb(255, 240, 240);
-        --md-sys-color-surface-container: rgb(252, 234, 234);
-        --md-sys-color-surface-container-high: rgb(246, 228, 228);
-        --md-sys-color-surface-container-highest: rgb(240, 222, 222);
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
     .container {
         display: flex;
         height: 100%;
-        background-color: var(--md-sys-color-background);
-        color: var(--md-sys-color-on-background);
+        background-color: white;
+        color: #333;
+        //font-family: 'Nunito', sans-serif;
         border-radius: 20px;
-        padding: 10px;
+        padding: 20px;
+        //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
     .sidebar {
-        width: 30%;
-        padding: 10px;
+        width: 25%;
+        padding: 20px;
+        background-color: #fff;
         border-radius: 20px;
-        border: 2px solid #d3d3d3;
+        box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border-right: 4px solid #fb8142;
+        border-top: 2px solid #fb8142;
+        border-bottom: 2px solid #fb8142;
+        //border-left: 1px solid #fb8142;
     }
 
     .group {
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 20px;
-        border: 2px solid #d3d3d3;
+        //margin-left: 15px;
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        background-color: #fafafa;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
         transition: all 0.3s ease;
     }
 
     .group-header {
         font-size: 18px;
-        font-weight: bold;
+        font-weight: 600;
         margin-bottom: 10px;
-        color: var(--md-sys-color-primary);
+        color: #ff6b6b;
     }
 
     .group-friend-icons {
         display: flex;
         align-items: center;
-        border-radius: 20px;
-        border: 2px solid #d3d3d3;
-        padding: 5px;
     }
 
     .friend-icon {
@@ -293,33 +248,43 @@
         height: 40px;
         border-radius: 50%;
         margin-right: 5px;
-        border: 2px solid #d3d3d3;
+        border: 2px solid #ff6b6b;
+        transition: transform 0.3s ease;
     }
 
         .friend-icon.more {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--md-sys-color-surface-variant);
+            background-color: #ff6b6b;
+            color: #fff;
             font-size: 14px;
-            color: var(--md-sys-color-on-surface-variant);
+            font-weight: 600;
         }
 
     .group:hover {
-        background-color: #f0f0f0;
-        transform: scale(1.02);
+        background-color: #f5f5f5;
+        transform: translateY(-2px);
     }
 
     .group.selected {
-        background-color: #e0e0e0;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .main {
         width: 70%;
-        padding: 10px;
-        background-color: var(--md-sys-color-surface);
+        margin-left: 15px;
+        padding: 20px;
+        background-color: #fff;
         border-radius: 20px;
-        border: 2px solid #d3d3d3;
+        box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        border-bottom: 2px solid #fb8142;
+        border-top: 2px solid #fb8142;
+        //border-left: 4px solid #fb8142;
+        border-right: 4px solid #fb8142;
     }
 
     .header {
@@ -328,49 +293,61 @@
         align-items: center;
         margin-bottom: 20px;
         padding-bottom: 10px;
-        border-bottom: 2px solid #d3d3d3;
+        border-bottom: 2px solid #f0f0f0;
     }
 
     .header-title {
         font-size: 24px;
-        font-weight: bold;
-        color: var(--md-sys-color-primary);
+        font-weight: 700;
+        color: #ff6b6b;
     }
 
     .search-input {
-        width: 200px;
+        width: 250px;
+        border-radius: 25px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
     }
 
     .friends-list {
         display: flex;
         flex-wrap: wrap;
-        flex-direction: row; /* ȷ    Ԫ  ˮƽ     */
-        gap: 10px;
+        gap: 15px;
+    }
+
+    .friend-item-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+
     }
 
     .friend-item {
         display: flex;
         align-items: center;
-        background-color: var(--md-sys-color-surface-variant);
-        padding: 10px;
-        border-radius: 20px;
-        margin: 10px;
-        width: 200px;
-        border: 2px solid #d3d3d3;
+        background-color: #f9f9f9;
+        padding: 20px;
+        min-width:180px;
+        border-radius: 15px;
+        width: calc(50% - 15px);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border-bottom: 3px solid #fb8142;
+        border-right: 3px solid #fb8142;
     }
 
-    .friend-item1, .friend-item2 {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
+        .friend-item:hover {
+            transform: translateY(-2px);
+            background-color: #f4f4f4;
+        }
 
     .avatar {
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        margin-right: 10px;
-        border: 2px solid #d3d3d3;
+        margin-right: 15px;
+        border: 2px solid #ff6b6b;
+        transition: all 0.3s ease;
     }
 
     .friend-info {
@@ -378,12 +355,15 @@
     }
 
     .friend-title {
-        font-weight: bold;
-        color: var(--md-sys-color-primary);
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
     }
 
     .friend-description {
-        color: var(--md-sys-color-on-surface-variant);
+        color: #999;
+        font-weight: 400;
+        margin-top: 5px;
     }
 
     .status-active {
@@ -392,8 +372,23 @@
     }
 
     .status-banned {
-        color: #5f480b;
+        color: #e74c3c;
         font-weight: bold;
     }
 
+    /* Smooth transitions for hover effects */
+    .group:hover .friend-icon,
+    .friend-item:hover .avatar {
+        transform: scale(1.05);
+    }
+
+    .friend-icon,
+    .avatar {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .friend-icon:hover,
+        .avatar:hover {
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+        }
 </style>
