@@ -1,54 +1,68 @@
 <template>
     <div class="container">
-        <div class="sidebar">
-            <div class="group"
-                 v-for="group in groups"
-                 :key="group.name"
-                 :class="{ selected: selectedGroup && selectedGroup.name === group.name }"
-                 @click="toggleGroupSelection(group)">
-                <div class="group-header">{{ group.Chinese }}</div>
-                <div class="group-friend-icons">
-                    <template v-for="(friend, index) in group.friends.slice(0, 3)">
-                        <img v-if="index < 3"
-                             :key="friend.id"
-                             :src="getAvatarUrl(friend.avatar)"
-                             class="friend-icon" />
-                    </template>
-                    <div v-if="group.friends.length > 3" class="friend-icon more">
-                        +{{ group.friends.length - 3 }}
-                    </div>
+        <div class="headhead">
+            <div class="title">{{ user_nickname }}的好友</div>
+            <div class="user-section">
+                <div class="avatar-wrapper">
+                    <img :src="avatar_url" class="avatar-circle" />
+                </div>
+                <div class="user-info">
+                    <p class="user-nick">{{ user_nickname }}</p>
+                    <p class="user-id">ID : {{ user_id }}</p>
                 </div>
             </div>
         </div>
-
-        <div class="main">
-            <div class="header">
-                <div class="header-title">{{ selectedGroupName }}</div>
-                <el-input v-model="searchQuery"
-                          placeholder="Search"
-                          prefix-icon="el-icon-search"
-                          class="search-input"></el-input>
-            </div>
-
-            <div class="friends-list">
-                <div class="friend-item-container" v-if="selectedGroup !== null">
-                    <div class="friend-item" v-for="friend in filtered2Friends" :key="friend.id">
-                        <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
-                        <div class="friend-info">
-                            <div class="friend-title">{{ friend.nickname }}</div>
-                            <div class="friend-description" :class="translateState(friend.state).class">
-                                {{ translateState(friend.state).text }}
-                            </div>
+        <div class="fbody">
+            <div class="sidebar">
+                <div class="group"
+                     v-for="group in groups"
+                     :key="group.name"
+                     :class="{ selected: selectedGroup && selectedGroup.name === group.name }"
+                     @click="toggleGroupSelection(group)">
+                    <div class="group-header">{{ group.Chinese }}</div>
+                    <div class="group-friend-icons">
+                        <template v-for="(friend, index) in group.friends.slice(0, 3)">
+                            <img v-if="index < 3"
+                                 :key="friend.id"
+                                 :src="getAvatarUrl(friend.avatar)"
+                                 class="friend-icon" />
+                        </template>
+                        <div v-if="group.friends.length > 3" class="friend-icon more">
+                            +{{ group.friends.length - 3 }}
                         </div>
                     </div>
                 </div>
-                <div class="friend-item-container" v-else>
-                    <div class="friend-item" v-for="friend in friends" :key="friend.id">
-                        <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
-                        <div class="friend-info">
-                            <div class="friend-title">{{ friend.nickname }}</div>
-                            <div class="friend-description" :class="translateState(friend.state).class">
-                                {{ translateState(friend.state).text }}
+            </div>
+
+            <div class="main">
+                <div class="header">
+                    <div class="header-title">{{ selectedGroupName }}</div>
+                    <el-input v-model="searchQuery"
+                              placeholder="Search"
+                              prefix-icon="el-icon-search"
+                              class="search-input"></el-input>
+                </div>
+
+                <div class="friends-list">
+                    <div class="friend-item-container" v-if="selectedGroup !== null">
+                        <div class="friend-item" v-for="friend in filtered2Friends" :key="friend.id">
+                            <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
+                            <div class="friend-info">
+                                <div class="friend-title">{{ friend.nickname }}</div>
+                                <div class="friend-description" :class="translateState(friend.state).class">
+                                    {{ translateState(friend.state).text }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="friend-item-container" v-else>
+                        <div class="friend-item" v-for="friend in friends" :key="friend.id">
+                            <img :src="getAvatarUrl(friend.avatar)" class="avatar" />
+                            <div class="friend-info">
+                                <div class="friend-title">{{ friend.nickname }}</div>
+                                <div class="friend-description" :class="translateState(friend.state).class">
+                                    {{ translateState(friend.state).text }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -65,6 +79,9 @@
     export default {
         data() {
             return {
+                user_nickname: '',
+                user_id: '',
+                avatar_url: '',
                 searchQuery: '',
                 selectedGroup: null,
                 groups: [
@@ -98,6 +115,20 @@
             },
         },
         methods: {
+            fetchUser() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        const data = response.data;
+                        this.user_id = data.id;
+                        this.user_nickname = data.nickname;
+                        this.avatar_url = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png';
+                        this.fetchApplications(token); // Fetch applications after fetching user data
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                    });
+            },
             getfriend() {
                 var token = Cookies.get('token');
 
@@ -188,6 +219,7 @@
         },
         mounted() {
             this.getfriend();
+            this.fetchUser();
         }
     };
 </script>
@@ -196,11 +228,66 @@
     @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
     .container {
+        height:100%;
+    }
+
+
+    .headhead {
         display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 90px;
+        padding: 20px;
+        border-bottom: 5px solid darksalmon;
+    }
+
+    .title {
+        font-size: 50px;
+        color: #f97c6c;
+        font-weight: bold;
+    }
+
+    .user-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .avatar-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+    }
+
+    .avatar-circle {
+        width: 100%;
         height: 100%;
+        object-fit: cover;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-nick {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .user-id {
+        font-size: 20px;
+        color: #888;
+        font-weight: bold;
+    }
+
+    .fbody {
+        display: flex;
+        height: 87%;
         background-color: white;
         color: #333;
-        //font-family: 'Nunito', sans-serif;
         border-radius: 20px;
         padding: 20px;
         //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -209,8 +296,9 @@
 
     .sidebar {
         width: 25%;
+        height:100%;
         padding: 20px;
-        background-color: #fff;
+        background-color: #fffcf4;
         border-radius: 20px;
         box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
@@ -225,10 +313,13 @@
         margin-bottom: 15px;
         padding: 15px;
         border-radius: 10px;
-        background-color: #fafafa;
+        background-color: #ffedd4;
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
         cursor: pointer;
         transition: all 0.3s ease;
+        border-right: 3px solid #fb8142;
+        //border-top: 2px solid #fb8142;
+        border-bottom: 3px solid #fb8142;
     }
 
     .group-header {
@@ -276,7 +367,7 @@
         width: 70%;
         margin-left: 15px;
         padding: 20px;
-        background-color: #fff;
+        background-color: #ffe2d8;
         border-radius: 20px;
         box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
