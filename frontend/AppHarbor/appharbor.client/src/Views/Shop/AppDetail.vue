@@ -7,7 +7,7 @@
         <div class="appheader">
             <img loading="lazy" src="@/../public/logo-text.png" class="logo-text-image" alt="AppHabour Logo Text" />
             <div class="button-container">
-                <button class="back-button" @click="goBack">返回商店</button>
+                <button class="back-button" @click="goBack">返回</button>
             </div>
             <div class="header-title">应用详情 : {{ app.name }}</div>
         </div>
