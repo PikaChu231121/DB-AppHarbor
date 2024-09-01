@@ -29,8 +29,9 @@
             },
             getAppImgUrl(imgPath) {
                 if (imgPath) {
-                    return `http://localhost:5118${imgPath}`;
+                    return `http://localhost:5118${ imgPath }`;
                 }
+                //todo
                 return '../../public/default.png'; // 默认图片路径
             },
             formattedPrice(price, discount) {
