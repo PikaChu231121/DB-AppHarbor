@@ -28,7 +28,7 @@
 
         <div v-if="favourites.length" class="auto-wrapper">
             <div v-for="(favourite, index) in favourites" :key="favourite.id" class="info-box" @click="goToDetail(favourite.applicationId)">
-                <img :src="getAppImgUrl(favourite.appAvatar)" class="app-image" />
+                <img :src="getAppImgUrl(favourite.appimage)" class="app-image" />
                 <p class="app-name">{{ favourite.applicationName }}</p>
                 <p class="app-category">{{ favourite.applicationCategory }}</p>
                 <p class="app-info">收藏时间: {{ formatDate(favourite.createTime) }}</p>

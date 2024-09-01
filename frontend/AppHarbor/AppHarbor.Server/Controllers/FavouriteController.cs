@@ -77,7 +77,7 @@ namespace AppHarbor.Server.Controllers
                     userId = f.UserId,
                     applicationName = f.Application.Name,
                     applicationCategory = f.Application.Category,
-                    /*to do*/
+                    appimage=f.Application.Image,
                 })
                 .ToList();
 
