@@ -48,8 +48,15 @@
 <script>
     import axios from 'axios';
     import Cookies from 'js-cookie';
+    import AlertBox from './AlertBox.vue';
+    import ConfirmBox from './ConfirmBox.vue';
 
     export default {
+        name: 'FavouriteList',
+        components: {
+            AlertBox,
+            ConfirmBox
+        },
         data() {
             return {
                 favourites: [],
@@ -57,6 +64,8 @@
                 isBulkDeleting: false,
                 selectedFavourites: [],
                 selectedCategory: 'all',
+                alert: '',
+                confirm: '',
                 user_nickname: '',
                 user_id: '',
                 avatar_url: '',
@@ -67,6 +76,19 @@
             this.fetchFavourites();
         },
         methods: {
+            formatDate(dateTime) {
+                const date = new Date(dateTime);
+                date.setHours(date.getHours() + 8);
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+            },
             fetchUser() {
                 const token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/user/userInfo', { token })
@@ -106,33 +128,76 @@
                     console.error('Error fetching favourites:', error);
                 }
             },
-            deleteFavourite(id) {
-                // Implementation remains unchanged
+            async deleteFavourite(id) {
+                try {
+                    const token = Cookies.get('token');
+                    const response = await axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                        token: token,
+                        id: id
+                    });
+                    const parsedData = response.data;
+                    if (parsedData.success) {
+                        this.favourites = this.favourites.filter(fav => fav.id !== id);
+                        this.confirmNotification('取消收藏应用收藏成功！');
+                        this.fetchFavourites(); // 重新拉取收藏夹内容
+                    } else {
+                        this.alertNotification('取消收藏应用收藏失败，请稍后重试！');
+                    }
+                } catch (error) {
+                    this.alertNotification('取消收藏应用收藏失败，请稍后重试！');
+                    console.error('Error deleting favourite:', error);
+                }
             },
-            bulkDelete() {
-                // Implementation remains unchanged
+            async bulkDelete() {
+                try {
+                    const token = Cookies.get('token');
+                    const response = await axios.post('http://localhost:5118/api/favourite/bulkDelete', {
+                        token: token,
+                        ids: this.selectedFavourites
+                    });
+                    const parsedData = JSON.parse(response.data);
+                    if (parsedData.success) {
+                        this.favourites = this.favourites.filter(fav => !this.selectedFavourites.includes(fav.id));
+                        this.selectedFavourites = []; // 清空选中项
+                        this.isBulkDeleting = false; // 重置批量删除状态
+                        this.confirmNotification('批量取消收藏应用成功');
+                        this.fetchFavourites(); // 重新拉取收藏夹内容
+                    } else {
+                        this.alertNotification('批量取消收藏应用收藏失败，请稍后重试！');
+                    }
+                } catch (error) {
+                    this.alertNotification('批量取消收藏应用收藏失败，请稍后重试！');
+                    console.error('Error bulk deleting favourites:', error);
+                }
             },
+            alertNotification(message) {
+                this.notify('alert', message);
+            },
+            confirmNotification(message) {
+                this.notify('confirm', message);
+            },
+            notify(type, message) {
+                this[type] = '';
+                this.$nextTick(() => {
+                    this[type] = message;
+                });
+            },
+
             filterByCategory() {
+                console.log("Selected category:", this.selectedCategory); // 确认选中的种类是否正确
                 this.fetchFavourites();
+            },
+            toggleBulkDelete() {
+                this.isBulkDeleting = !this.isBulkDeleting;
+                if (!this.isBulkDeleting) {
+                    this.selectedFavourites = [];
+                }// 清空已选中的应用
             },
             getAppImgUrl(imgPath) {
                 if (imgPath) {
                     return `http://localhost:5118${imgPath}`;
                 }
                 return '../../public/default.png'; // 默认图片路径
-            },
-            formatDate(dateTime) {
-                const date = new Date(dateTime);
-                date.setHours(date.getHours() + 8);
-                return date.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                });
             },
             goToDetail(appId) {
                 this.$router.push(`/app/${appId}`);
