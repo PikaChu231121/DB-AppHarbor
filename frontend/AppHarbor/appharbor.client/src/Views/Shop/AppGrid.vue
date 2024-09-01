@@ -101,7 +101,6 @@
         background-color: #fff;
         border-radius: 10px;
         padding: 10px;
-        //border: 1px solid #e2e2e2;
         transition: background-color 0.3s ease;
         width: 180px;
         height: 220px;
@@ -109,7 +108,7 @@
     }
 
         .app-item:hover {
-            background-color:whitesmoke;
+            background-color: whitesmoke;
         }
 
     .app-image {
@@ -126,14 +125,24 @@
 
     .app-details {
         text-align: center;
+        width: 100%; /* Ensures the content takes up the full width */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .app-name {
-        font-size: 20px;
+        font-size: calc(14px + 0.5vw); /* Dynamic size adjustment */
         font-weight: 600;
         margin-top: 5px;
         color: #333;
+        text-align: center;
         font-weight: bold !important; /* 设置粗体 */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 100%;
+        max-width: 100%; /* Ensures it doesn't exceed the width of app-item */
     }
 
     .app-price {
@@ -141,6 +150,7 @@
         color: #e91e63;
         margin-bottom: 5px;
         font-weight: bold !important; /* 设置粗体 */
+        flex-shrink: 0; /* Prevents shrinking */
     }
 
     .app-category {
@@ -148,12 +158,16 @@
         color: lightseagreen;
         background-color: whitesmoke;
         border-radius: 10px;
-        padding: 2px 10px; /* 增加左右内边距，确保文本不贴边 */
-        display: inline-block; /* 让标签宽度自动适应内容 */
-        text-align: center; /* 居中对齐文本 */
-        margin: 0 auto; /* 确保在父容器内居中 */
+        padding: 2px 10px;
+        display: inline-block;
+        text-align: center;
         font-weight: bold !important; /* 设置粗体 */
+        max-width: 100%; /* Ensures it doesn't exceed the width of app-item */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
+
 
 
 
