@@ -126,7 +126,6 @@
                         this.user_id = data.id;
                         this.user_nickname = data.nickname;
                         this.avatar_url = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png';
-                        this.fetchApplications(token); // Fetch applications after fetching user data
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
