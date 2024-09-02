@@ -23,8 +23,8 @@ export default {
     data() {
         return {
             searchQuery: '',
-            filters: ['按价格排序', '按评分排序'],
-            activeFilter: '按评分排序' // Ĭ�ϼ���Ĺ�����
+            filters: ['按价格排序', '按热度排序'],
+            activeFilter: '按热度排序' // Ĭ�ϼ���Ĺ�����
         }
     },
     methods: {

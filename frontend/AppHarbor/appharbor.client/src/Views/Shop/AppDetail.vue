@@ -69,6 +69,7 @@
                     <button v-if="comment.userId === user.id"
                             @click="deleteComment(comment.id)"
                             class="button delete-button">
+                            删除
                     </button>
                 </div>
             </div>
