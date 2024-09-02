@@ -34,13 +34,34 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: white; 
+        background-color: white;
         border: 2px solid #ebbfb8;
-        border-radius: 10px;
-        padding: 20px;
+        border-radius: 15px;
+        padding: 25px;
         z-index: 1000;
-        width: 300px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        width: 320px;
+        box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
+        animation: popup-fade-in 0.3s ease-out, popup-scale-up 0.3s ease-out;
+    }
+
+    @keyframes popup-fade-in {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes popup-scale-up {
+        from {
+            transform: scale(0.9) translate(-50%, -50%);
+        }
+
+        to {
+            transform: scale(1) translate(-50%, -50%);
+        }
     }
 
     .custom-popup-content {
@@ -48,9 +69,9 @@
     }
 
         .custom-popup-content p {
-            font-size: 16px;
+            font-size: 18px;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: bold;
             font-family: 'Comic Sans MS', cursive, sans-serif;
         }
@@ -59,14 +80,22 @@
             background-color: #ebbfb8;
             color: #fff;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 25px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: background-color 0.3s ease;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
         }
 
             .custom-popup-content button:hover {
                 background-color: #f3c7ba;
+                transform: translateY(-3px);
+            }
+
+            .custom-popup-content button:active {
+                background-color: #ebbfb8;
+                transform: translateY(1px);
             }
 </style>
