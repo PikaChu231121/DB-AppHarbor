@@ -273,6 +273,7 @@
         border-right: 4px solid #fb8142;
         border-top: 2px solid #fb8142;
         border-bottom: 2px solid #fb8142;
+        overflow: auto;
     }
 
     .right-section {

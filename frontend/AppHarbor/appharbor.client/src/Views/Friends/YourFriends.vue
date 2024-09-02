@@ -221,7 +221,7 @@
                     case 'banned':
                         return { text: '• 被封禁', class: 'status-banned' };
                     default:
-                        return { text: state, class: '' };
+                        return { text: '• 活跃', class: 'status-active' };
                 }
             }
 

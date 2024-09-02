@@ -30,7 +30,7 @@ namespace AppHarbor.Server.Controllers
             // 从数据库中获取所有公告并与管理员表连接
             var announcementList = (from announcement in _dbContext.Announcements
                                     join admin in _dbContext.Admins on announcement.AdminId equals admin.Id
-                                    orderby announcement.PublishTime // 根据发布时间排序
+                                    orderby announcement.PublishTime descending// 根据发布时间排序
                                     select new
                                     {
                                         announcement.Id,
