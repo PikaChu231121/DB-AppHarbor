@@ -104,7 +104,7 @@
             sortApps() {
                 if (this.sortMethod === '按价格排序') {
                     this.apps.sort((a, b) => b.price - a.price);
-                } else if (this.sortMethod === '按评分排序') {
+                } else if (this.sortMethod === '按热度排序') {
                     this.apps.sort((a, b) => b.downloadCount - a.downloadCount);
                 }
             },
