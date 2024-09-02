@@ -248,7 +248,7 @@ export default {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 2% 5% 2% 5%;
     width: calc(50% - 8px);
-    height: 100%;
+    height: 80vh;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -280,7 +280,7 @@ export default {
     padding: 10px;
     font-size: 16px;
     margin-right: 10px;
-    margin-left: 25px;
+    margin-left: 120px;
     border: 2px solid #1e99e5;
     border-radius: 5px;
 }
