@@ -1,7 +1,11 @@
 <template>
     <div class="friend-manager">
         <Loading :loading="isLoading" />
-        <LoginAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
+        <!LoginAlert v-if="alertMessage" style="z-index: 1;" :message="alertMessage" @close="alertMessage = ''" />
+        <!-- Alert Message Toast -->
+        <div v-if="alertMessage" class="notification-toast">
+            <p>{{ alertMessage }}</p>
+        </div>
         <!-- Left Section -->
         <div class="left-section">
             <h2 class="main-title">管理好友</h2>
@@ -44,18 +48,18 @@
         <!-- Add Friend Popup -->
         <transition name="popup">
             <div v-if="showAddFriendPopup" class="add-friend-popup" ref="addFriendPopup" @click.stop>
-                <p style="font-family: 'Baloo 2', cursive;">请选择添加关系的种类：</p>
+                <p>请选择添加关系的种类：</p>
                 <button class="popup-item family" @click.stop="confirmAddFriend('family')">
-                    <span style="font-family: 'Baloo 2', cursive;">家人</span>
+                    <span>家人</span>
                 </button>
                 <button class="popup-item friend" @click.stop="confirmAddFriend('friend')">
-                    <span style="font-family: 'Baloo 2', cursive;">朋友</span>
+                    <span>朋友</span>
                 </button>
                 <button class="popup-item classmate" @click.stop="confirmAddFriend('classmate')">
-                    <span style="font-family: 'Baloo 2', cursive;">同学</span>
+                    <span>同学</span>
                 </button>
                 <button class="popup-item cancel-button" @click.stop="cancelAddFriend">
-                    <span style="font-family: 'Baloo 2', cursive;">取消</span>
+                    <span>取消</span>
                 </button>
             </div>
         </transition>
@@ -63,12 +67,12 @@
         <!-- Delete Friend Popup -->
         <transition name="popup">
             <div v-if="showDeleteFriendPopup" class="delete-friend-popup" ref="deleteFriendPopup" @click.stop>
-                <p style="font-family: 'Baloo 2', cursive;">你确定要删除好友{{ friendToDeleteNickname }}吗？</p>
+                <p>你确定要删除好友{{ friendToDeleteNickname }}吗？</p>
                 <button class="popup-item confirm-button" @click.stop="confirmDeleteFriend">
-                    <span style="font-family: 'Baloo 2', cursive;">确定</span>
+                    <span>确定</span>
                 </button>
                 <button class="popup-item cancel-button" @click.stop="cancelDeleteFriend">
-                    <span style="font-family: 'Baloo 2', cursive;">取消</span>
+                    <span>取消</span>
                 </button>
             </div>
         </transition>
@@ -95,12 +99,19 @@
                 showDeleteFriendPopup: false,
                 selectedUserId: null,
                 friendToDeleteNickname: '',
-
                 alertMessage: '',
                 isLoading: false
             };
         },
         methods: {
+            showToast() {
+                // 确保 alertMessage 能被显示
+                if (this.alertMessage) {
+                    setTimeout(() => {
+                        this.alertMessage = ''; // 4秒后清除消息
+                    }, 4000);
+                }
+            },
             fetchFriends() {
                 var token = Cookies.get('token');
                 let formData1 = new FormData();
@@ -114,30 +125,24 @@
                     });
             },
             searchUsers() {
-                this.isLoading = true;
+                //this.isLoading = true;
 
                 let formData = new FormData();
                 let userId = Number(this.searchQuery);
                 formData.append('inputId', userId);
                 axios.post('http://localhost:5118/api/user/searchid', formData)
                     .then(response => {
-                        setTimeout(() => {
-                            this.isLoading = false; // Hide loading animation
-
-                        }, 2000); // Delay for 2 seconds
+                        
                         if (response.data && response.data.id) {
                             this.searchResults = [response.data];
                         } else {
-                            setTimeout(() => {
-                                this.isLoading = false; // Hide loading animation
-
-                            }, 2000); // Delay for 2 seconds
+                    
                             this.searchResults = [];
                         }
                     })
                     .catch(error => {
                         setTimeout(() => {
-                            this.isLoading = false; // Hide loading animation
+                            //this.isLoading = false; // Hide loading animation
 
                         }, 2000); // Delay for 2 seconds
                         console.error('Error searching users:', error);
@@ -161,27 +166,22 @@
                 formData.append('relationship', relationType);
                 axios.post('http://localhost:5118/api/relationship/addfriend', formData)
                     .then(() => {
-                        this.isLoading = true;
+                        //this.isLoading = true;
                         this.fetchFriends();
-                        setTimeout(() => {
-                            this.isLoading = false; // Hide loading animation
-
-                        }, 2000); // Delay for 2 seconds
+                        this.showToast(); // 确保调用显示气泡的方法
                         this.alertMessage = `添加成功`;
                     })
                     .catch(error => {
                         if (error.response.data.data == 5) {
                             //alert('好友不能是自己');
                             this.alertMessage = `好友不能是自己 `;
+                            this.showToast(); // 确保调用显示气泡的方法
 
                         }
                         else {
                             this.alertMessage = `好友` + userId + `已经是您的好友,不需要重复添加`;
-
-                            setTimeout(() => {
-                                this.isLoading = false; // Hide loading animation
-
-                            }, 2000);
+                            this.showToast(); // 确保调用显示气泡的方法
+                            
                             //alert('好友' + userId + '已经是您的好友,不需要重复添加');
                             console.error('Error adding friend:', error);
                         }
@@ -207,14 +207,10 @@
                 formData.append('friendid', userId);
                 axios.post('http://localhost:5118/api/relationship/deletefriend', formData)
                     .then(() => {
-                        this.isLoading = true;
+                        //this.isLoading = true;
                         this.friends = this.friends.filter(friend => friend.id !== userId);
                         this.alertMessage = `删除成功`;
-
-                        setTimeout(() => {
-                            this.isLoading = false; // Hide loading animation
-
-                        }, 1000);
+                        this.showToast(); // 确保调用显示气泡的方法
                     })
                     .catch(error => {
                         console.error('Error removing friend:', error);
@@ -255,29 +251,46 @@
     .friend-manager {
         display: flex;
         justify-content: space-between;
-        background-color: #fbb1a2;
+        background-color: #fff;
         padding: 20px;
         height: 100%;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);
     }
 
     .left-section {
-        width: 30%;
+        width: 25%;
+        padding: 20px;
+        background-color: #fffcf4;
+        border-radius: 20px;
+        box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);
+        border-right: 4px solid #fb8142;
+        border-top: 2px solid #fb8142;
+        border-bottom: 2px solid #fb8142;
     }
 
     .right-section {
         width: 70%;
+        margin-left: 15px;
+        padding: 20px;
+        background-color: #ffe2d8;
+        border-radius: 20px;
+        box-shadow: 0 8px 8px rgba(0, 0, 0, 0.05);
+        overflow-y: auto;
+        border-bottom: 2px solid #fb8142;
+        border-top: 2px solid #fb8142;
+        border-right: 4px solid #fb8142;
     }
 
     .main-title {
-        color: #fff;
-        font-size: 24px;
+        color: #ff6b6b;
+        font-size: 25px;
+        font-weight: bold;
         margin-bottom: 10px;
     }
 
     .sub-title {
-        color: #fff;
+        color: #ff6b6b;
         font-size: 18px;
         margin-bottom: 20px;
     }
@@ -290,22 +303,28 @@
         display: flex;
         align-items: center;
         margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #fff;
-        transition: background-color 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        width: 100%;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border-bottom: 3px solid #fb8142;
+        border-right: 3px solid #fb8142;
     }
 
         .friend-item:hover {
-            background-color: #f99d85;
+            background-color: #f4f4f4;
+            transform: translateY(-2px);
         }
 
     .avatar {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
-        margin-right: 10px;
+        margin-right: 15px;
+        border: 2px solid #ff6b6b;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .friend-details {
@@ -314,10 +333,12 @@
 
     .friend-name {
         font-weight: bold;
+        font-size: 18px;
+        color: #333;
     }
 
     .friend-group {
-        color: #888;
+        color: #999;
         font-size: 12px;
     }
 
@@ -325,8 +346,8 @@
         background-color: #ff6b6b;
         border: none;
         color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 10px 20px;
+        border-radius: 20px;
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.3s ease;
     }
@@ -339,14 +360,20 @@
     .search-bar {
         display: flex;
         margin-bottom: 20px;
+        height:10%;
     }
 
     .search-input {
         flex: 1;
         padding: 10px;
         border: none;
-        border-radius: 5px 0 0 5px;
+        border-radius: 25px 0 0 25px;
         outline: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        font-size:25px;
+        font-weight:bold;
+        //margin-left:20px;
     }
 
     .search-button {
@@ -354,9 +381,11 @@
         border: none;
         background-color: #ff6b6b;
         color: white;
-        border-radius: 0 5px 5px 0;
+        border-radius: 0 25px 25px 0;
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.3s ease;
+        font-size: 25px;
+        font-weight: bold;
     }
 
         .search-button:hover {
@@ -372,15 +401,19 @@
         display: flex;
         align-items: center;
         margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #fff;
-        transition: background-color 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        width: calc(50% - 15px);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border-bottom: 3px solid #fb8142;
+        border-right: 3px solid #fb8142;
     }
 
         .search-result:hover {
-            background-color: #f99d85;
+            background-color: #f4f4f4;
+            transform: translateY(-2px);
         }
 
     .result-details {
@@ -389,10 +422,12 @@
 
     .result-name {
         font-weight: bold;
+        font-size: 18px;
+        color: #333;
     }
 
     .result-group {
-        color: #888;
+        color: #999;
         font-size: 12px;
     }
 
@@ -400,8 +435,8 @@
         background-color: #4caf50;
         border: none;
         color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 10px 20px;
+        border-radius: 20px;
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.3s ease;
     }
@@ -413,36 +448,41 @@
 
     .add-friend-popup, .delete-friend-popup {
         position: absolute;
-        top: 200px;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
+        width: 400px; /* 固定宽度 */
+        padding: 20px;
         background-color: #fff;
-        border-radius: 12px;
-        padding: 16px;
+        border-radius: 20px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transform: translate(-50%, -50%);
         z-index: 1000;
-        opacity: 1;
-        transition: opacity 0.3s ease;
+        font-weight: bold;
+        font-family: 'Microsoft YaHei';
+        font-size:25px;
+        text-align: center; /* 居中对齐 */
     }
 
     .popup-item {
-        display: block;
-        width: 100%;
         margin-top: 10px;
-        padding: 10px;
-        border-radius: 5px;
-        text-align: center;
+        padding: 15px; /* 增加 padding 以改善按钮大小 */
+        border-radius: 10px;
+        font-size: 20px; /* 调整字体大小 */
+        font-weight: bold;
         cursor: pointer;
-        border: none;
         transition: background-color 0.3s ease, transform 0.3s ease;
+        border:0;
+        margin :10px;
     }
 
         .popup-item:hover {
             transform: scale(1.05);
         }
 
+
         .popup-item.family {
             background-color: #ffb3ba;
+            font-weight: bold;
         }
 
             .popup-item.family:hover {
@@ -451,6 +491,7 @@
 
         .popup-item.friend {
             background-color: #ffdfba;
+            font-weight: bold;
         }
 
             .popup-item.friend:hover {
@@ -459,6 +500,7 @@
 
         .popup-item.classmate {
             background-color: #ffffba;
+            font-weight: bold;
         }
 
             .popup-item.classmate:hover {
@@ -467,6 +509,7 @@
 
         .popup-item.cancel-button {
             background-color: #c1c1c1;
+            font-weight: bold;
         }
 
             .popup-item.cancel-button:hover {
@@ -475,9 +518,54 @@
 
         .popup-item.confirm-button {
             background-color: #ff6b6b;
+            font-weight: bold;
         }
 
             .popup-item.confirm-button:hover {
                 background-color: #e85050;
             }
+
+
+    .no-results {
+        font-size: 25px;
+        font-weight: bold;
+        margin-left: 45%;
+        margin-top: 10%;
+    }
+
+    .notification-toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #17a2b8; /* 青色背景 */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        opacity: 0;
+        animation: fadeInOut 4s ease forwards;
+        font-weight: bold;
+        font-family: 'Microsoft YaHei';
+    }
+
+    @keyframes fadeInOut {
+        0% {
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
+
 </style>
