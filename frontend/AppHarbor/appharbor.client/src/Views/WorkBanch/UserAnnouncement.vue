@@ -187,7 +187,7 @@
         padding: 20px;
         background-color: #f5f5f5;
         border-radius: 8px;
-        max-width: 1200px;
+        width: 100%;
         margin: 0 auto;
         height: 100%;
     }
