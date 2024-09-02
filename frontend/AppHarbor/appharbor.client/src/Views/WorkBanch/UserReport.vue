@@ -100,6 +100,12 @@ export default {
                 })
                 .catch(error => {
                     console.error('获取举报信息失败:', error);
+                    Cookies.remove('token');
+                    this.$router.push('/').then(() => {
+                        // 刷新登录页面
+                        window.location.reload();
+                    });
+                    alert("token异常，请重新登陆！");
                 });
         },
         viewReportContent(report) {
