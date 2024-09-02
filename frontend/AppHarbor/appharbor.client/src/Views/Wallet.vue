@@ -1,6 +1,9 @@
 <template>
     <!link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <div class="Wallet">
+        <div v-if="notificationMessage" class="notification-toast">
+            <p>{{ notificationMessage }}</p>
+        </div>
         <div class="header">
             <div class="title">{{ user_nickname }}的钱包</div>
             <div class="user-section">
@@ -260,6 +263,39 @@
     .purchase td {
         color: #5a5a5a;
     }
+
+    .notification-toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #17a2b8; /* 青色背景 */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        opacity: 0;
+        animation: fadeInOut 4s ease forwards;
+    }
+
+    @keyframes fadeInOut {
+        0% {
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
 </style>
 
 
@@ -275,10 +311,17 @@
                 transactions: [],
                 avatar_url: '',
                 credit: -1,
-                rechargeAmount: 0 // 充值金额
+                rechargeAmount: 0, // 充值金额
+                notificationMessage: '', // 通知消息
             };
         },
         methods: {
+            showNotification(message) {
+                this.notificationMessage = message;
+                setTimeout(() => {
+                    this.notificationMessage = '';
+                }, 4000); // 气泡提示显示4秒钟
+            },
             fetchUserAndTransactions() {
                 var token = Cookies.get('token');
                 axios.post('http://localhost:5118/api/user/userInfo', { token: token })
@@ -312,32 +355,30 @@
                     });
             },
             recharge() {
-
                 if (this.rechargeAmount <= 0) {
-                    alert('请输入有效的充值金额');
+                    this.showNotification('请输入有效的充值金额');
                     return;
                 }
 
                 if (this.rechargeAmount + this.credit > 1e6) {
-                    alert(`充值失败，账户金额不能超过 1000000 元`);
+                    this.showNotification('充值失败，账户金额不能超过 1000000 元');
                     return;
                 }
 
                 if (!/^\d+(\.\d{1,2})?$/.test(this.rechargeAmount)) {
-                    alert('请输入最多两位小数的有效金额');
+                    this.showNotification('请输入最多两位小数的有效金额');
                     return;
                 }
 
                 axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
                     .then(response => {
                         this.fetchUserAndTransactions();
-                        alert('充值成功');
+                        this.showNotification('充值成功');
                     })
                     .catch(error => {
                         console.error('Error recharging:', error);
-                        alert('充值失败，请联系管理员');
+                        this.showNotification('充值失败，请联系管理员');
                     });
-
             },
         },
         mounted() {
