@@ -1,4 +1,7 @@
 <template>
+    <div v-if="alert || confirm" class="notification-toast">
+        <p>{{ alert || confirm }}</p>
+    </div>
     <div class="favourite-list">
         <div class="header">
             <div class="title">{{ user_nickname }}的收藏夹</div>
@@ -26,15 +29,31 @@
             </select>
         </div>
 
+        <div class="bulk-actions">
+            <button class="bulk-delete-toggle" @click="toggleBulkDelete">
+                {{ isBulkDeleting ? '取消批量操作' : '批量操作' }}
+            </button>
+            <button v-if="isBulkDeleting" class="bulk-delete-confirm" @click="bulkDelete" :disabled="!selectedFavourites.length">
+                批量取消收藏
+            </button>
+        </div>
+
         <div v-if="favourites.length" class="auto-wrapper">
-            <div v-for="(favourite, index) in favourites" :key="favourite.id" class="info-box" @click="goToDetail(favourite.applicationId)">
+            <div v-for="(favourite, index) in favourites"
+                 :key="favourite.id"
+                 class="info-box"
+                 @click="!isBulkDeleting && goToDetail(favourite.applicationId)">
                 <img :src="getAppImgUrl(favourite.appimage)" class="app-image" />
                 <p class="app-name">{{ favourite.applicationName }}</p>
                 <p class="app-category">{{ favourite.applicationCategory }}</p>
                 <p class="app-info">收藏时间: {{ formatDate(favourite.createTime) }}</p>
                 <div class="action-buttons">
                     <button class="favourite-button" @click.stop="deleteFavourite(favourite.applicationId)" :disabled="isBulkDeleting">取消收藏</button>
-                    <input type="checkbox" v-if="isBulkDeleting" v-model="selectedFavourites" :value="favourite.id" class="bulk-delete-checkbox">
+                    <input type="checkbox"
+                           v-if="isBulkDeleting"
+                           v-model="selectedFavourites"
+                           :value="favourite.id"
+                           class="bulk-delete-checkbox">
                 </div>
             </div>
         </div>
@@ -42,6 +61,10 @@
         <div v-else class="no-applications">
             <p>{{ message }}</p>
         </div>
+
+        <!-- Alert and Confirm Boxes -->
+        <AlertBox v-if="alert" :message="alert" @close="alert = ''" />
+        <ConfirmBox v-if="confirm" :message="confirm" @close="confirm = ''" />
     </div>
 </template>
 
@@ -74,6 +97,7 @@
         created() {
             this.fetchUser();
             this.fetchFavourites();
+            this.resetNotifications();
         },
         methods: {
             formatDate(dateTime) {
@@ -138,13 +162,13 @@
                     const parsedData = response.data;
                     if (parsedData.success) {
                         this.favourites = this.favourites.filter(fav => fav.id !== id);
-                        this.confirmNotification('取消收藏应用收藏成功！');
+                        this.confirmNotification('取消收藏应用成功！');
                         this.fetchFavourites(); // 重新拉取收藏夹内容
                     } else {
-                        this.alertNotification('取消收藏应用收藏失败，请稍后重试！');
+                        this.alertNotification('取消收藏应用失败，请稍后重试！');
                     }
                 } catch (error) {
-                    this.alertNotification('取消收藏应用收藏失败，请稍后重试！');
+                    this.alertNotification('取消收藏应用失败，请稍后重试！');
                     console.error('Error deleting favourite:', error);
                 }
             },
@@ -163,10 +187,10 @@
                         this.confirmNotification('批量取消收藏应用成功');
                         this.fetchFavourites(); // 重新拉取收藏夹内容
                     } else {
-                        this.alertNotification('批量取消收藏应用收藏失败，请稍后重试！');
+                        this.alertNotification('批量取消收藏应用失败，请稍后重试！');
                     }
                 } catch (error) {
-                    this.alertNotification('批量取消收藏应用收藏失败，请稍后重试！');
+                    this.alertNotification('批量取消收藏应用失败，请稍后重试！');
                     console.error('Error bulk deleting favourites:', error);
                 }
             },
@@ -182,7 +206,6 @@
                     this[type] = message;
                 });
             },
-
             filterByCategory() {
                 console.log("Selected category:", this.selectedCategory); // 确认选中的种类是否正确
                 this.fetchFavourites();
@@ -191,7 +214,8 @@
                 this.isBulkDeleting = !this.isBulkDeleting;
                 if (!this.isBulkDeleting) {
                     this.selectedFavourites = [];
-                }// 清空已选中的应用
+                    this.confirmNotification('批量操作已取消'); // 取消批量操作时提示
+                } // 清空已选中的应用
             },
             getAppImgUrl(imgPath) {
                 if (imgPath) {
@@ -200,8 +224,14 @@
                 return '../../public/default.png'; // 默认图片路径
             },
             goToDetail(appId) {
-                this.$router.push(`/app/${appId}`);
-            }
+                if (!this.isBulkDeleting) {
+                    this.$router.push(`/app/${appId}`);
+                }
+            },
+            resetNotifications() {
+                this.alert = '';
+                this.confirm = '';
+            },
         }
     };
 </script>
@@ -220,15 +250,15 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        height :90px;
+        height: 90px;
         padding: 20px;
-        border-bottom: 5px solid darksalmon; 
+        border-bottom: 5px solid darksalmon;
     }
 
     .title {
         font-size: 50px;
         color: #f97c6c;
-        font-weight: bold;
+        font-weight: bold
     }
 
     .user-section {
@@ -314,6 +344,46 @@
                 box-shadow: 0 0 5px 2px rgba(251, 177, 162, 0.5);
             }
 
+    .bulk-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .bulk-delete-toggle {
+        padding: 10px 20px;
+        margin-right: 10px;
+        border: none;
+        background-color: #fbb1a2;
+        color: #fff;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .bulk-delete-toggle:hover {
+            background-color: #f97c6c;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+    .bulk-delete-confirm {
+        padding: 10px 20px;
+        border: none;
+        background-color: #f97c6c;
+        color: #fff;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .bulk-delete-confirm:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
 
     .auto-wrapper {
         display: flex;
@@ -333,6 +403,7 @@
         text-align: center;
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         cursor: pointer;
+        position: relative;
     }
 
         .info-box:hover {
@@ -348,7 +419,6 @@
         transition: transform 0.3s ease;
     }
 
-
     .app-name {
         font-size: 25px;
         font-weight: bold;
@@ -361,13 +431,12 @@
         color: lightseagreen;
         background-color: whitesmoke;
         border-radius: 10px;
-        padding: 2px 10px; /* 增加左右内边距，确保文本不贴边 */
-        display: inline-block; /* 让标签宽度自动适应内容 */
-        text-align: center; /* 居中对齐文本 */
-        margin: 0 auto; /* 确保在父容器内居中 */
-        font-weight: bold !important; /* 设置粗体 */
+        padding: 2px 10px;
+        display: inline-block;
+        text-align: center;
+        margin: 0 auto;
+        font-weight: bold !important;
         margin-bottom: 10px;
-
     }
 
     .app-info {
@@ -383,6 +452,7 @@
 
     .action-buttons {
         margin-top: 10px;
+        position: relative;
     }
 
     .favourite-button {
@@ -396,6 +466,46 @@
     }
 
     .bulk-delete-checkbox {
-        margin-top: 10px;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 24px;
+        height: 24px;
+        transform: scale(1.5);
+        cursor: pointer;
     }
+
+
+    .notification-toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #3db999;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        opacity: 0;
+        animation: fadeInOut 4s ease forwards;
+    }
+
+    @keyframes fadeInOut {
+        0% {
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
 </style>
