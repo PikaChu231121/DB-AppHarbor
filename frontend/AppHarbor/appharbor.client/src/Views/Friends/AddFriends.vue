@@ -257,6 +257,7 @@
         justify-content: space-between;
         background-color: #fbb1a2;
         padding: 20px;
+        height: 100%;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
