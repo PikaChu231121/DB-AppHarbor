@@ -145,7 +145,7 @@ export default {
 <style scoped>
 .report-list {
     margin: 20px;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-weight: bold;
     color: #333;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -224,7 +224,7 @@ button {
     cursor: pointer;
     padding: 6px 12px;
     font-size: 0.9em;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-weight: bold;
     transition: background-color 0.3s ease;
 }
 
