@@ -3,9 +3,11 @@
         <div class="pagination-controls">
             <!-- Previous Page Button -->
             <button class="pagination-button previous" @click="goToPreviousPage" :disabled="isFirstPage">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/eb00729ac35dd30cdcce73386ced7ed9edb9836a5c738bba749960c794ad5761?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="" class="pagination-icon" />
-                <span>上一页</span>
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/eb00729ac35dd30cdcce73386ced7ed9edb9836a5c738bba749960c794ad5761?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&"
+                     alt="" class="pagination-icon" />
+                <span>上页</span>
             </button>
+
             <!-- Page Numbers -->
             <ul class="pagination-list">
                 <li v-for="page in visiblePages" :key="page">
@@ -20,18 +22,36 @@
                     <span class="pagination-ellipsis">...</span>
                 </li>
             </ul>
+
             <!-- Next Page Button -->
             <button class="pagination-button next" @click="goToNextPage" :disabled="isLastPage">
-                <span>下一页</span>
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/b85c02f0b5539596af9cb766334ec851876c21e920ea6e52714e82da9823a8fb?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&" alt="" class="pagination-icon" />
+                <span>下页</span>
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/b85c02f0b5539596af9cb766334ec851876c21e920ea6e52714e82da9823a8fb?apiKey=b4c87aa6fd1245589700a3931ad0dfbf&"
+                     alt="" class="pagination-icon" />
             </button>
+
+            <!-- Jump to Page -->
+            <div class="jump-to-page">
+                <input type="text" v-model="jumpPage" placeholder="跳转页码" @keypress.enter="handleJumpToPage" />
+                <button @click="handleJumpToPage">跳转</button>
+            </div>
         </div>
+
+        <!-- Custom Popup Component -->
+        <CustomPopup :message="popupMessage"
+                     :visible="isPopupVisible"
+                     @close="isPopupVisible = false" />
     </nav>
 </template>
 
 <script>
+    import CustomPopup from './CustomPopup.vue';
+
     export default {
         name: 'PaginationComponent',
+        components: {
+            CustomPopup
+        },
         props: {
             currentPage: {
                 type: Number,
@@ -41,6 +61,14 @@
                 type: Number,
                 required: true
             }
+        },
+        data() {
+            return {
+                visiblePageCount: 5,
+                jumpPage: '',
+                isPopupVisible: false,
+                popupMessage: ''
+            };
         },
         computed: {
             isFirstPage() {
@@ -68,11 +96,6 @@
                 return this.totalPages > this.visiblePageCount;
             }
         },
-        data() {
-            return {
-                visiblePageCount: 5
-            }
-        },
         methods: {
             goToPreviousPage() {
                 if (!this.isFirstPage) {
@@ -86,9 +109,20 @@
             },
             goToPage(page) {
                 this.$emit('page-changed', page);
+            },
+            handleJumpToPage() {
+                const page = parseInt(this.jumpPage, 10);
+                if (isNaN(page) || page < 1 || page > this.totalPages) {
+                    this.popupMessage = '请输入有效的页码（正整数且在页码范围内）';
+                    this.isPopupVisible = true;
+                    this.jumpPage = ''; // 清空输入框
+                } else {
+                    this.goToPage(page);
+                    this.jumpPage = ''; // 清空输入框
+                }
             }
         }
-    }
+    };
 </script>
 
 <style scoped>
@@ -129,6 +163,11 @@
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease;
     }
+
+        .pagination-button.previous,
+        .pagination-button.next {
+            padding: 8px 20px; /* 增加左右的内边距，增大按钮长度 */
+        }
 
         .pagination-button:disabled {
             opacity: 0.5;
@@ -188,6 +227,24 @@
         font-weight: bold; /* 设置字体加粗 */
     }
 
+    .jump-to-page {
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+    }
+
+    .jump-input {
+        width: 60px;
+        padding: 6px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .jump-button {
+        padding: 6px 12px;
+    }
+
     @media (max-width: 991px) {
         .pagination-container {
             flex-direction: column;
@@ -196,5 +253,37 @@
         .pagination-controls {
             flex-wrap: wrap;
         }
+
+        .jump-to-page {
+            margin-top: 10px;
+        }
     }
+
+    .jump-to-page {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: 20px;
+    }
+
+        .jump-to-page input {
+            width: 60px;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .jump-to-page button {
+            padding: 6px 12px;
+            border-radius: 4px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .jump-to-page button:hover {
+                background-color: #e0e0e0;
+            }
 </style>
