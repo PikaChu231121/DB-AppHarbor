@@ -14,6 +14,9 @@
         </div>
         <div class="fbody">
             <div class="sidebar">
+                <div class="sidebar-title">
+                    好友分组
+                </div>
                 <div class="group"
                      v-for="group in groups"
                      :key="group.name"
@@ -308,12 +311,19 @@
         //border-left: 1px solid #fb8142;
     }
 
+    .sidebar-title {
+        font-size: 25px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #ff6b6b;
+    }
+
     .group {
         //margin-left: 15px;
         margin-bottom: 15px;
         padding: 15px;
         border-radius: 10px;
-        background-color: #ffedd4;
+        background-color: white;
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
         cursor: pointer;
         transition: all 0.3s ease;
@@ -354,12 +364,12 @@
         }
 
     .group:hover {
-        background-color: #f5f5f5;
+        background-color: #ffedd4;
         transform: translateY(-2px);
     }
 
     .group.selected {
-        background-color: #fff;
+        background-color: #e4cc80;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
