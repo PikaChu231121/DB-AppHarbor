@@ -66,7 +66,7 @@ export default {
         },
         getAvatarUrl(avatarPath) {
             if (avatarPath) {
-                return '${this.$Url}' + avatarPath;
+                return `${this.$Url}` + avatarPath;
             } else {
                 return '@/../public/default.png';
             }
