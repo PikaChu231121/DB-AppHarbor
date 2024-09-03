@@ -187,9 +187,9 @@
         padding: 20px;
         background-color: #f5f5f5;
         border-radius: 8px;
-        max-width: 1200px;
+        width: 100%;
         margin: 0 auto;
-        max-height: 677.6px;
+        height: 100%;
     }
 
     .header {
@@ -202,7 +202,8 @@
     .main-title {
         font-size: 36px;
         color: black;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        //font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
         margin: 0;
     }
 
@@ -215,8 +216,9 @@
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 4px;
-        font-size: 14px;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 18px;
+        //font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
     }
 
     .announcement-list {
@@ -244,7 +246,8 @@
         margin: 0;
         font-size: 22px;
         color: #ffa8a4;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        //font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
     }
 
     .announcement-details {
@@ -305,7 +308,8 @@
     .popup-title {
         margin-top: 0;
         font-size: 24px;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        //font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
         color: #ffa8a4;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
@@ -368,7 +372,8 @@
     .pagination-controls {
         display: flex;
         justify-content: center;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        //font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight: bold;
         align-items: center;
         margin-top: 20px;
     }
@@ -376,9 +381,10 @@
         .pagination-controls button {
             margin: 0 5px;
             padding: 5px 10px;
-            font-size: 14px;
+            font-size: 18px;
             border: 1px solid #ddd;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            //font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
             border-radius: 4px;
             background-color: #ffa8a4;
             color: #fff;
@@ -398,7 +404,8 @@
         .pagination-controls input {
             width: 60px;
             margin: 0 10px;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            //font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
             padding: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -410,6 +417,7 @@
         font-size: 18px;
         color: #888;
         margin: 20px 0;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-weight:bold;
+        //font-family: 'Comic Sans MS', cursive, sans-serif;
     }
 </style>

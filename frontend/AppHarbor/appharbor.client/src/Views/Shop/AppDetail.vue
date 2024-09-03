@@ -4,94 +4,103 @@
         <confirm-box :msg="confirm"></confirm-box>
         <NotificationModal :visible="showNotification" :title="notificationTitle" :message="notificationMessage"
                            @close="showNotification = false" />
-        <div class="button-container">
-            <button class="back-button" @click="goBack">返回商店</button>
+        <div class="appheader">
+            <img loading="lazy" src="@/../public/logo-text.png" class="logo-text-image" alt="AppHabour Logo Text" />
+            <div class="button-container">
+                <button class="back-button" @click="goBack">返回</button>
+            </div>
+            <div class="header-title">应用详情 : {{ app.name }}</div>
         </div>
-        <!-- 图片信息 -->
-        <div class="image-placeholder">
-            <div class="image-frame">
+
+
+        <div class="app-details" :style="{ backgroundImage: `url(${getAppImgUrl(app.image)})` }">
+            <div class="acrylic"></div>
+            <div class="image-placeholder">
                 <img :src="getAppImgUrl(app.image)" :alt="app.name" class="app-image" />
             </div>
-        </div>
-        <!-- 应用详情 -->
-        <div class="app-details">
-            <h2 class="text-heading">{{ app.name }}</h2>
-            <div class="tag">{{ app.category }}</div>
-            <div class="price" v-html="formattedPrice"></div>
 
-            <div class="button-container">
+            <div class="appd">
+                <h2 class="app-name">{{ app.name }}</h2>
+                <div class="tag">{{ app.category }}</div>
+                <div class="price" v-html="formattedPrice"></div>
                 <button class="button" @click="goToPurchase(app.id)">购买</button>
-                <button class="button" @click="toggleFavourite">{{ isFavourited ? '取消收藏' : '收藏' }}</button>
             </div>
-
-            <div class="faq">
-                <div class="faq-header" @click="toggleFAQ">
-                    <h3 class="faq-title">介绍</h3>
-                    <span class="arrow">
-                        <img v-if="isFAQOpen" src="@/assets/direction-up.svg" alt="Arrow Up">
-                        <img v-else src="@/assets/direction-down.svg" alt="Arrow Down">
-                    </span>
-                </div>
-                <div class="faq-content" :class="{ hidden: !isFAQOpen }">
-                    <p>{{ app.description }}</p>
-                </div>
-            </div>
-
-            <!-- 举报按钮 -->
-            <div class="report-button-container">
-                <button class="button report-button" @click="openReportModal">举报</button>
-            </div>
-        </div>
-    </div>
-    <!-- 评论区域 -->
-    <div class="comments-container">
-        <h3>用户评论</h3>
-        <div v-for="comment in comments" :key="comment.id" class="comment-item">
-            <img :src="getAvatarUrl(comment.avatar)" alt="Avatar" class="avatar">
-            <div class="info">
-                <span class="nickname">{{ comment.nickname }}</span>
-                <div class="score">
-                    <span v-for="star in 5" :key="star" class="star"
-                          :class="{ filled: star <= comment.score }">&#9733;</span>
-                </div>
-                <p class="content">{{ comment.content }}</p>
-                <span class="publishTime">发布于 {{ formatDate(comment.publishTime) }}</span>
-            </div>
-            <div class="delete-button-container">
-                <button v-if="comment.userId === user.id"
-                        @click="deleteComment(comment.id)"
-                        class="button delete-button">
-                    删除
+            <div class="favandrep">
+                <button class="favourite-button" @click="toggleFavourite" :class="{ 'not-favourited': !isFavourited }">
+                    <span class="icon">{{ isFavourited ? '😍' : '☆' }}</span>
                 </button>
+                <div class="report-button-container">
+                    <button class="report-button" @click="openReportModal">
+                        <span class="icon">😵</span>
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="comment-editor">
-            <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
-            <div class="score">
-                <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }"
-                      @click="setScore(star)">&#9733;</span>
+
+
+
+        <div class="faq">
+            <div class="faq-header" @click="toggleFAQ">
+                <h3 class="faq-title">介绍</h3>
+                <span class="arrow">
+                    <img v-if="isFAQOpen" src="@/assets/direction-up.svg" alt="Arrow Up">
+                    <img v-else src="@/assets/direction-down.svg" alt="Arrow Down">
+                </span>
             </div>
-            <button class="button" @click="submitComment">发布评论</button>
+            <div class="faq-content" :class="{ hidden: !isFAQOpen }">
+                <p>{{ app.description }}</p>
+            </div>
         </div>
-    </div>
 
-    <!-- 举报弹窗 -->
-    <div v-if="showReportModal" class="report-modal">
-        <div class="modal-content">
-            <h3 style="font-size:30px;font-weight:bold">举报应用&nbsp;{{ app.name }}</h3>
-            <p style="font-size:15px;font-family:'Times New Roman', Times, serif">你确定要举报{{ app.name }}吗?请在下方填写举报内容</p>
-            <textarea v-model="reportContent" placeholder="请输入举报内容"></textarea>
-            <button class="rbutton" @click="submitReport">提交举报</button>
-            <button class="rbutton" @click="closeReportModal">取消</button>
+        <div class="comments-container">
+            <h3>用户评论</h3>
+            <div v-for="comment in comments" :key="comment.id" class="comment-item">
+                <img :src="getAvatarUrl(comment.avatar)" alt="Avatar" class="avatar">
+                <div class="info">
+                    <span class="nickname">{{ comment.nickname }}</span>
+                    <div class="score">
+                        <span v-for="star in 5" :key="star" class="star"
+                              :class="{ filled: star <= comment.score }">&#9733;</span>
+                    </div>
+                    <p class="content">{{ comment.content }}</p>
+                    <span class="publishTime">发布于 {{ formatDate(comment.publishTime) }}</span>
+                </div>
+                <div class="delete-button-container">
+                    <button v-if="comment.userId === user.id"
+                            @click="deleteComment(comment.id)"
+                            class="button delete-button">
+                            删除
+                    </button>
+                </div>
+            </div>
+            <div class="comment-editor">
+                <textarea v-model="newComment.content" placeholder="输入评论内容"></textarea>
+                <div class="score">
+                    <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= newComment.score }"
+                          @click="setScore(star)">&#9733;</span>
+                </div>
+                <button class="button" @click="submitComment">发布评论</button>
+            </div>
         </div>
-    </div>
 
-    <!-- 评论弹窗 -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
-        <div class="modal-content" @click.stop>
-            <p>{{ commentMessage }}</p>
-            <button @click="closeModal">关闭</button>
+        <div v-if="showReportModal" class="report-modal">
+            <div class="modal-content">
+                <h3 style="font-size:30px;font-weight:bold">举报应用&nbsp;{{ app.name }}</h3>
+                <p style="font-size:15px;font-family:'Times New Roman', Times, serif">你确定要举报{{ app.name }}吗?请在下方填写举报内容</p>
+                <textarea v-model="reportContent" placeholder="请输入举报内容"></textarea>
+                <button class="rbutton" @click="submitReport">提交举报</button>
+                <button class="rbutton" @click="closeReportModal">取消</button>
+            </div>
         </div>
+
+        <div v-if="showModal" class="modal-overlay" @click="closeModal">
+            <div class="modal-content" @click.stop>
+                <p>{{ commentMessage }}</p>
+                <button @click="closeModal">关闭</button>
+            </div>
+        </div>
+
+
     </div>
 
 </template>
@@ -104,7 +113,7 @@
     import ConfirmBox from '../ConfirmBox.vue';
 
     export default {
-        components: { 
+        components: {
             NotificationModal,
             AlertBox,
             ConfirmBox
@@ -121,7 +130,7 @@
                 },
                 isFavourited: false,
                 alert: '',
-                confirm:'',
+                confirm: '',
                 showReportModal: false, // 是否显示举报弹窗
                 reportContent: '', // 举报内容
                 showNotification: false,
@@ -275,30 +284,30 @@
                     rating: this.newComment.score,
                     applicationId: this.app.id
                 })
-                .then(response => {
-                    const parsedData = response.data;
-                    if (parsedData && parsedData.success) {
-                        // 评论弹窗
-                        this.commentMessage = '评论成功！';
-                        this.showModal = true;
-                        // 更新评论显示
-                        const appId = this.$route.params.id;
-                        this.fetchAllComments(appId);
-                        // 清空评论表单
-                        this.newComment.content = '';
-                        this.newComment.score = 0;
-                        /*this.isFavourited = true;*/
-                    } else {
+                    .then(response => {
+                        const parsedData = response.data;
+                        if (parsedData && parsedData.success) {
+                            // 评论弹窗
+                            this.commentMessage = '评论成功！';
+                            this.showModal = true;
+                            // 更新评论显示
+                            const appId = this.$route.params.id;
+                            this.fetchAllComments(appId);
+                            // 清空评论表单
+                            this.newComment.content = '';
+                            this.newComment.score = 0;
+                            /*this.isFavourited = true;*/
+                        } else {
+                            this.commentMessage = '评论失败：' + parsedData.msg;
+                            this.showModal = true;
+                        }
+                    })
+                    .catch(error => {
+                        const parsedData = error.response.data;
+                        console.error('Error adding comment:', error);
                         this.commentMessage = '评论失败：' + parsedData.msg;
                         this.showModal = true;
-                    }
-                })
-                    .catch(error => {
-                    const parsedData = error.response.data;
-                    console.error('Error adding comment:', error);
-                    this.commentMessage = '评论失败：' + parsedData.msg;
-                    this.showModal = true;
-                });
+                    });
             },
             deleteComment(commentId) {
                 axios.post('http://localhost:5118/api/comment/deleteappcomment', {
@@ -378,79 +387,112 @@
                     hour12: false
                 }).replace(/\//g, '-'); // 将斜杠替换为短横线
             },
-    },
-    computed: {
-        formattedPrice() {
-            if (this.app.price === 0) {
-                return `<span>Free! 免费</span>`;
-            }
+        },
+        computed: {
+            formattedPrice() {
+                if (this.app.price === 0) {
+                    return `<span>Free! 免费</span>`;
+                }
 
-            const originalPrice = this.app.price.toFixed(2).split('.');
-            const originalIntegerPart = originalPrice[0];
-            const originalDecimalPart = originalPrice[1];
+                const originalPrice = this.app.price.toFixed(2).split('.');
+                const originalIntegerPart = originalPrice[0];
+                const originalDecimalPart = originalPrice[1];
 
-            const discountedPrice = (this.app.price * this.app.discount).toFixed(2).split('.');
-            const discountedIntegerPart = discountedPrice[0];
-            const discountedDecimalPart = discountedPrice[1];
+                const discountedPrice = (this.app.price * this.app.discount).toFixed(2).split('.');
+                const discountedIntegerPart = discountedPrice[0];
+                const discountedDecimalPart = discountedPrice[1];
 
-            let result = `
+                let result = `
                     <span>
                         ￥ <span class="integer-part">${discountedIntegerPart}</span>.<span class="decimal-part">${discountedDecimalPart}</span>
                     </span>
                 `;
 
-            if (this.app.discount < 1.0) {
-                result += `
+                if (this.app.discount < 1.0) {
+                    result += `
                     <span style="text-decoration: line-through; font-size: 0.6em; color:gray;">
                         原价：<span class="integer-part">${originalIntegerPart}</span>.<span class="decimal-part">${originalDecimalPart}</span>
                     </span>
                 `;
+                }
+
+                return result;
             }
 
-            return result;
         }
-
     }
-}
 </script>
 
 
 <style scoped>
-    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
     .card {
-        display: flex;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px; /* Updated border radius */
-        overflow: hidden;
-        max-width: 800px;
-        background-color: #fff;
-        margin: auto;
-        background-color: #faebd7; /* Updated background color */
+        width: 100%; 
+        //height: 100vh;
+        display: flex; 
+        flex-direction: column; 
+        box-sizing: border-box; 
+        background-color:whitesmoke;
     }
 
-    .button-container {
+    .appheader {
         display: flex;
-        flex-direction: column;
-        padding: 10px;
+        height: 65px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 12px;
+        gap: 20px;
+        background-color: #efc2bb; /* Optional: Add a background color */
+        z-index: 1000;
+        border-bottom: 4px solid #ffe7d3;
+    }
+
+    .header-title {
+        margin-left: auto;
+        margin-right: 20px;
+        font-weight: bold;
+        font-size: 25px;
+        color: white;
+    }
+
+    
+    .logo-text-image {
+        height: 40px; /* Adjust height as needed */
+    }
+
+
+    .button-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex; 
+        justify-content: center;
+        align-items: center;
     }
 
     .back-button {
-        background: linear-gradient(135deg, #fbb1a2, #e89a8d); /* Gradient background */
-        color: #fff;
-        padding: 12px 24px;
+        background-color: #fbb1a2; /* 背景颜色 */
+        padding: 10px 20px; /* 内边距 */
+        border-radius: 8px; /* 边框圆角 */
+        //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+        z-index: 100; /* 确保在其他元素之上 */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        font-weight: bold !important;
+        font-family:'Microsoft YaHei';
+        font-size: 20px;
+        color:white;
         border: none;
-        border-radius: 12px; /* Rounded corners */
-        cursor: pointer;
-        font-size: 18px; /* Slightly larger font size */
-        font-weight: bold;
-        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
     }
 
         .back-button:hover {
-            background: linear-gradient(135deg, #e89a8d, #e0897c); /* Darker gradient on hover */
-            transform: translateY(-3px); /* Slight lift effect */
+            background-color :darksalmon;
+            //background: linear-gradient(135deg, #e89a8d, #e0897c); /* Darker gradient on hover */
+            //transform: translateY(-3px); /* Slight lift effect */
         }
 
         .back-button:active {
@@ -463,49 +505,74 @@
             box-shadow: 0 0 0 4px rgba(250, 235, 215, 0.5);
         }
 
-    .image-placeholder {
-        width: 50%;
-        height: 100%;
+    .app-details {
+        margin-top: 30px;
+        padding: 150px;
+        box-sizing: border-box;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #faebd7;
-        margin-top: auto;
-        margin-bottom: auto;
+        position: relative;
+        //overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
-    .image-frame {
-        width: 300px; /* 固定宽度 */
-        height: 300px; /* 固定高度 */
-        border: 4px solid #ddd; /* 边框颜色 */
-        border-radius: 12px; /* 圆角 */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
-        overflow: hidden; /* 确保图片不会溢出边框 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #fff; /* 背景颜色与图片对比 */
+        .app-details .acrylic {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px) brightness(0.8);
+            //background-color: whitesmoke;
+            background-color: #ffffffef;
+            z-index: 1;
+        }
+
+
+    .image-placeholder {
+        width: 250px; 
+        height: 250px; 
+        //background-color: #eaeaea; 
+        border-radius: 60px; /* 添加圆角 */
+        overflow: hidden; 
+        z-index:2;
     }
+
 
     .app-image {
-        width: 100%; /* 自适应宽度 */
-        height: 100%; /* 自适应高度 */
+        width: 100%;
+        height: 100%;
         object-fit: cover; /* 确保图片不会变形 */
     }
 
-    .app-details {
-        width: 50%;
-        padding: 20px;
+
+    .appd {
+        margin-left: 50px;
+        margin-right: 100px;
+        width: auto;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        flex: 1;
+        position: relative;
+        z-index: 2;
     }
 
-    .text-heading {
-        font-size: 24px;
-        font-family: 'Pacifico', cursive; /* Cute font */
-        color: #333; /* Updated text color */
-        margin-bottom: 10px;
+
+    .app-name {
+        font-size: 45px;
+        font-weight: bold;
+        //margin-bottom: 10px; /* 添加一些下边距 */
+    }
+
+    /* 分类和价格样式 */
+    .tag  {
+        font-size: 18px;
+        margin-top: 10px;
+    }
+    .price {
+        font-size: 15px;
     }
 
     .tag {
@@ -516,7 +583,7 @@
         font-size: 16px;
         border-radius: 8px;
         width: fit-content;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
 
     .price {
@@ -524,12 +591,129 @@
         font-weight: bold;
         color: #ff5722; /* Updated color */
         margin-bottom: 10px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
+
+    .favandrep {
+        right: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* 调整购买按钮样式 */
+    .button {
+        max-width: 360px;
+        padding: 10px 10px;
+        font-size: 25px;
+        font-family: 'Microsoft YaHei';
+        border-radius: 8px;
+        background-color: #fbb1a2;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .favourite-button {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        background-color: white;
+        border-radius: 20px;
+        border: 0;
+        box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+
+        .favourite-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .favourite-button .icon {
+            font-size: 30px;
+            color: #ffd700; /* 收藏时为黄色 */
+        }
+
+        .favourite-button.not-favourited .icon {
+            color: #ccc; /* 未收藏时为灰色 */
+        }
+
+        .favourite-button::after {
+            content: '收藏';
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .favourite-button:hover::after {
+            opacity: 1;
+        }
+
+    /* 举报按钮样式 */
+    .report-button-container .report-button {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+        background-color: white;
+        border-radius: 20px;
+        border: 0;
+        box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+
+        .report-button-container .report-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 举报按钮的图标 */
+        .report-button-container .report-button .icon {
+            font-size: 30px;
+            color: inherit;
+        }
+
+        /* 举报按钮的气泡文字 */
+        .report-button-container .report-button::after {
+            content: '举报';
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .report-button-container .report-button:hover::after {
+            opacity: 1;
+        }
+
 
     .description {
         margin-bottom: 20px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
 
     .button, .purchase-button {
@@ -544,7 +728,7 @@
         font-weight: bold;
         transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
     }
 
         .button:hover, .purchase-button:hover {
@@ -563,8 +747,14 @@
         }
 
     .faq {
-        border-top: 1px solid #e5e5e5;
-        padding-top: 10px;
+        //border-top: 1px solid #e5e5e5;
+        margin-top: 30px;
+        margin-left: 150px;
+        margin-right: 150px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 30px;
     }
 
     .faq-header {
@@ -576,7 +766,7 @@
 
     .faq-title {
         font-size: 18px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bold;
         margin: 0;
     }
 
@@ -597,12 +787,14 @@
         }
 
     .comments-container {
-        max-width: 800px;
-        margin: 20px auto;
-        background: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px solid #e5e5e5;
+        margin-top: 30px;
+        margin-left: 150px;
+        margin-right: 150px;
+        margin-bottom: 50px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 30px;
     }
 
     .comment-item {
@@ -645,15 +837,7 @@
         margin-top: 5px;
     }
 
-    .app-details {
-        width: 50%;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .button-container {
+    .buy-button {
         display: flex;
         gap: 15px; /* 增加按钮间距 */
         margin-top: 10px; /* 调整与其他元素的间距 */
@@ -715,7 +899,7 @@
         border: 1px solid #ddd;
         padding: 10px;
         margin-bottom: 10px;
-        margin-top:10px;
+        margin-top: 10px;
     }
 
     .rbutton {
@@ -726,9 +910,9 @@
         color: white;
         padding: 10px 20px;
         cursor: pointer;
-        font-weight:bolder;
-        font-size:15px;
-        font-family: 'Pacifico', cursive; /* Cute font */
+        font-weight: bolder;
+        font-size: 15px;
+        font-weight: bold;
         transition: background-color 0.3s, transform 0.2s;
     }
 
@@ -793,7 +977,4 @@
                 background-color: #e89a8d;
                 transform: translateY(-2px);
             }
-
-
-
 </style>

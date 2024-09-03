@@ -1,25 +1,33 @@
 <template>
+    <!link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <div class="Wallet">
+        <div v-if="notificationMessage" class="notification-toast">
+            <p>{{ notificationMessage }}</p>
+        </div>
         <div class="header">
-            <img :src="avatar_url" class="avatar-header" />
-            <div class="avatar">
-                <img :src="avatar_url" class="avatar-circle" />
+            <div class="title">{{ user_nickname }}的钱包</div>
+            <div class="user-section">
+                <div class="avatar-wrapper">
+                    <img :src="avatar_url" class="avatar-circle" />
+                </div>
                 <div class="user-info">
-                    <p class="user-nickname">用户昵称：{{ user_nickname }}</p>
-                    <p class="user-id">用户ID：{{ user_id }}</p>
+                    <p class="user-nick">{{ user_nickname }}</p>
+                    <p class="user-id">ID : {{ user_id }}</p>
                 </div>
             </div>
         </div>
-        <div class="auto-wrapper">
-            <div class="info-box">
-                <p class="text">钱包余额</p>
+
+        <div class="wallet-body">
+            <div class="auto-wrapper">
+                <p class="leftmoney">钱包余额</p>
                 <p class="user-credit" v-html="formattedCredit"></p>
                 <div class="button-row">
                     <input type="number" v-model="rechargeAmount" placeholder="输入充值金额" class="input-recharge" />
-                    <button type="button" class="button" @click="recharge">充值</button>
+                    <button type="button" class="chargebutton" @click="recharge">充值</button>
                 </div>
             </div>
-            <div class="info-box">
+
+            <div class="order-list">
                 <p class="text">交易记录</p>
                 <div class="transaction-table">
                     <table>
@@ -43,355 +51,357 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- <div class="button-row">
-                    <button type="button" class="button" @click="prevPage">上一页</button>
-                    <button type="button" class="button" @click="nextPage">下一页</button>
-                </div> -->
             </div>
         </div>
+
+
+
     </div>
 </template>
 
-<script>
-import axios from 'axios';
-import Cookies from 'js-cookie';
-export default {
-    data() {
-        return {
-            user_nickname: '',
-            user_id: '',
-            transactions: [],
-            avatar_url: '',
-            credit: -1,
-            rechargeAmount: 0 // 充值金额
-        };
-    },
-    methods: {
-        fetchUserAndTransactions() {
-            var token = Cookies.get('token');
-            axios.post('http://localhost:5118/api/user/userInfo', { token: token })
-                .then(response => {
-                    this.user = response.data;
-                    console.info(response.data);
-                    this.user_id = response.data.id;
-                    this.user_nickname = response.data.nickname;
-                    this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
-                    this.credit = response.data.credit;
+<style scoped>
+    .Wallet {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 85%;
+        //background-color: aquamarine;
+    }
 
-                    // 确保在user_id被设置之后调用fetchTransactions
-                    this.fetchTransactions();
-                    // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
-                    // 理想状态是通过cookies直接能得到所有的信息
-                })
-                .catch(error => {
-                    console.error('Error fetching user data:', error);
-                });
-        },
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        border-bottom: 5px solid darksalmon;
+        //background-color: #fbeaea;
+        //position: fixed;
+    }
 
-        fetchTransactions() {
-            console.info(this.user_id);
-            axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
-                .then(response => {
-                    this.transactions = response.data.$values;
-                    console.info(this.transactions);
-                })
-                .catch(error => {
-                    console.error('Error fetching transactions:', error);
-                });
-        },
-        recharge() {
+    .title {
+        font-size: 50px;
+        color: #f97c6c;
+        font-weight: bold;
+        margin-left:20px;
+    }
 
-            if (this.rechargeAmount <= 0) {
-                alert('请输入有效的充值金额');
-                return;
-            }
+    .user-section {
+        display: flex;
+        align-items: center;
+    }
 
-            if (this.rechargeAmount + this.credit > 1e6) {
-                alert(`充值失败，账户金额不能超过 1000000 元`);
-                return;
-            }
+    .avatar-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+    }
 
-            if (!/^\d+(\.\d{1,2})?$/.test(this.rechargeAmount)) {
-                alert('请输入最多两位小数的有效金额');
-                return;
-            }
+    .avatar-circle {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        
+    }
 
-            axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
-                .then(response => {
-                    this.fetchUserAndTransactions();
-                    alert('充值成功');
-                })
-                .catch(error => {
-                    console.error('Error recharging:', error);
-                    alert('充值失败，请联系管理员');
-                });
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        margin-right: 20px;
+    }
 
-        },
-    },
-    mounted() {
-        this.fetchUserAndTransactions(); // 页面加载时从cookies获取用户ID，再获取交易信息
-    },
+    .user-nick {
+        font-size: 22px;
+        font-weight: bold;
+    }
 
-    computed: {
-        formattedCredit() {
-            if (this.credit < 0) {
-                return "正在加载";
-            }
-            const creditStr = this.credit.toFixed(2).split('.');
-            const integerPart = creditStr[0];
-            const decimalPart = creditStr[1];
-            return `<span>￥ </span><span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
+    .user-id {
+        font-size: 20px;
+        color: #888;
+        font-weight: bold;
+    }
+
+    .wallet-body {
+        //display: flex;
+        //background-color: gold;
+        height: 100%;
+        border-bottom: 5px solid darksalmon;
+    }
+
+    .auto-wrapper {
+        //position:fixed;
+        width: 100%;
+        height: 20%;
+        background-color: #FADAD6;
+        display: flex;
+        flex-direction: row; /* 组件横向排列 */
+        align-items: center; /* 组件上下居中 */
+        justify-content: space-between; /* 控制不同部分的对齐 */
+        border-bottom: 5px solid #fec65a;
+        //border-radius: 20px;
+    }
+
+    .leftmoney {
+        font-size: 30px;
+        font-weight: bold;
+        color: palevioletred;
+        margin-left: 40px;
+        //background-color:aquamarine;
+    }
+
+
+    .user-credit {
+        font-size: 60px;
+        font-family: 'Roboto Condensed', sans-serif;
+        font-weight: bold;
+        color: #D2691E;
+        //background-color: #e9c3c3;
+        padding: 20px;
+        //border: 2px solid pink;
+        border-radius: 20px;
+        //margin-left: 30px; /* 使其在父容器中居中 */
+        //transform: translateX(-50%); /* 左对齐的同时保持居中 */
+    }
+
+    .button-row {
+        display: flex;
+        justify-content: flex-end; /* 输入框和按钮右对齐 */
+        align-items: center;
+        gap: 10px; /* 在输入框和按钮之间添加间距 */
+        margin-right: 20px; /* 按钮组距离右边界 */
+    }
+
+    .input-recharge {
+        padding: 8px;
+        font-size: 30px;
+        border: 4px solid #FADAD6;
+        border-radius: 20px;
+    }
+
+    .chargebutton {
+        font-weight: bold;
+        font-size: 25px;
+        color: white;
+        background-color: plum;
+        border: none;
+        border-radius: 20px;
+        padding: 10px;
+    }
+
+    .order-list {
+        height: 75%;
+        width:100%;
+        overflow: auto;
+    }
+
+    .text {
+        font-size: 30px;
+        font-weight: bold;
+        color: palevioletred;
+        margin-left: 40px;
+        margin-top:20px;
+    }
+
+
+    .transaction-table {
+        width: 95%;
+        //overflow-y: auto;
+        //max-height: 40%; 
+        border-radius: 20px;
+        margin:20px;
+    }
+
+    table {
+        width: 95%;
+        border-collapse: collapse;
+        font-size: 16px;
+        font-weight:bold !important;
+        font-family:'Microsoft YaHei' !important;
+        background-color: #fbeaea;
+        border: 3px solid #fadad6;
+        border-radius: 20px;
+    }
+
+    thead th {
+        background-color: #fadad6;
+        color: #f8887d;
+        font-weight: bold;
+        border-bottom: 3px solid #fadad6;
+        font-weight: bold !important;
+        font-family: 'Microsoft YaHei' !important;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #fadad6;
+        font-weight: bold !important;
+        font-family: 'Microsoft YaHei' !important;
+    }
+
+    tr:hover {
+        background-color: #ffe5e5;
+        transform: scale(1.01);
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .recharge {
+        background-color: #ffe5e5;
+    }
+
+    .purchase {
+        background-color: #fbeaea;
+    }
+
+    .recharge td {
+        color: #d9534f;
+    }
+
+    .purchase td {
+        color: #5a5a5a;
+    }
+
+    .notification-toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #17a2b8; /* 青色背景 */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        opacity: 0;
+        animation: fadeInOut 4s ease forwards;
+    }
+
+    @keyframes fadeInOut {
+        0% {
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
         }
     }
-}
+
+</style>
+
+
+
+<script>
+    import axios from 'axios';
+    import Cookies from 'js-cookie';
+    export default {
+        data() {
+            return {
+                user_nickname: '',
+                user_id: '',
+                transactions: [],
+                avatar_url: '',
+                credit: -1,
+                rechargeAmount: 0, // 充值金额
+                notificationMessage: '', // 通知消息
+            };
+        },
+        methods: {
+            showNotification(message) {
+                this.notificationMessage = message;
+                setTimeout(() => {
+                    this.notificationMessage = '';
+                }, 4000); // 气泡提示显示4秒钟
+            },
+            fetchUserAndTransactions() {
+                var token = Cookies.get('token');
+                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                    .then(response => {
+                        this.user = response.data;
+                        console.info(response.data);
+                        this.user_id = response.data.id;
+                        this.user_nickname = response.data.nickname;
+                        this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
+                        this.credit = response.data.credit;
+
+                        // 确保在user_id被设置之后调用fetchTransactions
+                        this.fetchTransactions();
+                        // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
+                        // 理想状态是通过cookies直接能得到所有的信息
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user data:', error);
+                        Cookies.remove('token');
+                        this.$router.push('/').then(() => {
+                            // 刷新登录页面
+                            window.location.reload();
+                        });
+                        alert("token异常，请重新登陆！");
+                    });
+            },
+
+            fetchTransactions() {
+                console.info(this.user_id);
+                axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
+                    .then(response => {
+                        this.transactions = response.data.$values;
+                        console.info(this.transactions);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching transactions:', error);
+                    });
+            },
+            recharge() {
+                if (this.rechargeAmount <= 0) {
+                    this.showNotification('请输入有效的充值金额');
+                    return;
+                }
+
+                if (this.rechargeAmount + this.credit > 1e6) {
+                    this.showNotification('充值失败，账户金额不能超过 1000000 元');
+                    return;
+                }
+
+                if (!/^\d+(\.\d{1,2})?$/.test(this.rechargeAmount)) {
+                    this.showNotification('请输入最多两位小数的有效金额');
+                    return;
+                }
+
+                axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
+                    .then(response => {
+                        this.fetchUserAndTransactions();
+                        this.showNotification('充值成功');
+                    })
+                    .catch(error => {
+                        console.error('Error recharging:', error);
+                        this.showNotification('充值失败，请联系管理员');
+                    });
+            },
+        },
+        mounted() {
+            this.fetchUserAndTransactions(); // 页面加载时从cookies获取用户ID，再获取交易信息
+        },
+
+        computed: {
+            formattedCredit() {
+                if (this.credit < 0) {
+                    return "正在加载";
+                }
+                const creditStr = this.credit.toFixed(2).split('.');
+                const integerPart = creditStr[0];
+                const decimalPart = creditStr[1];
+                return `<span>￥ </span><span class="integer-part">${integerPart}</span>.<span class="decimal-part">${decimalPart}</span>`;
+            }
+        }
+    }
 </script>
 
-<style scoped>
-.Wallet {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.header {
-    height: 150px;
-    width: 100%;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    border-radius: 10px;
-    border: 3px solid #ffd7d2;
-}
-
-.avatar-header {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    filter: blur(50px)opacity(80%);
-}
-
-.avatar {
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    left: 5%;
-    top: 15%;
-    height: 100px;
-    width: 500px;
-}
-
-.avatar-circle {
-    position: relative;
-    background-color: #ffffff;
-    object-fit: cover;
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.447);
-    z-index: 1;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-bottom: 4%;
-    margin-left: 5%;
-}
-
-.user-nickname {
-    font-size: 40px;
-    height: 70%;
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    text-shadow: 0 3px 15px rgb(255, 255, 255);
-}
-
-.user-id {
-    width: 100%;
-    margin-left: 5px;
-    height: 70%;
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    text-shadow: 0 3px 15px rgb(255, 255, 255);
-}
-
-.auto-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: calc(100% - 150px);
-    margin: 10px 10px 3px;
-}
-
-.info-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #fff9f9;
-    border: 3px solid #ffd7d2;
-    padding: 2% 5% 2% 5%;
-    width: calc(50% - 8px);
-    height: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.user-credit {
-    font-size: 30px;
-    /* 基本字体大小 */
-}
-
-::v-deep .integer-part {
-    font-size: 50px;
-}
-
-::v-deep .decimal-part {
-    font-size: 20px;
-}
-
-.input-recharge {
-    padding: 10px;
-    font-size: 16px;
-    margin-right: 10px;
-    border: 2px solid #FADAD6;
-    border-radius: 5px;
-}
-
-.text {
-    font-family: Inika;
-    font-size: 2rem;
-    color: #000000;
-    line-height: normal;
-    text-align: left;
-    vertical-align: top;
-    font-weight: 400;
-    white-space: normal;
-    margin-bottom: 1rem;
-}
-
-.transaction-table {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: scroll;
-    margin-bottom: 1rem;
-}
-
-/* 表格基本样式 */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 18px;
-    text-align: left;
-    background-color: #fbeaea;
-    border: 3px solid #fadad6;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* TODO: 表头不随鼠标scroll而移动 */
-thead th {
-    position: sticky;
-    top: 0px;
-    background-color: #fadad6;
-    color: #f8887d;
-    font-weight: bold;
-    border-bottom: 3px solid #fadad6;
-}
-
-th,
-td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #fadad6;
-}
-
-tr:hover {
-    background-color: #ffe5e5;
-    transform: scale(1.01);
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-/* 充值交易的背景颜色 */
-.recharge {
-    background-color: #ffe5e5;
-}
-
-/* 其他交易的背景颜色 */
-.purchase {
-    background-color: #fbeaea;
-}
-
-/* 设置不同交易类型的文本颜色 */
-.recharge td {
-    color: #d9534f;
-}
-
-.purchase td {
-    color: #5a5a5a;
-}
-
-/* 给表格添加圆角效果 */
-table,
-th,
-td,
-tr {
-    border-radius: 10px;
-}
-
-/* 表格头部单独设置圆角 */
-th:first-child {
-    border-top-left-radius: 10px;
-}
-
-th:last-child {
-    border-top-right-radius: 10px;
-}
-
-tr:last-child td:first-child {
-    border-bottom-left-radius: 10px;
-}
-
-tr:last-child td:last-child {
-    border-bottom-right-radius: 10px;
-}
-
-.button-row {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1em;
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #fbeaea;
-    font-size: 18px;
-    color: #F8887D;
-    border: 3px solid #FADAD6;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s, color 0.3s;
-}
-
-button:disabled {
-    cursor: not-allowed;
-}
-
-button:hover:enabled {
-    background-color: #ffe5e5;
-    transform: scale(1.05);
-    color: #F8887D;
-    transition: background-color 0.3s, transform 0.3s, color 0.3s;
-}
-</style>

@@ -100,6 +100,12 @@ export default {
                 })
                 .catch(error => {
                     console.error('获取举报信息失败:', error);
+                    Cookies.remove('token');
+                    this.$router.push('/').then(() => {
+                        // 刷新登录页面
+                        window.location.reload();
+                    });
+                    alert("token异常，请重新登陆！");
                 });
         },
         viewReportContent(report) {
@@ -145,7 +151,7 @@ export default {
 <style scoped>
 .report-list {
     margin: 20px;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-weight: bold;
     color: #333;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -224,7 +230,7 @@ button {
     cursor: pointer;
     padding: 6px 12px;
     font-size: 0.9em;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-weight: bold;
     transition: background-color 0.3s ease;
 }
 

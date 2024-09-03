@@ -175,7 +175,8 @@ export default {
     margin: 0 auto;
     font-family: 'Baloo 2', cursive, Arial, sans-serif;
     font-size: 16px;
-    min-width: 940px;
+    width: 90%;
+    height: 75vh;
     display: flex;
     flex-direction: column;
 }

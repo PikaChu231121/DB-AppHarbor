@@ -13,9 +13,8 @@
                 <div v-if="selectedMenu === 'records'">
                     <TransactionRecords />
                 </div>
-                <div v-if="selectedMenu === 'wallet'" class="main-content">
-                    <!-- 为了让 main-content样式作用于wallet-->
-                    <MerchantWallet />
+                <div v-if="selectedMenu === 'wallet'" class="main-content-wallet">
+                <MerchantWallet />
                 </div>
                 <div v-if="selectedMenu === 'announcement'">
                     <MerchantAnnouncement />
@@ -83,7 +82,13 @@ export default {
 
 .main-content {
     flex: 1;
-    display: flex;
+    display: center;
+    padding: 16px;
+}
+
+.main-content-wallet {
+    flex: 1;
+    display: grid;
     padding: 16px;
 }
 
