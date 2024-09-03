@@ -74,7 +74,7 @@
                 var token = Cookies.get('token');
                 var formData = new FormData();
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/admin/logout', formData)
+                axios.post(`${this.$Url}/api/admin/logout`, formData)
                     .then(response => {
                         // 显示登出成功提示
                         alert("您已成功登出");
@@ -92,12 +92,12 @@
                 const token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/admin/adminInfo', formData)
+                axios.post(`${this.$Url}/api/admin/adminInfo`, formData)
                     .then(response => {
                         const data = response.data;
                         this.user.adminId = data.id;
                         this.user.adminNickname = data.nickname;
-                        this.user.adminAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '@/../public/default.png';
+                        this.user.adminAvatar = data.avatar ? `${this.$Url}${data.avatar}` : '@/../public/default.png';
                         this.user.registerTime = data.registerTime;
                     })
                     .catch(error => {
@@ -118,7 +118,7 @@
                     formData.append('id', this.user.adminId);
 
                     const token = Cookies.get('token');
-                    axios.post('http://localhost:5118/api/Image/upload-admin-image', formData, {
+                    axios.post(`${this.$Url}/api/Image/upload-admin-image`, formData, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'multipart/form-data'
@@ -154,7 +154,7 @@
                     this.showPopup = true;
                     return;
                 }
-                axios.post('http://localhost:5118/api/admin/updateAdminNickname', {
+                axios.post(`${this.$Url}/api/admin/updateAdminNickname`, {
                     id: this.user.adminId,
                     newnickname: this.user.adminNickname
                 })

@@ -50,7 +50,7 @@
         methods: {
             fetchApps() {
                 console.log('fetchApps has been execute!');
-                axios.post('http://localhost:5118/api/application/getapplist', {
+                axios.post(`${this.$Url}/api/application/getapplist`, {
                     Category: this.Category
                 })
                     .then(response => {
@@ -65,7 +65,7 @@
                     });
             },
             searchApps() {
-                axios.post('http://localhost:5118/api/application/searchapplist', {
+                axios.post(`${this.$Url}/api/application/searchapplist`, {
                     Category: this.Category,
                     Price_min: this.priceRange[0],
                     Price_max: this.priceRange[1],

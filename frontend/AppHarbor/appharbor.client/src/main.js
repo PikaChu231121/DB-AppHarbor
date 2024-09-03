@@ -11,4 +11,8 @@ import router from './router'
 const app = createApp(App);
 
 
+// 定义全局常量
+app.config.globalProperties.$Url = 'http://localhost:5118';
+
+
 app.use(router).mount('#app');

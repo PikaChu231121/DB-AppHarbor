@@ -115,12 +115,12 @@
             },
             fetchUser() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token })
+                axios.post(`${this.$Url}/api/user/userInfo`, { token })
                     .then(response => {
                         const data = response.data;
                         this.user_id = data.id;
                         this.user_nickname = data.nickname;
-                        this.avatar_url = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png';
+                        this.avatar_url = data.avatar ? `${this.$Url}${data.avatar}` : '../../public/default.png';
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
@@ -138,7 +138,7 @@
                     const formData = new FormData();
                     formData.append('token', token);
                     formData.append('categoryFilter', this.selectedCategory);
-                    const response = await axios.post('http://localhost:5118/api/favourite/getfavourites', formData);
+                    const response = await axios.post(`${this.$Url}/api/favourite/getfavourites`, formData);
                     const parsedData = JSON.parse(response.data);
 
                     if (parsedData && parsedData.Favourites) {
@@ -161,7 +161,7 @@
             async deleteFavourite(id) {
                 try {
                     const token = Cookies.get('token');
-                    const response = await axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                    const response = await axios.post(`${this.$Url}/api/favourite/deleteFavourite`, {
                         token: token,
                         id: id
                     });
@@ -181,7 +181,7 @@
             async bulkDelete() {
                 try {
                     const token = Cookies.get('token');
-                    const response = await axios.post('http://localhost:5118/api/favourite/bulkDelete', {
+                    const response = await axios.post(`${this.$Url}/api/favourite/bulkDelete`, {
                         token: token,
                         ids: this.selectedFavourites
                     });
@@ -225,7 +225,7 @@
             },
             getAppImgUrl(imgPath) {
                 if (imgPath) {
-                    return `http://localhost:5118${imgPath}`;
+                    return `${this.$Url}${imgPath}`;
                 }
                 return '../../public/default.png'; // 默认图片路径
             },

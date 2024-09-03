@@ -106,7 +106,7 @@ export default {
             formData.append('Category', this.appCategory);
             formData.append('Token', token);
             console.log(this.appFile);
-            axios.post('http://localhost:5118/api/application/uploadapp', formData, {
+            axios.post(`${this.$Url}/api/application/uploadapp`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -116,7 +116,7 @@ export default {
                     let formDataImg = new FormData();
                     formDataImg.append('file', this.appImage);
                     formDataImg.append('id', this.appId);
-                    axios.post('http://localhost:5118/api/Image/upload-app-img', formDataImg)
+                    axios.post(`${this.$Url}/api/Image/upload-app-img`, formDataImg)
                         .then(response => {
                             console.log(response);
                         })

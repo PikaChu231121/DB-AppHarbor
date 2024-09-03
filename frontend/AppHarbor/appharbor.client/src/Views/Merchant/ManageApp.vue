@@ -269,7 +269,7 @@
                 formData.append('sortOrder', this.sortOrder);
 
                 try {
-                    const response = await axios.post('http://localhost:5118/api/merchant/getApps', formData);
+                    const response = await axios.post(`${this.$Url}/api/merchant/getApps`, formData);
                     this.apps = response.data.apps.$values.map(app => ({
                         ...app,
                         discount: parseFloat(app.discount).toFixed(2)
@@ -318,7 +318,7 @@
                 formData.append('discount', this.selectedApp.discount);
 
                 try {
-                    await axios.post('http://localhost:5118/api/merchant/updateApp', formData);
+                    await axios.post(`${this.$Url}/api/merchant/updateApp`, formData);
                     this.confirmNotification('应用信息修改成功！');
                     this.fetchApps(this.currentPage);
                 } catch (error) {
@@ -336,7 +336,7 @@
                 formData.append('merchantId', this.merchantId);
 
                 try {
-                    await axios.post('http://localhost:5118/api/merchant/deleteApp', formData);
+                    await axios.post(`${this.$Url}/api/merchant/deleteApp`, formData);
                     this.confirmNotification('应用下架成功！');
                     this.closeConfirmDelete();
                     this.closeEditModal();
@@ -358,7 +358,7 @@
                 formDataImg.append('id', this.selectedApp.id);
 
                 try {
-                    await axios.post('http://localhost:5118/api/merchant/upload-app-img', formDataImg);
+                    await axios.post(`${this.$Url}/api/merchant/upload-app-img`, formDataImg);
                     /*this.confirmNotification('图标上传成功！');*/
                 } catch (error) {
                     console.error('Error uploading image:', error);
@@ -371,7 +371,7 @@
                 formDataAppFile.append('id', this.selectedApp.id);
 
                 try {
-                    await axios.post('http://localhost:5118/api/merchant/uploadapp', formDataAppFile);
+                    await axios.post(`${this.$Url}/api/merchant/uploadapp`, formDataAppFile);
                     /*this.confirmNotification('应用包上传成功！');*/
                 } catch (error) {
                     console.error('Error uploading app file:', error);
@@ -485,7 +485,7 @@
                 return stateMapping[releaseState] || releaseState;
             },
             getFullImageUrl(imagePath) {
-                const baseUrl = 'http://localhost:5118';
+                const baseUrl = '${this.$Url}';
                 return imagePath ? `${baseUrl}${imagePath}` : '';
             },
         },

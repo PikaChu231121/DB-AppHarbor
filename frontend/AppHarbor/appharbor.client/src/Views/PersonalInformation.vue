@@ -80,7 +80,7 @@
         methods: {
             fetchUserInfo() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post(`${this.$Url}/api/user/userInfo`, { token: token })
                     .then(response => {
                         this.user = response.data;
                     })
@@ -106,7 +106,7 @@
                     let formData = new FormData();
                     formData.append('file', file);
                     formData.append('id', this.user.id);
-                    axios.post('http://localhost:5118/api/Image/upload-personal-image', formData)
+                    axios.post(`${this.$Url}/api/Image/upload-personal-image`, formData)
                         .then(response => {
                             this.user.avatar = response.data.data;
                             this.confirmNotification('头像上传成功');
@@ -122,7 +122,7 @@
                     this.alertNotification("昵称不允许为空，请重新输入");
                     return;
                 }
-                axios.post('http://localhost:5118/api/user/updateUserNickname', {
+                axios.post(`${this.$Url}/api/user/updateUserNickname`, {
                     id: this.user.id,
                     newnickname: this.user.nickname
                 })
@@ -139,7 +139,7 @@
                 var token = Cookies.get('token');
                 var formData = new FormData();
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/user/logout', formData)
+                axios.post(`${this.$Url}/api/user/logout`, formData)
                     .then(() => {
                         // 显示登出成功提示
                         alert("您已成功登出");
@@ -163,7 +163,7 @@
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
-                    return `http://localhost:5118${avatarPath}`;
+                    return `${this.$Url}${avatarPath}`;
                 }
                 return '../../public/default.png'; // 默认头像路径
             }

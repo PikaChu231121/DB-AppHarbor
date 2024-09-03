@@ -69,7 +69,7 @@
                     let formData = new FormData();
                     formData.append('id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
                     formData.append('password', this.password);
-                    axios.post('http://localhost:5118/api/admin/adminlogin', formData)
+                    axios.post(`${this.$Url}/api/admin/adminlogin`, formData)
                         .then(response => {
                             Cookies.set("token", response.data);
                             this.isLoading = true; // Show loading animation on login attempt
@@ -89,7 +89,7 @@
                     let formData = new FormData();
                     formData.append('merchant_id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
                     formData.append('password', this.password);
-                    axios.post('http://localhost:5118/api/Merchant/login', formData)
+                    axios.post(`${this.$Url}/api/Merchant/login`, formData)
                         .then(response => {
                             Cookies.set("token", response.data);
                             this.isLoading = true; // Show loading animation on login attempt
@@ -111,7 +111,7 @@
                     let formData = new FormData();
                     formData.append('id', this.id);
                     formData.append('password', this.password);
-                    axios.post('http://localhost:5118/api/user/login', formData)
+                    axios.post(`${this.$Url}/api/user/login`, formData)
                         .then(response => {
                             Cookies.set("token", response.data);
                             this.isLoading = true; // Show loading animation on login attempt
