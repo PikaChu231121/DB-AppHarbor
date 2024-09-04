@@ -155,10 +155,10 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
-        border-radius: 50px; /* Rounded buttons */
+        border-radius: 50px;
         color: #555;
         padding: 8px 12px;
-        background-color: #f4f4f4; /* Light gray background */
+        background-color: #f4f4f4;
         border: 1px solid #ddd;
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease;
@@ -166,7 +166,7 @@
 
         .pagination-button.previous,
         .pagination-button.next {
-            padding: 8px 20px; /* 增加左右的内边距，增大按钮长度 */
+            //padding: 8px 20px; /* 增加左右的内边距，增大按钮长度 */
         }
 
         .pagination-button:disabled {
@@ -223,8 +223,8 @@
     }
 
     .pagination-button span {
-        font-family: 'Microsoft YaHei', sans-serif; /* 设置字体为微软雅黑 */
-        font-weight: bold; /* 设置字体加粗 */
+        font-family: 'Microsoft YaHei', sans-serif; 
+        font-weight: bold; 
     }
 
     .jump-to-page {
@@ -243,6 +243,7 @@
 
     .jump-button {
         padding: 6px 12px;
+
     }
 
     @media (max-width: 991px) {
@@ -264,6 +265,7 @@
         align-items: center;
         gap: 10px;
         margin-left: 20px;
+        
     }
 
         .jump-to-page input {
@@ -272,6 +274,8 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             text-align: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: bold;
         }
 
         .jump-to-page button {
@@ -281,6 +285,8 @@
             border: 1px solid #ddd;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-weight: bold;
         }
 
             .jump-to-page button:hover {
