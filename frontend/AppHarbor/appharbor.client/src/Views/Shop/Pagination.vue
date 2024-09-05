@@ -141,7 +141,7 @@
         font-weight: bold !important; /* 设置粗体 */
         position: absolute;
         bottom: 60px;
-        left: 50%;
+        left: 40%;
     }
 
     .pagination-controls {
