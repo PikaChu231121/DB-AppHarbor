@@ -116,7 +116,7 @@
                 var token = Cookies.get('token');
                 let formData1 = new FormData();
                 formData1.append('token', token);
-                axios.post('http://localhost:5118/api/relationship/findall', formData1)
+                axios.post(`${this.$Url}/api/relationship/findall`, formData1)
                     .then(response => {
                         this.friends = response.data.data.$values;
                     })
@@ -136,7 +136,7 @@
                 let formData = new FormData();
                 let userId = Number(this.searchQuery);
                 formData.append('inputId', userId);
-                axios.post('http://localhost:5118/api/user/searchid', formData)
+                axios.post(`${this.$Url}/api/user/searchid`, formData)
                     .then(response => {
                         
                         if (response.data && response.data.id) {
@@ -170,7 +170,7 @@
                 formData.append('token', token);
                 formData.append('friendId', userId);
                 formData.append('relationship', relationType);
-                axios.post('http://localhost:5118/api/relationship/addfriend', formData)
+                axios.post(`${this.$Url}/api/relationship/addfriend`, formData)
                     .then(() => {
                         //this.isLoading = true;
                         this.fetchFriends();
@@ -211,7 +211,7 @@
                 let formData = new FormData();
                 formData.append('token', token);
                 formData.append('friendid', userId);
-                axios.post('http://localhost:5118/api/relationship/deletefriend', formData)
+                axios.post(`${this.$Url}/api/relationship/deletefriend`, formData)
                     .then(() => {
                         //this.isLoading = true;
                         this.friends = this.friends.filter(friend => friend.id !== userId);
@@ -227,7 +227,7 @@
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
-                    return `http://localhost:5118${avatarPath}`;
+                    return `${this.$Url}${avatarPath}`;
                 }
                 return require('../../../public/default.png');
             },

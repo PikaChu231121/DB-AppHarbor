@@ -80,11 +80,11 @@
 
                 let url = '';
                 if (this.userType === '普通用户') {
-                    url = 'http://localhost:5118/api/User/register';
+                    url = `${this.$Url}/api/User/register`;
                 } else if (this.userType === '商家') {
-                    url = 'http://localhost:5118/api/Merchant/register';
+                    url = `${this.$Url}/api/Merchant/register`;
                 } else if (this.userType === '管理员') {
-                    url = 'http://localhost:5118/api/Admin/register';
+                    url = `${this.$Url}/api/Admin/register`;
                 }
 
                 let formData = new FormData();

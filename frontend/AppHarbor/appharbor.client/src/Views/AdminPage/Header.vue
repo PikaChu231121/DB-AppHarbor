@@ -46,12 +46,12 @@
                 const token = Cookies.get('token');
                 let formData = new FormData();
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/admin/adminInfo', formData)
+                axios.post(`${this.$Url}/api/admin/adminInfo`, formData)
                     .then(response => {
                         const data = response.data;
                         this.adminId = data.id;
                         this.adminNickname = data.nickname;
-                        this.adminAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png'; // avatar 判空
+                        this.adminAvatar = data.avatar ? `${this.$Url}${data.avatar}` : '../../public/default.png'; // avatar 判空
                     })
                     .catch(error => {
                         console.error('Error fetching admin data:', error);

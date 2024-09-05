@@ -324,13 +324,13 @@
             },
             fetchUserAndTransactions() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post(`${this.$Url}/api/user/userInfo`, { token: token })
                     .then(response => {
                         this.user = response.data;
                         console.info(response.data);
                         this.user_id = response.data.id;
                         this.user_nickname = response.data.nickname;
-                        this.avatar_url = response.data.avatar ? `http://localhost:5118${response.data.avatar}` : '../../public/default.png'; //avatar 判空
+                        this.avatar_url = response.data.avatar ? `${this.$Url}${response.data.avatar}` : '../../public/default.png'; //avatar 判空
                         this.credit = response.data.credit;
 
                         // 确保在user_id被设置之后调用fetchTransactions
@@ -351,7 +351,7 @@
 
             fetchTransactions() {
                 console.info(this.user_id);
-                axios.post('http://localhost:5118/api/user/getTransaction', { id: this.user_id })
+                axios.post(`${this.$Url}/api/user/getTransaction`, { id: this.user_id })
                     .then(response => {
                         this.transactions = response.data.$values;
                         console.info(this.transactions);
@@ -376,7 +376,7 @@
                     return;
                 }
 
-                axios.post('http://localhost:5118/api/user/recharge', { id: this.user_id, amount: this.rechargeAmount })
+                axios.post(`${this.$Url}/api/user/recharge`, { id: this.user_id, amount: this.rechargeAmount })
                     .then(response => {
                         this.fetchUserAndTransactions();
                         this.showNotification('充值成功');

@@ -152,7 +152,7 @@
                 this.isFAQOpen = !this.isFAQOpen;
             },
             fetchAppDetails(appId) {
-                axios.post('http://localhost:5118/api/application/getappdetail', { Id: appId })
+                axios.post(`${this.$Url}/api/application/getappdetail`, { Id: appId })
                     .then(response => {
                         this.app = response.data;
                     })
@@ -162,7 +162,7 @@
             },
             getAppImgUrl(imgPath) {
                 if (imgPath) {
-                    return `http://localhost:5118${imgPath}`;
+                    return `${this.$Url}${imgPath}`;
                 }
                 return '../../public/default.png'; // 默认图片路径
             },
@@ -174,7 +174,7 @@
             },
             addFavourite() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/addFavourite', {
+                axios.post(`${this.$Url}/api/favourite/addFavourite`, {
                     token: token,
                     id: this.app.id
                 })
@@ -193,7 +193,7 @@
             },
             removeFavourite() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/deleteFavourite', {
+                axios.post(`${this.$Url}/api/favourite/deleteFavourite`, {
                     token: token,
                     id: this.app.id
                 })
@@ -212,7 +212,7 @@
             },
             checkIfFavourite(appId) {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/favourite/checkIfFavourite', {
+                axios.post(`${this.$Url}/api/favourite/checkIfFavourite`, {
                     token: token,
                     appId: appId
                 })
@@ -245,9 +245,9 @@
             },
             installapp() {
                 console.log('downloading: ' + this.app.id);
-                axios.post('http://localhost:5118/api/application/installapp', { Id: this.app.id })
+                axios.post(`${this.$Url}/api/application/installapp`, { Id: this.app.id })
                     .then(response => {
-                        window.location.href = `http://localhost:5118${response.data}`;
+                        window.location.href = `${this.$Url}${response.data}`;
                         console.log('downloaded: ' + this.app.id);
                     })
                     .catch(error => {
@@ -255,7 +255,7 @@
                     });
             },
             fetchAllComments(appId) {
-                axios.post('http://localhost:5118/api/comment/getappcomment', { ApplicationId: appId })
+                axios.post(`${this.$Url}/api/comment/getappcomment`, { ApplicationId: appId })
                     .then(response => {
                         this.comments = response.data.$values;
                     })
@@ -265,7 +265,7 @@
             },
             fetchUserInfo() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post(`${this.$Url}/api/user/userInfo`, { token: token })
                     .then(response => {
                         this.user = response.data;
                     })
@@ -278,7 +278,7 @@
             },
             submitComment() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/comment/postappcomment', {
+                axios.post(`${this.$Url}/api/comment/postappcomment`, {
                     token: token,
                     content: this.newComment.content,
                     rating: this.newComment.score,
@@ -310,7 +310,7 @@
                     });
             },
             deleteComment(commentId) {
-                axios.post('http://localhost:5118/api/comment/deleteappcomment', {
+                axios.post(`${this.$Url}/api/comment/deleteappcomment`, {
                     commentId: commentId
                 })
                     .then(response => {
@@ -335,7 +335,7 @@
             },
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
-                    return `http://localhost:5118${avatarPath}`;
+                    return `${this.$Url}${avatarPath}`;
                 }
                 return '../../public/default.png'; // 默认头像路径
             },
@@ -354,7 +354,7 @@
                 const now = new Date();
                 const reportTime = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString(); // 加 8 小时并转换为 ISO 8601 格式
 
-                axios.post('http://localhost:5118/api/report/publishreport', {
+                axios.post(`${this.$Url}/api/report/publishreport`, {
                     token: token,
                     content: this.reportContent,
                     reportTime: reportTime, // 传递调整后的时间
