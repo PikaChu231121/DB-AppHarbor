@@ -65,7 +65,7 @@
         flex-direction: column;
         width: 100%;
         height: 85%;
-        //background-color: aquamarine;
+        /* background-color: aquamarine; */
     }
 
     .header {
@@ -76,8 +76,8 @@
         height: 100px;
         padding: 10px;
         border-bottom: 5px solid darksalmon;
-        //background-color: #fbeaea;
-        //position: fixed;
+        /* background-color: #fbeaea; */
+        /* position: fixed; */
     }
 
     .title {
@@ -125,14 +125,14 @@
     }
 
     .wallet-body {
-        //display: flex;
-        //background-color: gold;
+        /* display: flex; */
+        /* background-color: gold; */
         height: 100%;
         border-bottom: 5px solid darksalmon;
     }
 
     .auto-wrapper {
-        //position:fixed;
+        /* position:fixed; */
         width: 100%;
         height: 20%;
         background-color: #FADAD6;
@@ -141,7 +141,7 @@
         align-items: center; /* 组件上下居中 */
         justify-content: space-between; /* 控制不同部分的对齐 */
         border-bottom: 5px solid #fec65a;
-        //border-radius: 20px;
+        /* border-radius: 20px; */
     }
 
     .leftmoney {
@@ -149,7 +149,7 @@
         font-weight: bold;
         color: palevioletred;
         margin-left: 40px;
-        //background-color:aquamarine;
+        /* background-color:aquamarine; */
     }
 
 
@@ -158,12 +158,12 @@
         font-family: 'Roboto Condensed', sans-serif;
         font-weight: bold;
         color: #D2691E;
-        //background-color: #e9c3c3;
+        /* background-color: #e9c3c3; */
         padding: 20px;
-        //border: 2px solid pink;
+        /* border: 2px solid pink; */
         border-radius: 20px;
-        //margin-left: 30px; /* 使其在父容器中居中 */
-        //transform: translateX(-50%); /* 左对齐的同时保持居中 */
+        /* margin-left: 30px; 使其在父容器中居中 */
+        /* transform: translateX(-50%); 左对齐的同时保持居中 */
     }
 
     .button-row {
@@ -208,8 +208,8 @@
 
     .transaction-table {
         width: 95%;
-        //overflow-y: auto;
-        //max-height: 40%; 
+        /* overflow-y: auto; */
+        /* max-height: 40%;  */
         border-radius: 20px;
         margin:20px;
     }
@@ -232,6 +232,7 @@
         border-bottom: 3px solid #fadad6;
         font-weight: bold !important;
         font-family: 'Microsoft YaHei' !important;
+        text-align: left;
     }
 
     th,
@@ -266,7 +267,7 @@
 
     .notification-toast {
         position: fixed;
-        bottom: 20px;
+        bottom: 80px;
         left: 50%;
         transform: translateX(-50%);
         background-color: #17a2b8; /* 青色背景 */
@@ -332,11 +333,7 @@
                         this.user_nickname = response.data.nickname;
                         this.avatar_url = response.data.avatar ? `${this.$Url}${response.data.avatar}` : '../../public/default.png'; //avatar 判空
                         this.credit = response.data.credit;
-
-                        // 确保在user_id被设置之后调用fetchTransactions
                         this.fetchTransactions();
-                        // TODO: 现在需要两次通信，第一次用cookies从服务器取了userinfo，等到这个info再问服务器要交易记录
-                        // 理想状态是通过cookies直接能得到所有的信息
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);

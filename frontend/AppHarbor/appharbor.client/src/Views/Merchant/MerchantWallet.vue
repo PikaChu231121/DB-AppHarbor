@@ -130,7 +130,7 @@ export default {
                 })
                 .catch(error => {
                     console.error('Error withdrawing:', error);
-                    this.alertNotification('提现失败，请联系管理员');
+                    this.alertNotification('提现失败');
                 });
         },
 
@@ -142,7 +142,7 @@ export default {
                 .then(response => {
                     const data = response.data.$values;
 
-                    console.log(data); // 检查 data 的结构
+                    // console.log(data); // 检查 data 的结构
 
                     if (Array.isArray(data)) {
                         // 提取应用名称和总收入数据
@@ -194,9 +194,15 @@ export default {
         },
         alertNotification(message) {
             this.alert = message;
+            setTimeout(() => {
+                this.alert = null;
+            }, 3000);
         },
         confirmNotification(message) {
             this.confirm = message;
+            setTimeout(() => {
+                this.confirm = null;
+            }, 3000);
         },
     },
     mounted() {
