@@ -190,7 +190,7 @@ namespace AppHarbor.Server.Controllers
             {
                 Password = password,
                 Nickname = Nickname,
-                Avatar = "default.png",
+                Avatar = "/uploads/default.png",
                 RegisterTime = DateTime.Now,
                 Credit = 0,
                 State = "Normal"

@@ -75,7 +75,7 @@
                 var token = Cookies.get('token');
                 var formData = new FormData();
                 formData.append('token', token);
-                axios.post('http://localhost:5118/api/merchant/logout', formData)
+                axios.post(`${this.$Url}/api/merchant/logout`, formData)
                     .then(() => {
                         // 显示登出成功提示
                         alert("您已成功登出");
@@ -91,13 +91,13 @@
             },
             fetchUserInfo() {
                 const token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/merchant/merchantInfo', {token: token})
+                axios.post(`${this.$Url}/api/merchant/merchantInfo`, {token: token})
                     .then(response => {
                         const data = response.data;
                         this.user.merchantId = data.id;
                         this.user.merchantNickname = data.nickName;
-                        this.user.merchantAvatar = data.avatar ? `http://localhost:5118${data.avatar}` : '@/../public/default.png';
-                        if (this.user.merchantAvatar=='http://localhost:5118default.png') {
+                        this.user.merchantAvatar = data.avatar ? `${this.$Url}${data.avatar}` : '@/../public/default.png';
+                        if (this.user.merchantAvatar=='${this.$Url}default.png') {
                             this.user.merchantAvatar = '@/../public/default.png';
                         }
                         this.user.registerTime = data.registerTime;
@@ -120,7 +120,7 @@
                     formData.append('id', this.user.merchantId);
 
                     const token = Cookies.get('token');
-                    axios.post('http://localhost:5118/api/Image/upload-merchant-image', formData, {
+                    axios.post(`${this.$Url}/api/Image/upload-merchant-image`, formData, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'multipart/form-data'
@@ -158,7 +158,7 @@
                 let formData = new FormData();
                 formData.append('id', this.user.merchantId);
                 formData.append('nickName', this.user.merchantNickname);
-                axios.post('http://localhost:5118/api/merchant/updateMerchantNickname', formData)
+                axios.post(`${this.$Url}/api/merchant/updateMerchantNickname`, formData)
                     .then(() => {
                         this.popupMessage = '昵称修改成功';
                         this.showPopup = true;

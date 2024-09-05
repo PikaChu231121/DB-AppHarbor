@@ -120,12 +120,12 @@
         methods: {
             fetchUser() {
                 var token = Cookies.get('token');
-                axios.post('http://localhost:5118/api/user/userInfo', { token: token })
+                axios.post(`${this.$Url}/api/user/userInfo`, { token: token })
                     .then(response => {
                         const data = response.data;
                         this.user_id = data.id;
                         this.user_nickname = data.nickname;
-                        this.avatar_url = data.avatar ? `http://localhost:5118${data.avatar}` : '../../public/default.png';
+                        this.avatar_url = data.avatar ? `${this.$Url}${data.avatar}` : '../../public/default.png';
                     })
                     .catch(error => {
                         console.error('Error fetching user data:', error);
@@ -143,7 +143,7 @@
                 let formData1 = new FormData();
                 formData1.append('token', token);
                 formData1.append('relationship', "family");
-                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData1)
+                axios.post(`${this.$Url}/api/relationship/findmysubscriber`, formData1)
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Family') {
@@ -158,7 +158,7 @@
                 let formData2 = new FormData();
                 formData2.append('token', token);
                 formData2.append('relationship', 'friend');
-                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData2)
+                axios.post(`${this.$Url}/api/relationship/findmysubscriber`, formData2)
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Friend') {
@@ -173,7 +173,7 @@
                 let formData3 = new FormData();
                 formData3.append('token', token);
                 formData3.append('relationship', 'classmate');
-                axios.post('http://localhost:5118/api/relationship/findmysubscriber', formData3)
+                axios.post(`${this.$Url}/api/relationship/findmysubscriber`, formData3)
                     .then(response => {
                         this.groups.forEach(group => {
                             if (group.name === 'Classmate') {
@@ -187,7 +187,7 @@
 
                 let formData4 = new FormData();
                 formData4.append('token', token);
-                axios.post('http://localhost:5118/api/relationship/findall', formData4)
+                axios.post(`${this.$Url}/api/relationship/findall`, formData4)
                     .then(response => {
                         this.groups.forEach(group => {
                             this.friends = response.data.data.$values;
@@ -208,7 +208,7 @@
 
             getAvatarUrl(avatarPath) {
                 if (avatarPath) {
-                    return `http://localhost:5118${avatarPath}`;
+                    return `${this.$Url}${avatarPath}`;
                 }
                 return '../../../public/default.png'; // Default avatar path
             },

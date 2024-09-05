@@ -69,7 +69,7 @@
         methods: {
             changePassword() {
                 this.isLoading = true;
-                axios.post('http://localhost:5118/api/User/changepassword', {
+                axios.post(`${this.$Url}/api/User/changepassword`, {
                     Id: this.username,
                     OldPassword: this.bpassword,
                     NewPassword: this.apassword,
@@ -125,7 +125,7 @@
         padding-bottom: 1em; /* Adjust this value to move the content up */
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         height: 60vh;
-        width: 420px;
+        width: 480px;
         display: flex;
         flex-direction: column;
         justify-content: center;

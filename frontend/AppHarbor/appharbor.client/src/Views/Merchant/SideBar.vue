@@ -66,7 +66,7 @@ export default {
         },
         getAvatarUrl(avatarPath) {
             if (avatarPath) {
-                return 'http://localhost:5118' + avatarPath;
+                return `${this.$Url}` + avatarPath;
             } else {
                 return '@/../public/default.png';
             }
@@ -84,7 +84,7 @@ export default {
     },
     created() {
         const token = Cookies.get('token');
-        axios.post('http://localhost:5118/api/merchant/MerchantInfo', { token })
+        axios.post(`${this.$Url}/api/merchant/MerchantInfo`, { token })
             .then(response => {
                 this.merchant.id = response.data.id;
                 this.merchant.nickname = response.data.nickName;

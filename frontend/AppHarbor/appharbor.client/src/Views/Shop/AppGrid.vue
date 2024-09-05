@@ -29,7 +29,7 @@
             },
             getAppImgUrl(imgPath) {
                 if (imgPath) {
-                    return `http://localhost:5118${ imgPath }`;
+                    return `${this.$Url}${ imgPath }`;
                 }
                 //todo
                 return '../../public/default.png'; // 默认图片路径

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppHarbor.Server.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class BanCommentController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
