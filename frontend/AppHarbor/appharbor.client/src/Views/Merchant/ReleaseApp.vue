@@ -71,7 +71,7 @@ export default {
             appName: '',
             appVersion: '',
             appImage: null,
-            appImageUrl: '../../../public/logo.png',
+            appImageUrl: '@/../public/logo.png',
             appFile: null,
             appDescription: '',
             appPrice: 0,
