@@ -46,6 +46,7 @@
     import global from "../global.js";
     import LoginAlert from './LoginAlert.vue';
     import Loading from './Tools/Loading.vue';
+    import CryptoJS from 'crypto-js'; // 引入 crypto-js 库
 
     export default {
         name: 'ChangePassword',
@@ -71,8 +72,8 @@
                 this.isLoading = true;
                 axios.post(`${this.$Url}/api/User/changepassword`, {
                     Id: this.username,
-                    OldPassword: this.bpassword,
-                    NewPassword: this.apassword,
+                    OldPassword: CryptoJS.SHA256(this.bpassword).toString(CryptoJS.enc.Hex),
+                    NewPassword: CryptoJS.SHA256(this.apassword).toString(CryptoJS.enc.Hex),
                 })
                     .then(response => {
                         this.alertMessage = `尊敬的 ${this.username}用户，您的密码已修改 `;
