@@ -29,11 +29,10 @@
         </div>
 
         <div class="auto-wrapper">
-            <div class="info-box" v-for="app in filteredApplications" :key="app.id">
+            <div class="info-box" v-for="app in filteredApplications" :key="app.id" @click="appDetail(app.id)">
                 <img :src="getAppImgUrl(app.image)" class="app-image" />
                 <p class="app-name">{{ app.name }}</p>
                 <button class="purchase-button" @click="downloadApp(app.package,app.id)">下载</button>
-                <button class="view-button" @click="openAppDetail(app)">查看应用</button>
             </div>
         </div>
 
@@ -152,6 +151,9 @@
                 }
                 return '../../public/default.png'; // 默认图片路径
             },
+            appDetail(id) {
+                this.$router.push(`/app/${id}`);
+            }
         },
         mounted() {
             this.fetchUser();
@@ -235,13 +237,14 @@
     .info-box {
         display: flex;
         flex-direction: column;
+        cursor: pointer;
         align-items: center;
         background: #fff9f9;
         border: 3px solid #ffd7d2;
         padding: 20px;
         margin: 15px;
         width: 220px;
-        height: 280px;
+        height: 240px;
         max-height: 280px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
