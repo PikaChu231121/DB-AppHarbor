@@ -122,12 +122,12 @@
                     })
                     .catch(error => {
                         console.error('Error fetching friends:', error);
-                        Cookies.remove('token');
-                        this.$router.push('/').then(() => {
-                            // 刷新登录页面
-                            window.location.reload();
-                        });
-                        alert("token异常，请重新登陆！");
+                        // Cookies.remove('token');
+                        // this.$router.push('/').then(() => {
+                        //     // 刷新登录页面
+                        //     window.location.reload();
+                        // });
+                        // alert("token异常，请重新登陆！");
                     });
             },
             searchUsers() {
