@@ -48,6 +48,7 @@
     import global from "../global.js";
     import LoginAlert from './LoginAlert.vue';
     import Loading from './Tools/Loading.vue';
+    import CryptoJS from 'crypto-js'; // 引入 crypto-js 库
 
     export default {
         name: 'UserLogin',
@@ -68,7 +69,7 @@
                 if (this.id[0] === 'a') {
                     let formData = new FormData();
                     formData.append('id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
-                    formData.append('password', this.password);
+                    formData.append('password', CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex));
                     axios.post(`${this.$Url}/api/admin/adminlogin`, formData)
                         .then(response => {
                             Cookies.set("token", response.data);
@@ -88,7 +89,7 @@
                 else if (this.id[0] === 'm') {
                     let formData = new FormData();
                     formData.append('merchant_id', this.id.substring(1));  // 提取从第二个字符开始的子字符串
-                    formData.append('password', this.password);
+                    formData.append('password', CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex));
                     axios.post(`${this.$Url}/api/Merchant/login`, formData)
                         .then(response => {
                             Cookies.set("token", response.data);
@@ -110,7 +111,7 @@
                 else {
                     let formData = new FormData();
                     formData.append('id', this.id);
-                    formData.append('password', this.password);
+                    formData.append('password', CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex));
                     axios.post(`${this.$Url}/api/user/login`, formData)
                         .then(response => {
                             Cookies.set("token", response.data);

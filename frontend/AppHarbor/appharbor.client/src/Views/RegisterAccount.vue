@@ -52,6 +52,7 @@
     import global from "../global.js";
     import LoginAlert from './LoginAlert.vue';
     import Loading from './Tools/Loading.vue';
+    import CryptoJS from 'crypto-js'; // 引入 crypto-js 库
 
     export default {
         name: 'RegisterAccount',
@@ -87,9 +88,12 @@
                     url = `${this.$Url}/api/Admin/register`;
                 }
 
+                // 对密码进行 SHA-256 加密
+                const hashedPassword = CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex);
+
                 let formData = new FormData();
                 formData.append('nickname', this.nickname);
-                formData.append('password', this.password);
+                formData.append('password', hashedPassword);
                 axios.post(url, formData)
                     .then(response => {
                         console.log("successfully registered!");
