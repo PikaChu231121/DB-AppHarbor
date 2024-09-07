@@ -283,6 +283,11 @@
             <p>&nbsp;&nbsp;应用类型:&nbsp;&nbsp;&nbsp; {{ selectedApp.category }}</p>
             <p>&nbsp;&nbsp;应用ID: &nbsp;&nbsp;&nbsp;{{ selectedApp.id }}</p>
             <p>&nbsp;&nbsp;应用价格:&nbsp;&nbsp;&nbsp; {{ selectedApp.price === 0 ? '免费' : selectedApp.price }}</p>
+            <p>
+                &nbsp;&nbsp;应用发布折扣: &nbsp;&nbsp;&nbsp;
+                {{ selectedApp.discount === 1 ? '原价' : (selectedApp.discount * 10).toFixed(1) + '折' }}
+            </p>
+
             <p>&nbsp;&nbsp;应用描述: &nbsp;&nbsp;&nbsp;{{ selectedApp.description }}</p>
             <button @click="closePopup" class="popup-close-button">关闭</button>
         </div>

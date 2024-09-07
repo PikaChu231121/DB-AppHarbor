@@ -248,6 +248,7 @@ namespace AppHarbor.Server.Controllers
                                DownloadCount = app.DownloadCount,
                                Price = app.Price,
                                Package = app.Package,
+                               Discount = app.Discount,
                            }
                        )
                        .Where(app => app.ReleaseState == "released")
@@ -280,6 +281,7 @@ namespace AppHarbor.Server.Controllers
                                 DownloadCount = app.DownloadCount,
                                 Price = app.Price,
                                 Package = app.Package,
+                                Discount = app.Discount,
                             }
                         )
                         .Where(app => app.ReleaseState == "test")
