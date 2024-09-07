@@ -117,11 +117,22 @@
             NotificationModal,
             AlertBox,
             ConfirmBox
-        },
+    },
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            // 路由进入此页时，清空旧的 app 数据，重新获取
+            vm.app = '';
+            const appId = to.params.id;
+            vm.fetchAppDetails(appId);
+            vm.checkIfFavourite(appId);
+            vm.fetchAllComments(appId);
+            vm.fetchUserInfo();
+        });
+    },
         data() {
             return {
-                app: null,
-                user: null,
+                app: '',
+                user: '',
                 isFAQOpen: true,
                 comments: [],
                 newComment: {
@@ -140,8 +151,8 @@
                 commentMessage: '',
             };
         },
-        created() {
-            const appId = this.$route.params.id;
+    created() {
+        const appId = this.$route.params.id;
             this.fetchAppDetails(appId);
             this.checkIfFavourite(appId);
             this.fetchAllComments(appId);
@@ -390,6 +401,7 @@
         },
         computed: {
             formattedPrice() {
+                if (!this.app)return;
                 if (this.app.price === 0) {
                     return `<span>Free! 免费</span>`;
                 }
