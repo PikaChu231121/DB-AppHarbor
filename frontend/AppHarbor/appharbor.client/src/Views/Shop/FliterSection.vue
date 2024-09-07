@@ -25,12 +25,12 @@
                            :min="minPrice"
                            :max="maxPrice"
                            @input="updatePriceRange" />
-                    <input type="range"
+                    <!--<input type="range"
                            id="priceRangeMax"
                            v-model="priceRange[1]"
                            :min="minPrice"
                            :max="maxPrice"
-                           @input="updatePriceRange" />
+                           @input="updatePriceRange" />-->
                 </div>
             </div>
         </div>
