@@ -485,7 +485,7 @@
                 return stateMapping[releaseState] || releaseState;
             },
             getFullImageUrl(imagePath) {
-                const baseUrl = '${this.$Url}';
+                const baseUrl = `${this.$Url}`;
                 return imagePath ? `${baseUrl}${imagePath}` : '';
             },
         },
