@@ -44,7 +44,7 @@
                 currentPage: 1, // 当前页码，初始为1
                 totalPages: 1, // 总页数，初始为1
                 appsPerPage: 10, // 每页显示的应用数量
-                sortMethod: 'Rating', // 添加排序方式
+                sortMethod: '按热度排序', // 添加排序方式
             }
         },
         methods: {
