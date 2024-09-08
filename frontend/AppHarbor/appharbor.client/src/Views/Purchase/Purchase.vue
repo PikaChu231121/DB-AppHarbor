@@ -100,10 +100,22 @@
             AlertBox,
             ConfirmBox
         },
+        beforeRouteEnter(to, from, next) {
+            next(vm => {
+                // 路由进入此页时，清空旧的 app 数据，重新获取
+                vm.app = '';
+                const appId = to.params.id;
+                vm.fetchAppDetails(appId);
+                // 获取个人信息部分
+                vm.fetchUserInfo();
+                // 获取好友信息部分
+                vm.fetchFriends();
+            });
+        },
         data() {
             return {
-                user: null,
-                app: null,
+                user: '',
+                app: '',
                 user_credit: 0,
                 receiver: null,
                 friends: [],
@@ -313,6 +325,7 @@
         },
         computed: {
             formattedPrice() {
+                if (!this.app) return;
                 if (this.app.price === 0) {
                     return `<span>Free! 免费</span>`;
                 }
