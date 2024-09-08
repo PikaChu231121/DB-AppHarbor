@@ -104,6 +104,7 @@
             next(vm => {
                 // 路由进入此页时，清空旧的 app 数据，重新获取
                 vm.app = '';
+                vm.friends = [];
                 const appId = to.params.id;
                 vm.fetchAppDetails(appId);
                 // 获取个人信息部分
@@ -117,7 +118,7 @@
                 user: '',
                 app: '',
                 user_credit: 0,
-                receiver: null,
+                receiver: '',
                 friends: [],
                 showDropdown: false,
                 alert: '',

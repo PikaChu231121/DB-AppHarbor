@@ -175,7 +175,7 @@
                 if (imgPath) {
                     return `${this.$Url}${imgPath}`;
                 }
-                return '../../public/default.png'; // 默认图片路径
+                return '../../public/473a0adf42244483aad60880b50e129a.png'; // 默认图片路径
             },
             goBack() {
                 this.$router.push('/WorkBanchPage');
